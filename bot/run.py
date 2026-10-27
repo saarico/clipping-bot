@@ -8,6 +8,7 @@ For every folder under CLIPPING/:
   2_REDO    rico's critique docs -> saved to campaigns/<c>/critiques/ for the reviewer; clips re-picked
   3_APPROVED  each clip gets its POST KIT entry (title, description, tags, rules to re-check)
 State lives in campaigns/<c>/state.json (committed by the workflow). Videos never enter git.
+Drive access: rclone (bot/drive.py); tests: CLIPPING_LOCAL=/some/dir uses a plain folder as the Drive.
 """
 import json
 import os
@@ -59,8 +60,11 @@ def note(st, msg):
     st["log"] = (st.get("log", []) + [f"{now()}  {msg}"])[-40:]
 
 
-def is_gdoc(f):
-    return f["mimeType"] == drive.GDOC
+BOT_DOCS = {"BRIEF", "NEEDS THE VIDEO", "SUMMARY", "POST KIT"}
+
+
+def is_bot_doc(f):
+    return f["Name"].rsplit(".", 1)[0] in BOT_DOCS
 
 
 def get_source(name, st, stage, cdir):
@@ -68,10 +72,10 @@ def get_source(name, st, stage, cdir):
     dest = WORK / name / "episode.mp4"
     if dest.exists():
         return dest
-    vids = [f for f in drive.children(stage["0_START"]) if f["name"].lower().endswith(VID_EXT)]
+    vids = drive.files(stage["0_START"], VID_EXT)
     if vids:
-        note(st, f"downloading {vids[0]['name']} from 0_START")
-        return drive.download(vids[0]["id"], dest)
+        note(st, f"downloading {vids[0]['Name']} from 0_START")
+        return drive.download(vids[0]["Path"], dest)
     links = st.get("brief", {}).get("links", [])
     if links and not st.get("download_failed"):
         note(st, f"trying to download {links[0]} (yt-dlp)")
@@ -86,22 +90,21 @@ def get_source(name, st, stage, cdir):
     return None
 
 
-def do_campaign(name, cid):
+def do_campaign(name, cpath):
     st = load_state(name)
     cdir = ROOT / "campaigns" / name
     cdir.mkdir(parents=True, exist_ok=True)
-    stage = drive.stages(cid)
+    stage = drive.stages(cpath)
     (WORK / name).mkdir(parents=True, exist_ok=True)
 
     # 0_START: requirements -> brief
     if not st.get("brief"):
-        reqs = [f for f in drive.children(stage["0_START"]) if f["name"].lower().endswith(REQ_EXT) or is_gdoc(f)]
-        reqs = [f for f in reqs if f["name"] not in ("NEEDS THE VIDEO", "BRIEF")]
+        reqs = [f for f in drive.files(stage["0_START"], REQ_EXT) if not is_bot_doc(f)]
         if not reqs:
             note(st, "waiting for the requirements file in 0_START")
             save_state(name, st)
             return
-        text = "\n\n".join(drive.text_of(f["id"], f["name"]) for f in reqs)
+        text = "\n\n".join(drive.text_of(f["Path"], f["Name"]) for f in reqs)
         st["brief"] = briefer.parse(text)
         (cdir / "brief.json").write_text(json.dumps(st["brief"], indent=1))
         b = st["brief"]
@@ -113,28 +116,29 @@ def do_campaign(name, cid):
 
     # 2_REDO: new critiques -> saved for the reviewer, clips re-picked
     seen = set(st.get("critiques_seen", []))
-    for f in drive.children(stage["2_REDO"]):
-        if f["id"] in seen or not (is_gdoc(f) or f["name"].lower().endswith(REQ_EXT)):
+    for f in drive.files(stage["2_REDO"], REQ_EXT):
+        key = f"{f['Path']}@{f.get('ModTime')}"
+        if key in seen:
             continue
-        txt = drive.text_of(f["id"], f["name"])
+        txt = drive.text_of(f["Path"], f["Name"])
         (cdir / "critiques").mkdir(exist_ok=True)
-        (cdir / "critiques" / f"{datetime.now(timezone.utc):%Y%m%d-%H%M}_{f['name']}.md").write_text(txt)
-        seen.add(f["id"])
+        (cdir / "critiques" / f"{datetime.now(timezone.utc):%Y%m%d-%H%M}_{f['Name']}.md").write_text(txt)
+        seen.add(key)
         st["needs_redo"] = True
-        note(st, f"critique read: {f['name']} ({len(txt)} chars); clips will be re-picked")
+        note(st, f"critique read: {f['Name']} ({len(txt)} chars); clips will be re-picked")
     st["critiques_seen"] = sorted(seen)
 
     # 3_APPROVED: post kits
-    approved = [f for f in drive.children(stage["3_APPROVED"]) if f["name"].lower().endswith(VID_EXT)]
+    approved = drive.files(stage["3_APPROVED"], VID_EXT)
     kits = st.get("kits", {})
-    new_kits = [f for f in approved if f["id"] not in kits]
+    new_kits = [f for f in approved if f["Path"] not in kits]
     if new_kits:
         hooks = {Path(c["mp4"]).name: c["hook"] for c in st.get("clips", [])}
         text = [f"POST KIT  ({now()})", ""]
         for f in new_kits:
-            text.append(post_kit.kit(f["name"], hooks.get(f["name"], Path(f["name"]).stem.replace("-", " ")), st["brief"], st["brief"].get("platforms") or ["youtube"]))
+            text.append(post_kit.kit(f["Name"], hooks.get(f["Name"], Path(f["Name"]).stem.replace("-", " ")), st["brief"], st["brief"].get("platforms") or ["youtube"]))
             text.append("")
-            kits[f["id"]] = f["name"]
+            kits[f["Path"]] = f["Name"]
         drive.write_doc("POST KIT", "\n".join(text), stage["3_APPROVED"])
         st["kits"] = kits
         note(st, f"post kit written for {len(new_kits)} approved clip(s)")
@@ -174,9 +178,9 @@ def main(only=None):
     camps = drive.campaigns()
     if only:
         camps = [c for c in camps if c[0] == only]
-    for name, cid in camps:
+    for name, cpath in camps:
         try:
-            do_campaign(name, cid)
+            do_campaign(name, cpath)
         except Exception as e:  # one campaign must not stop the others
             st = load_state(name)
             note(st, f"ERROR {type(e).__name__}: {str(e)[:200]}")

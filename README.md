@@ -24,7 +24,7 @@ Drive: CLIPPING/
 | Cut, QA, judge | bot | `bot/render_clip.py`, `bot/qa_check.py`, `bot/judge_clip.py`, `scorecards/judgment.md` |
 | Review | rico | 1_CHECK → 2_REDO or 3_APPROVED |
 | Post kit (title, description, tags) | bot | `bot/post_kit.py`, `config/accounts.json` |
-| Post, paste the link into Content Rewards | rico (until the platform audits pass) | see SETUP.md |
+| Post, paste the link into Content Rewards | rico (one click from the POST KIT) | see SETUP.md |
 
 Rules the bot follows: `RULES.md`. rico's critiques land in `campaigns/<c>/critiques/` and the reviewer
 applies them in the next `plan.json`. State per campaign: `campaigns/<c>/state.json`. Videos never enter git.

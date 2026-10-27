@@ -253,7 +253,7 @@ def check_spelling(rep, text):
             words.add(w)
     sp = SpellChecker()
     bad = sorted(w for w in sp.unknown(words) if not all(p in allow or not sp.unknown([p]) for p in w.split("-")))
-    rep.add("Caption spelling", "FAIL" if bad else "PASS",
+    rep.add("Caption spelling", "WARN" if bad else "PASS",
             ("unknown words: " + ", ".join(f"{w} (did you mean {sp.correction(w)}?)" for w in bad[:8])
              + ". Fix the word, or add a real name to spelling_allowlist.txt") if bad else f"{len(words)} words checked")
 

@@ -1,140 +1,182 @@
-"""Google Drive for the bot. One OAuth token (rico's own account, scopes drive + youtube.upload),
-stored as the GitHub secret GOOGLE_TOKEN_JSON. Nothing here ever sees a password.
+"""rico's Google Drive, through rclone. No Google Cloud project: rico runs `rclone authorize "drive"`
+once and puts the printed token in the GitHub secret RCLONE_TOKEN (SETUP.md).
 
-Folder layout the bot expects (created on first run if missing):
-  CLIPPING/
-    CAMPAIGNS TO JOIN            (Google Doc, bot-written)
-    <campaign>/0_START  1_CHECK  2_REDO  3_APPROVED
+Everything is a PATH under the CLIPPING folder, never a file id:
+  CLIPPING/<campaign>/0_START  1_CHECK  2_REDO  3_APPROVED
+Google Docs are read as text and written from text (rclone's import/export formats).
+
+Backends:  rclone (production, env RCLONE_TOKEN or an existing rclone remote "gdrive")
+           local  (tests: env CLIPPING_LOCAL=/some/dir acts as the Drive)
 """
-import io
 import json
-import mimetypes
 import os
+import shutil
+import subprocess
 from pathlib import Path
 
-from google.oauth2.credentials import Credentials
-from googleapiclient.discovery import build
-from googleapiclient.http import MediaFileUpload, MediaIoBaseDownload
-
-FOLDER = "application/vnd.google-apps.folder"
-GDOC = "application/vnd.google-apps.document"
 STAGES = ["0_START", "1_CHECK", "2_REDO", "3_APPROVED"]
-_svc = None
+ROOT_NAME = os.environ.get("CLIPPING_ROOT", "CLIPPING")
+GDOC = "application/vnd.google-apps.document"
+TEXT_EXT = (".txt", ".md")
 
 
-def creds():
-    raw = os.environ.get("GOOGLE_TOKEN_JSON") or Path(os.environ.get("GOOGLE_TOKEN_FILE", "token.json")).read_text()
-    return Credentials.from_authorized_user_info(json.loads(raw))
+class Local:
+    """A directory standing in for Drive (tests). Google Docs are plain .txt files."""
+
+    def __init__(self, base):
+        self.base = Path(base)
+
+    def _p(self, path):
+        return self.base / path
+
+    def ls(self, path):
+        d = self._p(path)
+        if not d.exists():
+            return []
+        out = []
+        for e in sorted(d.iterdir()):
+            out.append({"Name": e.name, "Path": f"{path}/{e.name}", "IsDir": e.is_dir(), "Size": e.stat().st_size,
+                        "ModTime": e.stat().st_mtime,
+                        "MimeType": "inode/directory" if e.is_dir() else ("text/plain" if e.suffix == ".txt" else "application/octet-stream")})
+        return out
+
+    def mkdir(self, path):
+        self._p(path).mkdir(parents=True, exist_ok=True)
+
+    def download(self, path, dest):
+        Path(dest).parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy(self._p(path), dest)
+        return Path(dest)
+
+    def upload(self, local, path):
+        self._p(path).parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy(local, self._p(path))
+
+    def write_doc(self, path, text):
+        self._p(path + ".txt").parent.mkdir(parents=True, exist_ok=True)
+        self._p(path + ".txt").write_text(text)
+
+    def move(self, src, dst):
+        self._p(dst).parent.mkdir(parents=True, exist_ok=True)
+        shutil.move(self._p(src), self._p(dst))
 
 
-def svc():
-    global _svc
-    if _svc is None:
-        _svc = build("drive", "v3", credentials=creds(), cache_discovery=False)
-    return _svc
+class Rclone:
+    def __init__(self):
+        self.remote = os.environ.get("RCLONE_REMOTE", "gdrive")
+        conf = Path(os.environ.get("RCLONE_CONFIG", str(Path.home() / ".config/rclone/rclone.conf")))
+        tok = os.environ.get("RCLONE_TOKEN")
+        if tok and not conf.exists():
+            conf.parent.mkdir(parents=True, exist_ok=True)
+            conf.write_text(f"[{self.remote}]\ntype = drive\nscope = drive\ntoken = {tok.strip()}\n")
+        self.flags = ["--drive-export-formats", "txt", "--drive-import-formats", "txt", "-q"]
+
+    def _r(self, path):
+        return f"{self.remote}:{path}"
+
+    def run(self, *args, check=True, timeout=1800):
+        r = subprocess.run(["rclone", *args, *self.flags], capture_output=True, text=True, timeout=timeout)
+        if check and r.returncode != 0:
+            raise RuntimeError(f"rclone {args[0]} failed: {r.stderr.strip()[-400:]}")
+        return r
+
+    def ls(self, path):
+        r = self.run("lsjson", self._r(path), check=False)
+        if r.returncode != 0:
+            return []
+        out = []
+        for e in json.loads(r.stdout or "[]"):
+            e["Path"] = f"{path}/{e['Name']}"
+            out.append(e)
+        return out
+
+    def mkdir(self, path):
+        self.run("mkdir", self._r(path))
+
+    def download(self, path, dest):
+        Path(dest).parent.mkdir(parents=True, exist_ok=True)
+        self.run("copyto", self._r(path), str(dest), timeout=7200)
+        return Path(dest)
+
+    def upload(self, local, path):
+        self.run("copyto", str(local), self._r(path), timeout=7200)
+
+    def write_doc(self, path, text):
+        """A Google Doc: upload NAME.txt with import-formats txt; Drive converts it to a Doc named NAME."""
+        tmp = Path("/tmp/drive_docs") / (Path(path).name + ".txt")
+        tmp.parent.mkdir(parents=True, exist_ok=True)
+        tmp.write_text(text)
+        self.run("copyto", str(tmp), self._r(path + ".txt"))
+
+    def move(self, src, dst):
+        self.run("moveto", self._r(src), self._r(dst))
 
 
-def q(query, fields="files(id,name,mimeType,modifiedTime,size,parents)"):
-    out, token = [], None
-    while True:
-        r = svc().files().list(q=query, fields="nextPageToken," + fields, pageToken=token, pageSize=200,
-                               supportsAllDrives=True, includeItemsFromAllDrives=True).execute()
-        out += r.get("files", [])
-        token = r.get("nextPageToken")
-        if not token:
-            return out
+_be = None
 
 
-def esc(s):
-    return s.replace("\\", "\\\\").replace("'", "\\'")
-
-
-def children(folder_id, mime=None):
-    extra = f" and mimeType = '{mime}'" if mime else ""
-    return q(f"'{folder_id}' in parents and trashed = false{extra}")
-
-
-def find_folder(name, parent=None):
-    p = f" and '{parent}' in parents" if parent else ""
-    hits = q(f"name = '{esc(name)}' and mimeType = '{FOLDER}' and trashed = false{p}")
-    return hits[0]["id"] if hits else None
-
-
-def ensure_folder(name, parent=None):
-    fid = find_folder(name, parent)
-    if fid:
-        return fid
-    body = {"name": name, "mimeType": FOLDER}
-    if parent:
-        body["parents"] = [parent]
-    return svc().files().create(body=body, fields="id", supportsAllDrives=True).execute()["id"]
+def be():
+    global _be
+    if _be is None:
+        _be = Local(os.environ["CLIPPING_LOCAL"]) if os.environ.get("CLIPPING_LOCAL") else Rclone()
+    return _be
 
 
 def root():
-    return ensure_folder(os.environ.get("CLIPPING_ROOT", "CLIPPING"))
+    be().mkdir(ROOT_NAME)
+    return ROOT_NAME
 
 
 def campaigns():
-    """[(name, folder_id)] for every folder directly under CLIPPING."""
-    return [(f["name"], f["id"]) for f in children(root(), FOLDER)]
+    """[(name, path)] for every folder directly under CLIPPING."""
+    return [(e["Name"], e["Path"]) for e in be().ls(root()) if e.get("IsDir")]
 
 
-def stages(campaign_id):
-    return {s: ensure_folder(s, campaign_id) for s in STAGES}
+def stages(campaign_path):
+    out = {}
+    have = {e["Name"] for e in be().ls(campaign_path) if e.get("IsDir")}
+    for s in STAGES:
+        if s not in have:
+            be().mkdir(f"{campaign_path}/{s}")
+        out[s] = f"{campaign_path}/{s}"
+    return out
 
 
-def download(file_id, dest, mime=None):
-    """Download a file. Google Docs are exported (default: plain text)."""
-    dest = Path(dest)
-    dest.parent.mkdir(parents=True, exist_ok=True)
-    meta = svc().files().get(fileId=file_id, fields="mimeType,name", supportsAllDrives=True).execute()
-    if meta["mimeType"].startswith("application/vnd.google-apps"):
-        req = svc().files().export_media(fileId=file_id, mimeType=mime or "text/plain")
-    else:
-        req = svc().files().get_media(fileId=file_id, supportsAllDrives=True)
-    with io.FileIO(dest, "wb") as fh:
-        dl = MediaIoBaseDownload(fh, req, chunksize=32 * 1024 * 1024)
-        done = False
-        while not done:
-            _, done = dl.next_chunk()
-    return dest
+def files(path, exts=None):
+    """Files in a folder. Google Docs show up as NAME.txt (rclone export) with MimeType GDOC."""
+    out = []
+    for e in be().ls(path):
+        if e.get("IsDir"):
+            continue
+        name = e["Name"]
+        e["is_doc"] = e.get("MimeType") == GDOC or name.lower().endswith(TEXT_EXT)
+        if exts is None or name.lower().endswith(tuple(exts)) or (e["is_doc"] and ".txt" in exts):
+            out.append(e)
+    return out
 
 
-def upload(path, folder_id, name=None, mime=None, replace=True):
-    """Upload a local file into a folder; replaces a same-named file when replace=True."""
-    path = Path(path)
-    name = name or path.name
-    mime = mime or mimetypes.guess_type(str(path))[0] or "application/octet-stream"
-    media = MediaFileUpload(str(path), mimetype=mime, resumable=path.stat().st_size > 5 * 1024 * 1024)
-    if replace:
-        for f in q(f"name = '{esc(name)}' and '{folder_id}' in parents and trashed = false", "files(id)"):
-            return svc().files().update(fileId=f["id"], media_body=media, fields="id", supportsAllDrives=True).execute()["id"]
-    body = {"name": name, "parents": [folder_id]}
-    return svc().files().create(body=body, media_body=media, fields="id", supportsAllDrives=True).execute()["id"]
+def download(path, dest):
+    return be().download(path, dest)
 
 
-def write_doc(name, text, folder_id):
-    """Create or replace a Google Doc (from plain text) so rico can open it with one click."""
-    tmp = Path("/tmp") / (name.replace("/", "_") + ".txt")
-    tmp.write_text(text)
-    media = MediaFileUpload(str(tmp), mimetype="text/plain")
-    hits = q(f"name = '{esc(name)}' and '{folder_id}' in parents and mimeType = '{GDOC}' and trashed = false", "files(id)")
-    if hits:
-        return svc().files().update(fileId=hits[0]["id"], media_body=media, fields="id", supportsAllDrives=True).execute()["id"]
-    body = {"name": name, "parents": [folder_id], "mimeType": GDOC}
-    return svc().files().create(body=body, media_body=media, fields="id", supportsAllDrives=True).execute()["id"]
+def upload(local, folder, name=None):
+    be().upload(local, f"{folder}/{name or Path(local).name}")
 
 
-def move(file_id, from_id, to_id):
-    svc().files().update(fileId=file_id, addParents=to_id, removeParents=from_id, fields="id", supportsAllDrives=True).execute()
+def write_doc(name, text, folder):
+    be().write_doc(f"{folder}/{name}", text)
 
 
-def text_of(file_id, name):
-    """Plain text of a requirements / critique file: Google Doc, .docx, .pdf, .txt, .md."""
+def move(src, dst):
+    be().move(src, dst)
+
+
+def text_of(path, name):
+    """Plain text of a requirements / critique file: Google Doc (exported .txt), .docx, .pdf, .txt, .md."""
     low = name.lower()
     local = Path("/tmp/drive_text") / name
-    if low.endswith((".docx",)):
-        download(file_id, local)
+    download(path, local)
+    if low.endswith(".docx"):
         import docx
         d = docx.Document(str(local))
         parts = [p.text for p in d.paragraphs]
@@ -143,9 +185,7 @@ def text_of(file_id, name):
                 parts.append(" | ".join(c.text for c in row.cells))
         return "\n".join(parts)
     if low.endswith(".pdf"):
-        download(file_id, local)
         import pdfplumber
         with pdfplumber.open(str(local)) as pdf:
             return "\n".join((pg.extract_text() or "") for pg in pdf.pages)
-    download(file_id, local.with_suffix(".txt"))  # Google Docs export to text; txt/md download as is
-    return local.with_suffix(".txt").read_text(errors="replace")
+    return local.read_text(errors="replace")

@@ -80,9 +80,9 @@ def main():
         notes.append(f"Discover page read: {len(cards)} campaigns found." if cards else "Discover page loaded but its format could not be read.")
     except Exception as e:
         notes.append(f"Discover page blocked from GitHub ({type(e).__name__}).")
-    links_doc = drive.q(f"name = 'CAMPAIGN LINKS' and '{rt}' in parents and trashed = false", "files(id,name)")
+    links_doc = [f for f in drive.files(rt) if f["Name"].rsplit(".", 1)[0] == "CAMPAIGN LINKS"]
     if links_doc:
-        txt = drive.text_of(links_doc[0]["id"], "CAMPAIGN LINKS")
+        txt = drive.text_of(links_doc[0]["Path"], links_doc[0]["Name"])
         for url in re.findall(r"https?://\S*contentrewards\.com/\S+", txt):
             try:
                 cards.append(card_from_page(url.rstrip(").,")))
