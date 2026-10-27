@@ -146,14 +146,16 @@ def campaigns():
     return [(n, n) for n in names]
 
 
-def stages(campaign):
-    """{stage: 'CLIPPING/<stage>/<campaign>'}, creating the campaign folder in each stage if missing."""
+def stages(campaign, create=True):
+    """{stage: 'CLIPPING/<stage>/<campaign>'}. With create, the campaign folder is made in every stage
+    (only done once a campaign has requirements, so 'to join' folders stay a single folder in 0_START)."""
     r = root()
     out = {}
     for s in STAGES:
-        have = {e["Name"] for e in be().ls(f"{r}/{s}") if e.get("IsDir")}
-        if campaign not in have:
-            be().mkdir(f"{r}/{s}/{campaign}")
+        if create:
+            have = {e["Name"] for e in be().ls(f"{r}/{s}") if e.get("IsDir")}
+            if campaign not in have:
+                be().mkdir(f"{r}/{s}/{campaign}")
         out[s] = f"{r}/{s}/{campaign}"
     return out
 

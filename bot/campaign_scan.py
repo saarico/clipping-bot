@@ -7,6 +7,7 @@ not the highest rate (rico, 2026-10-27).
 """
 import json
 import re
+from datetime import datetime, timezone
 import sys
 from pathlib import Path
 
@@ -57,6 +58,9 @@ def cards_from_html(html):
             one = re.search(r"\$([\d.,]+[kKmM]?)\b(?!\s*/)", text)
             if one:
                 c["budget_left"] = _money(one.group(1))
+        vw = re.search(r"(\d[\d.,]*)\s*([kKmM])?\s*views?", text, re.I)
+        if vw:
+            c["views"] = _money(vw.group(1) + (vw.group(2) or ""))
         words = [p for p in parts if not re.search(r"\$|^\d+[hdw]\b|views?$|ago$", p, re.I)]
         words.sort(key=len, reverse=True)
         c["name"] = words[0] if words else uid
@@ -112,29 +116,50 @@ def lane_for(platforms):
     return "?"
 
 
+SEEN = Path(__file__).resolve().parent.parent / "data" / "scan_seen.json"
+MAX_NEW = 3
+
+
+def auto_score(c):
+    """Score a Discover card. The full scorecard needs a research dossier (creator reach, clip library);
+    a card only shows pay, budget, spend and views, so A + E come from campaign_score and the rest
+    from traction proxies. Returns (total out of 100, verdict, stops)."""
+    raw, _verdict, pts, stops = cs.score(c)
+    a, e = pts["A pay and budget"], pts["E rules load"]
+    tot_b = c.get("budget_total") or 0
+    spent = (tot_b - c.get("budget_left", 0)) / tot_b if tot_b else 0
+    tr = 12 if spent >= 0.5 else 9 if spent >= 0.2 else 5 if spent >= 0.05 else 0
+    v = c.get("views", 0)
+    tr += 13 if v >= 1e6 else 10 if v >= 250e3 else 6 if v >= 50e3 else 3 if v >= 10e3 else 0
+    cl = c.get("clippers")
+    comp = 5 if not cl else 10 if cl < 100 else 6 if cl < 400 else 3 if cl < 1500 else 0
+    dl = c.get("days_left")
+    fresh = 5 if dl is None or dl >= 14 else 3 if dl >= 7 else 0
+    total = round((a + e + tr + comp + fresh) / 75 * 100)
+    verdict = "STOP" if stops else "JOIN" if total >= 65 else "MAYBE" if total >= 50 else "SKIP"
+    return total, verdict, stops
+
+
+def folder_name(title):
+    t = re.sub(r"[\\/:*?\"<>|]+", " ", title)
+    t = re.sub(r"\s+", " ", t).strip(" .")
+    return t[:60].strip() or "campaign"
+
+
 def main():
     rt = drive.root()
     live = [n for n, _ in drive.campaigns()]
+    seen = json.loads(SEEN.read_text()) if SEEN.exists() else {}
     notes, cards = [], []
     try:
         cards = cards_from_html(fetch(DISCOVER))
         notes.append(f"Discover page read: {len(cards)} campaigns found." if cards else "Discover page loaded but its format could not be read.")
     except Exception as e:
         notes.append(f"Discover page blocked from GitHub ({type(e).__name__}).")
-    links_doc = [f for f in drive.files(rt) if f["Name"].rsplit(".", 1)[0] == "CAMPAIGN LINKS"]
-    if links_doc:
-        txt = drive.text_of(links_doc[0]["Path"], links_doc[0]["Name"])
-        for url in re.findall(r"https?://\S*contentrewards\.com/\S+", txt):
-            try:
-                cards.append(card_from_page(url.rstrip(").,")))
-            except Exception as e:
-                notes.append(f"Could not read {url}: {type(e).__name__}")
-    else:
-        drive.write_doc("CAMPAIGN LINKS", "Paste Content Rewards campaign links here, one per line. The bot scores them on its next run.", rt)
-        notes.append("Created the CAMPAIGN LINKS doc for pasted links.")
     # Discover cards carry no platforms/days: open the campaign page for the best-looking ones
     # (pre-filter on the two hard stops we can see: rate >= 0.75 and budget left >= 1000).
-    enrich = [c for c in cards if not c.get("platforms") and c.get("rate", 0) >= 0.75 and c.get("budget_left", 0) >= 1000]
+    enrich = [c for c in cards if not c.get("platforms") and c.get("rate", 0) >= 0.75 and c.get("budget_left", 0) >= 1000
+              and folder_name(c.get("name", "")) not in seen and folder_name(c.get("name", "")) not in live]
     enrich.sort(key=lambda c: (-c.get("rate", 0), -c.get("budget_left", 0)))
     for c in enrich[:15]:
         try:
@@ -147,24 +172,46 @@ def main():
         c["banned_content"] = c.get("banned_content") or page.get("banned_content", False)
     rows = []
     for c in cards:
+        c["folder"] = folder_name(c.get("name", ""))
+        if c["folder"] in seen or c["folder"] in live:
+            continue  # already offered once (rico deleted it or joined it): never offer again
         c.setdefault("lane", lane_for(c.get("platforms", [])))
         try:
-            total, verdict, _pts, stops = cs.score(c)
+            total, verdict, stops = auto_score(c)
         except Exception:
             continue
-        rows.append((c, total, ("STOP: " + "; ".join(stops)) if stops else verdict))
-    # diversify: lanes with no live campaign first, then score
+        if stops or verdict != "JOIN":
+            continue
+        rows.append((c, total, verdict))
+    # diversify: lanes with no live campaign first, then score; one new campaign per lane per run
     live_lanes = {lane_for([p for p in ("youtube", "instagram", "tiktok") if p in n.lower()]) for n in live}
     rows.sort(key=lambda r: (r[0].get("lane") in live_lanes, -r[1]))
-    lines = ["CAMPAIGNS TO JOIN  (bot, financial scorecard; lane balance first, pay second)", ""]
-    for c, tot, verdict in rows[:10]:
-        lines.append(f"[{c.get('lane','?')}] {tot} {verdict}  {c.get('name','?')}  ${c.get('rate','?')}/1k  ${c.get('budget_left','?')} left  {c.get('link','')}")
-    if not rows:
-        lines.append("Nothing scored this run.")
-    lines += ["", "Live campaigns: " + (", ".join(live) or "none"), ""] + notes
-    lines += ["", "To join: click the link, join on the site, download the requirements, and make a folder named after the campaign inside CLIPPING/0_START/ and drop them there."]
-    drive.write_doc("CAMPAIGNS TO JOIN", "\n".join(lines), rt)
-    print("\n".join(lines))
+    made, lanes_done = [], set()
+    for c, tot, verdict in rows:
+        if len(made) >= MAX_NEW or c["lane"] in lanes_done:
+            continue
+        folder = f"{rt}/0_START/{c['folder']}"
+        drive.be().mkdir(folder)
+        text = "\n".join([
+            f"{c['name']}",
+            "",
+            f"Link: {c['link']}",
+            f"Pay: ${c.get('rate', '?')} per 1k views   Budget left: ${c.get('budget_left', '?'):,.0f}" if isinstance(c.get("budget_left"), float) else f"Pay: ${c.get('rate', '?')} per 1k views",
+            f"Lane: {c['lane']}   Score: {tot}/100 ({verdict})",
+            "",
+            "1. Open the link and join the campaign.",
+            "2. Download the requirements and drop them in this folder.",
+            "3. The bot reads them on its next run (every 5 hours) and puts 3 clips in 1_CHECK.",
+            "",
+            "Not interested? Delete this folder. The bot will not bring it back.",
+        ])
+        drive.write_doc("JOIN", text, folder)
+        seen[c["folder"]] = {"link": c["link"], "score": tot, "lane": c["lane"], "offered": datetime.now(timezone.utc).isoformat(timespec="minutes")}
+        made.append(c["folder"])
+        lanes_done.add(c["lane"])
+    SEEN.parent.mkdir(parents=True, exist_ok=True)
+    SEEN.write_text(json.dumps(seen, indent=1))
+    print("\n".join(notes + [f"scored {len(rows)} JOIN candidates; new folders in 0_START: {made or 'none'}", "live: " + (", ".join(live) or "none")]))
 
 
 if __name__ == "__main__":

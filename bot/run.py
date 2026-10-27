@@ -60,7 +60,7 @@ def note(st, msg):
     st["log"] = (st.get("log", []) + [f"{now()}  {msg}"])[-40:]
 
 
-BOT_DOCS = {"BRIEF", "NEEDS THE VIDEO", "SUMMARY", "POST KIT"}
+BOT_DOCS = {"BRIEF", "NEEDS THE VIDEO", "SUMMARY", "POST KIT", "JOIN"}
 
 
 def is_bot_doc(f):
@@ -94,7 +94,7 @@ def do_campaign(name, cpath):
     st = load_state(name)
     cdir = ROOT / "campaigns" / name
     cdir.mkdir(parents=True, exist_ok=True)
-    stage = drive.stages(cpath)
+    stage = drive.stages(cpath, create=False)
     (WORK / name).mkdir(parents=True, exist_ok=True)
 
     # 0_START: requirements -> brief
@@ -104,6 +104,7 @@ def do_campaign(name, cpath):
             note(st, "waiting for the requirements file in 0_START")
             save_state(name, st)
             return
+        stage = drive.stages(cpath)  # requirements are in: now make the campaign folder in 1_CHECK, 2_REDO, 3_APPROVED
         text = "\n\n".join(drive.text_of(f["Path"], f["Name"]) for f in reqs)
         st["brief"] = briefer.parse(text)
         (cdir / "brief.json").write_text(json.dumps(st["brief"], indent=1))
