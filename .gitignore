@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+token.json
+client_secret.json
+*.mp4
+*.mov
+*.wav
+*.png
+*.jpg
+/campaigns/*/words.json
+/campaigns/*/critiques/*.docx
