@@ -81,7 +81,7 @@ def dur_of(path):
 
 async def _tts(text, voice, out_mp3):
     import edge_tts
-    com = edge_tts.Communicate(text, voice, rate=RATE)
+    com = edge_tts.Communicate(text, voice, rate=RATE, boundary="WordBoundary")   # 7.x defaults to sentence marks
     words = []
     with open(out_mp3, "wb") as f:
         async for ch in com.stream():
@@ -101,17 +101,23 @@ def speak(text, voice, out_wav):
         sh(["ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi", "-i", f"anullsrc=r=48000:cl=stereo", "-t", f"{d:.2f}", str(out_wav)])
         return [{"text": t, "start": 0.15 + 0.32 * i, "end": 0.15 + 0.32 * i + 0.28} for i, t in enumerate(toks)]
     mp3 = out_wav.with_suffix(".mp3")
-    last = None
+    errors = []
     for attempt, v in enumerate([voice] + [x for x in VOICES if x != voice]):
         try:
             words = asyncio.run(_tts(text, v, mp3))
-            if mp3.stat().st_size > 1000 and words:
+            size = mp3.stat().st_size if mp3.exists() else 0
+            if size > 1000:
                 sh(["ffmpeg", "-y", "-loglevel", "error", "-i", str(mp3), "-ar", "48000", "-ac", "2", str(out_wav)])
+                if not words:   # no word marks came back: spread the words evenly over the audio
+                    toks, d = text.split(), dur_of(out_wav)
+                    step = max(d - 0.2, 0.1) / max(len(toks), 1)
+                    words = [{"text": t, "start": 0.1 + i * step, "end": 0.1 + (i + 0.9) * step} for i, t in enumerate(toks)]
                 return words
-            last = "empty audio"
-        except Exception as e:  # network hiccup or a retired voice: try the next one
-            last = f"{type(e).__name__}: {str(e)[:100]}"
+            errors.append(f"{v}: {size} bytes, {len(words)} marks")
+        except Exception as e:  # network hiccup, blocked endpoint or a retired voice: try the next one
+            errors.append(f"{v}: {type(e).__name__}: {str(e)[:120]}")
             time.sleep(2 + attempt)
+    last = " | ".join(errors)
     raise RuntimeError(f"voice failed: {last}")
 
 

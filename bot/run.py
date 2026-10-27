@@ -145,7 +145,9 @@ def do_campaign(name, cpath):
         import fetch_page
         fetched = []
         for url in dict.fromkeys(u.rstrip(".,:;)") for u in re.findall(r"https?://[^\s<>\"')\]]+", text)):
-            if re.search(r"youtube\.com|youtu\.be|tiktok\.com|instagram\.com|drive\.google\.com/file|contentrewards\.com", url):
+            # videos, podcasts and recordings are sources, not rule pages
+            if re.search(r"youtube\.com|youtu\.be|tiktok\.com|instagram\.com|drive\.google\.com/file|contentrewards\.com|"
+                         r"spotify\.com|zoom\.us|rss\.com|podcast|apple\.com|x\.com|twitter\.com|\.media/|magazine\.com|tftc\.io", url):
                 continue
             try:
                 page = fetch_page.fetch_text(url.rstrip(".,"))
