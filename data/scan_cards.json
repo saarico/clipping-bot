@@ -1,0 +1,1785 @@
+[
+ {
+  "name": "HardScope x ClipFarm",
+  "org": "Clip Farm",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 14500.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 14,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 4,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/db7f38ed-20ee-40aa-aa7c-658592ddcbf1",
+  "total": 38,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "Boxabl Official Clipping",
+  "org": "Clip Farm",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 21500.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 14,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 4,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/188c3e39-7850-4896-94df-e7a5be0cfec3",
+  "total": 38,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "RobTheBank Clips 2.0",
+  "org": "9mo",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 31500.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 14,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 4,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/10764ec4-b429-44c4-88db-fc1aef8e24a3",
+  "total": 38,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "Clips Hablando de VALOR - Tiktok/Youtube/Instagram",
+  "org": "Carlotta Sabina Academy",
+  "category": null,
+  "lane": "C",
+  "rate": null,
+  "budget_left": 1900.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [
+   "youtube",
+   "tiktok",
+   "instagram"
+  ],
+  "pts": {
+   "pay+budget": 7,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 7,
+   "entertainment": 4,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/7610267f-aa08-45b4-9975-6acf0faeca1a",
+  "total": 38,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate"
+  ]
+ },
+ {
+  "name": "Clip the Show",
+  "org": "BILF Podcast",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 2400.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 9,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 8,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/088c2279-ab1d-4434-9ba0-6637ab9311fa",
+  "total": 37,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "CLIP ANY NO COMFORT OR CALL IT A DAY EPISODE",
+  "org": "deFaria Clipping Rewards",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 2200.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 9,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 8,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/796d5d55-c4ae-4172-9670-4afd85668a4d",
+  "total": 37,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "Riley Green - The Voice Coach Moments Clip [8417]",
+  "org": "Sound Network",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 5300.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 12,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 4,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/86b9452c-6f66-49e0-9c91-adf96cd64253",
+  "total": 36,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "ForgeGUI [UNLIMITED]",
+  "org": "BloxClips",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 295500.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 14,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/52a937dd-2e14-4e4b-8eaf-971ac5921208",
+  "total": 34,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "Reach",
+  "org": "820",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 10000.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 14,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/44a3ffcb-d4a1-492b-94a4-704919950246",
+  "total": 34,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "ForgeGUI [UNLIMITED]",
+  "org": "BloxClips",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 295500.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 14,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/1db63081-715e-4e04-9b11-fbc1d4e8e700",
+  "total": 34,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "Reach",
+  "org": "106",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 23100.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 14,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/1248a69e-1e13-4ef7-90e3-f54e951b1fe1",
+  "total": 34,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "Reach",
+  "org": "1.7K",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 30000.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 14,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/4479e5e2-9a00-489e-8b0c-345834f37cc7",
+  "total": 34,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "Backyard Breaks [Clipping Campaign]",
+  "org": "ClipHouse",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 66600.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 14,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/e509f6d0-13bf-42bc-8450-09e12c216c33",
+  "total": 34,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "Daimon X Syndicate",
+  "org": "Distributed",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 50500.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 14,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/bb7a286d-c388-4550-b2c2-8beca19cd6d0",
+  "total": 34,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "Content Rewards UGC [International]",
+  "org": "Content Rewards UGC [Non-English]",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 41800.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 14,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/8394d4b8-3c0d-4362-bfec-39ac48da131a",
+  "total": 34,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "DreamMe [HEALTH]",
+  "org": "Reachify",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 28200.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 14,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/b69f900e-9fb8-4cce-813e-89b63e10e0da",
+  "total": 34,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "WatchMeWin Clipping",
+  "org": "WMW CLIPPING",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 27300.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 14,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/2eae3b20-87f5-4fa2-9bc3-0c2bb62facc5",
+  "total": 34,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "Split-Screen UGC [English]",
+  "org": "Content Rewards",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 14100.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 14,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/6e8cb2c6-7724-44a4-83da-66697acb20af",
+  "total": 34,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "Michael Sartain&#x27;s Clipping Army",
+  "org": "Michael Sartain&#x27;s Clipper Army",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 11400.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 14,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/86842687-ba2b-4638-a024-995dcf3d25a3",
+  "total": 34,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "ARZ Urus Clipping Campaign",
+  "org": "Arz Urus Clipping",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 13800.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 14,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/ebc7847a-91ea-4545-aac7-9249b84df001",
+  "total": 34,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "Modern Warfare 4 - DMZ Live Clipping",
+  "org": "Clipping Culture",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 3500.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 9,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 4,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/78bd78e4-0ec3-44d7-9f56-122ff7c374bc",
+  "total": 33,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "Tony Hawk Part 2",
+  "org": "The Clip Ship",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 2500.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 9,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 4,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/bd4a3ba0-9dc6-4cde-a89f-0ac902f84643",
+  "total": 33,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "Jacob Nach (Educational/Motivational/Lifestyle)",
+  "org": "Clip Track",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 3900.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 9,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 4,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/5e4fe241-c51e-488c-8ba7-3575be36bbfe",
+  "total": 33,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "Jackelyne Campaign",
+  "org": "Jackelyne Clips",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 3200.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 9,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 4,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/5991571d-8c83-41e8-941c-34d96476c06b",
+  "total": 33,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "Clip for Team Minogue!",
+  "org": "Minogue For MA",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 2200.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 9,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 4,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/210e40be-92ca-4b3a-912f-231944511254",
+  "total": 33,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "Decentraland - Highlights + Halloween Teasers",
+  "org": "Clipping Culture",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 8200.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 12,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/2f9a69e0-c338-440c-90d2-f1ba95e775b0",
+  "total": 32,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "Call of Duty MW4 \u0639\u0631\u0628\u064a V2",
+  "org": "Arabic Clipping",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 5800.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 12,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/0afd04db-e183-4411-9957-0b890ef272b5",
+  "total": 32,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "Call of Duty MW4 (en Fran\u00e7ais)",
+  "org": "French Clipping",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 8800.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 12,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/18496202-6029-4a29-a44c-9fc33678fcb9",
+  "total": 32,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "Carlos Esparraga Clipping",
+  "org": "/1K",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 6400.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 12,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/311c447c-b44b-483e-b172-f5fceabd20ce",
+  "total": 32,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "WKWK \u0645\u0637\u0639\u0645 \u0648\u0643 \u0627\u0644\u0643\u0648\u064a\u062a\u064a",
+  "org": "ClipHaus",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 9100.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 12,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/816b45a1-dc3f-42b5-b41e-81a1ebf8360e",
+  "total": 32,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "Mario Vincere 1 USD = 1K de vistas",
+  "org": "Afiliados Mario Vincere",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 6600.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 12,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/b9b58693-b70d-419c-b660-e6c38903c8f3",
+  "total": 32,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "Open Road Clipping",
+  "org": "Clipix",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 5250.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 12,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/23022f84-5715-4ba5-a647-abc4baf4f0f8",
+  "total": 32,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "Reuben A Geimah",
+  "org": "Reuben A Geimah",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 5000.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 12,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/414e37c7-4e33-49d1-a883-43ad6bb9b552",
+  "total": 32,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "CG5 Concert x +1 Speed Keyboard Escape [ROBLOX]",
+  "org": "BloxClips",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 72.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 7,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 4,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/9263d251-d194-4309-9c16-2f1b0d80372e",
+  "total": 31,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "budget left under $1,000",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "no na - \u201cstar\u201d (Live Performance)",
+  "org": "Artist Influence",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 1.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 7,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 4,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/c4ba4820-ed7d-406d-abb3-25f7993f9b88",
+  "total": 31,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "budget left under $1,000",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "John Furrier Clipping Campaign",
+  "org": "John Furrier Podcast",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 1500.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 7,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 4,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/10b9e68d-6004-4730-a741-4b5b37ae0a20",
+  "total": 31,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "Scape: clip Gravity for its Early Access launch",
+  "org": "ScapeWorld Entertainment AB",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 493.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 7,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 4,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/8553875d-dfb0-4a97-aea5-448008876e46",
+  "total": 31,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "budget left under $1,000",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "Mini Brands \u2014 Ulta Beauty Clipping",
+  "org": "Clip Influence",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 1100.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 7,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 4,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/6d11ea9e-b814-494a-a135-30dcbcc39645",
+  "total": 31,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "Post Clips for Sinparty",
+  "org": "Clipr Agency",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 1300.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 7,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 4,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/2f4f74ef-7a5f-4e37-894b-94c56bc0ddc4",
+  "total": 31,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "FRENZY By SV2 Clipping",
+  "org": "Clipix",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 3500.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 9,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/dc73902e-bfaf-4a15-9ed2-40a62999a119",
+  "total": 29,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "Flip.gg Clipping",
+  "org": "ClipLaunch",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 2000.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 9,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/6f0d4fb3-4ed1-42be-8644-e2e569681a42",
+  "total": 29,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "LADbible Entertainment Clipping",
+  "org": "ClipUp Official",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 2100.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 9,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/187d5d23-22c6-4dfb-9e32-cf296a3fb0b7",
+  "total": 29,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "2 Bears 1 Cave Clipping October",
+  "org": "YMH Studios",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 4600.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 9,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/295e9879-4464-4a31-975d-1c7b3a80d359",
+  "total": 29,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "Sofiane Pamart",
+  "org": "Clipperazzi",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 2000.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 9,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/667adb2b-0423-4930-9385-95cdd207a096",
+  "total": 29,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "Pablo P\u00e9rez - Sobreviviendo en Bali con 100\u20ac",
+  "org": "Pablo Perez Clipping",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 3400.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 9,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/b9f3aca2-7dbd-4309-ad07-6838ab7fef38",
+  "total": 29,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "Roblox App Clipping",
+  "org": "Superbullet AI",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 2500.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 9,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/9b248ec0-0be4-4223-bab1-202b5013c0e7",
+  "total": 29,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "SKULLPANDA at Doja Cat\u2019s 31st Birthday Party",
+  "org": "Pop Mart Americas Inc.",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 1300.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 7,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/2478f835-202a-4df4-9c34-8fd9fa47088c",
+  "total": 27,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "SAMSUNG - SEA (PH/TH/VN/ID/SG/MY)",
+  "org": "Artist Influence",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 56.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 7,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/1ac16fd4-1149-4f53-8960-3c4d693e3221",
+  "total": 27,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "budget left under $1,000",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "PREME x MD MOTIVATOR, TRISTAN THOMPSON, BEN DA DON",
+  "org": "Preme Clipping Campaign",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 167.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 7,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/737afda7-f1b5-4986-932a-fb681a603cea",
+  "total": 27,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "budget left under $1,000",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "ClipHaus",
+  "org": "FOLD",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 913.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 7,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/6071d2fd-225d-46db-9a78-f7e683bd89e2",
+  "total": 27,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "budget left under $1,000",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "Post Sports Edits using &quot;FTW&quot; by Spitty",
+  "org": "Spitty",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 119.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 7,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/b865e0da-2b57-463f-886a-c800abd14f60",
+  "total": 27,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "budget left under $1,000",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "Clipping Collective",
+  "org": "MISFITZ Clipping",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 1000.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 7,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/efcdffcc-d036-4553-97eb-b85f5adb5b84",
+  "total": 27,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "Sabri Malle Clipping",
+  "org": "Sabri Malle Clipping",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 1500.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 7,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/7e5c4c7a-1d93-49bb-8214-ca3a4ba60c62",
+  "total": 27,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "Dillon Danis Clipping",
+  "org": "ClipUp Official",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 1200.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 7,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/da416664-ae72-4fc4-b0c0-78acc04affaf",
+  "total": 27,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "Dev Lemons - Middle of the Night",
+  "org": "Verge Records",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 1800.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 7,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/4fa67e05-2c50-4004-8ebd-59aa6750405a",
+  "total": 27,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "Antoine Sallis Clipping",
+  "org": "Rendr Studios",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 2.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 7,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/b46e43fd-8879-4ce6-a0fa-167d5f3e830d",
+  "total": 27,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "budget left under $1,000",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "Customuse Creators",
+  "org": "Customuse",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 1200.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 7,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/628310d1-3a5f-4fe2-b096-4e7eee7af03e",
+  "total": 27,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "The Up Next Fighting Clipping Campaign",
+  "org": "Clipper Army",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 672.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 7,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/8cea2f0d-87e7-4ab7-8a47-ee7e84c6706d",
+  "total": 27,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "budget left under $1,000",
+   "no platform matches a lane"
+  ]
+ },
+ {
+  "name": "Ryan Zofay - Clipping Campaign 01",
+  "org": "RYAN ZOFAY",
+  "category": null,
+  "lane": "?",
+  "rate": null,
+  "budget_left": 624.0,
+  "budget_total": null,
+  "views": null,
+  "clippers": null,
+  "days_left": null,
+  "platforms": [],
+  "pts": {
+   "pay+budget": 7,
+   "rules": 10,
+   "traction": 0,
+   "competition": 5,
+   "time": 5,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/926e1b7f-1030-4333-a557-f99d9f891437",
+  "total": 27,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "budget left under $1,000",
+   "no platform matches a lane"
+  ]
+ }
+]
