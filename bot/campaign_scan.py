@@ -23,7 +23,7 @@ DISCOVER = "https://contentrewards.com/discover"
 
 
 def fetch(url):
-    r = requests.get(url, headers=UA, timeout=30)
+    r = requests.get(url, headers=UA, timeout=20)
     r.raise_for_status()
     return r.text
 
@@ -150,7 +150,7 @@ TOPIC = {  # rico's lanes: lane = what the content is about
     "B": r"\b(beauty|makeup|skincare|fashion|outfit|celebrity|celebrities|drama|gossip|reality|dating|relationship|love|girls?|women|influencer|kardashian|pop|lifestyle|wellness|self care|glow|aesthetic|bridgerton|tea)\b",
 }
 BORING = r"\b(ugc|split[- ]screen|app|apps|software|download|sign[- ]?up|referral|use my link|promo code|promo|discount|extension|wallet|casino|betting)\b"
-FUN = r"\b(podcast|interview|episode|show|story|stories|clips?|stream|streamer|concert|live|reaction|comedy|funny|drama|celebrity|reality)\b"
+FUN = r"\b(podcast|interview|episode|show|story|stories|stream|streamer|concert|live|reaction|comedy|comedian|funny|drama|celebrity|reality|highlights|moments)\b"
 LANE_PLATFORM = {"A": "youtube", "B": "instagram", "C": "tiktok"}
 CAT_LANE = {"finance": "A", "business": "A", "crypto": "A", "education": "A", "technology": "C", "gaming": "C", "entertainment": "C", "sports": "C",
             "music": "C", "comedy": "C", "podcast": "C", "lifestyle": "B", "beauty": "B", "fashion": "B", "reality": "B", "health": "B", "fitness": "C"}
@@ -159,7 +159,7 @@ CAT_LANE = {"finance": "A", "business": "A", "crypto": "A", "education": "A", "t
 def content_fit(c):
     """(lane, topic_pts 0-10, fun_pts 0-15). Lane by topic first (rico: YouTube = business and money,
     TikTok = entertainment and cool stuff, Instagram = girly stuff and drama), platform second."""
-    blob = " ".join(str(c.get(k, "")) for k in ("name", "org", "category", "text")).lower()
+    blob = " ".join(str(c.get(k, "")) for k in ("name", "org", "category")).lower()
     plats = [p.lower() for p in c.get("platforms", [])]
     hits = {l: len(re.findall(rx, blob)) for l, rx in TOPIC.items()}
     lane, topic = None, 0
@@ -193,23 +193,25 @@ def auto_score(c):
     raw, _verdict, pts, stops = cs.score(c)
     name = c.get("name", "")
     if re.search(r"[\u0600-\u06FF\u0400-\u04FF\u0E00-\u0E7F\u3040-\u30FF\u4E00-\u9FFF\uAC00-\uD7AF]", name) or \
-       re.search(r"\b(en fran[cç]ais|espa[ñn]ol|hablando|portugu[eê]s|deutsch|italiano|international|arabic|hindi|\(fr\)|\(es\)|\(de\)|\(pt\))\b", name, re.I):
+       re.search(r"\b(en fran[cç]ais|espa[ñn]ol|hablando|portugu[eê]s|deutsch|italiano|international|arabic|hindi|\(fr\)|\(es\)|\(de\)|\(pt\)|con|para|sobre|pour|avec|und|vistas|clips en)\b|€", name, re.I):
         stops.append("not an English campaign (our accounts post in English)")
-    a, e = pts["A pay and budget"], pts["E rules load"]
+    a = pts["A pay and budget"]                      # 0-25: rate, budget left, budget per clipper
     tot_b = c.get("budget_total") or 0
     spent = (tot_b - c.get("budget_left", 0)) / tot_b if tot_b else 0
-    tr = 12 if spent >= 0.5 else 9 if spent >= 0.2 else 5 if spent >= 0.05 else 0
+    tr = 12 if 0.5 <= spent < 0.9 else 9 if spent >= 0.2 else 5 if spent >= 0.05 else 0   # 0-12: money already paid out = clips get paid
     v = c.get("views", 0)
-    tr += 13 if v >= 1e6 else 10 if v >= 250e3 else 6 if v >= 50e3 else 3 if v >= 10e3 else 0
+    tr += 8 if v >= 1e6 else 5 if v >= 250e3 else 2 if v >= 50e3 else 0                   # 0-8: only when the card shows views
     cl = c.get("clippers")
-    comp = 5 if not cl else 10 if cl < 100 else 6 if cl < 400 else 3 if cl < 1500 else 0
+    comp = 5 if not cl else 10 if cl < 100 else 6 if cl < 400 else 3 if cl < 1500 else 0  # 0-10: fewer clippers = more budget each
     dl = c.get("days_left")
-    fresh = 5 if dl is None or dl >= 14 else 3 if dl >= 7 else 0
-    lane, topic, fun = content_fit(c)
+    if dl is not None and dl < 7:
+        stops.append("under 7 days left")
+    lane, topic, fun = content_fit(c)               # 0-10 lane fit, 0-15 entertainment
     c["lane"] = lane
     guess = 3 if c.get("platforms_guessed") else 0
-    c["pts"] = {"pay+budget": a, "rules": e, "traction": tr, "competition": comp, "time": fresh, "lane fit": topic, "entertainment": fun, "platform guessed": -guess}
-    total = a + e + tr + comp + fresh + topic + fun - guess   # max 100
+    c["pts"] = {"pay+budget": a, "paid out": tr, "competition": comp, "lane fit": topic, "entertainment": fun, "platform guessed": -guess}
+    total = round(max(0, a + tr + comp + topic + fun - guess) / 72 * 100)   # 72 = every point a card can earn
+    total = min(total, 100)
     verdict = "STOP" if stops else "JOIN" if total >= 60 else "MAYBE" if total >= 50 else "SKIP"
     return total, verdict, stops
 
@@ -235,7 +237,7 @@ def main():
     enrich = [c for c in cards if not c.get("platforms") and c.get("rate", 0) >= 0.75 and c.get("budget_left", 0) >= 1000
               and folder_name(c.get("name", "")) not in seen and folder_name(c.get("name", "")) not in live]
     enrich.sort(key=lambda c: (-c.get("rate", 0), -c.get("budget_left", 0)))
-    for c in enrich[:15]:
+    for c in enrich[:8]:
         try:
             page = card_from_page(c["link"])
         except Exception:
@@ -265,7 +267,7 @@ def main():
     dump.sort(key=lambda d: -d.get("total", 0))
     (SEEN.parent / "scan_cards.json").write_text(json.dumps(dump, indent=1))
     # diversify: lanes with no live campaign first, then score; one new campaign per lane per run
-    live_lanes = {lane_for([p for p in ("youtube", "instagram", "tiktok") if p in n.lower()]) for n in live}
+    live_lanes = {seen[n]["lane"] for n in live if n in seen and seen[n].get("lane")}
     rows.sort(key=lambda r: (r[0].get("lane") in live_lanes, -r[1]))
     made, lanes_done = [], set()
     for c, tot, verdict in rows:
