@@ -62,6 +62,10 @@ def cards_from_html(html):
         if vw:
             c["views"] = _money(vw.group(1) + (vw.group(2) or ""))
         words = [p for p in parts if not re.search(r"\$|^\d+[hdw]\b|views?$|ago$", p, re.I)]
+        cats = [p for p in words if p.lower() in CATEGORIES]
+        if cats:
+            c["category"] = cats[0]
+            words = [p for p in words if p not in cats]
         words.sort(key=len, reverse=True)
         c["name"] = words[0] if words else uid
         if len(words) > 1:
@@ -106,6 +110,7 @@ def card_from_page(url):
     c["platforms"] = [p for p in ("youtube", "tiktok", "instagram", "facebook") if p in low.lower()]
     c["pay_to_join"] = bool(re.search(r"pay to join|entry fee", low, re.I))
     c["banned_content"] = bool(re.search(r"\b(casino|gambling|betting|crypto pump|adult|onlyfans)\b", low, re.I))
+    c["text"] = re.sub(r"\s+", " ", low)[:3000]
     return c
 
 
@@ -118,6 +123,42 @@ def lane_for(platforms):
 
 SEEN = Path(__file__).resolve().parent.parent / "data" / "scan_seen.json"
 MAX_NEW = 3
+
+
+CATEGORIES = {"finance", "business", "entertainment", "technology", "apps", "lifestyle", "gaming", "music", "sports", "education",
+              "beauty", "fashion", "comedy", "podcast", "health", "fitness", "crypto", "news", "reality", "food", "travel", "art", "other"}
+TOPIC = {  # rico's lanes: lane = what the content is about
+    "A": r"\b(finance|financial|business|money|invest|investing|stocks?|trading|entrepreneur|startup|marketing|sales|real estate|wealth|millionaire|economy|bank|sofi|credit|crypto|bitcoin|side hustle|ecom|dropship|saas|career)\b",
+    "C": r"\b(gaming|game|games|roblox|minecraft|fortnite|esports|streamer|stream|twitch|kick|music|concert|rap|hip hop|artist|album|sports?|football|soccer|nba|ufc|boxing|cars?|tech|technology|gadget|anime|comedy|funny|prank|motivation|podcast|clips?)\b",
+    "B": r"\b(beauty|makeup|skincare|fashion|outfit|celebrity|celebrities|drama|gossip|reality|dating|relationship|love|girls?|women|influencer|kardashian|pop|lifestyle|wellness|self care|glow|aesthetic|bridgerton|tea)\b",
+}
+BORING = r"\b(ugc|split[- ]screen|app|apps|software|download|sign[- ]?up|referral|use my link|promo code|promo|discount|extension|wallet|casino|betting)\b"
+FUN = r"\b(podcast|interview|episode|show|story|stories|clips?|stream|streamer|concert|live|reaction|comedy|funny|drama|celebrity|reality)\b"
+LANE_PLATFORM = {"A": "youtube", "B": "instagram", "C": "tiktok"}
+
+
+def content_fit(c):
+    """(lane, topic_pts 0-10, fun_pts 0-15). Lane by topic first (rico: YouTube = business and money,
+    TikTok = entertainment and cool stuff, Instagram = girly stuff and drama), platform second."""
+    blob = " ".join(str(c.get(k, "")) for k in ("name", "org", "category", "text")).lower()
+    plats = [p.lower() for p in c.get("platforms", [])]
+    hits = {l: len(re.findall(rx, blob)) for l, rx in TOPIC.items()}
+    lane, topic = None, 0
+    for l, _n in sorted(hits.items(), key=lambda kv: -kv[1]):
+        if hits[l] and LANE_PLATFORM[l] in plats:
+            lane, topic = l, 10 if hits[l] >= 2 else 7
+            break
+    if lane is None:
+        for l in ("A", "C", "B"):
+            if LANE_PLATFORM[l] in plats:
+                lane, topic = l, 3   # platform fits, topic unclear
+                break
+    fun = 0
+    fun += min(8, 4 * len(re.findall(FUN, blob)))
+    fun += 4 if (c.get("category", "").lower() in ("entertainment", "comedy", "sports", "gaming", "music", "podcast", "reality")) else 0
+    fun += 3 if c.get("views", 0) >= 250e3 else 0
+    fun -= min(15, 6 * len(re.findall(BORING, blob)))
+    return lane or "?", topic, max(0, min(15, fun))
 
 
 def auto_score(c):
@@ -135,7 +176,11 @@ def auto_score(c):
     comp = 5 if not cl else 10 if cl < 100 else 6 if cl < 400 else 3 if cl < 1500 else 0
     dl = c.get("days_left")
     fresh = 5 if dl is None or dl >= 14 else 3 if dl >= 7 else 0
-    total = round((a + e + tr + comp + fresh) / 75 * 100)
+    lane, topic, fun = content_fit(c)
+    c["lane"] = lane
+    guess = 3 if c.get("platforms_guessed") else 0
+    c["pts"] = {"pay+budget": a, "rules": e, "traction": tr, "competition": comp, "time": fresh, "lane fit": topic, "entertainment": fun, "platform guessed": -guess}
+    total = a + e + tr + comp + fresh + topic + fun - guess   # max 100
     verdict = "STOP" if stops else "JOIN" if total >= 65 else "MAYBE" if total >= 50 else "SKIP"
     return total, verdict, stops
 
@@ -170,19 +215,26 @@ def main():
             if page.get(k):
                 c[k] = page[k]
         c["banned_content"] = c.get("banned_content") or page.get("banned_content", False)
-    rows = []
+        c["text"] = page.get("text", "")[:3000]
+        if not c.get("platforms"):
+            c["platforms"], c["platforms_guessed"] = ["youtube", "tiktok", "instagram"], True
+    rows, dump = [], []
     for c in cards:
         c["folder"] = folder_name(c.get("name", ""))
         if c["folder"] in seen or c["folder"] in live:
             continue  # already offered once (rico deleted it or joined it): never offer again
-        c.setdefault("lane", lane_for(c.get("platforms", [])))
         try:
             total, verdict, stops = auto_score(c)
-        except Exception:
+        except Exception as e:
+            dump.append({"name": c.get("name"), "error": f"{type(e).__name__}: {e}"})
             continue
+        dump.append({k: c.get(k) for k in ("name", "org", "category", "lane", "rate", "budget_left", "budget_total", "views", "clippers", "days_left", "platforms", "pts", "link")}
+                    | {"total": total, "verdict": verdict, "stops": stops})
         if stops or verdict != "JOIN":
             continue
         rows.append((c, total, verdict))
+    dump.sort(key=lambda d: -d.get("total", 0))
+    (SEEN.parent / "scan_cards.json").write_text(json.dumps(dump, indent=1))
     # diversify: lanes with no live campaign first, then score; one new campaign per lane per run
     live_lanes = {lane_for([p for p in ("youtube", "instagram", "tiktok") if p in n.lower()]) for n in live}
     rows.sort(key=lambda r: (r[0].get("lane") in live_lanes, -r[1]))
