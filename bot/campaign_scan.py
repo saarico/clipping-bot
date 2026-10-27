@@ -262,10 +262,11 @@ def main():
         if not c.get("platforms"):
             c["platforms"], c["platforms_guessed"] = ["youtube", "tiktok", "instagram"], True
     rows, dump = [], []
+    seen_ids = {v.get("link", "").rsplit("/", 1)[-1] for v in seen.values()}
     for c in cards:
         c["folder"] = folder_name(c.get("name", ""))
-        if c["folder"] in seen or c["folder"] in live:
-            continue  # already offered once (rico deleted it or joined it): never offer again
+        if c["folder"] in seen or c["folder"] in live or c["link"].rsplit("/", 1)[-1] in seen_ids:
+            continue  # already offered once (rico deleted it or joined it): never offer again, under any title
         try:
             total, verdict, stops = auto_score(c)
         except Exception as e:
@@ -281,7 +282,8 @@ def main():
     # diversify: lanes with no live campaign first, then score; one new campaign per lane per run
     live_lanes = {seen[n]["lane"] for n in live if n in seen and seen[n].get("lane")}
     rows.sort(key=lambda r: (r[0].get("lane") in live_lanes, -r[1]))
-    made, lanes_done = [], set()
+    made = []
+    lanes_done = {seen[n]["lane"] for n in live if n in seen and seen[n].get("lane")}   # one open offer per lane at a time
     for c, tot, verdict in rows:
         if len(made) >= MAX_NEW or c["lane"] in lanes_done:
             continue
