@@ -7,6 +7,7 @@ not the highest rate (rico, 2026-10-27).
 """
 import html as htmlmod
 import json
+import os
 import re
 from datetime import datetime, timezone
 import sys
@@ -28,6 +29,7 @@ def fetch(url):
     return r.text
 
 
+NEVER = r"\b(mark manson|manson|solved)\b"   # rico, 2026-10-27 03:11: never again
 BANNED = r"\b(casino|gambling|betting|sportsbook|crypto pump|adult|onlyfans|fansly|sinparty|nsfw|18\+|porn|xxx|escort|sugar daddy|vape|nicotine|kratom)\b"
 
 
@@ -38,36 +40,58 @@ def _money(tok):
     return float(tok.rstrip("km")) * mult
 
 
-def cards_from_html(html):
-    """Campaign cards from the Discover page.
-    The page is server-rendered: each card is an <a href="/c/campaigns/<uuid>"> with the org, title,
-    '$spent/$budget' and '$X/1K' as text. Falls back to embedded JSON when present."""
+def cards_from_json(html):
+    """The Discover page embeds every campaign as JSON inside a Next.js flight string
+    ({\"campaign\":{...}} with escaped quotes): title, brand, category, platforms, payoutSortRaw (rate),
+    availableBudgetRaw, budgetTotalRaw, creatorCountRaw (clippers), submissionCountRaw, description, id."""
+    doc = html.replace('\\"', '"')
+    dec = json.JSONDecoder()
     out, seen = [], set()
+    for m in re.finditer(r'"campaign":\s*\{', doc):
+        try:
+            obj, _ = dec.raw_decode(doc, m.end() - 1)
+        except Exception:
+            continue
+        uid = obj.get("id")
+        if not uid or uid in seen or not obj.get("title"):
+            continue
+        seen.add(uid)
+        c = {"host": "Content Rewards", "link": f"https://contentrewards.com/c/campaigns/{uid}",
+             "name": htmlmod.unescape(obj["title"]), "org": obj.get("brand") or "", "category": obj.get("category") or "",
+             "description": (obj.get("description") or "")[:600], "platforms": [p.lower() for p in obj.get("platforms") or []],
+             "clippers": obj.get("creatorCountRaw"), "submissions": obj.get("submissionCountRaw"),
+             "budget_total": obj.get("budgetTotalRaw"), "budget_left": obj.get("availableBudgetRaw"),
+             "application_only": bool(obj.get("requiresApplication")), "verified": bool(obj.get("isVerified")),
+             "pay_type": obj.get("type"), "funded_ago": obj.get("fundedAgo"), "raw": "json"}
+        if obj.get("type") == "cpm" and obj.get("payoutSortRaw") is not None:
+            c["rate"] = float(obj["payoutSortRaw"])
+        low = f"{c['name']} {c['org']} {c['description']}".lower()
+        c["banned_content"] = bool(re.search(BANNED, low))
+        out.append(c)
+    return out
+
+
+def cards_from_html(html):
+    """Campaign cards from the Discover page: the embedded JSON first (complete), the visible card
+    text second ('Org · age Title $spent / $budget <clippers> $rate /1K', numbers split over tags)."""
+    cards = cards_from_json(html)
+    out, seen = [], {c["link"].rsplit("/", 1)[-1] for c in cards}
+    out += cards
     for m in re.finditer(r'<a\b[^>]*href="(/c/campaigns/([0-9a-f-]{36})[^"]*)"[^>]*>(.*?)</a>', html, flags=re.S | re.I):
         href, uid, inner = m.group(1), m.group(2), m.group(3)
         if uid in seen:
             continue
         text = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " | ", inner)).strip()
         parts = [t.strip() for t in text.split("|") if t.strip()]
-        flat = re.sub(r"\s+", " ", text.replace("|", " "))        # rate and budget may be split over several tags
+        flat = re.sub(r"\s+", " ", text.replace("|", " "))
         c = {"host": "Content Rewards", "link": "https://contentrewards.com" + href.split("?")[0], "raw": flat[:160]}
         rate = re.search(r"\$\s?(\d+(?:\.\d+)?)(?:\s*[-\u2013]\s*\$?\s?\d+(?:\.\d+)?)?\s*/\s*1\s*[kK]", flat)
-        if not rate:
-            rate = re.search(r"\$\s?(\d+(?:\.\d+)?)\s*(?:per|/)\s*(?:1,?000|1\s*k)", flat, re.I)
         if rate:
             c["rate"] = float(rate.group(1))
         bud = re.search(r"(\$\s?[\d.,]+\s?[kKmM]?)\s*/\s*(\$\s?[\d.,]+\s?[kKmM]?)(?!\s*/)", flat)
         if bud and not re.search(r"/\s*1\s*[kK]", bud.group(0)):
             spent, total = _money(bud.group(1)), _money(bud.group(2))
-            c["budget_total"] = total
-            c["budget_left"] = max(total - spent, 0.0)
-        else:
-            one = re.search(r"\$\s?([\d.,]+\s?[kKmM]?)\b(?!\s*/)", flat)
-            if one:
-                c["budget_left"] = _money(one.group(1))
-        vw = re.search(r"(\d[\d.,]*)\s*([kKmM])?\s*views?", flat, re.I)
-        if vw:
-            c["views"] = _money(vw.group(1) + (vw.group(2) or ""))
+            c["budget_total"], c["budget_left"] = total, max(total - spent, 0.0)
         cl = re.search(r"\$\s?[\d.,]+\s?[kKmM]?\s*/\s*\$\s?[\d.,]+\s?[kKmM]?\s+(\d[\d,]*)\s+\$", flat)
         if cl:
             c["clippers"] = int(cl.group(1).replace(",", ""))
@@ -81,34 +105,11 @@ def cards_from_html(html):
         c["name"] = words[0] if words else uid
         if len(words) > 1:
             c["org"] = words[1]
-        low = text.lower()
-        c["platforms"] = [p for p in ("youtube", "tiktok", "instagram", "facebook") if p in low]
-        c["banned_content"] = bool(re.search(BANNED, low))
+        c["platforms"] = []
+        c["banned_content"] = bool(re.search(BANNED, text.lower()))
         if "rate" in c or "budget_left" in c:
             out.append(c)
             seen.add(uid)
-    best = {}
-    for c in out:
-        k = folder_name(c.get("name", ""))
-        if k not in best or c.get("budget_left", 0) > best[k].get("budget_left", 0):
-            best[k] = c
-    out = list(best.values())
-    if out:
-        return out
-    for blob in re.findall(r"<script[^>]*>(\{.*?\})</script>", html, flags=re.S):
-        try:
-            data = json.loads(blob)
-        except Exception:
-            continue
-        stack = [data]
-        while stack:
-            x = stack.pop()
-            if isinstance(x, dict):
-                if {"title", "rate"} <= set(k.lower() for k in x) or {"name", "cpm"} <= set(k.lower() for k in x):
-                    out.append(x)
-                stack += list(x.values())
-            elif isinstance(x, list):
-                stack += x
     return out
 
 
@@ -160,8 +161,11 @@ def content_fit(c):
     """(lane, topic_pts 0-10, fun_pts 0-15). Lane by topic first (rico: YouTube = business and money,
     TikTok = entertainment and cool stuff, Instagram = girly stuff and drama), platform second."""
     blob = " ".join(str(c.get(k, "")) for k in ("name", "org", "category")).lower()
+    desc = str(c.get("description", "")).lower()
     plats = [p.lower() for p in c.get("platforms", [])]
     hits = {l: len(re.findall(rx, blob)) for l, rx in TOPIC.items()}
+    if not any(hits.values()):
+        hits = {l: len(re.findall(rx, desc)) for l, rx in TOPIC.items()}
     lane, topic = None, 0
     for l, _n in sorted(hits.items(), key=lambda kv: -kv[1]):
         if hits[l] and LANE_PLATFORM[l] in plats:
@@ -177,10 +181,10 @@ def content_fit(c):
                     lane, topic = l, 2   # platform fits, topic unclear
                     break
     fun = 0
-    fun += min(8, 4 * len(re.findall(FUN, blob)))
+    fun += min(8, 4 * len(re.findall(FUN, blob + " " + desc)))
     fun += 4 if (c.get("category", "").lower() in ("entertainment", "comedy", "sports", "gaming", "music", "podcast", "reality")) else 0
     fun += 3 if c.get("views", 0) >= 250e3 else 0
-    fun -= min(15, 6 * len(re.findall(BORING, blob)))
+    fun -= min(15, 6 * len(re.findall(BORING, blob + " " + desc)))
     return lane or "?", topic, max(0, min(15, fun))
 
 
@@ -192,6 +196,8 @@ def auto_score(c):
         del c[k]
     raw, _verdict, pts, stops = cs.score(c)
     name = c.get("name", "")
+    if re.search(NEVER, name, re.I):
+        stops.append("rico said never")
     if re.search(r"[\u0600-\u06FF\u0400-\u04FF\u0E00-\u0E7F\u3040-\u30FF\u4E00-\u9FFF\uAC00-\uD7AF]", name) or \
        re.search(r"\b(en fran[cç]ais|espa[ñn]ol|hablando|portugu[eê]s|deutsch|italiano|international|arabic|hindi|\(fr\)|\(es\)|\(de\)|\(pt\)|con|para|sobre|pour|avec|und|vistas|clips en)\b|€", name, re.I):
         stops.append("not an English campaign (our accounts post in English)")
@@ -199,8 +205,8 @@ def auto_score(c):
     tot_b = c.get("budget_total") or 0
     spent = (tot_b - c.get("budget_left", 0)) / tot_b if tot_b else 0
     tr = 12 if 0.5 <= spent < 0.9 else 9 if spent >= 0.2 else 5 if spent >= 0.05 else 0   # 0-12: money already paid out = clips get paid
-    v = c.get("views", 0)
-    tr += 8 if v >= 1e6 else 5 if v >= 250e3 else 2 if v >= 50e3 else 0                   # 0-8: only when the card shows views
+    sub = c.get("submissions") or 0
+    tr += 8 if sub >= 300 else 5 if sub >= 80 else 2 if sub >= 15 else 0                   # 0-8: clips already submitted = clippers trust it
     cl = c.get("clippers")
     comp = 5 if not cl else 10 if cl < 100 else 6 if cl < 400 else 3 if cl < 1500 else 0  # 0-10: fewer clippers = more budget each
     dl = c.get("days_left")
@@ -229,7 +235,8 @@ def main():
     notes, cards = [], []
     try:
         page = fetch(DISCOVER)
-        (SEEN.parent / "discover_sample.html").write_text(page[:600_000])   # so the reader can be tested offline
+        if os.environ.get("SAVE_PAGE"):
+            (SEEN.parent / "discover_sample.html").write_text(page)   # on demand: test the reader offline on the real page
         cards = cards_from_html(page)
         notes.append(f"Discover page read: {len(cards)} campaigns found." if cards else "Discover page loaded but its format could not be read.")
     except Exception as e:
@@ -264,7 +271,7 @@ def main():
         except Exception as e:
             dump.append({"name": c.get("name"), "error": f"{type(e).__name__}: {e}"})
             continue
-        dump.append({k: c.get(k) for k in ("name", "org", "category", "lane", "rate", "budget_left", "budget_total", "views", "clippers", "days_left", "platforms", "pts", "link", "raw")}
+        dump.append({k: c.get(k) for k in ("name", "org", "category", "lane", "rate", "budget_left", "budget_total", "views", "clippers", "days_left", "platforms", "submissions", "application_only", "pts", "link", "raw")}
                     | {"total": total, "verdict": verdict, "stops": stops})
         if stops or c["lane"] == "?" or total < 55:
             continue

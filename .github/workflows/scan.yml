@@ -3,6 +3,11 @@ on:
   schedule:
     - cron: "23 * * * *"       # every hour: find campaigns, make 0_START/<campaign>/JOIN folders
   workflow_dispatch:
+    inputs:
+      save_page:
+        description: "Save the Discover page to data/discover_sample.html (for offline parser tests)"
+        required: false
+        default: "false"
 concurrency:
   group: clipping-scan
   cancel-in-progress: false
@@ -24,6 +29,7 @@ jobs:
       - name: scan
         env:
           RCLONE_TOKEN: ${{ secrets.RCLONE_TOKEN }}
+          SAVE_PAGE: ${{ inputs.save_page == 'true' && '1' || '' }}
         run: |
           set -o pipefail
           python bot/campaign_scan.py 2>&1 | tee data/last_scan.log
