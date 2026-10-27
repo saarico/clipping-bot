@@ -30,7 +30,7 @@ def fetch(url):
 
 
 NEVER = r"\b(mark manson|manson|solved)\b"   # rico, 2026-10-27 03:11: never again
-BANNED = r"\b(casino|gambling|betting|sportsbook|crypto pump|adult|onlyfans|fansly|sinparty|nsfw|18\+|porn|xxx|escort|sugar daddy|vape|nicotine|kratom)\b"
+BANNED = r"\b(flip\.gg|case opening|cases? battle|skins? gambling|sinparty|onlyfans|casino|gambling|betting|sportsbook|crypto pump|adult|onlyfans|fansly|sinparty|nsfw|18\+|porn|xxx|escort|sugar daddy|vape|nicotine|kratom)\b"
 
 
 def _money(tok):
@@ -152,6 +152,25 @@ TOPIC = {  # rico's lanes: lane = what the content is about
 }
 BORING = r"\b(ugc|split[- ]screen|app|apps|software|download|sign[- ]?up|referral|use my link|promo code|promo|discount|extension|wallet|casino|betting)\b"
 FUN = r"\b(podcast|interview|episode|show|story|stories|stream|streamer|concert|live|reaction|comedy|comedian|funny|drama|celebrity|reality|highlights|moments)\b"
+# rico (2026-10-27 05:20 UTC): never again a brand ad. Clips must grow the channels, so a campaign has to
+# be about a SHOW or a PERSON (podcast, streamer, performer, game footage), not a product.
+SHOW = r"\b(podcasts?|interviews?|episodes?|show|shows|streamer|streamers|streams?|streaming|live|concert|performance|tour|comedy|comedian|reaction|reacts|highlights|moments|vlogs?|talks?|debate|panel|rant|kick|twitch|youtuber|creator|influencer|clip the show|clipping army|fight|fighter|match|game|games|gaming|roblox|minecraft|fortnite|warfare|warzone|esports|speedrun|music|rapper|singer|band|dj)\b"
+AD = r"\b(ugc|split[- ]screen|app|apps|software|saas|download|install|sign[- ]?up|referral|use my link|promo code|promo|discount|extension|wallet|product|products|brand awareness|launch|early access|pre-?orders?|crowdfund|invest in|ai tool|ai video|generator|fintech|bitcoin rewards|debit card|credit card|subscription|supplement|skincare brand)\b"
+AD_CATS = {"apps", "finance", "technology", "health & wellness", "crypto", "software", "ecommerce", "e-commerce", "product", "brand", "business", "saas"}
+
+
+def is_ad(c):
+    """True when the campaign promotes a product or company instead of clipping a show or a person."""
+    blob = " ".join(str(c.get(k, "")) for k in ("name", "org", "category")).lower()
+    desc = str(c.get("description", "")).lower()[:1500]
+    show = len(re.findall(SHOW, blob)) * 2 + len(re.findall(SHOW, desc))
+    ad = len(re.findall(AD, blob)) * 2 + len(re.findall(AD, desc))
+    cat = str(c.get("category", "")).lower()
+    if cat in AD_CATS and show < 2:
+        return True
+    return ad >= 2 and ad > show
+
+
 LANE_PLATFORM = {"A": "youtube", "B": "instagram", "C": "tiktok"}
 CAT_LANE = {"finance": "A", "business": "A", "crypto": "A", "education": "A", "technology": "C", "gaming": "C", "entertainment": "C", "sports": "C",
             "music": "C", "comedy": "C", "podcast": "C", "lifestyle": "B", "beauty": "B", "fashion": "B", "reality": "B", "health": "B", "fitness": "C"}
@@ -198,6 +217,8 @@ def auto_score(c):
     name = c.get("name", "")
     if re.search(NEVER, name, re.I):
         stops.append("rico said never")
+    if is_ad(c):
+        stops.append("brand ad, not a show (rico: clips must grow the channels)")
     if re.search(r"[\u0600-\u06FF\u0400-\u04FF\u0E00-\u0E7F\u3040-\u30FF\u4E00-\u9FFF\uAC00-\uD7AF]", name) or \
        re.search(r"\b(en fran[cç]ais|espa[ñn]ol|hablando|portugu[eê]s|deutsch|italiano|international|arabic|hindi|\(fr\)|\(es\)|\(de\)|\(pt\)|con|para|sobre|pour|avec|und|vistas|clips en)\b|€", name, re.I):
         stops.append("not an English campaign (our accounts post in English)")

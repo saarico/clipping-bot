@@ -1,0 +1,25 @@
+name: probe
+# One-off check from the runner (the sandbox cannot reach YouTube): can yt-dlp read this video?
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: video URL to probe
+        required: true
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -q yt-dlp
+      - name: probe
+        run: |
+          mkdir -p data
+          { echo "probe $(date -u +%Y-%m-%dT%H:%MZ) ${{ inputs.url }}"; yt-dlp --no-warnings --print "%(title)s | %(duration)s s | %(uploader)s" --no-playlist "${{ inputs.url }}" 2>&1 | tail -n 5; } | tee data/probe.log
+      - name: save
+        run: |
+          git config user.name clipping-bot && git config user.email bot@users.noreply.github.com
+          git add data/probe.log && (git diff --cached --quiet || (git commit -m "probe" && git pull --rebase origin main && git push))
