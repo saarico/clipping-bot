@@ -5,7 +5,7 @@ the bot scores whatever links rico pasted into the "CAMPAIGN LINKS" doc instead.
 financial scorecard (campaign_score.py); the pick favours the lane with the fewest live campaigns,
 not the highest rate (rico, 2026-10-27).
 """
-import html
+import html as htmlmod
 import json
 import re
 from datetime import datetime, timezone
@@ -71,7 +71,7 @@ def cards_from_html(html):
         cl = re.search(r"\$\s?[\d.,]+\s?[kKmM]?\s*/\s*\$\s?[\d.,]+\s?[kKmM]?\s+(\d[\d,]*)\s+\$", flat)
         if cl:
             c["clippers"] = int(cl.group(1).replace(",", ""))
-        parts = [html.unescape(p) for p in parts]
+        parts = [htmlmod.unescape(p) for p in parts]
         words = [p for p in parts if not re.search(r"\$|^\d+[hdw]\b|^\d+\s*(mo|w|d|h)$|^\d[\d,]*$|views?$|ago$", p, re.I)]
         cats = [p for p in words if p.lower() in CATEGORIES]
         if cats:
@@ -229,7 +229,7 @@ def main():
         cards = cards_from_html(fetch(DISCOVER))
         notes.append(f"Discover page read: {len(cards)} campaigns found." if cards else "Discover page loaded but its format could not be read.")
     except Exception as e:
-        notes.append(f"Discover page blocked from GitHub ({type(e).__name__}).")
+        notes.append(f"Discover page blocked from GitHub ({type(e).__name__}: {str(e)[:120]}).")
     # Discover cards carry no platforms/days: open the campaign page for the best-looking ones
     # (pre-filter on the two hard stops we can see: rate >= 0.75 and budget left >= 1000).
     enrich = [c for c in cards if not c.get("platforms") and c.get("rate", 0) >= 0.75 and c.get("budget_left", 0) >= 1000
