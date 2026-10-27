@@ -65,10 +65,12 @@ class Rclone:
     def __init__(self):
         self.remote = os.environ.get("RCLONE_REMOTE", "gdrive")
         conf = Path(os.environ.get("RCLONE_CONFIG", str(Path.home() / ".config/rclone/rclone.conf")))
-        tok = os.environ.get("RCLONE_TOKEN")
-        if tok and not conf.exists():
+        tok = os.environ.get("RCLONE_TOKEN", "")
+        if "{" in tok and not conf.exists():
+            tok = tok[tok.index("{"):tok.rindex("}") + 1]   # the secret may be the whole `rclone authorize` output
+            json.loads(tok)
             conf.parent.mkdir(parents=True, exist_ok=True)
-            conf.write_text(f"[{self.remote}]\ntype = drive\nscope = drive\ntoken = {tok.strip()}\n")
+            conf.write_text(f"[{self.remote}]\ntype = drive\nscope = drive\ntoken = {tok}\n")
         self.flags = ["--drive-export-formats", "txt", "--drive-import-formats", "txt", "-q"]
 
     def _r(self, path):
