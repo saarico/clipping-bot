@@ -37,7 +37,9 @@ jobs:
       - name: run
         env:
           RCLONE_TOKEN: ${{ secrets.RCLONE_TOKEN }}
-        run: python bot/run.py "${{ inputs.campaign }}"
+        run: |
+          set -o pipefail
+          python bot/run.py "${{ inputs.campaign }}" 2>&1 | tee data/last_run.log
       - name: save state
         if: always()
         run: |
