@@ -18,7 +18,7 @@ def parse(text):
     for p in ("youtube", "tiktok", "instagram", "facebook", "x.com", "snapchat"):
         if p in low:
             b["platforms"].append("x" if p == "x.com" else p)
-    b["tags"] = sorted(set(re.findall(r"(?<![\w.])@[A-Za-z0-9_.]{2,30}", text)) | set(re.findall(r"(?<![\w&])#[A-Za-z][A-Za-z0-9_]{2,30}", text)))
+    b["tags"] = sorted({t.rstrip(".") for t in re.findall(r"(?<![\w.])@[A-Za-z0-9_.]{2,30}", text)} | set(re.findall(r"(?<![\w&])#[A-Za-z][A-Za-z0-9_]{2,30}", text)))
     # source links: YouTube first, then Drive / Dropbox / direct video files (the bot downloads those itself)
     src = re.findall(r"https?://(?:drive\.google\.com/(?:file/d/|drive/folders/|open\?id=)[^\s<>\"')\]]+|[^\s<>\"')\]]*dropbox\.com/[^\s<>\"')\]]+|[^\s<>\"')\]]+\.(?:mp4|mov|mkv|webm)(?:\?[^\s<>\"')\]]*)?)", text)
     b["links"] = list(dict.fromkeys(re.findall(YT, text) + src))
