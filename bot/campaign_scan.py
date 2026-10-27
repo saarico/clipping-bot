@@ -132,6 +132,19 @@ def main():
     else:
         drive.write_doc("CAMPAIGN LINKS", "Paste Content Rewards campaign links here, one per line. The bot scores them on its next run.", rt)
         notes.append("Created the CAMPAIGN LINKS doc for pasted links.")
+    # Discover cards carry no platforms/days: open the campaign page for the best-looking ones
+    # (pre-filter on the two hard stops we can see: rate >= 0.75 and budget left >= 1000).
+    enrich = [c for c in cards if not c.get("platforms") and c.get("rate", 0) >= 0.75 and c.get("budget_left", 0) >= 1000]
+    enrich.sort(key=lambda c: (-c.get("rate", 0), -c.get("budget_left", 0)))
+    for c in enrich[:15]:
+        try:
+            page = card_from_page(c["link"])
+        except Exception:
+            continue
+        for k in ("platforms", "days_left", "clippers", "pay_to_join"):
+            if page.get(k):
+                c[k] = page[k]
+        c["banned_content"] = c.get("banned_content") or page.get("banned_content", False)
     rows = []
     for c in cards:
         c.setdefault("lane", lane_for(c.get("platforms", [])))
