@@ -188,6 +188,9 @@ def auto_score(c):
     """Score a Discover card. The full scorecard needs a research dossier (creator reach, clip library);
     a card only shows pay, budget, spend and views, so A + E come from campaign_score and the rest
     from traction proxies. Returns (total out of 100, verdict, stops)."""
+    for k in ("views", "clippers", "budget_left", "budget_total", "rate", "days_left"):
+        if k in c and c[k] is None:
+            del c[k]
     raw, _verdict, pts, stops = cs.score(c)
     a, e = pts["A pay and budget"], pts["E rules load"]
     tot_b = c.get("budget_total") or 0
