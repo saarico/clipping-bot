@@ -87,6 +87,49 @@ def has_speech(path):
     return bool(m) and float(m.group(1)) > -45
 
 
+def fetch_link(url, dest, st):
+    """One source link -> episode.mp4. Google Drive files and folders (shared with anyone) via gdown,
+    Dropbox and direct video links via curl, everything else via yt-dlp (YouTube blocks GitHub runners)."""
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    tmp = dest.parent / "dl"
+    tmp.mkdir(exist_ok=True)
+    if re.search(r"drive\.google\.com|docs\.google\.com/.*(file|folder)", url):
+        note(st, f"downloading from Google Drive: {url[:80]}")
+        folder = "/folders/" in url
+        subprocess.run(["gdown", "--fuzzy", "--quiet", "-O", str(tmp) + "/"] + (["--folder"] if folder else []) + [url], check=False, timeout=7200)
+    elif re.search(r"dropbox\.com|\.(mp4|mov|mkv|webm|m4v)(\?|$)", url):
+        note(st, f"downloading file: {url[:80]}")
+        u = re.sub(r"[?&]dl=0", "", url)
+        u += ("&" if "?" in u else "?") + "dl=1" if "dropbox.com" in u else ""
+        subprocess.run(["curl", "-sL", "--max-time", "7000", "-o", str(tmp / "episode_dl.mp4"), u], check=False, timeout=7200)
+    else:
+        note(st, f"trying yt-dlp: {url[:80]}")
+        subprocess.run(["yt-dlp", "-f", "bv*[height<=1080][ext=mp4]+ba[ext=m4a]/b[ext=mp4]/b", "--no-playlist", "--socket-timeout", "30",
+                        "-o", str(tmp / "episode_dl.%(ext)s"), url], capture_output=True, text=True, timeout=3600)
+    vids = sorted((p for p in tmp.rglob("*") if p.suffix.lower() in VID_EXT and p.stat().st_size > 1e6), key=lambda p: -p.stat().st_size)
+    if not vids:
+        return None
+    if len(vids) == 1:
+        vids[0].replace(dest)
+        return dest
+    return join_videos(vids, dest)   # several files: one episode in name order
+
+
+def join_videos(parts, dest):
+    norm = []
+    for i, pth in enumerate(sorted(parts, key=lambda p: p.name)):
+        o = dest.parent / "parts" / f"n{i:02d}.mp4"
+        o.parent.mkdir(parents=True, exist_ok=True)
+        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(pth), "-vf", "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2,fps=30",
+                        "-r", "30", "-c:v", "libx264", "-preset", "veryfast", "-crf", "18", "-c:a", "aac", "-ar", "48000", "-ac", "2", str(o)], check=False)
+        if o.exists():
+            norm.append(o)
+    lst = dest.parent / "parts" / "list.txt"
+    lst.write_text("".join(f"file '{p}'\n" for p in norm))
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", str(lst), "-c", "copy", str(dest)], check=False)
+    return dest if dest.exists() else None
+
+
 def get_source(name, st, stage, cdir):
     """Episode file: from 0_START, else yt-dlp on the brief's first link (best effort)."""
     dest = WORK / name / "episode.mp4"
@@ -113,15 +156,21 @@ def get_source(name, st, stage, cdir):
             return dest
     links = st.get("brief", {}).get("links", [])
     if links and not st.get("download_failed"):
-        note(st, f"trying to download {links[0]} (yt-dlp)")
-        r = subprocess.run(["yt-dlp", "-f", "bv*[height<=1080][ext=mp4]+ba[ext=m4a]/b[ext=mp4]/b", "--no-playlist",
-                            "-o", str(dest), links[0]], capture_output=True, text=True, timeout=3600)
-        if dest.exists():
-            return dest
+        errors = []
+        for url in links[:6]:
+            try:
+                got = fetch_link(url, dest, st)
+            except Exception as e:
+                got = None
+                errors.append(f"{url[:60]}: {type(e).__name__} {str(e)[:80]}")
+            if got:
+                return got
         st["download_failed"] = True
-        msg = (r.stderr or "")[-300:].replace("\n", " ")
-        note(st, "download blocked; asked rico for the file")
-        drive.write_doc("NEEDS THE VIDEO", f"GitHub could not download the episode ({msg}).\n\nPlease drop the episode as episode.mp4 into this 0_START folder. The bot picks it up on its next run (every 5 hours).", stage["0_START"])
+        note(st, "no link could be downloaded; asked rico for the file")
+        drive.write_doc("NEEDS THE VIDEO", "GitHub could not download the episode from the links in the requirements"
+                        " (YouTube blocks downloads from GitHub; Google Drive and Dropbox links work when they are shared with anyone).\n\n"
+                        "What to do: download the episode on your PC and drop it in this folder as episode.mp4. "
+                        "The bot picks it up on its next run (every 5 hours).\n\nTried:\n- " + "\n- ".join(errors or links[:6]), stage["0_START"])
     return None
 
 
