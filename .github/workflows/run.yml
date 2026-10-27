@@ -29,6 +29,13 @@ jobs:
           curl -fsSL https://rclone.org/install.sh | sudo bash
       - name: deps
         run: pip install -q -r requirements.txt
+      - name: browser cache (for rules pages that need JavaScript, e.g. Notion)
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-chromium-v1
+      - name: browser
+        run: python -m playwright install --with-deps chromium >/dev/null 2>&1 || python -m playwright install chromium
       - name: whisper model cache
         uses: actions/cache@v4
         with:

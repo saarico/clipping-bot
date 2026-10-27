@@ -11,6 +11,7 @@ State lives in campaigns/<c>/state.json (committed by the workflow). Videos neve
 Drive access: rclone (bot/drive.py); tests: CLIPPING_LOCAL=/some/dir uses a plain folder as the Drive.
 """
 import json
+import re
 import os
 import subprocess
 import sys
@@ -106,6 +107,19 @@ def do_campaign(name, cpath):
             return
         stage = drive.stages(cpath)  # requirements are in: now make the campaign folder in 1_CHECK, 2_REDO, 3_APPROVED
         text = "\n\n".join(drive.text_of(f["Path"], f["Name"]) for f in reqs)
+        # rules often live behind a link (Notion, Google Doc, a brand page): fetch those pages too
+        import fetch_page
+        fetched = []
+        for url in dict.fromkeys(re.findall(r"https?://[^\s<>\"')\]]+", text)):
+            if re.search(r"youtube\.com|youtu\.be|tiktok\.com|instagram\.com|drive\.google\.com/file|contentrewards\.com", url):
+                continue
+            page = fetch_page.fetch_text(url.rstrip(".,"))
+            if page and len(page) > 200:
+                fetched.append(f"=== {url} ===\n{page[:20000]}")
+                note(st, f"rules fetched from {url} ({len(page)} chars)")
+        if fetched:
+            text += "\n\n" + "\n\n".join(fetched)
+            drive.write_doc("RULES (fetched by the bot)", "\n\n".join(fetched)[:60000], stage["0_START"])
         st["brief"] = briefer.parse(text)
         (cdir / "brief.json").write_text(json.dumps(st["brief"], indent=1))
         b = st["brief"]
