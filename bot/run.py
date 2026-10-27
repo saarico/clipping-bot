@@ -256,7 +256,15 @@ def publish(name, st, stage, kept, summary, t0):
 def main(only=None):
     rt = drive.root()
     log(f"CLIPPING root {rt}")
-    camps = drive.campaigns()
+    dropped = [l.strip() for l in (ROOT / "config" / "dropped.txt").read_text().splitlines() if l.strip() and not l.startswith("#")] if (ROOT / "config" / "dropped.txt").exists() else []
+    for d in dropped:   # campaigns rico dropped: their folders go to _trash, their state is forgotten
+        moved = drive.drop(d)
+        if moved:
+            log(f"dropped {d}: moved {', '.join(moved)} to _trash")
+        if state_path(d).exists():
+            import shutil
+            shutil.rmtree(state_path(d).parent, ignore_errors=True)
+    camps = [c for c in drive.campaigns() if c[0] not in dropped]
     if only:
         camps = [c for c in camps if c[0] == only]
     for name, cpath in camps:

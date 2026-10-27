@@ -207,3 +207,15 @@ def text_of(path, name):
         with pdfplumber.open(str(local)) as pdf:
             return "\n".join((pg.extract_text() or "") for pg in pdf.pages)
     return local.read_text(errors="replace")
+
+
+def drop(campaign):
+    """Move every stage folder of a dropped campaign into CLIPPING/_trash/<stage>_<campaign> (nothing is deleted)."""
+    r = root()
+    moved = []
+    for s in STAGES:
+        have = {e["Name"] for e in be().ls(f"{r}/{s}") if e.get("IsDir")}
+        if campaign in have:
+            be().move(f"{r}/{s}/{campaign}", f"{r}/_trash/{s}_{campaign}")
+            moved.append(s)
+    return moved
