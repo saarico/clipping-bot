@@ -252,9 +252,10 @@ def do_campaign(name, cpath):
         save_state(name, st)
         return
     plan = json.loads((cdir / "plan.json").read_text()) if (cdir / "plan.json").exists() else {}
+    if plan.get("brief_overrides"):      # the reviewer can pin fields the parser got wrong (tags, rules, lengths)
+        st["brief"].update(plan["brief_overrides"])
     if plan.get("brand_clips"):          # brand mode: scripts + voice over the campaign's own footage
         import brand_mode
-        st["brief"].update(plan.get("brief_overrides", {}))   # reviewer can pin e.g. the disclosure or a rewards rider
         footage = get_footage(name, st, stage)
         if not footage:
             note(st, "brand mode: waiting for the footage in 0_START")

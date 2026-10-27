@@ -86,7 +86,7 @@ def fm_candidates(words_path, gfx_path, brief):
 
 def load(campaign_dir, words_path, gfx_path, source, brief, campaign, out_dir, used=()):
     plan = Path(campaign_dir) / "plan.json"
-    if plan.exists():
+    if plan.exists() and json.loads(plan.read_text()).get("clips"):   # a plan without clips (overrides only) = auto picks
         p = json.loads(plan.read_text())
         specs = p.get("clips", [])[:MAX_CLIPS]
         for s in specs:

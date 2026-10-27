@@ -1,0 +1,32 @@
+{
+ "why": "Brief PDF text comes out jumbled, so the reviewer pins the clean facts here. Clips are picked automatically until the transcript exists; then the reviewer adds 'clips'.",
+ "brief_overrides": {
+  "platforms": [
+   "tiktok",
+   "instagram",
+   "youtube"
+  ],
+  "tags": [
+   "#DiggerPartner"
+  ],
+  "min_s": 10,
+  "max_s": 60,
+  "rate_per_1k": 1.5,
+  "max_per_clip": 750,
+  "min_payout": 1.5,
+  "disclosure": "",
+  "captions_required": true,
+  "rules": [
+   "End EVERY caption with #DiggerPartner and tag Warner Bros. (no tag = not paid)",
+   "Only footage from the approved DIGGER folder (trailers, TV spots, clips); nothing from outside, no other movies, no old Tom Cruise clips",
+   "Footage's own audio only: no added music, no voice-over, no face-cam",
+   "Vertical 9:16, 10-60 s, hook in the first 2 s, on-screen text or captions throughout",
+   "Framing in your own words: people are split on DIGGER, go see it and decide for yourself",
+   "Never reveal or hint at the twist; no spoilers in clip or caption",
+   "Never mention Scientology, Tom Cruise's past relationships or past roles; never compare to Don't Look Up; don't politicize",
+   "Don't quote review scores or box office numbers, don't argue with critics",
+   "No AI changes to anyone's face or voice",
+   "At least 40% of views from the US; keep likes visible; keep the post up 30 days; submit on Whop with demographics"
+  ]
+ }
+}
