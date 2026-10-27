@@ -1,15 +1,4 @@
-[05:07:28] CLIPPING root CLIPPING
-[05:08:04] rules page https://app.notion.com/p/Fold-Campaign-Rules-3ec0395e47eb814ba757d6b19ca82666: 2991 chars
-[05:08:34] brief read: 20 rules, 11 links, tags ['@foldapp']
-[05:09:36] brand clip 1: YOUR COFFEE JUST PAID YOU BACK IN BITCOIN
-[05:11:05] brand clip 2: POINTS VS BITCOIN REWARDS. BE HONEST.
-[05:12:17] brand clip 3: BITCOIN FOR PEOPLE WHO DON'T GET BITCOIN
-[05:13:32] brand mode: 3 script(s) from plan.json, voice en-US-AndrewNeural
-KEPT  01_your-coffee-just-paid-you-ba: 38.0s  qa PASS  score 90  hook: YOUR COFFEE JUST PAID YOU BACK IN BITCOIN
-KEPT  02_points-vs-bitcoin-rewards-be: 33.8s  qa PASS  score 95  hook: POINTS VS BITCOIN REWARDS. BE HONEST.
-KEPT  03_bitcoin-for-people-who-don-t: 35.0s  qa PASS  score 75  hook: BITCOIN FOR PEOPLE WHO DON'T GET BITCOIN
-3 clip(s) kept of 3 in 3.9 min
-[05:13:41] 3 clip(s) uploaded to 1_CHECK
-Discover page read: 70 campaigns found.
-scored 11 JOIN candidates; new folders in 0_START: none
-live: FOLD, Modern Warfare 4 - DMZ Live Clipping
+[05:25:43] CLIPPING root CLIPPING
+Discover page read: 64 campaigns found.
+scored 5 JOIN candidates; new folders in 0_START: none
+live: DIGGER x ClipFarm, Higgsfield 20VC Clipping
