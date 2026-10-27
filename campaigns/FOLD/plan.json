@@ -1,0 +1,197 @@
+{
+ "why": "FOLD is a brand campaign: silent app footage from the campaign Resources, so each clip is a short voice-over script (reviewer, 2026-10-27) on one of the brief's content angles. No future-value claims, no 'worth more than points', no competitor names, qualifiers kept, US audience. Disclosure burned in under the title.",
+ "brand_clips": [
+  {
+   "hook": "YOUR COFFEE JUST PAID YOU BACK IN BITCOIN",
+   "hook_hi": [
+    "BITCOIN"
+   ],
+   "angle": "EVERYDAY SPENDING",
+   "script": [
+    "POV: you buy the same coffee you buy every single morning, except this time it pays you back.",
+    "This is Fold. It's a debit card and an app that gives you bitcoin rewards on stuff you're already buying.",
+    "Coffee, gas, groceries, that random Target run. Swipe the card, and a little bitcoin shows up in the app.",
+    "You can also grab gift cards for brands you already shop at right inside Fold, and those earn rewards too. Rates vary by brand.",
+    "No charts, no crypto homework. Just your normal spending, quietly adding up.",
+    "Rewards aren't a deposit and can lose value, but if you're spending anyway, it's a pretty easy switch."
+   ],
+   "emphasis": [
+    "coffee",
+    "Fold",
+    "bitcoin",
+    "rewards",
+    "gas",
+    "groceries",
+    "gift",
+    "cards",
+    "free",
+    "easy"
+   ],
+   "footage": [
+    {
+     "file": "general navigation",
+     "lines": [
+      0,
+      1
+     ],
+     "from": 1.0
+    },
+    {
+     "file": "transactions-menu",
+     "lines": [
+      2,
+      2
+     ]
+    },
+    {
+     "file": "merchant-gift-card-purchase",
+     "lines": [
+      3,
+      3
+     ]
+    },
+    {
+     "file": "autostack-demo",
+     "lines": [
+      4,
+      4
+     ]
+    },
+    {
+     "file": "rewards-redemption",
+     "lines": [
+      5,
+      5
+     ]
+    }
+   ],
+   "caption": "Your morning coffee, but it gives you bitcoin back. #fold #bitcoin #cashback #personalfinance"
+  },
+  {
+   "hook": "POINTS VS BITCOIN REWARDS. BE HONEST.",
+   "hook_hi": [
+    "BITCOIN"
+   ],
+   "angle": "POINTS VS BITCOIN",
+   "script": [
+    "Be honest. When was the last time you actually used your credit card points?",
+    "They sit there, they expire, and half the time you need a math degree to redeem them.",
+    "Fold does rewards differently. You spend like normal, and you get rewarded in bitcoin instead of points.",
+    "It shows up in the app as real bitcoin that you own. You can hold it, or sell it back to dollars whenever you want.",
+    "I'm not here to tell you bitcoin rewards beat points. That's not the point.",
+    "The point is they're simple. Swipe with Fold, get bitcoin, done. Rewards aren't a deposit and can lose value, but at least I understand them."
+   ],
+   "emphasis": [
+    "honest",
+    "points",
+    "expire",
+    "Fold",
+    "bitcoin",
+    "simple",
+    "swipe"
+   ],
+   "footage": [
+    {
+     "file": "notification-center-demo",
+     "lines": [
+      0,
+      1
+     ]
+    },
+    {
+     "file": "transactions-disputes",
+     "lines": [
+      2,
+      2
+     ]
+    },
+    {
+     "file": "bitcoin-sell",
+     "lines": [
+      3,
+      3
+     ]
+    },
+    {
+     "file": "rewards-redemption",
+     "lines": [
+      4,
+      5
+     ]
+    }
+   ],
+   "caption": "Points vs bitcoin rewards. Which one do you actually use? #fold #bitcoin #creditcardpoints #moneytips"
+  },
+  {
+   "hook": "BITCOIN FOR PEOPLE WHO DON'T GET BITCOIN",
+   "hook_hi": [
+    "DON'T",
+    "GET"
+   ],
+   "angle": "BITCOIN MADE SIMPLE",
+   "script": [
+    "If bitcoin feels confusing, this is the simplest way I've seen to start.",
+    "Fold is an app with a debit card. You use it like any other card, and it rewards you with small amounts of bitcoin.",
+    "No exchange, no seed phrase, no YouTube rabbit hole. It's just there in the app.",
+    "Want more than the rewards? You can buy bitcoin right in Fold too, a few dollars at a time, and even put it on autopilot.",
+    "Lose the card? Lock it in two taps. Everything lives in one place.",
+    "Bitcoin has ups and downs and rewards can lose value, so start small. But start simple. That's the whole idea behind Fold."
+   ],
+   "emphasis": [
+    "confusing",
+    "simplest",
+    "Fold",
+    "bitcoin",
+    "card",
+    "autopilot",
+    "lock",
+    "simple"
+   ],
+   "footage": [
+    {
+     "file": "general navigation",
+     "lines": [
+      0,
+      1
+     ],
+     "from": 1.0
+    },
+    {
+     "file": "settings-navigation",
+     "lines": [
+      2,
+      2
+     ]
+    },
+    {
+     "file": "buy-bitcoin",
+     "lines": [
+      3,
+      3
+     ]
+    },
+    {
+     "file": "lock-debit-card",
+     "lines": [
+      4,
+      4
+     ]
+    },
+    {
+     "file": "autostack-demo",
+     "lines": [
+      5,
+      5
+     ]
+    }
+   ],
+   "caption": "Bitcoin, minus the homework. #fold #bitcoin #bitcoinforbeginners #moneytips"
+  }
+ ],
+ "brief_overrides": {
+  "disclosure": "Sponsored by Fold. I was compensated to share this.",
+  "rider": "Rewards are unsecured promotional obligations of Fold, Inc. They are not deposits, are not FDIC insured, and may lose value.",
+  "min_s": 15,
+  "max_s": 60
+ }
+}

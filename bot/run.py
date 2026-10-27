@@ -61,11 +61,30 @@ def note(st, msg):
     st["log"] = (st.get("log", []) + [f"{now()}  {msg}"])[-40:]
 
 
-BOT_DOCS = {"BRIEF", "NEEDS THE VIDEO", "SUMMARY", "POST KIT", "JOIN"}
+BOT_DOCS = {"BRIEF", "NEEDS THE VIDEO", "SUMMARY", "POST KIT", "JOIN", "RULES (fetched by the bot)"}
 
 
 def is_bot_doc(f):
     return f["Name"].rsplit(".", 1)[0] in BOT_DOCS
+
+
+def get_footage(name, st, stage):
+    """Brand mode: every video in 0_START, kept as separate files (app demos, b-roll)."""
+    fdir = WORK / name / "footage"
+    fdir.mkdir(parents=True, exist_ok=True)
+    vids = sorted(drive.files(stage["0_START"], VID_EXT), key=lambda f: f["Name"])
+    for v in vids:
+        local = fdir / re.sub(r"^Copy of ", "", v["Name"])
+        if not local.exists():
+            drive.download(v["Path"], local)
+    return fdir if any(fdir.iterdir()) else None
+
+
+def has_speech(path):
+    """False for silent product footage (no audio stream, or audio under -45 dB on average)."""
+    r = subprocess.run(["ffmpeg", "-i", str(path), "-t", "600", "-af", "volumedetect", "-f", "null", "-"], capture_output=True, text=True)
+    m = re.search(r"mean_volume: (-?[\d.]+)", r.stderr)
+    return bool(m) and float(m.group(1)) > -45
 
 
 def get_source(name, st, stage, cdir):
@@ -166,10 +185,11 @@ def do_campaign(name, cpath):
     kits = st.get("kits", {})
     new_kits = [f for f in approved if f["Path"] not in kits]
     if new_kits:
-        hooks = {Path(c["mp4"]).name: c["hook"] for c in st.get("clips", [])}
+        hooks = {c["mp4"]: c["hook"] for c in st.get("clips", [])}
+        caps = {c["mp4"]: c.get("caption", "") for c in st.get("clips", [])}
         text = [f"POST KIT  ({now()})", ""]
         for f in new_kits:
-            text.append(post_kit.kit(f["Name"], hooks.get(f["Name"], Path(f["Name"]).stem.replace("-", " ")), st["brief"], st["brief"].get("platforms") or ["youtube"]))
+            text.append(post_kit.kit(f["Name"], hooks.get(f["Name"], Path(f["Name"]).stem.replace("-", " ")), st["brief"], st["brief"].get("platforms") or ["youtube"], caption=caps.get(f["Name"], "")))
             text.append("")
             kits[f["Path"]] = f["Name"]
         drive.write_doc("POST KIT", "\n".join(text), stage["3_APPROVED"])
@@ -180,8 +200,27 @@ def do_campaign(name, cpath):
     if st.get("clips") and not st.get("needs_redo"):
         save_state(name, st)
         return
+    plan = json.loads((cdir / "plan.json").read_text()) if (cdir / "plan.json").exists() else {}
+    if plan.get("brand_clips"):          # brand mode: scripts + voice over the campaign's own footage
+        import brand_mode
+        st["brief"].update(plan.get("brief_overrides", {}))   # reviewer can pin e.g. the disclosure or a rewards rider
+        footage = get_footage(name, st, stage)
+        if not footage:
+            note(st, "brand mode: waiting for the footage in 0_START")
+            save_state(name, st)
+            return
+        t0 = time.time()
+        kept, summary = brand_mode.run(WORK / name, footage, st["brief"], plan, campaign=name, log=log)
+        publish(name, st, stage, kept, summary, t0)
+        return
     src = get_source(name, st, stage, cdir)
     if not src:
+        save_state(name, st)
+        return
+    if not has_speech(src):
+        if not st.get("needs_scripts"):
+            note(st, "footage has no speech: brand mode needs scripts (brand_clips in campaigns/<c>/plan.json)")
+        st["needs_scripts"] = True
         save_state(name, st)
         return
     words = cdir / "words.json"
@@ -194,6 +233,11 @@ def do_campaign(name, cpath):
     st["used_moments"] = (st.get("used_moments", []) + [{"start": p[0], "end": p[1], "hook": c["hook"]} for c in kept for p in c.get("parts", [])])[-30:]
     if (WORK / name / "words.json").exists() and not words.exists():
         (WORK / name / "words.json").replace(words)
+    publish(name, st, stage, kept, summary, t0)
+
+
+def publish(name, st, stage, kept, summary, t0):
+    """Kept clips -> 1_CHECK/<campaign>/ with the SUMMARY doc; state remembers them."""
     for k, c in enumerate(kept, 1):
         drive.upload(c["mp4"], stage["1_CHECK"], name=f"{k:02d}_{Path(c['mp4']).name.split('_', 1)[-1]}")
     body = [f"SUMMARY  ({now()}, {(time.time() - t0) / 60:.0f} min)", "", f"{len(kept)} clip(s) in 1_CHECK. Max 3 per campaign.", ""]
@@ -201,11 +245,11 @@ def do_campaign(name, cpath):
         body += [f"{k:02d}  {c['hook']}  ({c['dur']} s, judge {c['judge']})", f"    why: {c['why']}", "    captions:", *("    " + l for l in c["captions"].splitlines()[:40]), ""]
     body += ["Run notes:", summary, "", "Approve: drag the mp4 to 3_APPROVED. Change: put a Word doc with your notes in 2_REDO."]
     drive.write_doc("SUMMARY", "\n".join(body), stage["1_CHECK"])
-    st["clips"] = [{"mp4": f"{k:02d}_{Path(c['mp4']).name.split('_', 1)[-1]}", "hook": c["hook"], "judge": c["judge"], "dur": c["dur"]} for k, c in enumerate(kept, 1)]
+    st["clips"] = [{"mp4": f"{k:02d}_{Path(c['mp4']).name.split('_', 1)[-1]}", "hook": c["hook"], "judge": c["judge"], "dur": c["dur"],
+                    "caption": c.get("caption", "")} for k, c in enumerate(kept, 1)]
     st["needs_redo"] = False
     note(st, f"{len(kept)} clip(s) uploaded to 1_CHECK")
     save_state(name, st)
-
 
 def main(only=None):
     rt = drive.root()

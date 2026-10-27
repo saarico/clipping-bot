@@ -6,10 +6,15 @@ from pathlib import Path
 ACCOUNTS = json.loads((Path(__file__).parent.parent / "config" / "accounts.json").read_text())
 
 
-def kit(clip_name, hook, brief, lane_platforms):
+def kit(clip_name, hook, brief, lane_platforms, caption=""):
     tags = " ".join(brief.get("tags", []))
     title = f"{hook.rstrip('.')} {tags}".strip()
-    desc = f"{hook}\n\nFrom the full episode: {brief['links'][0] if brief.get('links') else 'see campaign'}\n{tags}".strip()
+    desc = (caption or f"{hook}\n\nFrom the full episode: {brief['links'][0] if brief.get('links') else 'see campaign'}") + f"\n{tags}"
+    if brief.get("disclosure"):   # brand campaigns: the paid disclosure goes in the caption too, word for word
+        desc += f"\n\n{brief['disclosure']}"
+    if brief.get("rider"):
+        desc += f"\n{brief['rider']}"
+    desc = desc.strip()
     lines = [f"CLIP: {clip_name}", ""]
     for p in lane_platforms:
         handle = ACCOUNTS.get(p, "?")

@@ -30,3 +30,13 @@ applies them in the next `plan.json`. State per campaign: `campaigns/<c>/state.j
 
 Run by hand: Actions → run → Run workflow (optionally one campaign folder name).
 Local test of the cutting line without Drive: `python3 bot/pipeline.py <work dir> <episode.mp4> <brief.json>`.
+
+## Brand mode (silent product footage)
+
+Some campaigns (FOLD) hand out app demos instead of a talking episode. For those the reviewer writes
+up to 3 short scripts in `campaigns/<c>/plan.json` under `brand_clips` (hook, script lines, which footage
+file under each line). `bot/brand_mode.py` gives the script a voice (edge-tts, free, word-timed), lays
+the footage under it (fit inside, blurred copy behind), adds the title band, word captions and the
+campaign's disclosure line under the title, runs one QA pass (length, forbidden claims, brand named,
+disclosure) and uploads to 1_CHECK like any other clip. Silent footage with no scripts yet is logged as
+"needs scripts" and nothing is transcribed.
