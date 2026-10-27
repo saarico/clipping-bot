@@ -228,7 +228,9 @@ def main():
     seen = json.loads(SEEN.read_text()) if SEEN.exists() else {}
     notes, cards = [], []
     try:
-        cards = cards_from_html(fetch(DISCOVER))
+        page = fetch(DISCOVER)
+        (SEEN.parent / "discover_sample.html").write_text(page[:600_000])   # so the reader can be tested offline
+        cards = cards_from_html(page)
         notes.append(f"Discover page read: {len(cards)} campaigns found." if cards else "Discover page loaded but its format could not be read.")
     except Exception as e:
         notes.append(f"Discover page blocked from GitHub ({type(e).__name__}: {str(e)[:120]}).")
@@ -237,7 +239,7 @@ def main():
     enrich = [c for c in cards if not c.get("platforms") and c.get("rate", 0) >= 0.75 and c.get("budget_left", 0) >= 1000
               and folder_name(c.get("name", "")) not in seen and folder_name(c.get("name", "")) not in live]
     enrich.sort(key=lambda c: (-c.get("rate", 0), -c.get("budget_left", 0)))
-    for c in enrich[:8]:
+    for c in enrich[:0]:   # campaign pages are client-rendered: nothing readable, so no fetches (saves ~4 min a run)
         try:
             page = card_from_page(c["link"])
         except Exception:
@@ -247,6 +249,9 @@ def main():
                 c[k] = page[k]
         c["banned_content"] = c.get("banned_content") or page.get("banned_content", False)
         c["text"] = page.get("text", "")[:3000]
+        if not c.get("platforms"):
+            c["platforms"], c["platforms_guessed"] = ["youtube", "tiktok", "instagram"], True
+    for c in cards:
         if not c.get("platforms"):
             c["platforms"], c["platforms_guessed"] = ["youtube", "tiktok", "instagram"], True
     rows, dump = [], []
