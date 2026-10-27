@@ -29,7 +29,7 @@ def fetch(url):
 
 def _money(tok):
     """'$359.3K' -> 359300.0, '$2,000' -> 2000.0"""
-    tok = tok.replace(",", "").replace("$", "").strip().lower()
+    tok = tok.replace(",", "").replace("$", "").replace(" ", "").strip().lower()
     mult = 1000 if tok.endswith("k") else 1_000_000 if tok.endswith("m") else 1
     return float(tok.rstrip("km")) * mult
 
@@ -45,20 +45,23 @@ def cards_from_html(html):
             continue
         text = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " | ", inner)).strip()
         parts = [t.strip() for t in text.split("|") if t.strip()]
-        c = {"host": "Content Rewards", "link": "https://contentrewards.com" + href.split("?")[0]}
-        rate = re.search(r"\$\s?(\d+(?:\.\d+)?)(?:\s*[-\u2013]\s*\$?\d+(?:\.\d+)?)?\s*/\s*1\s*k", text, re.I)
+        flat = re.sub(r"\s+", " ", text.replace("|", " "))        # rate and budget may be split over several tags
+        c = {"host": "Content Rewards", "link": "https://contentrewards.com" + href.split("?")[0], "raw": flat[:160]}
+        rate = re.search(r"\$\s?(\d+(?:\.\d+)?)(?:\s*[-\u2013]\s*\$?\s?\d+(?:\.\d+)?)?\s*/\s*1\s*[kK]", flat)
+        if not rate:
+            rate = re.search(r"\$\s?(\d+(?:\.\d+)?)\s*(?:per|/)\s*(?:1,?000|1\s*k)", flat, re.I)
         if rate:
             c["rate"] = float(rate.group(1))
-        bud = re.search(r"(\$[\d.,]+[kKmM]?)\s*/\s*(\$[\d.,]+[kKmM]?)", text)
-        if bud:
+        bud = re.search(r"(\$\s?[\d.,]+\s?[kKmM]?)\s*/\s*(\$\s?[\d.,]+\s?[kKmM]?)(?!\s*/)", flat)
+        if bud and not re.search(r"/\s*1\s*[kK]", bud.group(0)):
             spent, total = _money(bud.group(1)), _money(bud.group(2))
             c["budget_total"] = total
             c["budget_left"] = max(total - spent, 0.0)
         else:
-            one = re.search(r"\$([\d.,]+[kKmM]?)\b(?!\s*/)", text)
+            one = re.search(r"\$\s?([\d.,]+\s?[kKmM]?)\b(?!\s*/)", flat)
             if one:
                 c["budget_left"] = _money(one.group(1))
-        vw = re.search(r"(\d[\d.,]*)\s*([kKmM])?\s*views?", text, re.I)
+        vw = re.search(r"(\d[\d.,]*)\s*([kKmM])?\s*views?", flat, re.I)
         if vw:
             c["views"] = _money(vw.group(1) + (vw.group(2) or ""))
         words = [p for p in parts if not re.search(r"\$|^\d+[hdw]\b|views?$|ago$", p, re.I)]
@@ -76,6 +79,12 @@ def cards_from_html(html):
         if "rate" in c or "budget_left" in c:
             out.append(c)
             seen.add(uid)
+    best = {}
+    for c in out:
+        k = folder_name(c.get("name", ""))
+        if k not in best or c.get("budget_left", 0) > best[k].get("budget_left", 0):
+            best[k] = c
+    out = list(best.values())
     if out:
         return out
     for blob in re.findall(r"<script[^>]*>(\{.*?\})</script>", html, flags=re.S):
@@ -228,7 +237,7 @@ def main():
         except Exception as e:
             dump.append({"name": c.get("name"), "error": f"{type(e).__name__}: {e}"})
             continue
-        dump.append({k: c.get(k) for k in ("name", "org", "category", "lane", "rate", "budget_left", "budget_total", "views", "clippers", "days_left", "platforms", "pts", "link")}
+        dump.append({k: c.get(k) for k in ("name", "org", "category", "lane", "rate", "budget_left", "budget_total", "views", "clippers", "days_left", "platforms", "pts", "link", "raw")}
                     | {"total": total, "verdict": verdict, "stops": stops})
         if stops or verdict != "JOIN":
             continue
