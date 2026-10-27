@@ -1,0 +1,24 @@
+{
+ "name": "FOLD",
+ "log": [
+  "2026-10-27 03:59 UTC  brief read: 0 rules, 0 links, tags []"
+ ],
+ "brief": {
+  "text": "\ufeffhttps://app.notion.com/p/Fold-Campaign-Rules-3ec0395e47eb814ba757d6b19ca82666",
+  "platforms": [],
+  "tags": [],
+  "links": [],
+  "min_s": 20,
+  "max_s": 60,
+  "rate_per_1k": null,
+  "min_payout": null,
+  "max_per_clip": null,
+  "face_first_s": null,
+  "captions_required": false,
+  "no_ads": false,
+  "assigned_video": false,
+  "rules": []
+ },
+ "critiques_seen": [],
+ "updated": "2026-10-27 03:59 UTC"
+}
