@@ -58,7 +58,7 @@ def shots(source, start, end, min_len=0.6):
     diff = [0.0] + [float(np.abs(small[i] - small[i - 1]).mean()) for i in range(1, len(small))]
     cuts = [0]
     for i in range(1, len(diff)):
-        # threshold 20 (was 35): Solved's cuts between Mark's dark close-up and the wide room shot
+        # threshold 20 (was 35): a podcast's cuts between a dark close-up and the wide room shot
         # only move the picture by 21-33 (2026-10-26); the 2.5x ratio still rules out motion
         # a cut is one big jump between two frames; a sliding overlay is several medium ones in a row
         around = max(diff[max(0, i - 2):i] + diff[i + 1:i + 3] or [0])
@@ -191,7 +191,7 @@ def faces_in(source, start, end):
 
 def _native(source, a, dur):
     """Native-rate frames in [a, a+dur] with their real timestamps: (pts list, 64x36 gray frames).
-    The old code assumed 29.97 fps; Solved is 23.976 fps, and the one-frame error let a frame of
+    The old code assumed 29.97 fps; many podcasts are 23.976 fps, and the one-frame error let a frame of
     the wide shot slip in at a cut (2026-10-26)."""
     r = subprocess.run(["ffmpeg", "-loglevel", "info", "-nostats", "-ss", f"{a:.3f}", "-t", f"{dur:.3f}", "-i", source,
                         "-vf", "scale=64:36,format=gray,showinfo", "-f", "rawvideo", "-"], capture_output=True)

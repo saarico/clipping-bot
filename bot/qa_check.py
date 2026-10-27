@@ -361,7 +361,7 @@ def check_nobody(rep, mp4, details):
             continue
         g = cv2.equalizeHist(cv2.cvtColor(f[TOP // 2:], cv2.COLOR_BGR2GRAY))
         # a person in a single-speaker window is big: the face is 140+ px of the 540 px width. The
-        # empty-room crop of Solved's wide shot gives a steady 104 px false hit on the windows (measured).
+        # empty-room crop of a podcast's wide shot gives a steady 104 px false hit on the windows (measured).
         found = len(front.detectMultiScale(g, 1.1, 6, minSize=(140, 140))) or len(prof.detectMultiScale(g, 1.1, 6, minSize=(140, 140))) \
             or len(prof.detectMultiScale(cv2.flip(g, 1), 1.1, 6, minSize=(140, 140)))
         if not found:
@@ -381,7 +381,7 @@ def check_nobody(rep, mp4, details):
 
 
 def check_picture(rep, mp4, details):
-    # freezedetect noise 0.001 (was 0.003): Solved's static wide two-shot, shown whole on a blurred background,
+    # freezedetect noise 0.001 (was 0.003): a static wide two-shot, shown whole on a blurred background,
     # moves less than 0.3% per frame and was flagged frozen (2026-10-26); a cloned frame still trips 0.001
     log = ff_log(["-i", str(mp4), "-vf", f"crop={W}:{H - TOP}:0:{TOP},blackdetect=d=0.2:pix_th=0.06,freezedetect=n=0.001:d=1.5", "-an"])
     black = re.findall(r"black_start:([\d.]+) black_end:([\d.]+)", log)

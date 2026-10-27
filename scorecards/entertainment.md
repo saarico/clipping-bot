@@ -12,9 +12,9 @@ rico, 2026-10-26: "Are you able to read the entire video and judge and create a 
 4. **Read the top 15 in full** (`candidates.md`), as a stranger. Keep only moments with a stake a normal person feels and a payoff that lands. Write the title first: if no 10-word title makes someone stop, the moment is out.
 5. **Cut, then judge** (scorecards/judgment.md). Only clips over the bar go to rico.
 
-## What makes a Solved moment work (learned 2026-10-26)
-- A real person and a number beat a concept: "Agassi's dad: 2,500 balls a day" beats "shame drives compulsive behaviour".
-- Mark in close-up on the first word; the wide two-shot is for reactions, in a split, never the opener.
+## What makes a podcast moment work (learned 2026-10-26)
+- A real person and a number beat a concept: "his dad made him hit 2,500 balls a day" beats "shame drives compulsive behaviour".
+- The speaker in close-up on the first word; the wide two-shot is for reactions, in a split, never the opener.
 - A card or photo inside the window is worth a lot: the show's own graphic is the b-roll.
 - 35-55 s. Shorter if the payoff is early.
 

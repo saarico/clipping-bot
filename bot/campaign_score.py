@@ -6,7 +6,7 @@ Usage:
 
 card.json (facts Claude gathers; unknown = leave out = 0 points, never a guess):
 {
- "name": "ClipFarm x Solved w/ Mark Manson", "host": "Content Rewards (ClipFarm)", "rate": 1.25,
+ "name": "Example campaign", "host": "Content Rewards", "rate": 1.25,
  "budget_left": 14600, "days_left": 29, "clippers": 412, "platforms": ["instagram", "youtube"],
  "max_per_clip": 300, "min_payout": 1.0, "pay_to_join": false, "application_only": false,
  "audience_rule": "40% US/UK/CA/AU", "audience_ok": true, "banned_content": false, "scandal": false,
