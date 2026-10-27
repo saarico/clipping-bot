@@ -7,17 +7,16 @@ rico's Google Drive as the only place rico has to look. Runs on GitHub every 5 h
 Drive: CLIPPING/
   CAMPAIGNS TO JOIN          bot: scored list with links (financial scorecard, lane balance first)
   CAMPAIGN LINKS             you: paste campaign links here when the scan is blocked
-  <campaign>/
-    0_START/                 you: requirements (pdf/docx/doc) + episode.mp4 if asked     bot: BRIEF
-    1_CHECK/                 bot: max 3 clips + SUMMARY (why these moments, scores, captions)
-    2_REDO/                  you: a Word doc with your critique                           bot: re-picks
-    3_APPROVED/              you: drag the clip here                                      bot: POST KIT
+  0_START/<campaign>/        you: requirements (pdf/docx/doc) + episode.mp4 if asked     bot: BRIEF
+  1_CHECK/<campaign>/        bot: max 3 clips + SUMMARY (why these moments, scores, captions)
+  2_REDO/<campaign>/         you: a Word doc with your critique                           bot: re-picks
+  3_APPROVED/<campaign>/     you: drag the clip here                                      bot: POST KIT
 ```
 
 | Step | Who | Where |
 |---|---|---|
 | Find campaigns | bot | `bot/campaign_scan.py`, `scorecards/financial.md` |
-| Join, download requirements, drop in 0_START | rico | Drive |
+| Join, download requirements, drop in 0_START/<campaign>/ | rico | Drive |
 | Read requirements, pick the video, get the file | bot | `bot/brief.py`, `bot/run.py` (yt-dlp, else asks for the mp4) |
 | Transcribe the whole episode | bot | `bot/transcribe.py` (Whisper on CPU) |
 | Pick max 3 moments | bot / reviewer | `bot/plan.py`, `scorecards/entertainment.md`, `campaigns/<c>/plan.json` |

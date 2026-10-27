@@ -25,7 +25,7 @@ the secret; the old token can be revoked at https://myaccount.google.com/permiss
 
 ## 4. First run
 Actions → **run** → Run workflow. The bot creates `CAMPAIGNS TO JOIN` and `CAMPAIGN LINKS` in your
-CLIPPING folder. For each campaign: make a folder under CLIPPING, drop the requirements in `0_START`.
+CLIPPING folder. For each campaign: make a folder named after the campaign inside `CLIPPING/0_START/` and drop the requirements (and episode.mp4 if assigned) in it.
 
 ## Posting (what is automatic, what is your click)
 - **YouTube Shorts / TikTok / Instagram**: the POST KIT doc in 3_APPROVED has the title, description

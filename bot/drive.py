@@ -125,22 +125,36 @@ def be():
 
 
 def root():
+    """CLIPPING/ with the four numbered stage folders directly under it."""
     be().mkdir(ROOT_NAME)
+    have = {e["Name"] for e in be().ls(ROOT_NAME) if e.get("IsDir")}
+    for s in STAGES:
+        if s not in have:
+            be().mkdir(f"{ROOT_NAME}/{s}")
     return ROOT_NAME
 
 
 def campaigns():
-    """[(name, path)] for every folder directly under CLIPPING."""
-    return [(e["Name"], e["Path"]) for e in be().ls(root()) if e.get("IsDir")]
-
-
-def stages(campaign_path):
-    out = {}
-    have = {e["Name"] for e in be().ls(campaign_path) if e.get("IsDir")}
+    """[(name, name)] for every campaign folder found inside any stage folder.
+    Layout: CLIPPING/<stage>/<campaign>/ (rico makes the campaign folder inside 0_START)."""
+    r = root()
+    names = []
     for s in STAGES:
-        if s not in have:
-            be().mkdir(f"{campaign_path}/{s}")
-        out[s] = f"{campaign_path}/{s}"
+        for e in be().ls(f"{r}/{s}"):
+            if e.get("IsDir") and e["Name"] not in names:
+                names.append(e["Name"])
+    return [(n, n) for n in names]
+
+
+def stages(campaign):
+    """{stage: 'CLIPPING/<stage>/<campaign>'}, creating the campaign folder in each stage if missing."""
+    r = root()
+    out = {}
+    for s in STAGES:
+        have = {e["Name"] for e in be().ls(f"{r}/{s}") if e.get("IsDir")}
+        if campaign not in have:
+            be().mkdir(f"{r}/{s}/{campaign}")
+        out[s] = f"{r}/{s}/{campaign}"
     return out
 
 

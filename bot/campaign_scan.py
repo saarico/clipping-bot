@@ -26,9 +26,50 @@ def fetch(url):
     return r.text
 
 
+def _money(tok):
+    """'$359.3K' -> 359300.0, '$2,000' -> 2000.0"""
+    tok = tok.replace(",", "").replace("$", "").strip().lower()
+    mult = 1000 if tok.endswith("k") else 1_000_000 if tok.endswith("m") else 1
+    return float(tok.rstrip("km")) * mult
+
+
 def cards_from_html(html):
-    """Pull campaign objects out of embedded JSON (Next.js style); empty when the page is not parseable."""
-    out = []
+    """Campaign cards from the Discover page.
+    The page is server-rendered: each card is an <a href="/c/campaigns/<uuid>"> with the org, title,
+    '$spent/$budget' and '$X/1K' as text. Falls back to embedded JSON when present."""
+    out, seen = [], set()
+    for m in re.finditer(r'<a\b[^>]*href="(/c/campaigns/([0-9a-f-]{36})[^"]*)"[^>]*>(.*?)</a>', html, flags=re.S | re.I):
+        href, uid, inner = m.group(1), m.group(2), m.group(3)
+        if uid in seen:
+            continue
+        text = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " | ", inner)).strip()
+        parts = [t.strip() for t in text.split("|") if t.strip()]
+        c = {"host": "Content Rewards", "link": "https://contentrewards.com" + href.split("?")[0]}
+        rate = re.search(r"\$\s?(\d+(?:\.\d+)?)(?:\s*[-\u2013]\s*\$?\d+(?:\.\d+)?)?\s*/\s*1\s*k", text, re.I)
+        if rate:
+            c["rate"] = float(rate.group(1))
+        bud = re.search(r"(\$[\d.,]+[kKmM]?)\s*/\s*(\$[\d.,]+[kKmM]?)", text)
+        if bud:
+            spent, total = _money(bud.group(1)), _money(bud.group(2))
+            c["budget_total"] = total
+            c["budget_left"] = max(total - spent, 0.0)
+        else:
+            one = re.search(r"\$([\d.,]+[kKmM]?)\b(?!\s*/)", text)
+            if one:
+                c["budget_left"] = _money(one.group(1))
+        words = [p for p in parts if not re.search(r"\$|^\d+[hdw]\b|views?$|ago$", p, re.I)]
+        words.sort(key=len, reverse=True)
+        c["name"] = words[0] if words else uid
+        if len(words) > 1:
+            c["org"] = words[1]
+        low = text.lower()
+        c["platforms"] = [p for p in ("youtube", "tiktok", "instagram", "facebook") if p in low]
+        c["banned_content"] = bool(re.search(r"\b(casino|gambling|betting|crypto pump|adult|onlyfans)\b", low))
+        if "rate" in c or "budget_left" in c:
+            out.append(c)
+            seen.add(uid)
+    if out:
+        return out
     for blob in re.findall(r"<script[^>]*>(\{.*?\})</script>", html, flags=re.S):
         try:
             data = json.loads(blob)
@@ -108,7 +149,7 @@ def main():
     if not rows:
         lines.append("Nothing scored this run.")
     lines += ["", "Live campaigns: " + (", ".join(live) or "none"), ""] + notes
-    lines += ["", "To join: click the link, join on the site, download the requirements, and drop them in CLIPPING/<campaign name>/0_START/."]
+    lines += ["", "To join: click the link, join on the site, download the requirements, and make a folder named after the campaign inside CLIPPING/0_START/ and drop them there."]
     drive.write_doc("CAMPAIGNS TO JOIN", "\n".join(lines), rt)
     print("\n".join(lines))
 
