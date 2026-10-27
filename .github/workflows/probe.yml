@@ -6,6 +6,8 @@ on:
       url:
         description: video URL to probe
         required: true
+permissions:
+  contents: write
 jobs:
   probe:
     runs-on: ubuntu-latest
