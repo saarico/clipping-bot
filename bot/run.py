@@ -73,10 +73,25 @@ def get_source(name, st, stage, cdir):
     dest = WORK / name / "episode.mp4"
     if dest.exists():
         return dest
-    vids = drive.files(stage["0_START"], VID_EXT)
-    if vids:
+    vids = sorted(drive.files(stage["0_START"], VID_EXT), key=lambda f: f["Name"])
+    if len(vids) == 1:
         note(st, f"downloading {vids[0]['Name']} from 0_START")
         return drive.download(vids[0]["Path"], dest)
+    if vids:   # several files (brand assets, episode parts): one episode in name order
+        note(st, f"downloading {len(vids)} videos from 0_START and joining them")
+        parts = [drive.download(v["Path"], dest.parent / "parts" / f"{i:02d}.mp4") for i, v in enumerate(vids)]
+        norm = []
+        for i, pth in enumerate(parts):
+            o = dest.parent / "parts" / f"n{i:02d}.mp4"
+            subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(pth), "-vf", "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2,fps=30",
+                            "-r", "30", "-c:v", "libx264", "-preset", "veryfast", "-crf", "18", "-c:a", "aac", "-ar", "48000", "-ac", "2", str(o)], check=False)
+            if o.exists():
+                norm.append(o)
+        lst = dest.parent / "parts" / "list.txt"
+        lst.write_text("".join(f"file '{p}'\n" for p in norm))
+        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", str(lst), "-c", "copy", str(dest)], check=False)
+        if dest.exists():
+            return dest
     links = st.get("brief", {}).get("links", [])
     if links and not st.get("download_failed"):
         note(st, f"trying to download {links[0]} (yt-dlp)")
@@ -110,7 +125,7 @@ def do_campaign(name, cpath):
         # rules often live behind a link (Notion, Google Doc, a brand page): fetch those pages too
         import fetch_page
         fetched = []
-        for url in dict.fromkeys(re.findall(r"https?://[^\s<>\"')\]]+", text)):
+        for url in dict.fromkeys(u.rstrip(".,:;)") for u in re.findall(r"https?://[^\s<>\"')\]]+", text)):
             if re.search(r"youtube\.com|youtu\.be|tiktok\.com|instagram\.com|drive\.google\.com/file|contentrewards\.com", url):
                 continue
             try:

@@ -556,6 +556,8 @@ def build_ass(spec, pieces, layouts):
         if 0 < nxt[0] - c[1] < 0.4:
             c[1] = nxt[0]
     ev += [f"Dialogue: 1,{ts(a)},{ts(b)},Cap,,0,0,0,,{t}" for a, b, t in caps]
+    if spec.get("disclosure"):   # paid-partnership line a brand campaign requires, visible the whole clip
+        ev.append(f"Dialogue: 4,{ts(0)},{ts(total)},Disc,,0,0,0,,{{\\an2\\pos(540,{H - 60})}}{esc(spec['disclosure'])}")
     # callouts (PLAYBOOK 26): our own big text card for a number or a name the speaker says, timed in
     # source seconds like overlays. It is text, like the captions, so it is allowed where outside
     # footage is not. Never over a face: below the chin on single layouts, above the top panel on a split.
@@ -584,6 +586,7 @@ Style: Cap,{CAP_FONT},76,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,0,0,0,0,100
 Style: Hook,{TITLE_FONT},62,&H00FFFFFF,&H00FFFFFF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,0,0,5,50,50,0,1
 Style: Label,{TITLE_FONT},44,&H00000000,&H00000000,&H0000D7FF,&H0000D7FF,0,0,0,0,100,100,2,0,3,12,0,8,80,80,0,1
 Style: Callout,{TITLE_FONT},96,&H0000D7FF,&H0000D7FF,&H00000000,&H00000000,1,0,0,0,100,100,0,0,3,16,0,5,60,60,0,1
+Style: Disc,{CAP_FONT},34,&H00FFFFFF,&H00FFFFFF,&H00000000,&H90000000,0,0,0,0,100,100,0,0,3,10,0,2,40,40,0,1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text

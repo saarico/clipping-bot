@@ -38,6 +38,8 @@ def parse(text):
     if m:
         b["face_first_s"] = int(m.group(1))
     b["captions_required"] = bool(re.search(r"\b(subtitles?|captions?)\b", low))
+    m = re.search(r"disclosure[^\"\u201c\n]{0,60}[\"\u201c]([^\"\u201d\n]{8,160})[\"\u201d]", text, re.I)
+    b["disclosure"] = m.group(1).strip() if m else ""
     b["no_ads"] = bool(re.search(r"\b(no|without|exclude|skip)\b[^.\n]{0,30}\b(ad reads?|ads|sponsor)", low))
     b["assigned_video"] = bool(b["links"]) and not re.search(r"\b(any|all) (of (his|her|their) )?(videos?|episodes?|content)\b", low)
     # every line that reads like a rule is kept as one

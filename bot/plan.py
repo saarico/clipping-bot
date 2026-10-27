@@ -48,6 +48,7 @@ def auto_specs(words_path, gfx_path, source, brief, campaign, out_dir, used=()):
             "parts": [[c["start"], c["end"]]], "hook": hook_text(c), "emphasis": emph,
             "focus": [], "overlays": [], "callouts": [], "sfx": False,
             "wide_split": [[0.25, 0.40, 0.06], [0.75, 0.40, 0.06]],   # generic two-shot seats; the reviewer's plan.json overrides
+            "disclosure": brief.get("disclosure", ""),
             "out": str(Path(out_dir) / f"{slug(c['hook'])}.mp4"),
             "_why": f"score {c['score']}: " + ", ".join(f"{k} {v}" for k, v in c["reasons"].items() if v),
         })
@@ -92,5 +93,6 @@ def load(campaign_dir, words_path, gfx_path, source, brief, campaign, out_dir, u
             s.setdefault("campaign", campaign); s.setdefault("source", str(source)); s.setdefault("words", str(words_path))
             s.setdefault("out", str(Path(out_dir) / f"{slug(s.get('hook', 'clip'))}.mp4"))
             s.setdefault("_why", p.get("why", "reviewer's plan"))
+            s.setdefault("disclosure", brief.get("disclosure", ""))
         return specs, "plan.json (reviewer)"
     return auto_specs(words_path, gfx_path, source, brief, campaign, out_dir, used=used), "entertainment scorecard (auto)"
