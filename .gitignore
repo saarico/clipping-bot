@@ -7,6 +7,5 @@ client_secret.json
 *.wav
 *.png
 *.jpg
-/campaigns/*/words.json
 /campaigns/*/critiques/*.docx
 /campaigns/test-manson/

@@ -33,7 +33,7 @@ def sh(args, log=None, timeout=3600):
 
 def qa_verdict(folder):
     rep = (Path(folder) / "qa_report.md").read_text() if (Path(folder) / "qa_report.md").exists() else ""
-    fails = [l for l in rep.splitlines() if "FAIL" in l and not l.lower().startswith("result")]
+    fails = [l.strip() for l in rep.splitlines() if re.match(r"^\|[^|]+\|\s*FAIL\s*\|", l)]   # table rows only
     return ("PASS" if not fails and "PASS" in rep else "FAIL"), fails[:6]
 
 
@@ -45,7 +45,7 @@ def judge_score(folder):
     return int(m.group(1)) if m else 0
 
 
-def run(work, source, brief, words=None, campaign="campaign", log=print):
+def run(work, source, brief, words=None, campaign="campaign", log=print, used=(), plan_dir=None):
     work, source = Path(work), Path(source)
     work.mkdir(parents=True, exist_ok=True)
     t0 = time.time()
@@ -58,7 +58,7 @@ def run(work, source, brief, words=None, campaign="campaign", log=print):
     gfx = work / "gfx.json"
     if not gfx.exists():
         sh([PY, str(HERE / "graphics_map.py"), str(source), str(gfx)], work / "gfx.log")
-    specs, origin = planner.load(work, words, gfx if gfx.exists() else None, source, brief, campaign, work / "renders")
+    specs, origin = planner.load(plan_dir or work, words, gfx if gfx.exists() else None, source, brief, campaign, work / "renders", used=used)
     (work / "renders").mkdir(exist_ok=True)
     kept, tried, notes = [], 0, [f"moments from: {origin}"]
     for spec in specs:
@@ -86,7 +86,7 @@ def run(work, source, brief, words=None, campaign="campaign", log=print):
         dur = sum(b - a for a, b in json.loads((folder / "cut_details.json").read_text()).get("cuts", [[0, 0]]))
         line = f"{folder.name}: {dur:.0f}s  qa {qa}  judge {js}  hook: {spec['hook']}  [{why}]"
         if qa == "PASS" and js >= JUDGE_BAR:
-            kept.append({"folder": str(folder), "mp4": str(folder / f"{folder.name}.mp4"), "hook": spec["hook"],
+            kept.append({"folder": str(folder), "mp4": str(folder / f"{folder.name}.mp4"), "hook": spec["hook"], "parts": spec.get("parts", []),
                          "judge": js, "dur": round(dur, 1), "why": why, "captions": (folder / "captions.txt").read_text()})
             notes.append("KEPT  " + line)
         else:

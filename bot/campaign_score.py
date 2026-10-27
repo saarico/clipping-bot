@@ -1,4 +1,4 @@
-"""Score a clipping campaign against SYSTEM/DOCS/CAMPAIGN_SELECTION.md. Prints the ranking and writes
+"""Score a clipping campaign against scorecards/financial.md. Prints the ranking and writes
 ranking.json next to the cards (the board reads it).
 
 Usage:

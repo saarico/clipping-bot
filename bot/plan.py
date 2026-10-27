@@ -47,6 +47,7 @@ def auto_specs(words_path, gfx_path, source, brief, campaign, out_dir, used=()):
             "campaign": campaign, "source": str(source), "words": str(words_path),
             "parts": [[c["start"], c["end"]]], "hook": hook_text(c), "emphasis": emph,
             "focus": [], "overlays": [], "callouts": [], "sfx": False,
+            "wide_split": [[0.25, 0.40, 0.06], [0.75, 0.40, 0.06]],   # generic two-shot seats; the reviewer's plan.json overrides
             "out": str(Path(out_dir) / f"{slug(c['hook'])}.mp4"),
             "_why": f"score {c['score']}: " + ", ".join(f"{k} {v}" for k, v in c["reasons"].items() if v),
         })
@@ -82,7 +83,7 @@ def fm_candidates(words_path, gfx_path, brief):
     return picked
 
 
-def load(campaign_dir, words_path, gfx_path, source, brief, campaign, out_dir):
+def load(campaign_dir, words_path, gfx_path, source, brief, campaign, out_dir, used=()):
     plan = Path(campaign_dir) / "plan.json"
     if plan.exists():
         p = json.loads(plan.read_text())
@@ -92,4 +93,4 @@ def load(campaign_dir, words_path, gfx_path, source, brief, campaign, out_dir):
             s.setdefault("out", str(Path(out_dir) / f"{slug(s.get('hook', 'clip'))}.mp4"))
             s.setdefault("_why", p.get("why", "reviewer's plan"))
         return specs, "plan.json (reviewer)"
-    return auto_specs(words_path, gfx_path, source, brief, campaign, out_dir), "entertainment scorecard (auto)"
+    return auto_specs(words_path, gfx_path, source, brief, campaign, out_dir, used=used), "entertainment scorecard (auto)"

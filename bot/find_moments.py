@@ -16,7 +16,7 @@ What scores (a normal scroller's view, not a marketer's):
   pace       2.2-3.3 words per second; long pauses and filler words cost points
   visuals    the show has a card, photo or strip on screen inside the window (graphics_map.py)
 The result is a shortlist to READ, not a verdict: Claude reads the top candidates in full and the
-judge (JUDGE.md) grades the finished cut.
+judge (scorecards/judgment.md) grades the finished cut.
 """
 import json
 import re

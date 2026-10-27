@@ -41,4 +41,4 @@ With a new YouTube account: 15k views × 0.6 counted × $1.25 / 1000 × 0.9 = **
 ## 5. After joining
 - Copy the MAIN campaign page's rules into requirements.md and tags.json the same day (PLAYBOOK 19).
 - First 2 clips are a test: if the first 72 h fall under half of our lane median, stop and move on. The campaign card's budget bar tells you how fast others are eating it.
-- Log everything in SYSTEM/DATA/campaigns.csv (rate, budget at join, ends, status). Weekly: rank campaigns by net $ per hour and drop the worst (AUDIT.md section 4).
+- The scan logs every offered campaign in data/scan_seen.json. Weekly: rank campaigns by net $ per hour and drop the worst.

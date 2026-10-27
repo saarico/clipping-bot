@@ -157,7 +157,9 @@ def do_campaign(name, cpath):
         note(st, "transcribing the whole episode")
     used = [(c["start"], c["end"]) for c in st.get("used_moments", [])]
     t0 = time.time()
-    kept, summary = pipeline.run(WORK / name, src, st["brief"], words if words.exists() else None, campaign=name, log=log)
+    kept, summary = pipeline.run(WORK / name, src, st["brief"], words if words.exists() else None, campaign=name, log=log,
+                                 used=used, plan_dir=cdir)   # cdir holds the reviewer's plan.json; used = moments rico already saw
+    st["used_moments"] = (st.get("used_moments", []) + [{"start": p[0], "end": p[1], "hook": c["hook"]} for c in kept for p in c.get("parts", [])])[-30:]
     if (WORK / name / "words.json").exists() and not words.exists():
         (WORK / name / "words.json").replace(words)
     for k, c in enumerate(kept, 1):

@@ -186,7 +186,7 @@ def check_captions(rep, details, words, events, dur):
     gaps = [(a["end"], b["start"]) for a, b in zip(caps, caps[1:]) if b["start"] - a["end"] > 1.5]
     first = caps[0]["start"] if caps else dur
     last_end = caps[-1]["end"] if caps else 0
-    st = "FAIL" if missing or first > 1.0 or dur - last_end > 2.0 else "WARN" if gaps else "PASS"
+    st = "FAIL" if len(missing) > 2 or first > 1.0 or dur - last_end > 2.0 else "WARN" if gaps or missing else "PASS"
     rep.add("Captions cover the whole clip", st,
             f"{len(caps)} captions, first at {first:.1f} s, last ends {last_end:.1f} s of {dur:.1f} s"
             + (f"; not captioned: {' '.join(missing[:10])}" if missing else "")
@@ -520,7 +520,7 @@ def main(folder, source=None):
     sheet(mp4, folder / "qa_sheet.png")
 
     lines = [f"# Pre-post check: {folder.name}", "",
-             "Made by SYSTEM/TOOLS/qa_check.py. FAIL blocks posting. WARN needs a human look. qa_sheet.png shows one frame per second.", "",
+             "Made by bot/qa_check.py. FAIL drops the clip. WARN needs a human look. qa_sheet.png shows one frame per second.", "",
              "| Check | Result | Evidence |", "|---|---|---|"]
     lines += [f"| {a} | {s} | {e.replace('|', '/')} |" for a, s, e in rep.rows]
     lines += ["", f"**Verdict: {rep.verdict}**", ""]

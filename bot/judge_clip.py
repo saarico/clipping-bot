@@ -1,11 +1,11 @@
 """The judge, part 1 of 2: measure a finished clip the way a scroller feels it, before rico sees it
-(PLAYBOOK 27, DOCS/JUDGE.md).
+(RULES.md 27, scorecards/judgment.md).
 
 Usage:
   python3 judge_clip.py <clip folder>        # writes <clip folder>/judge_report.md (machine half)
 
 Part 2 is a separate Claude agent that has NOT seen the editing: it reads captions.txt and this
-report, looks at qa_sheet.png, scores the rubric in JUDGE.md and appends its verdict to the same
+report, looks at qa_sheet.png, scores the rubric in scorecards/judgment.md and appends its verdict to the same
 file. Under 75 overall = re-cut, not sent.
 
 Machine measures (0-100):
@@ -140,7 +140,7 @@ def main(folder):
     rep["length"] = 10 if 30 <= dur <= 55 else 6 if 20 <= dur <= 60 else 0
     total = sum(rep.values())
     out = [f"# Judge report: {folder.name}", "",
-           "Part 1, measured by SYSTEM/TOOLS/judge_clip.py. Part 2 (below) is the judge agent's blind read (DOCS/JUDGE.md).", "",
+           "Part 1, measured by bot/judge_clip.py. Part 2 (below) is the judge agent's blind read (scorecards/judgment.md).", "",
            "| Area | Points | Notes |", "|---|---|---|"]
     maxes = {"hook": 20, "pace": 15, "variety": 20, "framing": 15, "story": 20, "length": 10}
     for k, v in rep.items():
