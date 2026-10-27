@@ -5,6 +5,7 @@ the bot scores whatever links rico pasted into the "CAMPAIGN LINKS" doc instead.
 financial scorecard (campaign_score.py); the pick favours the lane with the fewest live campaigns,
 not the highest rate (rico, 2026-10-27).
 """
+import html
 import json
 import re
 from datetime import datetime, timezone
@@ -25,6 +26,9 @@ def fetch(url):
     r = requests.get(url, headers=UA, timeout=30)
     r.raise_for_status()
     return r.text
+
+
+BANNED = r"\b(casino|gambling|betting|sportsbook|crypto pump|adult|onlyfans|fansly|sinparty|nsfw|18\+|porn|xxx|escort|sugar daddy|vape|nicotine|kratom)\b"
 
 
 def _money(tok):
@@ -64,7 +68,11 @@ def cards_from_html(html):
         vw = re.search(r"(\d[\d.,]*)\s*([kKmM])?\s*views?", flat, re.I)
         if vw:
             c["views"] = _money(vw.group(1) + (vw.group(2) or ""))
-        words = [p for p in parts if not re.search(r"\$|^\d+[hdw]\b|views?$|ago$", p, re.I)]
+        cl = re.search(r"\$\s?[\d.,]+\s?[kKmM]?\s*/\s*\$\s?[\d.,]+\s?[kKmM]?\s+(\d[\d,]*)\s+\$", flat)
+        if cl:
+            c["clippers"] = int(cl.group(1).replace(",", ""))
+        parts = [html.unescape(p) for p in parts]
+        words = [p for p in parts if not re.search(r"\$|^\d+[hdw]\b|^\d+\s*(mo|w|d|h)$|^\d[\d,]*$|views?$|ago$", p, re.I)]
         cats = [p for p in words if p.lower() in CATEGORIES]
         if cats:
             c["category"] = cats[0]
@@ -75,7 +83,7 @@ def cards_from_html(html):
             c["org"] = words[1]
         low = text.lower()
         c["platforms"] = [p for p in ("youtube", "tiktok", "instagram", "facebook") if p in low]
-        c["banned_content"] = bool(re.search(r"\b(casino|gambling|betting|crypto pump|adult|onlyfans)\b", low))
+        c["banned_content"] = bool(re.search(BANNED, low))
         if "rate" in c or "budget_left" in c:
             out.append(c)
             seen.add(uid)
@@ -118,7 +126,7 @@ def card_from_page(url):
     if m: c["clippers"] = int(m.group(1).replace(",", ""))
     c["platforms"] = [p for p in ("youtube", "tiktok", "instagram", "facebook") if p in low.lower()]
     c["pay_to_join"] = bool(re.search(r"pay to join|entry fee", low, re.I))
-    c["banned_content"] = bool(re.search(r"\b(casino|gambling|betting|crypto pump|adult|onlyfans)\b", low, re.I))
+    c["banned_content"] = bool(re.search(BANNED, low, re.I))
     c["text"] = re.sub(r"\s+", " ", low)[:3000]
     return c
 
@@ -138,12 +146,14 @@ CATEGORIES = {"finance", "business", "entertainment", "technology", "apps", "lif
               "beauty", "fashion", "comedy", "podcast", "health", "fitness", "crypto", "news", "reality", "food", "travel", "art", "other"}
 TOPIC = {  # rico's lanes: lane = what the content is about
     "A": r"\b(finance|financial|business|money|invest|investing|stocks?|trading|entrepreneur|startup|marketing|sales|real estate|wealth|millionaire|economy|bank|sofi|credit|crypto|bitcoin|side hustle|ecom|dropship|saas|career)\b",
-    "C": r"\b(gaming|game|games|roblox|minecraft|fortnite|esports|streamer|stream|twitch|kick|music|concert|rap|hip hop|artist|album|sports?|football|soccer|nba|ufc|boxing|cars?|tech|technology|gadget|anime|comedy|funny|prank|motivation|podcast|clips?)\b",
+    "C": r"\b(gaming|game|games|gamer|roblox|minecraft|fortnite|call of duty|warfare|warzone|gta|valorant|xbox|playstation|nintendo|speedrun|esports|streamer|streaming|twitch|kick|music|concert|rap|hip hop|artist|album|sports?|football|soccer|nba|nfl|ufc|mma|boxing|wwe|f1|racing|cars?|tech|technology|gadget|anime|comedy|funny|prank|highlights|metaverse|gym|bodybuilding)\b",
     "B": r"\b(beauty|makeup|skincare|fashion|outfit|celebrity|celebrities|drama|gossip|reality|dating|relationship|love|girls?|women|influencer|kardashian|pop|lifestyle|wellness|self care|glow|aesthetic|bridgerton|tea)\b",
 }
 BORING = r"\b(ugc|split[- ]screen|app|apps|software|download|sign[- ]?up|referral|use my link|promo code|promo|discount|extension|wallet|casino|betting)\b"
 FUN = r"\b(podcast|interview|episode|show|story|stories|clips?|stream|streamer|concert|live|reaction|comedy|funny|drama|celebrity|reality)\b"
 LANE_PLATFORM = {"A": "youtube", "B": "instagram", "C": "tiktok"}
+CAT_LANE = {"finance": "A", "business": "A", "crypto": "A", "education": "A", "technology": "C", "gaming": "C", "entertainment": "C", "sports": "C",
+            "music": "C", "comedy": "C", "podcast": "C", "lifestyle": "B", "beauty": "B", "fashion": "B", "reality": "B", "health": "B", "fitness": "C"}
 
 
 def content_fit(c):
@@ -158,10 +168,14 @@ def content_fit(c):
             lane, topic = l, 10 if hits[l] >= 2 else 7
             break
     if lane is None:
-        for l in ("A", "C", "B"):
-            if LANE_PLATFORM[l] in plats:
-                lane, topic = l, 3   # platform fits, topic unclear
-                break
+        cat = CAT_LANE.get(c.get("category", "").lower())
+        if cat and LANE_PLATFORM[cat] in plats:
+            lane, topic = cat, 5   # lane from the card's category
+        elif not c.get("platforms_guessed"):
+            for l in ("C", "B", "A"):
+                if LANE_PLATFORM[l] in plats:
+                    lane, topic = l, 2   # platform fits, topic unclear
+                    break
     fun = 0
     fun += min(8, 4 * len(re.findall(FUN, blob)))
     fun += 4 if (c.get("category", "").lower() in ("entertainment", "comedy", "sports", "gaming", "music", "podcast", "reality")) else 0
@@ -190,7 +204,7 @@ def auto_score(c):
     guess = 3 if c.get("platforms_guessed") else 0
     c["pts"] = {"pay+budget": a, "rules": e, "traction": tr, "competition": comp, "time": fresh, "lane fit": topic, "entertainment": fun, "platform guessed": -guess}
     total = a + e + tr + comp + fresh + topic + fun - guess   # max 100
-    verdict = "STOP" if stops else "JOIN" if total >= 65 else "MAYBE" if total >= 50 else "SKIP"
+    verdict = "STOP" if stops else "JOIN" if total >= 60 else "MAYBE" if total >= 50 else "SKIP"
     return total, verdict, stops
 
 
@@ -239,9 +253,9 @@ def main():
             continue
         dump.append({k: c.get(k) for k in ("name", "org", "category", "lane", "rate", "budget_left", "budget_total", "views", "clippers", "days_left", "platforms", "pts", "link", "raw")}
                     | {"total": total, "verdict": verdict, "stops": stops})
-        if stops or verdict != "JOIN":
+        if stops or c["lane"] == "?" or total < 55:
             continue
-        rows.append((c, total, verdict))
+        rows.append((c, total, verdict if verdict == "JOIN" else "MAYBE, best in its lane"))
     dump.sort(key=lambda d: -d.get("total", 0))
     (SEEN.parent / "scan_cards.json").write_text(json.dumps(dump, indent=1))
     # diversify: lanes with no live campaign first, then score; one new campaign per lane per run
@@ -258,7 +272,8 @@ def main():
             "",
             f"Link: {c['link']}",
             f"Pay: ${c.get('rate', '?')} per 1k views   Budget left: ${c.get('budget_left', '?'):,.0f}" if isinstance(c.get("budget_left"), float) else f"Pay: ${c.get('rate', '?')} per 1k views",
-            f"Lane: {c['lane']}   Score: {tot}/100 ({verdict})",
+            f"Lane: {c['lane']} ({ {'A': 'YouTube business/money', 'B': 'Instagram girly/drama', 'C': 'TikTok entertainment'}[c['lane']] })   Score: {tot}/100 ({verdict})",
+            "Points: " + ", ".join(f"{k} {v}" for k, v in c.get("pts", {}).items() if v),
             "",
             "1. Open the link and join the campaign.",
             "2. Download the requirements and drop them in this folder.",
