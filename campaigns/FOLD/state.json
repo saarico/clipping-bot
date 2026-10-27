@@ -1,0 +1,41 @@
+{
+ "name": "FOLD",
+ "log": [
+  "2026-10-27 04:15 UTC  rules page https://app.notion.com/p/Fold-Campaign-Rules-3ec0395e47eb814ba757d6b19ca82666: 2991 chars",
+  "2026-10-27 04:15 UTC  rules page https://app.notion.com/p/Fold-Campaign-Rules-3ec0395e47eb814ba757d6b19ca82666:: 351 chars",
+  "2026-10-27 04:16 UTC  rules page https://app.notion.com/p/Fold-Campaign-Rules-3ec0395e4: 351 chars",
+  "2026-10-27 04:16 UTC  brief read: 9 rules, 0 links, tags []"
+ ],
+ "brief": {
+  "text": "\ufeff=== https://app.notion.com/p/Fold-Campaign-Rules-3ec0395e47eb814ba757d6b19ca82666 ===\n(could not render https://app.notion.com/p/Fold-Campaign-Rules-3ec0395e47eb814ba757d6b19ca82666: TimeoutError: Page.goto: Timeout 60000ms exceeded.\nCall log:\n  - navigating to \"https://app.notion.com/p/Fold-Campaign-Rules-3ec0395e4)\n\n\ufeffhttps://app.notion.com/p/Fold-Campaign-Rules-3ec0395e47eb814ba757d6b19ca82666\n\n=== https://app.notion.com/p/Fold-Campaign-Rules-3ec0395e47eb814ba757d6b19ca82666 ===\nSkip to content\nYou\u2019re almost there \u2014 sign up to start building in Notion today.\nSign up or login\nFold Campaign Rules\nFold  Campaign Rules\nEmpty\nCreated time\nOctober 1, 2026  \nThe goal\nEmpty\n Campaign Info\nFold is a Bitcoin rewards company focused on making Bitcoin part of everyday life.\nThe campaign is focused on general Fold awareness, everyday spending, bitcoin rewards, debit card usage, and merchant gift cards ahead of the Reserve launch.\nContent should feel native to social media, entertaining before promotional, simple, relatable, and creator-led.\n Requirements\nRULES\nPlatforms: TikTok, Instagram Reels, YouTube Shorts, and X\nRequired audience: United States (USA)\nEvery clip must clearly connect back to Fold\nKeep Fold as the clear subject of the content\nUse the latest approved Fold disclosure guidance\nRequired paid disclosure: \"Sponsored by Fold. I was compensated to share this.\"\nMake the disclosure visible and readable\nUse approved Fold footage/assets as the base when clipping source material\nKeep all important product context and qualifiers intact\nDo not make unsupported claims about Fold or its products\nReserve content is separate and must follow the separate approved Reserve brief and disclosure rules\nHIGH PRIORITY FORMAT\nHook in the first 1\u20133 seconds\nTrending, native pacing and native audio when appropriate\nOpen on a relatable everyday moment, strong reaction, question, or interesting statement\nMake the content entertaining before promotional\nThe viewer should understand the Fold connection quickly\nLet the creator's personality carry the content\nDo not make clips feel like traditional finance advertisements\nOVERALL CONTENT STYLE\nReal, native creator content\nPOV and first-person angles\nMeme and comedy formats when they fit\nEveryday spending and lifestyle content\nSimple Bitcoin education\nPersonal finance conversations\nBitcoin-native commentary for crypto audiences\nStrong storytelling\nAuthentic opinions and reactions\nQuality over quantity\nCONTENT ANGLES\nPOINTS VS BITCOIN\nCompare the experience of traditional rewards with Bitcoin rewards\nPOVs, memes, reactions, and commentary are encouraged\nKeep comparisons general\nDo not directly attack specific competitors\nDo not make claims about future Bitcoin value\nDon't say or imply that Bitcoin rewards are worth more than points or cash back, or that they will grow in value\nEVERYDAY SPENDING\nShow Fold fitting naturally into purchases people already make\nCoffee, food, shopping, gas, and everyday expenses\nShow how Fold can make normal spending more rewarding\nKeep the value simple and easy to understand\nBITCOIN MADE SIMPLE\nMake Bitcoin approachable for people who are curious but not crypto experts\nKeep explanations simple\nAvoid technical explanations\nFocus on making Bitcoin feel accessible and part of everyday life\nBITCOIN / STACKING SATS\nBitcoin creators\nCrypto creators\nFinance creators\nBitcoin communities on X\nMore Bitcoin-native language is appropriate for audiences that already understand it\n\n=== https://app.notion.com/p/Fold-Campaign-Rules-3ec0395e47eb814ba757d6b19ca82666: ===\nSkip to content\nYour AI workspace.\nLog in to your Notion account\nEmail\nUse an organization email to easily collaborate with teammates\nContinue\nor continue with\nGoogle\nChatGPT\nApple\nMicrosoft\nPasskey\nSSO\nNew user? Sign up\n\nBy continuing, you acknowledge that you understand and agree to the Terms & Conditions and Privacy Policy\n\nLanguage: English (US)\n\n=== https://app.notion.com/p/Fold-Campaign-Rules-3ec0395e4 ===\nSkip to content\nYour AI workspace.\nLog in to your Notion account\nEmail\nUse an organization email to easily collaborate with teammates\nContinue\nor continue with\nGoogle\nChatGPT\nApple\nMicrosoft\nPasskey\nSSO\nNew user? Sign up\n\nBy continuing, you acknowledge that you understand and agree to the Terms & Conditions and Privacy Policy\n\nLanguage: English (US)",
+  "platforms": [
+   "youtube",
+   "tiktok",
+   "instagram"
+  ],
+  "tags": [],
+  "links": [],
+  "min_s": 20,
+  "max_s": 60,
+  "rate_per_1k": null,
+  "min_payout": null,
+  "max_per_clip": null,
+  "face_first_s": null,
+  "captions_required": false,
+  "no_ads": false,
+  "assigned_video": false,
+  "rules": [
+   "Required audience: United States (USA)",
+   "Every clip must clearly connect back to Fold",
+   "Required paid disclosure: \"Sponsored by Fold. I was compensated to share this.\"",
+   "Do not make unsupported claims about Fold or its products",
+   "Reserve content is separate and must follow the separate approved Reserve brief and disclosure rules",
+   "Do not make clips feel like traditional finance advertisements",
+   "Do not directly attack specific competitors",
+   "Do not make claims about future Bitcoin value",
+   "Don't say or imply that Bitcoin rewards are worth more than points or cash back, or that they will grow in value"
+  ]
+ },
+ "critiques_seen": [],
+ "updated": "2026-10-27 04:16 UTC"
+}
