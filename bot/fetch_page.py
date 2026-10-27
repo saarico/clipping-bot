@@ -38,19 +38,31 @@ const { chromium } = require('playwright');
             return r.stdout.strip()
     except Exception:
         pass
-    try:  # python playwright
+    try:  # python playwright: Notion keeps sockets open, so never wait for "networkidle"
         from playwright.sync_api import sync_playwright
         with sync_playwright() as pw:
             b = pw.chromium.launch()
-            p = b.new_page(viewport={"width": 1280, "height": 2000})
-            p.goto(url, wait_until="networkidle", timeout=60000)
-            p.wait_for_timeout(5000)
+            p = b.new_page(viewport={"width": 1280, "height": 2400}, user_agent=UA["User-Agent"])
+            p.goto(url, wait_until="domcontentloaded", timeout=45000)
+            best = ""
+            for _ in range(12):                      # up to ~30 s: wait until the text stops growing
+                p.wait_for_timeout(2500)
+                try:
+                    t = p.evaluate("() => document.body.innerText") or ""
+                except Exception:
+                    t = ""
+                if len(t) > len(best):
+                    best = t
+                elif len(best) > 400:
+                    break
             for _ in range(6):
-                p.mouse.wheel(0, 2000)
-                p.wait_for_timeout(500)
-            text = p.evaluate("() => document.body.innerText")
+                p.mouse.wheel(0, 2500)
+                p.wait_for_timeout(600)
+            t = p.evaluate("() => document.body.innerText") or ""
+            if len(t) > len(best):
+                best = t
             b.close()
-            return text.strip()
+            return best.strip()
     except Exception as e:
         return f"(could not render {url}: {type(e).__name__}: {str(e)[:120]})"
 
@@ -87,6 +99,11 @@ def fetch_text(url):
         t = notion_text(url)
         if len(t) > 200:
             return t
+        for u in (url, "https://www.notion.so/" + (re.search(r"([0-9a-f]{32})", url.replace("-", "")) or [None, ""])[1]):
+            r = render(u)
+            if len(r) > 300 and "JavaScript must be enabled" not in r:
+                return r
+        return r
     if "docs.google.com/document" in url:
         url = re.sub(r"/edit.*$", "/export?format=txt", url)
     try:
