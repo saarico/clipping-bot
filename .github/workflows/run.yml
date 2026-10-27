@@ -35,7 +35,8 @@ jobs:
           path: ~/.cache/ms-playwright
           key: playwright-chromium-v1
       - name: browser
-        run: python -m playwright install --with-deps chromium >/dev/null 2>&1 || python -m playwright install chromium
+        run: |
+          (python -m playwright install --with-deps chromium || python -m playwright install chromium) 2>&1 | tail -n 5 | tee data/setup.log
       - name: whisper model cache
         uses: actions/cache@v4
         with:

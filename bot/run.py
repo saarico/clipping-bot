@@ -113,10 +113,13 @@ def do_campaign(name, cpath):
         for url in dict.fromkeys(re.findall(r"https?://[^\s<>\"')\]]+", text)):
             if re.search(r"youtube\.com|youtu\.be|tiktok\.com|instagram\.com|drive\.google\.com/file|contentrewards\.com", url):
                 continue
-            page = fetch_page.fetch_text(url.rstrip(".,"))
+            try:
+                page = fetch_page.fetch_text(url.rstrip(".,"))
+            except Exception as e:
+                page = f"({type(e).__name__}: {str(e)[:120]})"
+            note(st, f"rules page {url}: {len(page)} chars" + ("" if len(page) > 200 else f" -> {page[:160]}"))
             if page and len(page) > 200:
                 fetched.append(f"=== {url} ===\n{page[:20000]}")
-                note(st, f"rules fetched from {url} ({len(page)} chars)")
         if fetched:
             text += "\n\n" + "\n\n".join(fetched)
             drive.write_doc("RULES (fetched by the bot)", "\n\n".join(fetched)[:60000], stage["0_START"])

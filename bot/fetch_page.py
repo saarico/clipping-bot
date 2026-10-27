@@ -33,8 +33,9 @@ const { chromium } = require('playwright');
 })();
 """
     try:
-        r = subprocess.run(["node", "-e", js, "--", url], capture_output=True, text=True, timeout=timeout)
-        return r.stdout.strip()
+        r = subprocess.run(["node", "-e", js, url], capture_output=True, text=True, timeout=timeout)
+        if r.stdout.strip():
+            return r.stdout.strip()
     except Exception:
         pass
     try:  # python playwright
@@ -54,7 +55,38 @@ const { chromium } = require('playwright');
         return f"(could not render {url}: {type(e).__name__}: {str(e)[:120]})"
 
 
+def notion_text(url):
+    """Public Notion page via the loadPageChunk API (no browser needed). '' when not readable."""
+    m = re.search(r"([0-9a-f]{32})", url.replace("-", ""))
+    if not m:
+        return ""
+    h = m.group(1)
+    pid = f"{h[:8]}-{h[8:12]}-{h[12:16]}-{h[16:20]}-{h[20:]}"
+    body = {"pageId": pid, "limit": 200, "cursor": {"stack": []}, "chunkNumber": 0, "verticalColumns": False}
+    lines = []
+    try:
+        for host in ("https://www.notion.so", "https://app.notion.com"):
+            r = requests.post(f"{host}/api/v3/loadPageChunk", json=body, headers={**UA, "Content-Type": "application/json"}, timeout=30)
+            if r.status_code != 200:
+                continue
+            blocks = r.json().get("recordMap", {}).get("block", {})
+            for b in blocks.values():
+                v = b.get("value", {})
+                title = v.get("properties", {}).get("title")
+                if title:
+                    lines.append("".join(t[0] for t in title if isinstance(t, list) and t))
+            if lines:
+                break
+    except Exception as e:
+        return f"(notion api: {type(e).__name__}: {str(e)[:100]})"
+    return "\n".join(lines)
+
+
 def fetch_text(url):
+    if "notion" in url:
+        t = notion_text(url)
+        if len(t) > 200:
+            return t
     if "docs.google.com/document" in url:
         url = re.sub(r"/edit.*$", "/export?format=txt", url)
     try:
@@ -65,7 +97,7 @@ def fetch_text(url):
     text = plain(html) if html else ""
     if not html or SHELL.search(html) or len(text) < 300:
         rendered = render(url)
-        if len(rendered) > len(text):
+        if len(rendered) > len(text) or not text:
             text = rendered
     return text
 
