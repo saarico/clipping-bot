@@ -146,7 +146,7 @@ CATEGORIES = {"finance", "business", "entertainment", "technology", "apps", "lif
               "beauty", "fashion", "comedy", "podcast", "health", "fitness", "crypto", "news", "reality", "food", "travel", "art", "other"}
 TOPIC = {  # rico's lanes: lane = what the content is about
     "A": r"\b(finance|financial|business|money|invest|investing|stocks?|trading|entrepreneur|startup|marketing|sales|real estate|wealth|millionaire|economy|bank|sofi|credit|crypto|bitcoin|side hustle|ecom|dropship|saas|career)\b",
-    "C": r"\b(gaming|game|games|gamer|roblox|minecraft|fortnite|call of duty|warfare|warzone|gta|valorant|xbox|playstation|nintendo|speedrun|esports|streamer|streaming|twitch|kick|music|concert|rap|hip hop|artist|album|sports?|football|soccer|nba|nfl|ufc|mma|boxing|wwe|f1|racing|cars?|tech|technology|gadget|anime|comedy|funny|prank|highlights|metaverse|gym|bodybuilding)\b",
+    "C": r"\b(gaming|game|games|gamer|roblox|minecraft|fortnite|call of duty|warfare|warzone|gta|valorant|xbox|playstation|nintendo|speedrun|esports|streamer|streaming|twitch|kick|music|concert|rap|hip hop|artist|album|sports?|football|soccer|nba|nfl|ufc|mma|boxing|wwe|f1|racing|cars?|tech|technology|gadget|anime|comedy|comedian|funny|prank|highlights|metaverse|gym|bodybuilding|podcast|show|episode)\b",
     "B": r"\b(beauty|makeup|skincare|fashion|outfit|celebrity|celebrities|drama|gossip|reality|dating|relationship|love|girls?|women|influencer|kardashian|pop|lifestyle|wellness|self care|glow|aesthetic|bridgerton|tea)\b",
 }
 BORING = r"\b(ugc|split[- ]screen|app|apps|software|download|sign[- ]?up|referral|use my link|promo code|promo|discount|extension|wallet|casino|betting)\b"
@@ -191,6 +191,10 @@ def auto_score(c):
     for k in [k for k, v in c.items() if v is None]:
         del c[k]
     raw, _verdict, pts, stops = cs.score(c)
+    name = c.get("name", "")
+    if re.search(r"[\u0600-\u06FF\u0400-\u04FF\u0E00-\u0E7F\u3040-\u30FF\u4E00-\u9FFF\uAC00-\uD7AF]", name) or \
+       re.search(r"\b(en fran[cç]ais|espa[ñn]ol|hablando|portugu[eê]s|deutsch|italiano|international|arabic|hindi|\(fr\)|\(es\)|\(de\)|\(pt\))\b", name, re.I):
+        stops.append("not an English campaign (our accounts post in English)")
     a, e = pts["A pay and budget"], pts["E rules load"]
     tot_b = c.get("budget_total") or 0
     spent = (tot_b - c.get("budget_left", 0)) / tot_b if tot_b else 0
