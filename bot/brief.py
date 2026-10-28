@@ -6,6 +6,11 @@ the regexes miss stays a rule in the text, it is never dropped.
 """
 import json
 import re
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent))
+import profiles  # noqa: E402
 
 YT = r"(https?://(?:www\.)?(?:youtube\.com/(?:watch\?v=|playlist\?list=|shorts/|live/)|youtu\.be/)[\w\-&=?%]+)"
 
@@ -42,6 +47,7 @@ def parse(text):
     b["captions_required"] = bool(re.search(r"\b(subtitles?|captions?)\b", low))
     m = re.search(r"disclosure[^\"\u201c\n]{0,60}[\"\u201c]([^\"\u201d\n]{8,160})[\"\u201d]", text, re.I)
     b["disclosure"] = m.group(1).strip() if m else ""
+    b["style"] = profiles.detect_from_text(text)   # podcast / cinematic / stream / performance ('' = decide from the footage)
     m = re.search(r"(Rewards are unsecured[^\n]{10,220}?lose value\.)", text)   # the rewards rider some brands require near any rewards claim
     b["rider"] = m.group(1).strip() if m else ""
     b["no_ads"] = bool(re.search(r"\b(no|without|exclude|skip)\b[^.\n]{0,30}\b(ad reads?|ads|sponsor)", low))

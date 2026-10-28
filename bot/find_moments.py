@@ -22,6 +22,11 @@ import json
 import re
 import sys
 from collections import Counter
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent))
+import audio_energy  # noqa: E402
+import profiles  # noqa: E402
 
 MONEY = r"\$|\b(million|billion|thousand|dollars?|bucks|rich|broke|paid|pay|salary|revenue|profit|debt|price|cost)\b"
 FAIL = r"\b(fail(ed|ure|ing)?|fired|lost|lose|losing|quit|bankrupt|mistakes?|worst|broke|wrong|rejected|collapsed|divorced?|addict(ed|ion|ive)?)\b"
@@ -54,7 +59,9 @@ def count(rx, text):
     return len(re.findall(rx, text, flags=re.I))
 
 
-def score_window(sents, graphics):
+def score_window(sents, graphics, prof=None, energy=None):
+    """prof = profiles.PROFILES[...] (podcast rules when None); energy = dB per second (audio_energy)."""
+    prof = prof or profiles.PROFILES["podcast"]
     text = " ".join(s["text"] for s in sents)
     low = text.lower()
     dur = sents[-1]["end"] - sents[0]["start"]
@@ -76,47 +83,72 @@ def score_window(sents, graphics):
     shape += min(6, 3 * reactions)
     reasons["shape"] = min(20, shape)
     clarity = 10
-    if re.match(BACKREF, first.strip(), flags=re.I):
-        clarity -= 7
-    head = " ".join(x["text"] for x in sents[:2]).lower()
-    if re.search(PODCAST_TALK, head):
-        clarity -= 8          # "we talked about this in the shame episode": a stranger is lost
-    inside = count(PODCAST_TALK, low)
-    if sents[0]["n"] < 6:
-        clarity -= 3
-    if not (re.search(NUMBER, first, re.I) or re.search(r"\b[A-Z][a-z]{2,}\b", first[1:]) or re.search(r"\b(I|we|my)\b", first)):
-        clarity -= 3
+    if prof["clarity"]:
+        if re.match(BACKREF, first.strip(), flags=re.I):
+            clarity -= 7
+        head = " ".join(x["text"] for x in sents[:2]).lower()
+        if re.search(PODCAST_TALK, head):
+            clarity -= 8          # "we talked about this in the shame episode": a stranger is lost
+        if sents[0]["n"] < 6:
+            clarity -= 3
+        if not (re.search(NUMBER, first, re.I) or re.search(r"\b[A-Z][a-z]{2,}\b", first[1:]) or re.search(r"\b(I|we|my)\b", first)):
+            clarity -= 3
+    else:
+        clarity = 6               # trailers, streams: a strong line or a face is the opener, not a who/what sentence
+    inside = count(PODCAST_TALK, low) if prof["back_refs"] else 0
     reasons["clarity"] = max(0, clarity)
     pace = 10
-    if wps < 1.8:
+    lo_wps, hi_wps = prof["wps"]
+    if wps < lo_wps * 0.8:
         pace -= 6
-    elif wps < 2.2:
+    elif wps < lo_wps:
         pace -= 3
-    elif wps > 3.6:
+    elif wps > hi_wps:
         pace -= 2
-    fill = count(FILLER, low) / max(nwords, 1)
-    if fill > 0.06:
-        pace -= 4
-    elif fill > 0.035:
-        pace -= 2
-    gaps = sum(1 for a, b in zip(sents, sents[1:]) if b["start"] - a["end"] > 1.0)
-    pace -= min(4, gaps)
+    if prof["filler"]:
+        fill = count(FILLER, low) / max(nwords, 1)
+        if fill > 0.06:
+            pace -= 4
+        elif fill > 0.035:
+            pace -= 2
+    if prof["pause_penalty"]:
+        gaps = sum(1 for a, b in zip(sents, sents[1:]) if b["start"] - a["end"] > 1.0)
+        pace -= min(4, gaps)
     reasons["pace"] = max(0, pace)
+    # quotable lines (trailers, streams): short punchy sentences with a strong word or a question/exclamation
+    if prof["quotes"]:
+        q = sum(1 for x in sents if x["n"] <= 8 and (x["text"].rstrip().endswith(("!", "?")) or count(MONEY + "|" + FAIL + "|" + SURPRISE + "|" + EMOTION + "|" + FAMOUS, x["text"].lower())))
+        reasons["quotes"] = min(prof["quotes"], 3 * q)
+    if prof["reactions"] > 1:   # streams: hype words and reactions are the content
+        reasons["hype"] = min(10, 2 * count(profiles.HYPE, low) + 2 * reactions)
+    # loudness (streams, performances, trailers): a window that is louder than the episode, with peaks
+    if prof["energy"] and energy:
+        w = audio_energy.window(energy, sents[0]["start"], sents[-1]["end"])
+        if w:
+            rel, loud = w
+            reasons["energy"] = int(max(0, min(prof["energy"], prof["energy"] * (rel + 3) / 9 + loud * 0.5)))
     gfx = [g for g in graphics if g["from"] < sents[-1]["end"] and g["to"] > sents[0]["start"]]
-    reasons["visuals"] = min(12, 6 * len({g["type"] for g in gfx}) + 2 * len(gfx))
+    reasons["visuals"] = min(12, 6 * len({g["type"] for g in gfx}) + 2 * len(gfx)) if prof["cards"] else 0
     # payoff: the last sentence should be a point, not a trail-off
     last = sents[-1]["text"].strip()
     reasons["payoff"] = 10 if (last.endswith((".", "!")) and sents[-1]["n"] >= 5) else 4
     # length: 35-55 s is the sweet spot for Shorts with a story
-    reasons["length"] = 5 if 30 <= dur <= 55 else 3 if 22 <= dur <= 60 else 0
+    (l0, l1), (o0, o1) = prof["length"], prof["ok_len"]
+    reasons["length"] = 5 if l0 <= dur <= l1 else 3 if o0 <= dur <= o1 else 0
     reasons["self_contained"] = -4 * min(inside, 3)   # every podcast back-reference costs 4
     total = sum(reasons.values())
     return total, reasons, text, gfx
 
 
-def hook_from(sents):
-    """Suggested title: the sentence with the most stakes words, trimmed to 12 words."""
-    best = max(sents, key=lambda s: count(MONEY + "|" + FAIL + "|" + SURPRISE + "|" + EMOTION + "|" + FAMOUS, s["text"].lower()) * 10 - abs(s["n"] - 9))
+def hook_from(sents, prof=None):
+    """Suggested title: the sentence with the most stakes words, trimmed to 12 words (podcast), or the
+    shortest punchy line (trailers, streams)."""
+    prof = prof or profiles.PROFILES["podcast"]
+    if prof["quotes"] or prof["reactions"] > 1:
+        best = max(sents, key=lambda s: count(MONEY + "|" + FAIL + "|" + SURPRISE + "|" + EMOTION + "|" + FAMOUS + "|" + profiles.HYPE, s["text"].lower()) * 6
+                   + (4 if s["text"].rstrip().endswith(("!", "?")) else 0) - abs(s["n"] - 6))
+    else:
+        best = max(sents, key=lambda s: count(MONEY + "|" + FAIL + "|" + SURPRISE + "|" + EMOTION + "|" + FAMOUS, s["text"].lower()) * 10 - abs(s["n"] - 9))
     toks = best["text"].split()
     return " ".join(toks[:12]) + ("..." if len(toks) > 12 else "")
 

@@ -26,6 +26,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 import find_moments as fm  # noqa: E402
+import profiles  # noqa: E402
 
 
 def silence(mp4):
@@ -47,12 +48,13 @@ def main(folder):
     dur = sum(b - a for a, b in det["cuts"])
     shots = det["shots"]
     rep, notes = {}, {}
+    prof = profiles.profile(spec.get("style"))
 
     # hook
     first = body.splitlines()[0] if body.splitlines() else ""
     head = " ".join(first.split()[:8])
     h = 20
-    if re.match(fm.BACKREF, head.strip(), flags=re.I):
+    if prof["clarity"] and re.match(fm.BACKREF, head.strip(), flags=re.I):
         h -= 8; notes.setdefault("hook", []).append("first line starts on a pointer word")
     # captions are upper case: a proper name is a word the transcript itself capitalises mid-sentence
     wj = json.loads((folder / "words.json").read_text()) if (folder / "words.json").exists() else []
@@ -62,24 +64,25 @@ def main(folder):
         if t[:1].isupper() and len(t) > 2 and prev and not prev["text"].rstrip('"\'').endswith((".", "?", "!")):
             proper.add(t.lower())
     has_name = any(t.strip('",.?!()\'').lower() in proper for t in head.split()[1:])
-    if not (re.search(fm.NUMBER, head, re.I) or has_name or re.search(r"\b(I|we|my)\b", head, re.I)):
+    if prof["clarity"] and not (re.search(fm.NUMBER, head, re.I) or has_name or re.search(r"\b(I|we|my)\b", head, re.I)):
         h -= 5; notes.setdefault("hook", []).append("first line names no one and nothing")
     title = spec.get("hook", "")
     if len(title.split()) > 14:
         h -= 3; notes.setdefault("hook", []).append("title over 14 words")
-    if re.search(fm.PODCAST_TALK, " ".join(words[:25]).lower()):
+    if prof["back_refs"] and re.search(fm.PODCAST_TALK, " ".join(words[:25]).lower()):
         h -= 6; notes.setdefault("hook", []).append("opens with podcast talk")
     rep["hook"] = max(0, h)
 
     # pace
     wps = len(words) / max(dur, 1)
     p = 15
-    if wps < 1.8: p -= 7
-    elif wps < 2.2: p -= 4
-    elif wps > 3.6: p -= 2
-    sil = silence(mp4)
+    lo_wps, hi_wps = prof["wps"]
+    if wps < lo_wps * 0.8: p -= 7
+    elif wps < lo_wps: p -= 4
+    elif wps > hi_wps: p -= 2
+    sil = silence(mp4) if prof["pause_penalty"] else []
     p -= min(6, 3 * len(sil))
-    fill = fm.count(fm.FILLER, low) / max(len(words), 1)
+    fill = fm.count(fm.FILLER, low) / max(len(words), 1) if prof["filler"] else 0
     if fill > 0.06: p -= 4
     elif fill > 0.035: p -= 2
     notes["pace"] = [f"{wps:.1f} words/s", f"{len(sil)} silence(s) over 0.8 s", f"filler {fill:.1%}"]
@@ -105,9 +108,10 @@ def main(folder):
     if longest > 12: v -= 8
     elif longest > 8: v -= 4
     share = cards / max(dur, 1)
-    if share < 0.1: v -= 6
-    elif share < 0.2: v -= 3
-    if zooms == 0: v -= 2
+    if prof["cards"]:   # podcasts need b-roll; trailers and streams carry their own visual change
+        if share < 0.1: v -= 6
+        elif share < 0.2: v -= 3
+        if zooms == 0: v -= 2
     notes["variety"] = [f"longest stretch without a visual change {longest:.1f} s", f"cards/b-roll/callouts {share:.0%} of the clip", f"{zooms} punch-in(s)", f"{len(call)} callout(s)"]
     rep["variety"] = max(0, v)
 
@@ -132,14 +136,17 @@ def main(folder):
     if fm.count(fm.CONTRAST, low) or "?" in body[:300]: st += 4
     last = body.strip().splitlines()[-1].strip().rstrip('"\')') if body.strip() else ""
     st += 5 if last.endswith((".", "!", "?")) else 0
-    back = fm.count(fm.PODCAST_TALK, low)
+    back = fm.count(fm.PODCAST_TALK, low) if prof["back_refs"] else 0
     st += 3 if back == 0 else 0
+    if prof["reactions"] > 1:
+        st += min(4, fm.count(profiles.HYPE, low))
     notes["story"] = [f"{stakes} stakes word(s)", f"{back} podcast back-reference(s)", "ends on a finished sentence" if last.endswith((".", "!", "?")) else "ends mid-sentence"]
     rep["story"] = min(20, st)
 
-    rep["length"] = 10 if 30 <= dur <= 55 else 6 if 20 <= dur <= 60 else 0
+    (l0, l1), (o0, o1) = prof["length"], prof["ok_len"]
+    rep["length"] = 10 if l0 <= dur <= l1 else 6 if o0 <= dur <= o1 else 0
     total = sum(rep.values())
-    out = [f"# Judge report: {folder.name}", "",
+    out = [f"# Judge report: {folder.name}", "", f"Profile: {spec.get('style') or 'podcast'}", "",
            "Part 1, measured by bot/judge_clip.py. Part 2 (below) is the judge agent's blind read (scorecards/judgment.md).", "",
            "| Area | Points | Notes |", "|---|---|---|"]
     maxes = {"hook": 20, "pace": 15, "variety": 20, "framing": 15, "story": 20, "length": 10}

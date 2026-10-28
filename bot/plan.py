@@ -14,7 +14,9 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
+import audio_energy  # noqa: E402
 import find_moments as fm  # noqa: E402
+import profiles  # noqa: E402
 
 MAX_CLIPS, MAX_TRIES = 3, 6
 STAKES = fm.MONEY + "|" + fm.FAIL + "|" + fm.SURPRISE + "|" + fm.EMOTION + "|" + fm.FAMOUS
@@ -35,7 +37,14 @@ def hook_text(c):
 
 
 def auto_specs(words_path, gfx_path, source, brief, campaign, out_dir, used=()):
-    cands = fm_candidates(words_path, gfx_path, brief)
+    prof_name = brief.get("style") or "podcast"
+    energy = None
+    if profiles.profile(prof_name)["energy"]:
+        ep = Path(out_dir).parent / "energy.json"
+        if not ep.exists():
+            json.dump(audio_energy.energy(source), open(ep, "w"))
+        energy = json.load(open(ep))
+    cands = fm_candidates(words_path, gfx_path, brief, prof_name, energy)
     specs = []
     for c in cands:
         if any(min(c["end"], b) - max(c["start"], a) > 0 for a, b in used):
@@ -57,9 +66,10 @@ def auto_specs(words_path, gfx_path, source, brief, campaign, out_dir, used=()):
     return specs
 
 
-def fm_candidates(words_path, gfx_path, brief):
+def fm_candidates(words_path, gfx_path, brief, prof_name="podcast", energy=None):
     words = json.load(open(words_path))
     gfx = json.load(open(gfx_path)) if gfx_path and Path(gfx_path).exists() else []
+    prof = profiles.profile(prof_name)
     sents = fm.sentences(words)
     lo, hi = brief.get("min_s", 20), brief.get("max_s", 60)
     cands = []
@@ -70,10 +80,10 @@ def fm_candidates(words_path, gfx_path, brief):
                 continue
             if dur > hi + 2:
                 break
-            total, reasons, text, g = fm.score_window(sents[i:j + 1], gfx)
+            total, reasons, text, g = fm.score_window(sents[i:j + 1], gfx, prof, energy)
             cands.append({"start": round(sents[i]["start"], 2), "end": round(sents[j]["end"], 2), "dur": round(dur, 1),
                           "score": total, "reasons": reasons, "first_line": sents[i]["text"],
-                          "hook": fm.hook_from(sents[i:j + 1]), "graphics": g, "text": text})
+                          "hook": fm.hook_from(sents[i:j + 1], prof), "graphics": g, "text": text})
     cands.sort(key=lambda c: -c["score"])
     picked = []
     for c in cands:
@@ -85,6 +95,13 @@ def fm_candidates(words_path, gfx_path, brief):
 
 
 def load(campaign_dir, words_path, gfx_path, source, brief, campaign, out_dir, used=()):
+    if brief.get("style") not in profiles.PROFILES:   # no reviewer override: read the brief, then the footage
+        try:
+            words = json.load(open(words_path))
+            dur = words[-1]["end"] if words else 0
+        except Exception:
+            words, dur = [], 0
+        brief["style"] = profiles.resolve(brief, words, dur)
     plan = Path(campaign_dir) / "plan.json"
     if plan.exists() and json.loads(plan.read_text()).get("clips"):   # a plan without clips (overrides only) = auto picks
         p = json.loads(plan.read_text())
