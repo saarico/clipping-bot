@@ -150,11 +150,11 @@ def join_videos(parts, dest, log=print):
             log(f"skipped vertical file {pth.name} ({w}x{h})")
             continue
         crop = bars_crop(pth, dur)
-        vf = ((crop + ",") if crop else "") + "scale=-2:1080:flags=lanczos,crop='min(iw,1920)':1080,pad=1920:1080:(ow-iw)/2:(oh-ih)/2,fps=30,setsar=1"
+        vf = ((crop + ",") if crop else "") + "scale=-2:1080:flags=bicubic,crop='min(iw,1920)':1080,pad=1920:1080:(ow-iw)/2:(oh-ih)/2,fps=30,setsar=1"
         o = dest.parent / "parts" / f"n{i:02d}.mp4"
         o.parent.mkdir(parents=True, exist_ok=True)
-        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(pth), "-vf", vf, "-r", "30", "-c:v", "libx264", "-preset", "veryfast",
-                        "-crf", "18", "-c:a", "aac", "-ar", "48000", "-ac", "2", "-af", "aresample=async=1", str(o)], check=False)
+        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(pth), "-vf", vf, "-r", "30", "-c:v", "libx264", "-preset", "ultrafast",
+                        "-crf", "17", "-c:a", "aac", "-ar", "48000", "-ac", "2", "-af", "aresample=async=1", str(o)], check=False)
         if o.exists():
             norm.append(o)
             log(f"part {i:02d}: {pth.name[:60]} {w}x{h} {dur:.0f}s" + (f" ({crop})" if crop else ""))
@@ -187,8 +187,17 @@ def get_source(name, st, stage, cdir):
                     return drive.download(cached["episode.mp4"]["Path"], dest)
             except Exception as e:
                 note(st, f"cache check failed ({type(e).__name__}); rebuilding the episode")
-        note(st, f"downloading {len(vids)} videos from 0_START and joining them")
-        parts = [drive.download(v["Path"], dest.parent / "parts" / f"{i:02d}_{v['Name']}") for i, v in enumerate(vids)]
+        todo, sizes = [], set()
+        for v in vids:   # don't even download duplicates or finished vertical cuts
+            if v.get("Size") in sizes:
+                note(st, f"skipped duplicate {v['Name'][:60]}")
+            elif re.search(r"vertical|igtv|9x16|9_16|portrait|reels|tiktok|shorts", v["Name"], re.I):
+                note(st, f"skipped vertical cut {v['Name'][:60]}")
+            else:
+                todo.append(v)
+            sizes.add(v.get("Size"))
+        note(st, f"downloading {len(todo)} of {len(vids)} videos from 0_START and joining them")
+        parts = [drive.download(v["Path"], dest.parent / "parts" / f"{i:02d}_{v['Name']}") for i, v in enumerate(todo)]
         out = join_videos(parts, dest, log=lambda m: note(st, m))
         if out:
             try:
@@ -331,7 +340,8 @@ def do_campaign(name, cpath):
                                  used=used, plan_dir=cdir)   # cdir holds the reviewer's plan.json; used = moments rico already saw
     st["used_moments"] = (st.get("used_moments", []) + [{"start": p[0], "end": p[1], "hook": c["hook"]} for c in kept for p in c.get("parts", [])])[-30:]
     if (WORK / name / "words.json").exists() and not words.exists():
-        (WORK / name / "words.json").replace(words)
+        import shutil
+        shutil.copy(WORK / name / "words.json", words)   # /tmp and the repo are different disks on the runner
     publish(name, st, stage, kept, summary, t0)
 
 

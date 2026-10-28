@@ -517,6 +517,9 @@ def main(folder, source=None):
     check_transitions(rep, mp4, details, dur)
     check_audio_timing(rep, mp4)
     check_post_text(rep, folder, spec)
+    if spec.get("style") == "cinematic":   # movie trailers / scene clips: fast cuts and faceless shots are the material, not mistakes
+        soft = {"Speaker centred", "Somebody in frame", "Smooth transitions", "Clean first 2 seconds", "Audio"}
+        rep.rows = [(a, "WARN" if (s == "FAIL" and a in soft) else s, e + (" (cinematic: warn only)" if (s == "FAIL" and a in soft) else "")) for a, s, e in rep.rows]
     sheet(mp4, folder / "qa_sheet.png")
 
     lines = [f"# Pre-post check: {folder.name}", "",

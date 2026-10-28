@@ -27,6 +27,7 @@
    "Don't quote review scores or box office numbers, don't argue with critics",
    "No AI changes to anyone's face or voice",
    "At least 40% of views from the US; keep likes visible; keep the post up 30 days; submit on Whop with demographics"
-  ]
+  ],
+  "style": "cinematic"
  }
 }
