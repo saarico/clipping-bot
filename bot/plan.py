@@ -16,6 +16,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 import audio_energy  # noqa: E402
 import find_moments as fm  # noqa: E402
+import genres  # noqa: E402
 import profiles  # noqa: E402
 
 MAX_CLIPS, MAX_TRIES = 3, 6
@@ -59,17 +60,29 @@ def auto_specs(words_path, gfx_path, source, brief, campaign, out_dir, used=()):
             "wide_split": [[0.25, 0.40, 0.06], [0.75, 0.40, 0.06]],   # generic two-shot seats; the reviewer's plan.json overrides
             "disclosure": brief.get("disclosure", ""), "style": brief.get("style", ""),
             "out": str(Path(out_dir) / f"{slug(c['hook'])}.mp4"),
-            "_why": f"score {c['score']}: " + ", ".join(f"{k} {v}" for k, v in c["reasons"].items() if v),
+            "_why": f"score {c['score']}: " + ", ".join(f"{k} {v}" for k, v in c["reasons"].items() if v and k != "genres") + f" [{c['reasons'].get('genres', '')}]",
         })
         if len(specs) >= MAX_TRIES:
             break
     return specs
 
 
+def genre_mix(brief, words):
+    """The campaign's genres: reviewer's list (plan.json brief_overrides "genres"), else brief + transcript."""
+    g = brief.get("genres")
+    if isinstance(g, dict) and g:
+        return g
+    if isinstance(g, list) and g:
+        return {x: round(1 / len(g), 2) for x in g}
+    text = (brief.get("text", "") or "") + " " + " ".join(brief.get("rules", []))
+    return genres.detect_mix(text, " ".join(w["text"] for w in words))
+
+
 def fm_candidates(words_path, gfx_path, brief, prof_name="podcast", energy=None):
     words = json.load(open(words_path))
     gfx = json.load(open(gfx_path)) if gfx_path and Path(gfx_path).exists() else []
     prof = profiles.profile(prof_name)
+    mix = genre_mix(brief, words)
     sents = fm.sentences(words)
     lo, hi = brief.get("min_s", 20), brief.get("max_s", 60)
     cands = []
@@ -80,7 +93,7 @@ def fm_candidates(words_path, gfx_path, brief, prof_name="podcast", energy=None)
                 continue
             if dur > hi + 2:
                 break
-            total, reasons, text, g = fm.score_window(sents[i:j + 1], gfx, prof, energy)
+            total, reasons, text, g = fm.score_window(sents[i:j + 1], gfx, prof, energy, mix)
             cands.append({"start": round(sents[i]["start"], 2), "end": round(sents[j]["end"], 2), "dur": round(dur, 1),
                           "score": total, "reasons": reasons, "first_line": sents[i]["text"],
                           "hook": fm.hook_from(sents[i:j + 1], prof), "graphics": g, "text": text})

@@ -26,6 +26,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 import audio_energy  # noqa: E402
+import genres  # noqa: E402
 import profiles  # noqa: E402
 
 MONEY = r"\$|\b(million|billion|thousand|dollars?|bucks|rich|broke|paid|pay|salary|revenue|profit|debt|price|cost)\b"
@@ -59,9 +60,11 @@ def count(rx, text):
     return len(re.findall(rx, text, flags=re.I))
 
 
-def score_window(sents, graphics, prof=None, energy=None):
-    """prof = profiles.PROFILES[...] (podcast rules when None); energy = dB per second (audio_energy)."""
+def score_window(sents, graphics, prof=None, energy=None, mix=None):
+    """prof = profiles.PROFILES[...] (podcast rules when None); energy = dB per second (audio_energy);
+    mix = {genre: weight} from genres.detect_mix (what this campaign's audience came for)."""
     prof = prof or profiles.PROFILES["podcast"]
+    mix = mix or {"drama": 0.5, "business": 0.5}
     text = " ".join(s["text"] for s in sents)
     low = text.lower()
     dur = sents[-1]["end"] - sents[0]["start"]
@@ -69,8 +72,13 @@ def score_window(sents, graphics, prof=None, energy=None):
     wps = nwords / max(dur, 1)
     first = sents[0]["text"]
     reasons = {}
-    reasons["stakes"] = min(25, 4 * count(MONEY, low) + 4 * count(FAIL, low) + 3 * count(SURPRISE, low)
+    reasons["stakes"] = min(15, 4 * count(MONEY, low) + 4 * count(FAIL, low) + 3 * count(SURPRISE, low)
                             + 3 * count(EMOTION, low) + 2 * count(NUMBER, low) + 6 * count(FAMOUS, low))
+    # genre fit (0-25) and the comedy grade (0-10, always present): what the audience of THIS campaign laughs or leans in for
+    ent, gs = genres.entertainment(sents, low, mix)
+    reasons["entertainment"] = ent
+    reasons["comedy"] = gs["comedy"] // 2
+    reasons["_genres"] = gs
     # proper names (capitalised words not at a sentence start) read as "someone famous / a real story"
     names = [m for m in re.findall(r"(?<![.?!]\s)(?<!^)\b([A-Z][a-z]{2,})\b", text) if m.lower() not in ("i", "the", "and", "but", "so")]
     reasons["names"] = min(8, 2 * len(set(names)))
@@ -136,7 +144,9 @@ def score_window(sents, graphics, prof=None, energy=None):
     (l0, l1), (o0, o1) = prof["length"], prof["ok_len"]
     reasons["length"] = 5 if l0 <= dur <= l1 else 3 if o0 <= dur <= o1 else 0
     reasons["self_contained"] = -4 * min(inside, 3)   # every podcast back-reference costs 4
+    gs = reasons.pop("_genres")
     total = sum(reasons.values())
+    reasons["genres"] = ", ".join(f"{g} {v}" for g, v in sorted(gs.items(), key=lambda kv: -kv[1])[:3] if v)
     return total, reasons, text, gfx
 
 
@@ -146,6 +156,7 @@ def hook_from(sents, prof=None):
     prof = prof or profiles.PROFILES["podcast"]
     if prof["quotes"] or prof["reactions"] > 1:
         best = max(sents, key=lambda s: count(MONEY + "|" + FAIL + "|" + SURPRISE + "|" + EMOTION + "|" + FAMOUS + "|" + profiles.HYPE, s["text"].lower()) * 6
+                   + count(genres.LEX["comedy"] + "|" + genres.BIG_NUMBER, s["text"].lower()) * 4
                    + (4 if s["text"].rstrip().endswith(("!", "?")) else 0) - abs(s["n"] - 6))
     else:
         best = max(sents, key=lambda s: count(MONEY + "|" + FAIL + "|" + SURPRISE + "|" + EMOTION + "|" + FAMOUS, s["text"].lower()) * 10 - abs(s["n"] - 9))
