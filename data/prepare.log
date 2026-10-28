@@ -1,6 +1,7 @@
-[16:36:33] CLIPPING root CLIPPING
-[16:36:44] waiting for the requirements file in 0_START
-[16:36:44] 0 render job(s)
-Discover page read: 70 campaigns found.
-scored 7 JOIN candidates; new folders in 0_START: none
+[22:07:53] CLIPPING root CLIPPING
+[22:08:38] episode taken from the Drive cache (same source files as last time)
+[22:09:28] 4 candidate(s) picked (plan.json (reviewer)), 1 fallback(s); rendering on 4 machines with grade-and-retry
+[22:09:28] 4 render job(s)
+Discover page read: 73 campaigns found.
+scored 8 JOIN candidates; new folders in 0_START: ['The Iced Coffee Hour Podcast x Greg Lav']
 live: DIGGER x ClipFarm, Higgsfield 20VC Clipping
