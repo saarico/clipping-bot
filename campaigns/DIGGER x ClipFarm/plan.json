@@ -1,5 +1,5 @@
 {
- "why": "Brief PDF text comes out jumbled, so the reviewer pins the clean facts here. Clips are picked automatically until the transcript exists; then the reviewer adds 'clips'.",
+ "why": "Reviewer picks (2026-10-28 03:50 UTC) on the WB hook angles: a no-context premise line, 'Wait, that's Tom Cruise?', the strangest line. Approved scene clips + trailer 2A only. tighten off: the footage's own pauses and music beats stay.",
  "brief_overrides": {
   "platforms": [
    "tiktok",
@@ -29,5 +29,78 @@
    "At least 40% of views from the US; keep likes visible; keep the post up 30 days; submit on Whop with demographics"
   ],
   "style": "cinematic"
- }
+ },
+ "clips": [
+  {
+   "parts": [
+    [
+     26.4,
+     60.1
+    ]
+   ],
+   "hook": "Shut down a billion-dollar rig over a five-foot crack?",
+   "emphasis": [
+    "billion",
+    "five",
+    "crack",
+    "shut",
+    "salary",
+    "paying"
+   ],
+   "caption": "The richest man alive vs a five-foot crack in a glacier. People are split on DIGGER. Go see it and decide for yourself. @warnerbros #DiggerPartner",
+   "focus": [],
+   "overlays": [],
+   "callouts": [],
+   "sfx": false,
+   "tighten": false,
+   "style": "cinematic"
+  },
+  {
+   "parts": [
+    [
+     177.5,
+     194.9
+    ]
+   ],
+   "hook": "Wait... that's Tom Cruise?",
+   "emphasis": [
+    "drowned",
+    "continent",
+    "double",
+    "truth",
+    "speech"
+   ],
+   "caption": "\"You just drowned half the damn continent.\" Tom Cruise is DIGGER, the billionaire who has to fix the mess he made. Half the internet loves it, half hates it. See it and decide. @warnerbros #DiggerPartner",
+   "focus": [],
+   "overlays": [],
+   "callouts": [],
+   "sfx": false,
+   "tighten": false,
+   "style": "cinematic"
+  },
+  {
+   "parts": [
+    [
+     194.5,
+     216.4
+    ]
+   ],
+   "hook": "The richest man on Earth hears the bad news.",
+   "emphasis": [
+    "catastrophic",
+    "crash",
+    "disintegrate",
+    "million",
+    "barrels",
+    "news"
+   ],
+   "caption": "Markets crash, the dollar's gone... \"Is that all the bad news?\" DIGGER has people split down the middle. Go see it and decide for yourself. @warnerbros #DiggerPartner",
+   "focus": [],
+   "overlays": [],
+   "callouts": [],
+   "sfx": false,
+   "tighten": false,
+   "style": "cinematic"
+  }
+ ]
 }
