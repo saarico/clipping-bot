@@ -34,7 +34,8 @@ def hook_text(c):
     h = re.sub(r"^((and|so|but|like|yeah|um|uh|okay|ok|right|well|i mean)[, ]+)+", "", h, flags=re.I).strip()
     if h.endswith("..."):
         h = h[:-3]
-    return (h[:1].upper() + h[1:]).strip() + "."
+    h = (h[:1].upper() + h[1:]).strip()
+    return h if h[-1:] in "!?." else h + "."   # "bang bang bang!." happened (2026-10-28)
 
 
 def auto_specs(words_path, gfx_path, source, brief, campaign, out_dir, used=()):
