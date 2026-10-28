@@ -87,6 +87,8 @@ def fm_candidates(words_path, gfx_path, brief, prof_name="podcast", energy=None)
     cands.sort(key=lambda c: -c["score"])
     picked = []
     for c in cands:
+        if any(p["first_line"] == c["first_line"] or p["hook"] == c["hook"] for p in picked):
+            continue   # run 1 of DIGGER rendered the same opening line twice at two lengths
         if all(min(c["end"], p["end"]) - max(c["start"], p["start"]) < 0.4 * min(c["dur"], p["dur"]) for p in picked):
             picked.append(c)
         if len(picked) >= 20:
