@@ -1,15 +1,14 @@
-[03:44:28] CLIPPING root CLIPPING
-[03:44:41] episode taken from the Drive cache (same source files as last time)
-[03:45:13] render 1: Shut down a billion-dollar rig over a five-foot crack?
-[03:45:13] render 2: Wait... that's Tom Cruise?
-[03:45:13] render 3: The richest man on Earth hears the bad news.
-[03:49:13] moments from: plan.json (reviewer)
-transcript + graphics ready after 0.2 min
-KEPT  c01_shut-down-a-billion-dollar-r: 34s  qa PASS  judge 82  4.0 min  hook: Shut down a billion-dollar rig over a five-foot crack?  [Reviewer picks (2026-10-28 03:50 UTC) on the WB hook angles: a no-context premise line, 'Wait, that's Tom Cruise?', the strangest line. Approved scene clips + trailer 2A only. tighten off: the footage's own pauses and music beats stay.]
-KEPT  c02_wait-that-s-tom-cruise: 17s  qa PASS  judge 89  2.9 min  hook: Wait... that's Tom Cruise?  [Reviewer picks (2026-10-28 03:50 UTC) on the WB hook angles: a no-context premise line, 'Wait, that's Tom Cruise?', the strangest line. Approved scene clips + trailer 2A only. tighten off: the footage's own pauses and music beats stay.]
-KEPT  c03_the-richest-man-on-earth-hea: 21s  qa PASS  judge 83  2.5 min  hook: The richest man on Earth hears the bad news.  [Reviewer picks (2026-10-28 03:50 UTC) on the WB hook angles: a no-context premise line, 'Wait, that's Tom Cruise?', the strangest line. Approved scene clips + trailer 2A only. tighten off: the footage's own pauses and music beats stay.]
-3 clip(s) kept of 3 rendered, 3 at a time, in 4 min
-[03:49:42] 3 clip(s) uploaded to 1_CHECK
+[04:58:45] CLIPPING root CLIPPING
+[04:58:56] episode taken from the Drive cache (same source files as last time)
+[04:59:25] 3 candidate(s) picked (plan.json (reviewer)); rendering on 3 machines
+[04:59:25] 3 render job(s)
 Discover page read: 69 campaigns found.
 scored 8 JOIN candidates; new folders in 0_START: none
 live: DIGGER x ClipFarm, Higgsfield 20VC Clipping
+[05:05:33] moments from: plan.json (reviewer)
+transcript + graphics ready after 0.2 min
+KEPT  c01_shut-down-a-billion-dollar-r: 34s  qa PASS  judge 84  2.5 min  hook: Shut down a billion-dollar rig over a five-foot crack?  [Reviewer picks (2026-10-28 03:50 UTC) on the WB hook angles: a no-context premise line, 'Wait, that's Tom Cruise?', the strangest line. Approved scene clips + trailer 2A only. tighten off: the footage's own pauses and music beats stay.]
+KEPT  c02_wait-that-s-tom-cruise: 17s  qa PASS  judge 83  1.6 min  hook: Wait... that's Tom Cruise?  [Reviewer picks (2026-10-28 03:50 UTC) on the WB hook angles: a no-context premise line, 'Wait, that's Tom Cruise?', the strangest line. Approved scene clips + trailer 2A only. tighten off: the footage's own pauses and music beats stay.]
+KEPT  c03_the-richest-man-on-earth-hea: 21s  qa PASS  judge 77  1.1 min  hook: The richest man on Earth hears the bad news.  [Reviewer picks (2026-10-28 03:50 UTC) on the WB hook angles: a no-context premise line, 'Wait, that's Tom Cruise?', the strangest line. Approved scene clips + trailer 2A only. tighten off: the footage's own pauses and music beats stay.]
+3 clip(s) kept of 3 rendered on 3 machines, longest render 2.5 min
+[05:05:42] 3 clip(s) uploaded to 1_CHECK
