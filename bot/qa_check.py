@@ -306,9 +306,9 @@ def check_title(rep, events, spec):
         return
     lines = hook["text"].split(r"\N")
     st, notes = "PASS", [f"{len(lines)} line(s): \"{plain(hook['text'])}\""]
-    if len(lines) > 2:
+    if len(lines) > 3:
         st = "FAIL"
-        notes.append("more than 2 lines")
+        notes.append("more than 3 lines")
     m = PRONOUN_AFTER_NAME.search(spec.get("hook", ""))
     if m:
         st = "FAIL" if st == "FAIL" else "WARN"
@@ -480,6 +480,34 @@ def check_footage_text(rep, mp4, details):
     rep.add("Footage text cut off", st, f"text runs off the frame edge at {', '.join(f'{t} s' for t in hits[:8])}" if hits else "no footage text touches an edge")
 
 
+def check_one_look(rep, details):
+    """rico, 2026-10-28: "the screen keeps switching between 16:9 and 9:16, horrible". The whole clip is one
+    9:16 crop; a segment that shows the 16:9 picture whole (fit / center) fails the clip."""
+    bad = [s for s in details.get("shots", []) if s["layout"].split("+")[0] in ("fit", "center")]
+    rep.add("One 9:16 look", "FAIL" if bad else "PASS",
+            (f"{len(bad)} segment(s) show the 16:9 picture whole (format switch) at " + ", ".join("%.1fs" % b["from"] for b in bad[:5])) if bad else "9:16 crop throughout")
+
+
+def check_actor_size(rep, mp4, details):
+    """rico, 2026-10-28: "the screen is not focusing on actors". Measured on the finished clip once a second:
+    how often a face is on screen and how tall it is (share of the picture height)."""
+    det = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
+    prof = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_profileface.xml")
+    sizes, n = [], 0
+    ph = (H - TOP) // 2
+    for f in frames(mp4, 1):
+        g = cv2.equalizeHist(cv2.cvtColor(f[TOP // 2:], cv2.COLOR_BGR2GRAY))
+        faces = list(det.detectMultiScale(g, 1.1, 5, minSize=(36, 36))) + list(prof.detectMultiScale(g, 1.1, 5, minSize=(36, 36)))
+        n += 1
+        if len(faces):
+            sizes.append(max(r[3] for r in faces) / ph)
+    if n == 0:
+        return
+    present, med = len(sizes) / n, (float(np.median(sizes)) if sizes else 0.0)
+    st = "FAIL" if present < 0.3 or (sizes and med < 0.08) else "WARN" if present < 0.6 or med < 0.12 else "PASS"
+    rep.add("Actors fill the frame", st, f"a face in {present:.0%} of the seconds, typical face height {med:.0%} of the picture")
+
+
 def check_transitions(rep, mp4, details, dur):
     """Every hard cut in the finished picture must be one we meant (a shot or layout edge). An isolated
     jump anywhere else is a glitch; a jump in the first/last 1.5 s or at a join is a FAIL. A frame far
@@ -584,6 +612,8 @@ def main(folder, source=None):
     check_centred(rep, mp4, details)
     check_nobody(rep, mp4, details)
     check_footage_text(rep, mp4, details)
+    check_one_look(rep, details)
+    check_actor_size(rep, mp4, details)
     check_transitions(rep, mp4, details, dur)
     check_audio_timing(rep, mp4)
     check_post_text(rep, folder, spec)

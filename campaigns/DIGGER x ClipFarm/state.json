@@ -29,7 +29,8 @@
   "2026-10-28 04:58 UTC  re-cut requested: new grading, fonts, captions (rico: clips were bad)",
   "2026-10-28 04:58 UTC  episode taken from the Drive cache (same source files as last time)",
   "2026-10-28 04:59 UTC  3 candidate(s) picked (plan.json (reviewer)); rendering on 3 machines",
-  "2026-10-28 05:05 UTC  3 clip(s) uploaded to 1_CHECK"
+  "2026-10-28 05:05 UTC  3 clip(s) uploaded to 1_CHECK",
+  "2026-10-28 22:15 UTC  re-cut requested: one 9:16 look, actor focus, bolder text, grade-and-retry (rico: clips had issues)"
  ],
  "updated": "2026-10-28 16:36 UTC",
  "brief": {
@@ -124,5 +125,5 @@
    "caption": "Markets crash, the dollar's gone... \"Is that all the bad news?\" DIGGER has people split down the middle. Go see it and decide for yourself. @warnerbros #DiggerPartner"
   }
  ],
- "needs_redo": false
+ "needs_redo": true
 }

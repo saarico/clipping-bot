@@ -130,8 +130,11 @@ def main(folder):
     m = re.search(r"\| Footage text cut off \| (\w+) \| ([^|]*)", qa)
     if m and m.group(1) != "PASS":
         f -= 6 if m.group(1) == "FAIL" else 3; notes.setdefault("framing", []).append(m.group(2).strip())
-    if any(s["layout"].split("+")[0] == "center" for s in shots):
-        f -= 3; notes.setdefault("framing", []).append("letterboxed segment")
+    m = re.search(r"\| Actors fill the frame \| (\w+) \| ([^|]*)", qa)
+    if m and m.group(1) != "PASS":
+        f -= 6 if m.group(1) == "FAIL" else 3; notes.setdefault("framing", []).append(m.group(2).strip())
+    if any(s["layout"].split("+")[0] in ("center", "fit") for s in shots):
+        f -= 6; notes.setdefault("framing", []).append("format switch (16:9 picture shown whole)")
     if any(s["to"] - s["from"] < 0.5 for s in shots):
         f -= 2; notes.setdefault("framing", []).append("segment under 0.5 s")
     rep["framing"] = max(0, f)

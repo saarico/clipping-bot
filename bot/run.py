@@ -352,8 +352,10 @@ def do_campaign(name, cpath, phase="all"):
         if (WORK / name / "gfx.json").exists():
             shutil.copy(WORK / name / "gfx.json", d / "gfx.json")
         (d / "notes.json").write_text(json.dumps(notes))
-        jobs = [{"campaign": name, "cpath": cpath, "spec": sp, "origin": origin, "t0": t0} for sp in specs[:MATRIX_MAX]]
-        note(st, f"{len(jobs)} candidate(s) picked ({origin}); rendering on {len(jobs)} machines")
+        slots = min(MATRIX_MAX, len(specs))
+        jobs = [{"campaign": name, "cpath": cpath, "spec": sp, "fallbacks": specs[slots:][i::slots] if slots else [], "origin": origin, "t0": t0}
+                for i, sp in enumerate(specs[:slots])]
+        note(st, f"{len(jobs)} candidate(s) picked ({origin}), {len(specs) - len(jobs)} fallback(s); rendering on {len(jobs)} machines with grade-and-retry")
         save_state(name, st)
         return jobs
     kept, summary = pipeline.run(WORK / name, src, st["brief"], words if words.exists() else None, campaign=name, log=log,
@@ -384,8 +386,12 @@ def render_job(n):
         raise RuntimeError("source not available on the render machine")
     spec["source"] = str(src)
     (work / "renders").mkdir(exist_ok=True)
-    log(f"render {n + 1}: {spec['hook']}")
-    res = pipeline.one_clip(spec, work, src, words, f"c{n + 1:02d}")
+    lane = [spec] + j.get("fallbacks", [])
+    for sp in lane:
+        sp["words"], sp["source"] = str(words), str(src)
+    res, tries = pipeline.try_until(lane, work, src, words, f"c{n + 1:02d}", log=log)
+    res = res or {"hook": spec["hook"], "error": "no render finished", "ok": False, "judge": 0, "qa": "FAIL", "fails": [], "why": "", "parts": spec.get("parts", []), "dur": 0}
+    res["tries"] = [f"{Path(str(r.get('folder', r['hook']))).name}: qa {r.get('qa')} judge {r.get('judge')} {'; '.join(r.get('fails', [])[:2])}" for r in tries]
     out = OUT / str(n)
     out.mkdir(parents=True, exist_ok=True)
     if res.get("folder"):
@@ -418,7 +424,10 @@ def collect():
                 res = json.loads((d / "result.json").read_text())
                 if res.get("folder"):
                     res["folder"] = str(d / res["folder"]); res["mp4"] = str(d / res["mp4"])
+                for t in res.get("tries", [])[:-1]:
+                    notes.append("TRY   " + t)
                 results.append(res)
+            results.sort(key=lambda r: (-int(bool(r.get("ok"))), -(r.get("judge") or 0)))   # best clips first
             kept, notes = pipeline.decide(results, work, [], notes)
             mins = [r.get("minutes", 0) for r in results if r.get("minutes")]
             notes.append(f"{len(kept)} clip(s) kept of {len(results)} rendered on {len(results)} machines, "

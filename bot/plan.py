@@ -133,5 +133,13 @@ def load(campaign_dir, words_path, gfx_path, source, brief, campaign, out_dir, u
             s.setdefault("_why", p.get("why", "reviewer's plan"))
             s.setdefault("disclosure", brief.get("disclosure", ""))
             s.setdefault("style", brief.get("style", ""))
-        return specs, "plan.json (reviewer)"
+        # behind the reviewer's picks: the scorecard's best other moments, for the grade-and-retry loop
+        try:
+            taken = tuple(used) + tuple((p[0], p[1]) for sp in specs for p in sp.get("parts", []))
+            extra = auto_specs(words_path, gfx_path, source, brief, campaign, out_dir, used=taken)
+        except Exception as e:
+            extra = []
+        for x in extra:
+            x["_why"] = "fallback: " + x["_why"]
+        return specs + extra[:MAX_TRIES - len(specs)], "plan.json (reviewer)"
     return auto_specs(words_path, gfx_path, source, brief, campaign, out_dir, used=used), "entertainment scorecard (auto)"

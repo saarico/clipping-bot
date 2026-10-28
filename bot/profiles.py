@@ -27,10 +27,10 @@ PROFILES = {
                     length=(30, 55), ok_len=(22, 60), energy=0, quotes=0, reactions=1, cards=True,
                     soft_qa=set()),
     "cinematic": dict(wps=(0.8, 3.8), pause_penalty=False, filler=False, clarity=False, back_refs=False,
-                      length=(15, 40), ok_len=(10, 60), energy=6, quotes=10, reactions=1, cards=False,
+                      length=(12, 30), ok_len=(10, 45), energy=6, quotes=10, reactions=1, cards=False,   # rico 2026-10-28: "boring" at 34 s; fan-edit energy = short
                       soft_qa={"Speaker centred", "Somebody in frame", "Smooth transitions", "Clean first 2 seconds", "Audio",
                                "Captions cover the whole clip", "Ends on a finished sentence", "Faces clear of the title",
-                               "Cut edges (no clipped words)", "Picture (black, frozen, flicker)"}),   # music under every edge; black title cards
+                               "Cut edges (no clipped words)", "Picture (black, frozen, flicker)"}),   # music under every edge; black title cards. "One 9:16 look" and "Actors fill the frame" are never soft
     "stream": dict(wps=(1.2, 4.2), pause_penalty=False, filler=False, clarity=False, back_refs=False,
                    length=(15, 45), ok_len=(10, 60), energy=10, quotes=4, reactions=3, cards=False,
                    soft_qa={"Speaker centred", "Somebody in frame", "Smooth transitions", "Clean first 2 seconds",
@@ -54,14 +54,16 @@ HYPE = r"\b(insane|clutch|no way|let'?s go|lets go|gg|oh my god|omg|bro|what the
 # How the clip looks, per kind of footage (rico, 2026-10-28: "font looks nicer and is relevant").
 # Fonts live in bot/fonts (Google Fonts, OFL). cap_group = words per caption phrase (min, max).
 LOOK = {
-    "podcast": dict(title_font="Montserrat ExtraBold", title_file="Montserrat-ExtraBold.ttf", title_max=80, title_bold=0, title_spacing=0,
-                    cap_font="Montserrat Black", cap_bold=0, cap_size=70, outline=6, shadow=2, cap_group=(2, 4), accent="&H00D7FF&"),
-    "cinematic": dict(title_font="Bebas Neue", title_file="BebasNeue-Regular.ttf", title_max=118, title_bold=0, title_spacing=2,
-                      cap_font="Poppins", cap_bold=1, cap_size=74, outline=5, shadow=3, cap_group=(2, 4), accent="&H2BC6FF&"),   # warm gold
-    "stream": dict(title_font="Bangers", title_file="Bangers-Regular.ttf", title_max=104, title_bold=0, title_spacing=1,
-                   cap_font="Poppins", cap_bold=1, cap_size=74, outline=6, shadow=2, cap_group=(2, 4), accent="&H00D7FF&"),
-    "performance": dict(title_font="Bebas Neue", title_file="BebasNeue-Regular.ttf", title_max=118, title_bold=0, title_spacing=2,
-                        cap_font="Poppins", cap_bold=1, cap_size=72, outline=5, shadow=3, cap_group=(2, 5), accent="&H2BC6FF&"),
+    "podcast": dict(title_font="Montserrat ExtraBold", title_file="Montserrat-ExtraBold.ttf", title_max=84, title_bold=0, title_spacing=0,
+                    cap_font="Montserrat Black", cap_bold=0, cap_size=80, outline=7, shadow=2, cap_group=(2, 4), accent="&H00D7FF&"),
+    # rico, 2026-10-28 (DIGGER run 4): Bebas Neue + Poppins "isn't nice or good size": back to the heavy Montserrat
+    # look the approved ICH clips had, bigger, thicker outline
+    "cinematic": dict(title_font="Montserrat ExtraBold", title_file="Montserrat-ExtraBold.ttf", title_max=88, title_bold=0, title_spacing=0,
+                      cap_font="Montserrat Black", cap_bold=0, cap_size=86, outline=8, shadow=3, cap_group=(2, 4), accent="&H2BC6FF&"),   # warm gold
+    "stream": dict(title_font="Montserrat ExtraBold", title_file="Montserrat-ExtraBold.ttf", title_max=88, title_bold=0, title_spacing=0,
+                   cap_font="Montserrat Black", cap_bold=0, cap_size=86, outline=8, shadow=2, cap_group=(2, 4), accent="&H00D7FF&"),
+    "performance": dict(title_font="Montserrat ExtraBold", title_file="Montserrat-ExtraBold.ttf", title_max=88, title_bold=0, title_spacing=0,
+                        cap_font="Montserrat Black", cap_bold=0, cap_size=84, outline=8, shadow=3, cap_group=(2, 5), accent="&H2BC6FF&"),
 }
 
 

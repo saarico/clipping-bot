@@ -190,6 +190,41 @@ def trim_to_cuts(src, ranges, words):
 
 # ---------- 2. framing ----------
 
+def trim_cards(src, ranges, words):
+    """Movies and trailers: a wide credit or title card at the start or end of a moment is cut off; there
+    is nobody to focus on and it cannot fit a 9:16 window (rico, 2026-10-28). Spoken words are kept."""
+    out = []
+    for s, e in ranges:
+        shs = analyze_shots.shots(src, s, e)
+        ns, ne = s, e
+        for sh in shs[:2]:
+            if sh["start"] > ns + 0.3 or sh["faces"]:
+                break
+            tb = analyze_shots.text_box(src, max(sh["start"], ns), min(sh["end"], e))
+            if not tb or tb[2] - tb[0] <= 0.25:
+                break
+            first = next((w["start"] for w in words if w["start"] >= ns - 0.05), e)
+            cut = min(sh["end"], first - 0.15)
+            if cut - ns < 0.3 or e - cut < 8:
+                break
+            print(f"card at the start trimmed: {ns:.2f} -> {cut:.2f}")
+            ns = cut
+        for sh in reversed(shs[-2:]):
+            if sh["end"] < ne - 0.3 or sh["faces"]:
+                break
+            tb = analyze_shots.text_box(src, max(sh["start"], ns), min(sh["end"], ne))
+            if not tb or tb[2] - tb[0] <= 0.25:
+                break
+            last = max((w["end"] for w in words if w["end"] <= ne + 0.05), default=ns)
+            cut = max(sh["start"], last + 0.15)
+            if ne - cut < 0.3 or cut - ns < 8:
+                break
+            print(f"card at the end trimmed: {ne:.2f} -> {cut:.2f}")
+            ne = cut
+        out.append([ns, ne])
+    return out
+
+
 def people(faces, box=None):
     """The 1-2 people worth framing; faces inside an on-screen graphic (box, source px) don't count."""
     def in_box(f):
@@ -487,9 +522,10 @@ def title_lines(text, hi, lk=None):
             a, b = " ".join(words[:ends[0]]), " ".join(words[ends[0]:])
             if font.getlength(a) <= W - 110 and font.getlength(b) <= W - 110:
                 return size, r"\N".join(paint(l, hi) for l in (words[:ends[0]], words[ends[0]:]))
+    two = None
     for size in range(top, int(top * 0.5), -2):
         font = ImageFont.truetype(ffile, size)
-        fits = lambda t: font.getlength(t) <= W - 110
+        fits = lambda t: font.getlength(t) <= W - 70
         best = None
         for i in range(1, len(words) + 1):
             a, b = " ".join(words[:i]), " ".join(words[i:])
@@ -498,8 +534,28 @@ def title_lines(text, hi, lk=None):
                 if best is None or score < best[0]:
                     best = (score, words[:i], words[i:])
         if best:
-            return size, r"\N".join(paint(l, hi) for l in best[1:] if l)
-    raise ValueError(f"title too long for 2 lines: {text}")
+            two = (size, [l for l in best[1:] if l])
+            break
+    # a long title reads bigger on 3 short lines than on 2 long ones (rico, 2026-10-28: "not good size")
+    if two and two[0] < top * 0.72 and len(words) >= 6:
+        for size in range(min(top, 66), int(top * 0.5), -2):
+            font = ImageFont.truetype(ffile, size)
+            fits = lambda t: font.getlength(t) <= W - 70
+            best = None
+            for i in range(1, len(words) - 1):
+                for j in range(i + 1, len(words)):
+                    ls = [" ".join(words[:i]), " ".join(words[i:j]), " ".join(words[j:])]
+                    if all(fits(l) for l in ls):
+                        score = max(font.getlength(l) for l in ls) - min(font.getlength(l) for l in ls)
+                        if best is None or score < best[0]:
+                            best = (score, words[:i], words[i:j], words[j:])
+            if best:
+                if size > two[0] * 1.1:
+                    return size, r"\N".join(paint(l, hi) for l in best[1:])
+                break
+    if two:
+        return two[0], r"\N".join(paint(l, hi) for l in two[1])
+    raise ValueError(f"title too long for 3 lines: {text}")
 
 
 STUTTER = {"a", "the", "my", "i", "ive", "im", "that", "to", "we", "and", "so", "its", "they", "in", "of", "she",
@@ -715,6 +771,8 @@ def main(spec_path):
     if has_teaser and spec.get("teaser_exact"):
         ranges[0] = list(spec["teaser"])   # hand-checked cut (e.g. the next speaker starts mid-word)
     ranges = trim_to_cuts(src, ranges, words)
+    if not profiles.profile(spec.get("style"))["cards"]:
+        ranges = trim_cards(src, ranges, words)
     overlays = spec.get("overlays", [])
     focus = spec.get("focus", [])
     marks = [m for o in overlays for m in (o["from"], o["to"])] + [m for f in focus for m in f]
@@ -781,7 +839,7 @@ def main(spec_path):
                                 ppl, panel_w = small, 520
                                 wide_pair = list(small)
                             else:
-                                pair = wide_pair or fixed
+                                pair = [] if whole_when_lost else (wide_pair or fixed)   # a movie's wide shot is not the podcast's two seats
                                 if len(pair) == 2:
                                     ppl, panel_w = pair, 520
                                 elif len(small) == 1:
@@ -789,11 +847,23 @@ def main(spec_path):
                         lay = "split" if len(ppl) == 2 else "face" if ppl else "wide"
                         t_in = t_out = 0
                         if whole_when_lost:
-                            # trailers and scene clips: never crop through burned-in text; nobody close = whole frame
-                            tb = analyze_shots.text_box(src, vs, vs + b - a)
-                            if tb or lay == "wide" or small_used:   # a two-shot found by the small-face pass is not split on movies: whole frame
-                                ov = {"box": [0, 0, SRC_W, SRC_H], "style": "fit", "from": a, "to": b, "full": True, "hard_out": True}
-                                lay, ppl, t_in, t_out = "fit", [], 1e6, 1e6
+                            # movies, streams, concerts: ONE 9:16 look for the whole clip (rico, 2026-10-28: "the screen
+                            # keeps switching between 16:9 and 9:16, horrible"; "not focusing on actors"). The window
+                            # follows the actors and punches in on wide shots; a two-shot is cropped on whoever talks,
+                            # never split; burned-in text that fits the window is centred (wide credit cards at the
+                            # clip's edges were trimmed off by trim_cards).
+                            tb = analyze_shots.text_box(src, vs, vs + b - a) if not ppl or ppl[0][2] < 0.12 else None
+                            if tb:
+                                ppl = [((tb[0] + tb[2]) / 2, (tb[1] + tb[3]) / 2, 0.2)]
+                                lay, zoom = "face", 1.0          # centred on the text, never zoomed (the detector can miss letters)
+                            elif ppl:
+                                if len(ppl) == 2:
+                                    ppl = [talker(ppl)]
+                                lay = "face"
+                                zoom = max(zoom, min(1.5, max(1.0, 0.17 / max(ppl[0][2], 0.02))))
+                            else:
+                                lay = "wide"
+                            zoom = min(1.6, zoom * spec.get("zoom_boost", 1.0))
                     if lay in ("face", "side", "bottom", "banner", "hide") and ppl and ppl[0][2] >= 0.1:
                         keys, _ = pan_keys(src, vs, vs + b - a, box=ov["box"] if ov else None,
                                            start_cx=last_cx if same_shot else None)
