@@ -31,7 +31,11 @@ applies them in the next `plan.json`. State per campaign: `campaigns/<c>/state.j
 Run by hand: Actions → run → Run workflow (optionally one campaign folder name).
 Local test of the cutting line without Drive: `python3 bot/pipeline.py <work dir> <episode.mp4> <brief.json>`.
 
-## Brand mode (silent product footage)
+## Grading profiles (per kind of footage)
+
+`bot/profiles.py`: podcast, cinematic (trailers, scene clips), stream (gaming, live reactions), performance (music, concerts). The profile decides which QA checks are hard FAILs, the pace and length targets, and what counts as a strong moment (stakes words for podcasts, short quotable lines for trailers, hype words and loud seconds for streams). Set it in `plan.json` `brief_overrides.style`; otherwise the bot reads the brief, then the footage.
+
+## Brand mode (silent product footage, parked: no ad campaigns)
 
 Some campaigns (FOLD) hand out app demos instead of a talking episode. For those the reviewer writes
 up to 3 short scripts in `campaigns/<c>/plan.json` under `brand_clips` (hook, script lines, which footage
