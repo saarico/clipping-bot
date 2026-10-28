@@ -12,6 +12,11 @@ rico, 2026-10-26: "Are you able to read the entire video and judge and create a 
 4. **Read the top 15 in full** (`candidates.md`), as a stranger. Keep only moments with a stake a normal person feels and a payoff that lands. Write the title first: if no 10-word title makes someone stop, the moment is out.
 5. **Cut, then judge** (scorecards/judgment.md). Only clips over the bar go to rico.
 
+## Genres and media types (2026-10-28, rico: "go more into different genres and different types of media", "ensure comedy grade is also present")
+Two things describe a campaign. The **media profile** (bot/profiles.py: podcast, cinematic, stream, performance) says how the footage behaves and sets pace targets, what counts as a framing failure, and the fonts. The **genre mix** (bot/genres.py: comedy, drama, action, horror, romance, gossip, business, selfhelp, truecrime, sports, gaming, music) says what the audience came for; it is read from the brief, then the transcript, or pinned by the reviewer in plan.json `brief_overrides.genres`. Every window gets a 0-20 score per genre from word choice and sentence shape; the entertainment points (0-25) are the mix-weighted sum. **Comedy is always graded** (setup + short punchline, retorts, absurd numbers, insults, laughter, swearing used for effect) and blended in 20% even when the mix has no comedy: a laugh travels in every genre. The judge prints the same genre scores on the finished clip.
+
+**Backtest** before changing weights: `python3 bot/backtest.py words.json --style cinematic --truth 26.4-60.1,177.5-194.9` ranks approved clips; every approved clip should sit in the top 5 (2026-10-28: DIGGER reviewer picks 3/3, Mark Manson approved clip rank 4).
+
 ## What makes a podcast moment work (learned 2026-10-26)
 - A real person and a number beat a concept: "his dad made him hit 2,500 balls a day" beats "shame drives compulsive behaviour".
 - The speaker in close-up on the first word; the wide two-shot is for reactions, in a split, never the opener.
