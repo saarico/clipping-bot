@@ -33,8 +33,9 @@ LEX = {
              r"collapse\w*|war|nuclear|danger\w*|threat\w*|no choice|last chance|too late|save the world|end of the world|"
              r"you have to|you need to|or else|promise me|i swear|never again|everything|nothing left|lost everything|"
              r"responsib\w+|fault|blame\w*|forgive\w*|consequenc\w+|sacrific\w+|sir|mr\.|president)\b",
-    "action": r"\b(go|run|move|now|hurry|get (down|out|in)|shoot|fire|attack|fight|chase|explode\w*|bomb|gun|jump|drive|"
-              r"faster|hold on|look out|incoming|countdown|three|two|one|launch|rig|platform|helicopter|jet|crew)\b",
+    "action": r"\b(hurry|get (down|out)|shoot|shots? fired|fire|attack\w*|fight\w*|chase[sd]?|explo(de|sion)\w*|bomb\w*|guns?|"
+              r"faster|hold on|look out|incoming|countdown|launch\w*|helicopter|jet|missile\w*|crash\w*|escape\w*|hostage\w*|"
+              r"rescue\w*|evacuat\w+|emergency|mayday|blow (it |this )?up|take cover|open fire)\b",
     "horror": r"\b(scared|afraid|terrif\w+|creepy|haunted|ghost|demon|monster|dark|blood|scream\w*|nightmare|don't (go|look|open)|"
               r"behind you|something('s| is) (here|wrong)|whisper\w*|basement|woods)\b",
     "romance": r"\b(love[sd]?|loving|kiss\w*|date[sd]?|dating|girlfriend|boyfriend|wife|husband|ex|marri\w+|wedding|cheat\w*|"

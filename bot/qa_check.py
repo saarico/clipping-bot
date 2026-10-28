@@ -172,15 +172,16 @@ def check_cut_edges(rep, details, words, source):
 def check_captions(rep, details, words, events, dur):
     caps = [e for e in events if e["style"] == "Cap"]
     cap_words = {norm(w) for e in caps for w in plain(e["text"]).split()}
+    cap_join = "|".join(sorted(cap_words))                 # "90" + "%" are shown joined as "90%"
     missing = []
     for s, e in details["cuts"]:
         for w in words:
             if w["start"] >= s - 0.05 and w["end"] <= e + 0.05:
                 for tok in w["text"].split():
                     bare = tok.rstrip(',.?!"')
-                    if bare.endswith("-") and len(bare.strip("-")) <= 3 or norm(tok) in FILLER:
-                        continue                          # fragments and filler are left out on purpose
-                    if norm(tok) and norm(tok) not in cap_words:
+                    if bare.endswith("-") and len(bare.strip("-")) <= 3 or norm(tok) in FILLER or SWEAR_SHOWN.match(bare):
+                        continue                          # fragments, filler and masked swearing are left out on purpose
+                    if norm(tok) and norm(tok) not in cap_words and norm(tok) not in cap_join:
                         missing.append(tok)
     caps.sort(key=lambda e: e["start"])
     gaps = [(a["end"], b["start"]) for a, b in zip(caps, caps[1:]) if b["start"] - a["end"] > 1.5]
@@ -233,6 +234,46 @@ def check_captions(rep, details, words, events, dur):
     ending = plain(caps[-1]["text"]).strip().rstrip('"\')') if caps else ""
     ok = ending[-1:] in ".?!" if ending else False
     rep.add("Ends on a finished sentence", "PASS" if ok else "FAIL", f"last caption: \"{ending}\"")
+    check_readable(rep, caps, details.get("spec", {}))
+
+
+SWEAR_SHOWN = re.compile(r"\b(fuck\w*|shit\w*|bitch\w*|asshole\w*|cunt\w*|motherfuck\w*|goddamn|pussy)\b", re.I)
+
+
+def check_readable(rep, caps, spec):
+    """Captions a scroller can actually read (rico, 2026-10-28: "ensure captions are read and judged"):
+    phrases of 2-6 words (one-word flashes are unreadable, 7+ is a wall), each up at least 0.35 s, no
+    line over 34 characters, numbers whole ("350,000" not "350 ,000"), swearing masked unless the
+    reviewer set profanity "show"."""
+    if not caps:
+        rep.add("Captions readable", "FAIL", "no captions")
+        return
+    merged = []                                            # one caption split across two layouts is one caption to the eye
+    for e in sorted(caps, key=lambda e: e["start"]):
+        t = plain(e["text"]).strip()
+        if merged and merged[-1]["text"] == t and e["start"] - merged[-1]["end"] < 0.05:
+            merged[-1]["end"] = e["end"]
+        else:
+            merged.append({"text": t, "start": e["start"], "end": e["end"]})
+    caps = merged
+    texts = [e["text"] for e in caps]
+    n = [len(t.split()) for t in texts]
+    avg = sum(n) / len(n)
+    ones = sum(1 for k in n if k == 1)
+    short = sum(1 for e, k in zip(caps, n) if k > 1 and e["end"] - e["start"] < 0.35)
+    longline = [t for t in texts if max(len(l) for l in t.split("\n")) > 34]   # libass wraps past ~30; a wall is 2 wrapped lines
+    broken = [t for t in texts if re.search(r"\d ,\d|\d %|\$ \d|\d - \d", t)]
+    sworn = [t for t in texts if SWEAR_SHOWN.search(t)] if spec.get("profanity", "mask") != "show" else []
+    flags = []
+    if avg < 1.6: flags.append(f"captions flash one word at a time ({avg:.1f} words per caption)")
+    if avg > 6.5: flags.append(f"captions are walls of text ({avg:.1f} words per caption)")
+    if ones > len(n) * 0.4: flags.append(f"{ones} of {len(n)} captions are a single word")
+    if short: flags.append(f"{short} caption(s) shown under 0.35 s")
+    if longline: flags.append(f"line over 26 characters: \"{longline[0][:40]}\"")
+    if broken: flags.append(f"broken number: \"{broken[0][:40]}\"")
+    if sworn: flags.append(f"swearing shown unmasked: \"{sworn[0][:40]}\"")
+    st = "FAIL" if (avg < 1.3 or sworn or broken) else "WARN" if flags else "PASS"
+    rep.add("Captions readable", st, "; ".join(flags) if flags else f"{avg:.1f} words per caption, {len(n)} captions")
 
 
 def check_spelling(rep, text):
@@ -422,6 +463,23 @@ def check_picture(rep, mp4, details):
     rep.add("Clean first 2 seconds", "FAIL" if bad else "PASS", "; ".join(bad) or "no freeze or stray shot")
 
 
+def check_footage_text(rep, mp4, details):
+    """Text burned into the footage (a title card, a lower third, a sign) must not run off the edge of
+    the output (rico, 2026-10-28: the trailer's "A NEW FILM FROM" card was cropped through the middle).
+    Our own title and captions sit centred inside the margins, so only rows touching an edge count."""
+    import analyze_shots
+    hits = []
+    for i, fr in enumerate(frames(mp4, 1)):
+        g = cv2.cvtColor(fr, cv2.COLOR_BGR2GRAY)
+        h, w = g.shape
+        for x0, y0, x1, y1, nc in analyze_shots._text_rows(g):
+            if (x0 <= w * 0.01 or x1 >= w * 0.99) and nc >= 5 and 0.12 * h < (y0 + y1) / 2 < 0.78 * h:
+                hits.append(i)
+                break
+    st = "FAIL" if len(hits) >= 2 else "WARN" if hits else "PASS"
+    rep.add("Footage text cut off", st, f"text runs off the frame edge at {', '.join(f'{t} s' for t in hits[:8])}" if hits else "no footage text touches an edge")
+
+
 def check_transitions(rep, mp4, details, dur):
     """Every hard cut in the finished picture must be one we meant (a shot or layout edge). An isolated
     jump anywhere else is a glitch; a jump in the first/last 1.5 s or at a join is a FAIL. A frame far
@@ -525,6 +583,7 @@ def main(folder, source=None):
     check_picture(rep, mp4, details)
     check_centred(rep, mp4, details)
     check_nobody(rep, mp4, details)
+    check_footage_text(rep, mp4, details)
     check_transitions(rep, mp4, details, dur)
     check_audio_timing(rep, mp4)
     check_post_text(rep, folder, spec)

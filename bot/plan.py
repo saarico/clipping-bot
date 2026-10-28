@@ -31,7 +31,7 @@ def slug(s, n=28):
 def hook_text(c):
     """Title band: the strongest sentence of the moment, 4-12 words, ends clean."""
     h = c["hook"].rstrip(".…")
-    h = re.sub(r"^(and|so|but|like|yeah|um|uh)[, ]+", "", h, flags=re.I).strip()
+    h = re.sub(r"^((and|so|but|like|yeah|um|uh|okay|ok|right|well|i mean)[, ]+)+", "", h, flags=re.I).strip()
     if h.endswith("..."):
         h = h[:-3]
     return (h[:1].upper() + h[1:]).strip() + "."
@@ -46,6 +46,7 @@ def auto_specs(words_path, gfx_path, source, brief, campaign, out_dir, used=()):
             json.dump(audio_energy.energy(source), open(ep, "w"))
         energy = json.load(open(ep))
     cands = fm_candidates(words_path, gfx_path, brief, prof_name, energy)
+    mix = genre_mix(brief, json.load(open(words_path)))
     specs = []
     for c in cands:
         if any(min(c["end"], b) - max(c["start"], a) > 0 for a, b in used):
@@ -58,7 +59,7 @@ def auto_specs(words_path, gfx_path, source, brief, campaign, out_dir, used=()):
             "parts": [[c["start"], c["end"]]], "hook": hook_text(c), "emphasis": emph,
             "focus": [], "overlays": [], "callouts": [], "sfx": False,
             "wide_split": [[0.25, 0.40, 0.06], [0.75, 0.40, 0.06]],   # generic two-shot seats; the reviewer's plan.json overrides
-            "disclosure": brief.get("disclosure", ""), "style": brief.get("style", ""),
+            "disclosure": brief.get("disclosure", ""), "style": brief.get("style", ""), "genres": mix,
             "out": str(Path(out_dir) / f"{slug(c['hook'])}.mp4"),
             "_why": f"score {c['score']}: " + ", ".join(f"{k} {v}" for k, v in c["reasons"].items() if v and k != "genres") + f" [{c['reasons'].get('genres', '')}]",
         })
@@ -121,7 +122,12 @@ def load(campaign_dir, words_path, gfx_path, source, brief, campaign, out_dir, u
     if plan.exists() and json.loads(plan.read_text()).get("clips"):   # a plan without clips (overrides only) = auto picks
         p = json.loads(plan.read_text())
         specs = p.get("clips", [])[:MAX_CLIPS]
+        try:
+            mix = genre_mix(brief, json.load(open(words_path)))
+        except Exception:
+            mix = {"drama": 0.5, "business": 0.5}
         for s in specs:
+            s.setdefault("genres", mix)
             s.setdefault("campaign", campaign); s.setdefault("source", str(source)); s.setdefault("words", str(words_path))
             s.setdefault("out", str(Path(out_dir) / f"{slug(s.get('hook', 'clip'))}.mp4"))
             s.setdefault("_why", p.get("why", "reviewer's plan"))

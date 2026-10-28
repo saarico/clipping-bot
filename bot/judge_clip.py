@@ -8,15 +8,18 @@ Part 2 is a separate Claude agent that has NOT seen the editing: it reads captio
 report, looks at qa_sheet.png, scores the rubric in scorecards/judgment.md and appends its verdict to the same
 file. Under 75 overall = re-cut, not sent.
 
-Machine measures (0-100):
-  hook      /20  first 2.5 s: a name, a number or an "I/we" claim; no pronoun start; title <= 14 words
-  pace      /15  2.2-3.3 words per second; no silence over 0.8 s; filler words under 3.5%
-  variety   /20  a visual change (camera cut, card, split, punch-in) at least every 8 s; share of
-                 time with a card or b-roll on screen
-  framing   /15  face centred (qa_report), no letterbox, no segment under 0.5 s
-  story     /20  stakes words (money, fame, failure, surprise, emotion), a contrast or a question,
-                 ends on a finished sentence, no podcast back-references
-  length    /10  30-55 s
+Machine measures (0-100), rebalanced 2026-10-28 (rico: "ensure captions are read and judged",
+"ensure comedy grade is also present"):
+  hook          /20  first 2.5 s: a name, a number or an "I/we" claim; no pronoun start; title <= 14 words
+  pace          /10  words per second in the profile's band; no silence over 0.8 s; filler under 3.5%
+  variety       /15  a visual change (camera cut, card, split, punch-in) at least every 8 s
+  framing       /10  face centred (qa_report), no letterbox, no segment under 0.5 s, no footage text cut off
+  story         /10  stakes words, a contrast or a question, ends on a finished sentence, no back-references
+  entertainment /10  genres.py: the campaign's genre mix scored on what is actually said in the clip
+  comedy        /5   genres.comedy: setup + punch, retorts, absurd numbers, insults, laughter (always graded)
+  captions      /10  read like a person: 2-6 words per caption, nothing flashing, numbers whole, no
+                     unknown words, no cut-off fragments, swearing masked
+  length        /10  inside the profile's sweet spot
 """
 import json
 import re
@@ -26,6 +29,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 import find_moments as fm  # noqa: E402
+import genres  # noqa: E402
 import profiles  # noqa: E402
 
 
@@ -75,16 +79,16 @@ def main(folder):
 
     # pace
     wps = len(words) / max(dur, 1)
-    p = 15
+    p = 10
     lo_wps, hi_wps = prof["wps"]
-    if wps < lo_wps * 0.8: p -= 7
-    elif wps < lo_wps: p -= 4
+    if wps < lo_wps * 0.8: p -= 5
+    elif wps < lo_wps: p -= 3
     elif wps > hi_wps: p -= 2
     sil = silence(mp4) if prof["pause_penalty"] else []
-    p -= min(6, 3 * len(sil))
+    p -= min(4, 2 * len(sil))
     fill = fm.count(fm.FILLER, low) / max(len(words), 1) if prof["filler"] else 0
-    if fill > 0.06: p -= 4
-    elif fill > 0.035: p -= 2
+    if fill > 0.06: p -= 3
+    elif fill > 0.035: p -= 1
     notes["pace"] = [f"{wps:.1f} words/s", f"{len(sil)} silence(s) over 0.8 s", f"filler {fill:.1%}"]
     rep["pace"] = max(0, p)
 
@@ -104,27 +108,30 @@ def main(folder):
     longest = max(gaps) if gaps else dur
     cards = sum(s["to"] - s["from"] for s in shots if s["layout"].split("+")[0] in ("side", "bottom", "fit", "banner")) + sum(b - a for a, b in call)
     zooms = sum(1 for s in shots if "zoom" in s["layout"])
-    v = 20
-    if longest > 12: v -= 8
-    elif longest > 8: v -= 4
+    v = 15
+    if longest > 12: v -= 6
+    elif longest > 8: v -= 3
     share = cards / max(dur, 1)
     if prof["cards"]:   # podcasts need b-roll; trailers and streams carry their own visual change
-        if share < 0.1: v -= 6
-        elif share < 0.2: v -= 3
+        if share < 0.1: v -= 5
+        elif share < 0.2: v -= 2
         if zooms == 0: v -= 2
     notes["variety"] = [f"longest stretch without a visual change {longest:.1f} s", f"cards/b-roll/callouts {share:.0%} of the clip", f"{zooms} punch-in(s)", f"{len(call)} callout(s)"]
     rep["variety"] = max(0, v)
 
     # framing (from qa_report.md)
     qa = (folder / "qa_report.md").read_text() if (folder / "qa_report.md").exists() else ""
-    f = 15
+    f = 10
     m = re.search(r"\| Speaker centred \| (\w+) \| ([^|]*)", qa)
     if m:
-        if m.group(1) == "FAIL": f -= 10
-        elif m.group(1) == "WARN": f -= 4
+        if m.group(1) == "FAIL": f -= 6
+        elif m.group(1) == "WARN": f -= 3
         notes["framing"] = [m.group(2).strip()]
+    m = re.search(r"\| Footage text cut off \| (\w+) \| ([^|]*)", qa)
+    if m and m.group(1) != "PASS":
+        f -= 6 if m.group(1) == "FAIL" else 3; notes.setdefault("framing", []).append(m.group(2).strip())
     if any(s["layout"].split("+")[0] == "center" for s in shots):
-        f -= 5; notes.setdefault("framing", []).append("letterboxed segment")
+        f -= 3; notes.setdefault("framing", []).append("letterboxed segment")
     if any(s["to"] - s["from"] < 0.5 for s in shots):
         f -= 2; notes.setdefault("framing", []).append("segment under 0.5 s")
     rep["framing"] = max(0, f)
@@ -132,16 +139,45 @@ def main(folder):
     # story
     st = 0
     stakes = fm.count(fm.MONEY, low) + fm.count(fm.FAIL, low) + fm.count(fm.SURPRISE, low) + fm.count(fm.EMOTION, low) + 2 * fm.count(fm.FAMOUS, low)
-    st += min(8, stakes)
-    if fm.count(fm.CONTRAST, low) or "?" in body[:300]: st += 4
+    st += min(4, stakes)
+    if fm.count(fm.CONTRAST, low) or "?" in body[:300]: st += 2
     last = body.strip().splitlines()[-1].strip().rstrip('"\')') if body.strip() else ""
-    st += 5 if last.endswith((".", "!", "?")) else 0
+    st += 2 if last.endswith((".", "!", "?")) else 0
     back = fm.count(fm.PODCAST_TALK, low) if prof["back_refs"] else 0
-    st += 3 if back == 0 else 0
+    st += 2 if back == 0 else 0
     if prof["reactions"] > 1:
-        st += min(4, fm.count(profiles.HYPE, low))
+        st += min(2, fm.count(profiles.HYPE, low))
     notes["story"] = [f"{stakes} stakes word(s)", f"{back} podcast back-reference(s)", "ends on a finished sentence" if last.endswith((".", "!", "?")) else "ends mid-sentence"]
-    rep["story"] = min(20, st)
+    rep["story"] = min(10, st)
+
+    # entertainment + comedy: the genre scorecard read on the clip's own lines (never on the plan)
+    sents = [{"text": t, "n": len(t.split())} for t in re.split(r"(?<=[.?!])\s+|\n", body) if t.strip()]
+    mix = spec.get("genres") or genres.detect_mix(spec.get("hook", ""), low)
+    ent, gs = genres.entertainment(sents, low, mix)
+    rep["entertainment"] = min(10, round(ent * 10 / 25))
+    rep["comedy"] = min(5, round(gs["comedy"] / 3))
+    topg = sorted(((g, v) for g, v in gs.items() if v), key=lambda kv: -kv[1])[:4]
+    notes["entertainment"] = [f"mix {', '.join(f'{g} {w:.0%}' for g, w in mix.items())}", "genres " + ", ".join(f"{g} {v}/20" for g, v in topg)]
+    notes["comedy"] = [f"comedy {gs['comedy']}/20"]
+
+    # captions: what the scroller reads, from qa_report's caption rows
+    c = 10
+    cn = []
+    m = re.search(r"\| Captions readable \| (\w+) \| ([^|]*)", qa)
+    if m and m.group(1) != "PASS":
+        c -= 5 if m.group(1) == "FAIL" else 2; cn.append(m.group(2).strip()[:90])
+    m = re.search(r"\| Caption spelling \| (\w+) \| ([^|]*)", qa)
+    if m and m.group(1) != "PASS" and "not installed" not in m.group(2):
+        nbad = len(re.findall(r"\(did you mean", m.group(2)))
+        c -= min(3, nbad); cn.append(f"{nbad} unknown word(s)")
+    m = re.search(r"\| Caption text reads clean \| (\w+) \| ([^|]*)", qa)
+    if m and m.group(1) != "PASS":
+        c -= 2; cn.append(m.group(2).strip()[:60])
+    m = re.search(r"\| Captions cover the whole clip \| (\w+) \| ([^|]*)", qa)
+    if m and m.group(1) != "PASS":
+        c -= 3 if m.group(1) == "FAIL" else 1; cn.append("coverage: " + m.group(2).strip()[:60])
+    rep["captions"] = max(0, c)
+    notes["captions"] = cn or ["read clean"]
 
     (l0, l1), (o0, o1) = prof["length"], prof["ok_len"]
     rep["length"] = 10 if l0 <= dur <= l1 else 6 if o0 <= dur <= o1 else 0
@@ -149,7 +185,7 @@ def main(folder):
     out = [f"# Judge report: {folder.name}", "", f"Profile: {spec.get('style') or 'podcast'}", "",
            "Part 1, measured by bot/judge_clip.py. Part 2 (below) is the judge agent's blind read (scorecards/judgment.md).", "",
            "| Area | Points | Notes |", "|---|---|---|"]
-    maxes = {"hook": 20, "pace": 15, "variety": 20, "framing": 15, "story": 20, "length": 10}
+    maxes = {"hook": 20, "pace": 10, "variety": 15, "framing": 10, "story": 10, "entertainment": 10, "comedy": 5, "captions": 10, "length": 10}
     for k, v in rep.items():
         out.append(f"| {k} | {v}/{maxes[k]} | {'; '.join(notes.get(k, []))} |")
     out += ["", f"**Machine score: {total}/100** (length {dur:.1f} s, {len(words)} words)", "",

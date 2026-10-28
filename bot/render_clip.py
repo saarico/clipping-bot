@@ -70,6 +70,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).parent))
 import analyze_shots  # noqa: E402
+import profiles  # noqa: E402
 
 FONTS_DIR = Path(__file__).parent / "fonts"
 TITLE_FONT, CAP_FONT = "Montserrat ExtraBold", "Montserrat Black"
@@ -342,6 +343,12 @@ def build_filter(lay, ppl, zoom, ov, t_in, t_out, card_pre=None, keys=None, pane
         return _card_input(f"[0:v]split[a][b];[a]{base}[base];"
                 f"[b]{card},scale={pw - 12}:{ph - 12},pad={pw}:{ph}:6:6:white[card];"
                 f"[base][card]overlay=x='{x_expr}':y={py}[v]", card_pre)
+    if lay == "fit" and ov.get("full"):
+        # the whole source frame, full width, over a blurred copy: cinematic shots with burned-in text
+        # (never crop through a title card) or with nobody close enough to frame on
+        ph = int(SRC_H * W / SRC_W) // 2 * 2
+        py = (HC - ph) // 2 - 110
+        return f"[0:v]split[a][b];[a]{BLUR_BG}[base];[b]scale={W}:{ph}[card];[base][card]overlay=x=0:y={py}[v]"
     if lay == "fit":
         # the whole graphic, full width, over a blurred copy of itself
         pw = W - 40
@@ -458,25 +465,30 @@ CAP_Y = {"split": TOP + HC // 2, "bottom": TOP + HC // 2, "center": 1500, "side"
 CAP_DEFAULT = 1480
 
 
+ACCENT = ["&H00D7FF&"]   # set per render from the look
+
+
 def paint(words, hi):
-    return " ".join(r"{\c&H00D7FF&}" + esc(w) + r"{\c&HFFFFFF&}" if norm(w) in hi else esc(w) for w in words)
+    return " ".join(r"{\c" + ACCENT[0] + "}" + esc(w) + r"{\c&HFFFFFF&}" if norm(w) in hi else esc(w) for w in words)
 
 
-def title_lines(text, hi):
-    """Split the title into at most 2 lines at the biggest font size (<= 80) that fits the width."""
+def title_lines(text, hi, lk=None):
+    """Split the title into at most 2 lines at the biggest font size that fits the width (the look's font)."""
     from PIL import ImageFont
+    lk = lk or profiles.look(None)
+    ffile, top = str(FONTS_DIR / lk["title_file"]), lk["title_max"]
     hi = {norm(h) for h in hi}
     words = text.split()
     # two sentences -> one per line, if that fits at a decent size; otherwise balanced lines
     ends = [i + 1 for i, w in enumerate(words[:-1]) if w[-1] in ".?!"]
     if len(ends) == 1:
-        for size in range(80, 54, -2):
-            font = ImageFont.truetype(str(FONTS_DIR / "Montserrat-ExtraBold.ttf"), size)
+        for size in range(top, int(top * 0.68), -2):
+            font = ImageFont.truetype(ffile, size)
             a, b = " ".join(words[:ends[0]]), " ".join(words[ends[0]:])
             if font.getlength(a) <= W - 110 and font.getlength(b) <= W - 110:
                 return size, r"\N".join(paint(l, hi) for l in (words[:ends[0]], words[ends[0]:]))
-    for size in range(80, 40, -2):
-        font = ImageFont.truetype(str(FONTS_DIR / "Montserrat-ExtraBold.ttf"), size)
+    for size in range(top, int(top * 0.5), -2):
+        font = ImageFont.truetype(ffile, size)
         fits = lambda t: font.getlength(t) <= W - 110
         best = None
         for i in range(1, len(words) + 1):
@@ -511,7 +523,55 @@ def clean_caption(texts):
             if toks and norm(tok) == norm(toks[-1][1]) and norm(tok) in STUTTER:
                 toks.pop()                                 # "the, the owners" -> "the owners"
             toks.append([i, tok])
+    # whisper splits numbers and hyphens into their own tokens: "350 ,000" "90 %" "DRILL -IN -ACT" "$ 18"
+    fixed = []
+    for j, tok in toks:
+        glue = re.match(r"^[,%]", tok) or (tok.startswith("-") and len(tok) > 1 and not tok.startswith("--")) or fixed and fixed[-1][1] in ("$", "£", "€")
+        if fixed and glue and (fixed[-1][0] == j or re.match(r"^(,\d|%)", tok) or fixed[-1][1] in ("$", "£", "€")):   # "90 %" even across two word entries
+            fixed[-1][1] += tok
+        else:
+            fixed.append([j, tok])
+    toks = fixed
     return [" ".join(t for j, t in toks if j == i) for i in range(len(texts))]
+
+
+SWEAR = re.compile(r"^(fuck\w*|shit\w*|bitch\w*|asshole\w*|cunt\w*|motherfuck\w*|goddamn|dick\w*|pussy)([,.?!\"']*)$", re.I)
+
+
+def mask_swear(tok):
+    """F***ING: the audio keeps the word, the caption keeps the platform happy (default; spec "profanity": "show" turns it off)."""
+    m = SWEAR.match(tok)
+    if not m:
+        return tok
+    w = m.group(1)
+    return w[0] + "*" * (len(w) - 2) + w[-1] + m.group(2) if len(w) > 3 else w[0] + "*" * (len(w) - 1) + m.group(2)
+
+
+def phrases(inside, texts, lk):
+    """Group words into caption phrases of lk["cap_group"] words: a new phrase at a sentence end, a pause
+    over 0.45 s, the word cap, or 1.8 s on screen (rico, 2026-10-28: one word at a time flashed and was unreadable)."""
+    lo, hi = lk["cap_group"]
+    groups, cur = [], []
+    for w, text in zip(inside, texts):
+        if not text:
+            continue
+        if cur:
+            gap = w["start"] - cur[-1][0]["end"]
+            ended = cur[-1][1].rstrip('"\'')[-1:] in ".?!"
+            long = w["end"] - cur[0][0]["start"] > 1.8
+            if len(cur) >= hi or gap > 0.45 or long or (ended and len(cur) >= lo):
+                groups.append(cur); cur = []
+        cur.append((w, text))
+    if cur:
+        groups.append(cur)
+    # a one-word straggler joins the phrase before it when the pause is short
+    out = []
+    for g in groups:
+        if out and len(g) == 1 and len(out[-1]) < hi + 1 and g[0][0]["start"] - out[-1][-1][0]["end"] < 0.45:
+            out[-1] = out[-1] + g
+        else:
+            out.append(g)
+    return out
 
 
 def build_ass(spec, pieces, layouts):
@@ -526,8 +586,13 @@ def build_ass(spec, pieces, layouts):
                 return lay
         return "face"
 
-    size, title = title_lines(spec["hook"], spec.get("hook_hi", []))
-    ev = [f"Dialogue: 2,{ts(0)},{ts(total)},Hook,,0,0,0,,{{\\an5\\pos(540,{TOP // 2 + 4})\\fs{size}}}{title}"]
+    lk = profiles.look(spec.get("style"))
+    ACCENT[0] = lk["accent"]
+    mask = spec.get("profanity", "mask") != "show"
+    hook = " ".join(mask_swear(t) if mask else t for t in spec["hook"].split())
+    size, title = title_lines(hook, spec.get("hook_hi", []), lk)
+    sp = f"\\fsp{lk['title_spacing']}" if lk.get("title_spacing") else ""
+    ev = [f"Dialogue: 2,{ts(0)},{ts(total)},Hook,,0,0,0,,{{\\an5\\pos(540,{TOP // 2 + 4})\\fs{size}{sp}}}{title}"]
     if spec.get("teaser") and spec.get("label"):   # rico dislikes the label: off unless a spec asks
         start_main = pieces[1][2]
         ev.append(f"Dialogue: 2,{ts(start_main)},{ts(start_main + 1.5)},Label,,0,0,0,,"
@@ -536,17 +601,22 @@ def build_ass(spec, pieces, layouts):
     for s, e, off in pieces:
         # a word belongs to this piece only if it starts inside it with time to be heard
         inside = [w for w in words if s - 0.05 <= w["start"] < e - 0.1]
-        for w, text in zip(inside, clean_caption([w["text"] for w in inside])):
-            if not text:
-                continue
-            ws, we = max(w["start"], s), min(w["end"], e)
+        groups = phrases(inside, clean_caption([w["text"] for w in inside]), lk)
+        for gi, group in enumerate(groups):
+            ws, we = max(group[0][0]["start"], s), min(group[-1][0]["end"], e)
+            # hold each phrase at least 0.6 s (a fast line otherwise flashes), never into the next phrase
+            nxt = groups[gi + 1][0][0]["start"] - 0.02 if gi + 1 < len(groups) else e
+            we = min(max(we, ws + 0.6), max(nxt, ws + 0.3), e)
             a, b = ws - s + off, we - s + off
             toks = []
-            for tok in text.split():
-                t = esc(tok.upper())
-                if norm(tok) in emph:
-                    t = r"{\c&H00D7FF&}" + t + r"{\c&HFFFFFF&}"
-                toks.append(t)
+            for w, text in group:
+                for tok in text.split():
+                    if mask:
+                        tok = mask_swear(tok)
+                    t = esc(tok.upper())
+                    if norm(tok) in emph:
+                        t = r"{\c" + lk["accent"] + "}" + t + r"{\c&HFFFFFF&}"
+                    toks.append(t)
             # one event per layout the caption spans, so it jumps to the right spot with the picture
             edges = sorted({a, b, *[x for x, _, _ in layouts if a < x < b]})
             for a1, b1 in zip(edges, edges[1:]):
@@ -582,8 +652,8 @@ WrapStyle: 0
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Cap,{CAP_FONT},76,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,0,0,0,0,100,100,1,0,1,7,3,5,70,70,0,1
-Style: Hook,{TITLE_FONT},62,&H00FFFFFF,&H00FFFFFF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,0,0,5,50,50,0,1
+Style: Cap,{lk['cap_font']},{lk['cap_size']},&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,{lk['cap_bold']},0,0,0,100,100,1,0,1,{lk['outline']},{lk['shadow']},5,70,70,0,1
+Style: Hook,{lk['title_font']},62,&H00FFFFFF,&H00FFFFFF,&H00000000,&H00000000,{lk['title_bold']},0,0,0,100,100,0,0,1,0,0,5,50,50,0,1
 Style: Label,{TITLE_FONT},44,&H00000000,&H00000000,&H0000D7FF,&H0000D7FF,0,0,0,0,100,100,2,0,3,12,0,8,80,80,0,1
 Style: Callout,{TITLE_FONT},96,&H0000D7FF,&H0000D7FF,&H00000000,&H00000000,1,0,0,0,100,100,0,0,3,16,0,5,60,60,0,1
 Style: Disc,{CAP_FONT},34,&H00FFFFFF,&H00FFFFFF,&H00000000,&H90000000,0,0,0,0,100,100,0,0,3,10,0,2,40,40,0,1
@@ -656,6 +726,7 @@ def main(spec_path):
         off += n / FPS
 
     framer = Framer()
+    whole_when_lost = not profiles.profile(spec.get("style"))["cards"]   # cinematic / stream / performance
     last_cx, last_shot = None, None
     wide_pair = None   # the two small faces of the wide two-shot, once found in this render
     with tempfile.TemporaryDirectory() as tmp:
@@ -679,7 +750,7 @@ def main(spec_path):
                     vs = sw[2] + (a - sw[0]) if sw else a
                     ov = next((o for o in overlays if o["from"] <= mid < o["to"]), None)
                     zoom = 1.17 if any(f[0] <= mid < f[1] for f in focus) else piece_zoom
-                    keys, panel_w = None, 630
+                    keys, panel_w, small_used = None, 630, False
                     same_shot = last_shot is not None and abs(last_shot - sh["start"]) < 0.01
                     if ov and ov["style"] == "hide" and not people(analyze_shots.faces_in(src, a, b), box=ov["box"]):
                         ov = None      # nobody to crop the strip away from (wide shot, b-roll): frame as usual
@@ -701,6 +772,7 @@ def main(spec_path):
                             # 6 s of empty room where the wide shot was cropped down the middle).
                             # the whole shot, not this piece of it: the pair does not move and the result is cached
                             small = analyze_shots.small_faces(src, *((vs, vs + b - a) if sw else (sh["start"], sh["end"])))
+                            small_used = True
                             fixed = [tuple(p) for p in spec.get("wide_split", [])]
                             if len(small) == 2 and len(fixed) == 2 and any(
                                     min(abs(f[0] - q[0]) for f in fixed) > 0.12 for q in small):
@@ -716,6 +788,12 @@ def main(spec_path):
                                     ppl = small
                         lay = "split" if len(ppl) == 2 else "face" if ppl else "wide"
                         t_in = t_out = 0
+                        if whole_when_lost:
+                            # trailers and scene clips: never crop through burned-in text; nobody close = whole frame
+                            tb = analyze_shots.text_box(src, vs, vs + b - a)
+                            if tb or lay == "wide" or small_used:   # a two-shot found by the small-face pass is not split on movies: whole frame
+                                ov = {"box": [0, 0, SRC_W, SRC_H], "style": "fit", "from": a, "to": b, "full": True, "hard_out": True}
+                                lay, ppl, t_in, t_out = "fit", [], 1e6, 1e6
                     if lay in ("face", "side", "bottom", "banner", "hide") and ppl and ppl[0][2] >= 0.1:
                         keys, _ = pan_keys(src, vs, vs + b - a, box=ov["box"] if ov else None,
                                            start_cx=last_cx if same_shot else None)

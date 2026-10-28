@@ -85,7 +85,7 @@ def prepare(work, source, brief, words=None, campaign="campaign", log=print, use
     t0 = time.time()
     words = Path(words) if words else work / "words.json"
     if not words.exists():
-        log("transcribing (whisper small, CPU)")
+        log("transcribing (whisper on CPU: medium under 25 min, else small)")
         sh([PY, str(HERE / "transcribe.py"), str(source), str(words)], work / "transcribe.log", timeout=5 * 3600)
         if not words.exists():
             raise RuntimeError("transcription failed, see transcribe.log")

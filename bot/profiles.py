@@ -51,6 +51,24 @@ TEXT_HINTS = {
 HYPE = r"\b(insane|clutch|no way|let'?s go|lets go|gg|oh my god|omg|bro|what the|wtf|rage|cooked|cracked|goated|w|l|nah|yo|chat|ez|unreal|sheesh|bruh)\b"
 
 
+# How the clip looks, per kind of footage (rico, 2026-10-28: "font looks nicer and is relevant").
+# Fonts live in bot/fonts (Google Fonts, OFL). cap_group = words per caption phrase (min, max).
+LOOK = {
+    "podcast": dict(title_font="Montserrat ExtraBold", title_file="Montserrat-ExtraBold.ttf", title_max=80, title_bold=0, title_spacing=0,
+                    cap_font="Montserrat Black", cap_bold=0, cap_size=70, outline=6, shadow=2, cap_group=(2, 4), accent="&H00D7FF&"),
+    "cinematic": dict(title_font="Bebas Neue", title_file="BebasNeue-Regular.ttf", title_max=118, title_bold=0, title_spacing=2,
+                      cap_font="Poppins", cap_bold=1, cap_size=74, outline=5, shadow=3, cap_group=(2, 4), accent="&H2BC6FF&"),   # warm gold
+    "stream": dict(title_font="Bangers", title_file="Bangers-Regular.ttf", title_max=104, title_bold=0, title_spacing=1,
+                   cap_font="Poppins", cap_bold=1, cap_size=74, outline=6, shadow=2, cap_group=(2, 4), accent="&H00D7FF&"),
+    "performance": dict(title_font="Bebas Neue", title_file="BebasNeue-Regular.ttf", title_max=118, title_bold=0, title_spacing=2,
+                        cap_font="Poppins", cap_bold=1, cap_size=72, outline=5, shadow=3, cap_group=(2, 5), accent="&H2BC6FF&"),
+}
+
+
+def look(name):
+    return LOOK.get(name or "", LOOK["podcast"])
+
+
 def profile(name):
     return PROFILES.get(name or "", PROFILES["podcast"])
 

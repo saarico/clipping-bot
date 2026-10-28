@@ -256,3 +256,69 @@ if __name__ == "__main__":
     import json
     import sys
     print(json.dumps(shots(sys.argv[1], float(sys.argv[2]), float(sys.argv[3])), indent=1))
+
+
+def _text_rows(gray):
+    """Rows of letter-like connected components in a grayscale frame (both polarities):
+    [(x0, y0, x1, y1, n_components)] in pixels of the frame given. Letters: thin strokes, similar
+    heights, evenly spaced; that rules out window panes, keyboards and brick."""
+    h, w = gray.shape
+    rows = []
+    for inv in (False, True):
+        g = 255 - gray if inv else gray
+        _, bw = cv2.threshold(g, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        n, labels, stats, _ = cv2.connectedComponentsWithStats(bw, connectivity=8)
+        comps = []
+        for i in range(1, n):
+            x, y, cw, ch, area = stats[i]
+            if not (h * 0.02 <= ch <= h * 0.35 and 2 <= cw <= ch * 1.8):
+                continue
+            if not (0.12 <= area / float(cw * ch) <= 0.9):
+                continue
+            m = (labels[y:y + ch, x:x + cw] == i).astype(np.uint8)
+            stroke = cv2.distanceTransform(m, cv2.DIST_L2, 3).max()   # half the widest stroke
+            if stroke > 0.24 * ch:
+                continue                                              # a solid blob, not a letter
+            comps.append((x, y, cw, ch))
+        comps.sort(key=lambda c: c[1])
+        used = [False] * len(comps)
+        for i, (x, y, cw, ch) in enumerate(comps):
+            if used[i]:
+                continue
+            cy = y + ch / 2
+            line = [j for j, (x2, y2, cw2, ch2) in enumerate(comps)
+                    if not used[j] and abs((y2 + ch2 / 2) - cy) < ch * 0.5 and 0.6 <= ch2 / ch <= 1.7]
+            for j in line:
+                used[j] = True
+            hs = [comps[j][3] for j in line]
+            if len(line) < 5:
+                continue
+            xs = sorted(comps[j][0] for j in line)
+            gaps = np.diff(xs)
+            if np.std(hs) / np.mean(hs) > 0.3 or (len(gaps) and np.max(gaps) > 3.0 * max(np.median(gaps), 1)):
+                continue
+            x1 = max(comps[j][0] + comps[j][2] for j in line)
+            if x1 - xs[0] >= w * 0.12:
+                rows.append((xs[0], min(comps[j][1] for j in line), x1, max(comps[j][1] + comps[j][3] for j in line), len(line)))
+    return rows
+
+
+def text_box(source, start, end):
+    """Burned-in text (a title card, a credit, a lower third) in a stretch of the source: its box
+    (x0, y0, x1, y1) in 0-1 of the frame, or None. Five frames are checked; text must show in two of
+    them, or once as a long line (8+ letters: a card that is only up for a moment).
+    rico (2026-10-28): the trailer's "A NEW FILM FROM ..." card was cropped through the middle."""
+    frames = _frames(source, start, end)
+    if len(frames) == 0:
+        return None
+    idx = sorted(set(np.linspace(0, len(frames) - 1, min(5, len(frames))).astype(int)))
+    boxes, long_line = [], False
+    for i in idx:
+        rows = _text_rows(cv2.cvtColor(frames[i], cv2.COLOR_BGR2GRAY))
+        if rows:
+            boxes.append((min(r[0] for r in rows) / W, min(r[1] for r in rows) / H,
+                          max(r[2] for r in rows) / W, max(r[3] for r in rows) / H))
+            long_line = long_line or max(r[4] for r in rows) >= 8
+    if not boxes or (len(boxes) < 2 and not long_line):
+        return None
+    return (min(b[0] for b in boxes), min(b[1] for b in boxes), max(b[2] for b in boxes), max(b[3] for b in boxes))
