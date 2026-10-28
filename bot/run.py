@@ -176,10 +176,30 @@ def get_source(name, st, stage, cdir):
         note(st, f"downloading {vids[0]['Name']} from 0_START")
         return drive.download(vids[0]["Path"], dest)
     if vids:   # several files (scene clips, trailers, episode parts): one landscape episode in name order
+        import hashlib
+        sig = hashlib.md5("|".join(f"{v['Name']}:{v.get('Size')}" for v in vids).encode()).hexdigest()[:12]
+        cache = f"{drive.root()}/_cache/{name}"   # the joined episode is kept on Drive, so a redo skips download + convert
+        cached = {f["Name"]: f for f in drive.files(cache)}
+        if "episode.mp4" in cached and "source.json" in cached:
+            try:
+                if json.loads(drive.text_of(cached["source.json"]["Path"], "source.json")).get("sig") == sig:
+                    note(st, "episode taken from the Drive cache (same source files as last time)")
+                    return drive.download(cached["episode.mp4"]["Path"], dest)
+            except Exception as e:
+                note(st, f"cache check failed ({type(e).__name__}); rebuilding the episode")
         note(st, f"downloading {len(vids)} videos from 0_START and joining them")
         parts = [drive.download(v["Path"], dest.parent / "parts" / f"{i:02d}_{v['Name']}") for i, v in enumerate(vids)]
         out = join_videos(parts, dest, log=lambda m: note(st, m))
         if out:
+            try:
+                meta = dest.parent / "source.json"
+                meta.write_text(json.dumps({"sig": sig, "files": [v["Name"] for v in vids]}))
+                be_mkdir = drive.be().mkdir(cache)
+                drive.upload(out, cache, name="episode.mp4")
+                drive.upload(meta, cache, name="source.json")
+                note(st, "episode saved to the Drive cache")
+            except Exception as e:
+                note(st, f"cache save skipped ({type(e).__name__}: {str(e)[:80]})")
             return out
     links = st.get("brief", {}).get("links", [])
     if links and not st.get("download_failed"):
