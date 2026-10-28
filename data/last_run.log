@@ -1,36 +1,42 @@
-[02:03:33] CLIPPING root CLIPPING
-[02:03:45] downloading 14 videos from 0_START and joining them
-[02:09:25] part 00: 00_WRDG0948000D-GLOBAL_TRAILER_2A_ONLINE_UHD_236_MP4_no_slat 3240x2160 155s (crop=3232:2160:4:0)
-[02:09:25] skipped duplicate 01_WRDG0948000D-GLOBAL_TRAILER_2A_ONLINE_UHD_236_MP4_no_slate-rev-1.mp4
-[02:09:57] part 02: 02_WRDGE108000D-GLOBAL_THE_RISKS_ALT_CLIP_24_1080p_no_slate_ 1620x1080 24s (crop=1616:1072:2:4)
-[02:10:17] part 03: 03_WRDGE308000D-GLOBAL_NOT_MUCH_FOR_SPEECHES_CLIP_16_1080p_n 1620x1080 16s (crop=1616:1072:2:4)
-[02:10:17] skipped duplicate 04_WRDGE308000D-GLOBAL_NOT_MUCH_FOR_SPEECHES_CLIP_16_1080p_no_slate_MOV-rev-1 (1).mov
-[02:10:48] part 05: 05_WRDGE508000D-GLOBAL_ALL_THE_BAD_NEWS_CLIP_22_1080p_no_sla 1620x1080 22s (crop=1616:1072:2:4)
-[02:10:48] skipped vertical file 06_WRDGJ638000V-GLOBAL_F_THOSE_PEOPLE_PERCEPTION_REVIEW_REV_28_Social_Vertical_Large_no_slate-rev-1(1).mp4 (1080x1920)
-[02:10:48] skipped duplicate 07_WRDGJ638000V-GLOBAL_F_THOSE_PEOPLE_PERCEPTION_REVIEW_REV_28_Social_Vertical_Large_no_slate-rev-1.mp4
-[02:10:48] skipped vertical file 08_WRDGK235000N-GLOBAL_ANGRY_REVIEW_15_MP4_IGTV_no_slate-rev-1(1).mp4 (1080x1350)
-[02:10:48] skipped duplicate 09_WRDGK235000N-GLOBAL_ANGRY_REVIEW_15_MP4_IGTV_no_slate-rev-1.mp4
-[02:10:48] skipped vertical file 10_WRDGN238000V-GLOBAL_CHARACTER_BTS_131_MP4_IGTV_no_slate-rev-1(1).mp4 (1080x1920)
-[02:10:48] skipped duplicate 11_WRDGN238000V-GLOBAL_CHARACTER_BTS_131_MP4_IGTV_no_slate-rev-1.mp4
-[02:10:48] skipped vertical file 12_WRDGN338000V-GLOBAL_ANGRIER_REVIEW_36_proxy_MP4_IGTV_no_slate(1).mp4 (1080x1920)
-[02:10:48] skipped duplicate 13_WRDGN338000V-GLOBAL_ANGRIER_REVIEW_36_proxy_MP4_IGTV_no_slate.mp4
-[02:11:16] transcribing the whole episode
-[02:11:16] transcribing (whisper small, CPU)
-[02:12:40] render 1: I'll pay in your salary.
-[02:22:12] render 2: Go to Europe, make the speech, tell him the truth.
-[02:31:21] render 3: I'll pay in your salary.
-[02:40:29] render 4: When all else fails, you hit them with the truth.
-[02:46:46] render 5: You know, one day you're a cat.
-[02:51:08] render 6: When all else fails, you hit them with the truth.
-[02:54:57] moments from: entertainment scorecard (auto)
-DROP  01_i-ll-pay-in-your-salary: 48s  qa FAIL  judge 86  hook: I'll pay in your salary.  [score 81: stakes 25, names 8, shape 6, clarity 10, pace 7, visuals 10, payoff 10, length 5]  | Smooth transitions | FAIL | stray cut at 0.47s, 20.77s; unplanned cut mid-clip at 25.60s (b-roll's own cuts are fine) |
-DROP  01_go-to-europe-make-the-speech: 51s  qa FAIL  judge 64  hook: Go to Europe, make the speech, tell him the truth.  [score 69: stakes 21, names 6, shape 11, clarity 7, pace 6, visuals 8, payoff 10]  | Clean first 2 seconds | FAIL | stray short shot at 0.92s |; | Speaker centred | FAIL | 19 frames measured; off centre in 16% (at 18.5s, 20.5s, 27.5s); mean offset 7% of width |; | Somebody in frame | FAIL | no face for 16.5-22.0s, 27.5-29.0s |; | Smooth transitions | FAIL | stray cut at 8.20s; unplanned cut mid-clip at 7.93s (b-roll's own cuts are fine) |
-DROP  01_i-ll-pay-in-your-salary: 41s  qa FAIL  judge 88  hook: I'll pay in your salary.  [score 67: stakes 20, names 4, shape 2, clarity 10, pace 6, visuals 12, payoff 10, length 3]  | Clean first 2 seconds | FAIL | stray short shot at 40.25s |; | Smooth transitions | FAIL | stray cut at 27.53s, 30.30s |
-DROP  01_when-all-else-fails-you-hit: 30s  qa FAIL  judge 76  hook: When all else fails, you hit them with the truth.  [score 54: stakes 6, names 2, shape 2, clarity 10, pace 7, visuals 12, payoff 10, length 5]  | Speaker centred | FAIL | 10 frames measured; off centre in 30% (at 11.0s, 24.5s, 27.5s); mean offset 9% of width |; | Somebody in frame | FAIL | no face for 24.5-26.5s, 27.5-28.5s |; | Smooth transitions | FAIL | stray cut at 10.33s, 16.73s; unplanned cut mid-clip at 10.63s, 12.67s, 20.77s, 24.47s (b-roll's own cuts are fine) |
-DROP  01_you-know-one-day-you-re-a-ca: 18s  qa FAIL  judge 70  hook: You know, one day you're a cat.  [score 43: stakes 6, names 6, shape 3, clarity 10, pace 5, payoff 10, length 3]  | Audio | FAIL | loudness -14.0 LUFS; peak -0.4 dBFS; clipping |
-DROP  01_when-all-else-fails-you-hit: 19s  qa FAIL  judge 61  hook: When all else fails, you hit them with the truth.  [score 39: stakes 6, clarity 4, pace 4, visuals 10, payoff 10, length 5]  | Speaker centred | FAIL | 3 frames measured; off centre in 67% (at 5.0s, 11.0s); mean offset 13% of width |; | Somebody in frame | FAIL | no face for 1.5-2.5s, 5.0-7.0s, 11.0-13.5s |; | Smooth transitions | FAIL | stray cut at 1.43s; unplanned cut mid-clip at 5.13s (b-roll's own cuts are fine) |
-0 clip(s) kept of 6 rendered in 44 min
-[02:54:57] ERROR OSError: [Errno 18] Invalid cross-device link: '/tmp/clipwork/DIGGER x ClipFarm/words.json' -> '/home/runner/work/clipping-bot/clipping-bot/campaigns/DIGGER x ClipFarm/words.json'
+[03:03:54] CLIPPING root CLIPPING
+[03:04:41] skipped duplicate WRDG0948000D-GLOBAL_TRAILER_2A_ONLINE_UHD_236_MP4_no_slate-r
+[03:04:41] skipped duplicate WRDGE308000D-GLOBAL_NOT_MUCH_FOR_SPEECHES_CLIP_16_1080p_no_s
+[03:04:41] skipped vertical cut WRDGJ638000V-GLOBAL_F_THOSE_PEOPLE_PERCEPTION_REVIEW_REV_28_
+[03:04:41] skipped duplicate WRDGJ638000V-GLOBAL_F_THOSE_PEOPLE_PERCEPTION_REVIEW_REV_28_
+[03:04:41] skipped vertical cut WRDGK235000N-GLOBAL_ANGRY_REVIEW_15_MP4_IGTV_no_slate-rev-1(
+[03:04:41] skipped duplicate WRDGK235000N-GLOBAL_ANGRY_REVIEW_15_MP4_IGTV_no_slate-rev-1.
+[03:04:41] skipped vertical cut WRDGN238000V-GLOBAL_CHARACTER_BTS_131_MP4_IGTV_no_slate-rev-
+[03:04:41] skipped duplicate WRDGN238000V-GLOBAL_CHARACTER_BTS_131_MP4_IGTV_no_slate-rev-
+[03:04:41] skipped vertical cut WRDGN338000V-GLOBAL_ANGRIER_REVIEW_36_proxy_MP4_IGTV_no_slat
+[03:04:41] skipped duplicate WRDGN338000V-GLOBAL_ANGRIER_REVIEW_36_proxy_MP4_IGTV_no_slat
+[03:04:41] downloading 4 of 14 videos from 0_START and joining them
+[03:06:19] part 00: 00_WRDG0948000D-GLOBAL_TRAILER_2A_ONLINE_UHD_236_MP4_no_slat 3240x2160 155s (crop=3232:2160:4:0)
+[03:06:33] part 01: 01_WRDGE108000D-GLOBAL_THE_RISKS_ALT_CLIP_24_1080p_no_slate_ 1620x1080 24s (crop=1616:1072:2:4)
+[03:06:43] part 02: 02_WRDGE308000D-GLOBAL_NOT_MUCH_FOR_SPEECHES_CLIP_16_1080p_n 1620x1080 16s (crop=1616:1072:2:4)
+[03:06:56] part 03: 03_WRDGE508000D-GLOBAL_ALL_THE_BAD_NEWS_CLIP_22_1080p_no_sla 1620x1080 22s (crop=1616:1072:2:4)
+[03:13:03] episode saved to the Drive cache
+[03:13:17] transcribing the whole episode
+[03:13:17] transcribing (whisper small, CPU)
+[03:14:17] render 1: I'll pay in your salary.
+[03:14:17] render 2: I'll pay in your salary.
+[03:14:17] render 3: Losing those rigs would be catastrophic.
+[03:21:18] render 4: You know the hard truth, just bang bang bang!.
+[03:21:18] render 5: Next day you're just bashing him in the box.
+[03:21:18] render 6: You know the hard truth, just bang bang bang!.
+[03:29:55] moments from: entertainment scorecard (auto)
+transcript + graphics ready after 1.0 min
+render failed: I'll pay in your salary. render failed (toolcache/Python/3.11.17/x64/lib/python3.11/json/decoder.py", line 340, in decode
+    raise JSONDecodeError("Extra data", s, end)
+json.decoder.JSONDecodeError: Extra data: line 37 column 2 (char 562))
+render failed: I'll pay in your salary. render failed (toolcache/Python/3.11.17/x64/lib/python3.11/json/decoder.py", line 340, in decode
+    raise JSONDecodeError("Extra data", s, end)
+json.decoder.JSONDecodeError: Extra data: line 37 column 2 (char 562))
+DROP  c03_and-losing-those-rigs-would: 50s  qa FAIL  judge 65  7.0 min  hook: Losing those rigs would be catastrophic.  [score 71: stakes 21, names 8, shape 11, clarity 7, pace 6, visuals 8, payoff 10]  | Cut edges (no clipped words) | FAIL | 18 edges checked against the audio; start 146.54s is loud (49% of speech level); end 206.89s cuts through "The" |; | Ends on a finished sentence | FAIL | last caption: "THE" |
+DROP  c04_you-know-the-hard-truth-just: 18s  qa PASS  judge 61  7.7 min  hook: You know the hard truth, just bang bang bang!.  [score 56: stakes 11, shape 2, clarity 10, pace 6, visuals 12, payoff 10, length 5]
+DROP  c05_next-day-you-re-just-bashing: 18s  qa FAIL  judge 70  8.6 min  hook: Next day you're just bashing him in the box.  [score 42: stakes 6, names 6, shape 3, clarity 10, pace 4, payoff 10, length 3]  | Picture (black, frozen, flicker) | FAIL | black frames at 16.2s |
+DROP  c06_you-know-the-hard-truth-just: 18s  qa PASS  judge 61  7.8 min  hook: You know the hard truth, just bang bang bang!.  [score 33: stakes 6, pace 4, visuals 10, payoff 10, length 3]
+0 clip(s) kept of 6 rendered, 3 at a time, in 17 min
+[03:29:59] 0 clip(s) uploaded to 1_CHECK
 Discover page read: 69 campaigns found.
 scored 8 JOIN candidates; new folders in 0_START: none
 live: DIGGER x ClipFarm, Higgsfield 20VC Clipping
