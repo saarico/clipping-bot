@@ -1,0 +1,60 @@
+name: fetch
+# Bring Drive material to the sandbox (which cannot reach Drive): small proxies and frame sheets, committed to data/fetch/.
+on:
+  workflow_dispatch:
+    inputs:
+      paths:
+        description: "Drive paths under CLIPPING/, one per line"
+        required: true
+      proxy_height:
+        description: "proxy height in px (0 = frame sheet only)"
+        default: "720"
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: main}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          curl -fsSL https://rclone.org/install.sh | sudo bash
+      - name: fetch
+        env:
+          RCLONE_TOKEN: ${{ secrets.RCLONE_TOKEN }}
+          PATHS: ${{ inputs.paths }}
+          PH: ${{ inputs.proxy_height }}
+        run: |
+          set -o pipefail
+          mkdir -p data/fetch /tmp/fetch
+          python - <<'PY' 2>&1 | tee data/fetch/fetch.log
+          import os, re, subprocess, sys
+          from pathlib import Path
+          sys.path.insert(0, "bot"); import drive
+          ph = int(os.environ["PH"] or 0)
+          for p in [l.strip() for l in os.environ["PATHS"].splitlines() if l.strip()]:
+              src = Path("/tmp/fetch") / Path(p).name
+              drive.download(p if p.startswith("CLIPPING/") else "CLIPPING/" + p, src)
+              stem = re.sub(r"[^A-Za-z0-9._-]+", "_", Path(p).stem)[:60]
+              dur = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(src)], capture_output=True, text=True).stdout or 0)
+              print(f"{p}: {src.stat().st_size/1e6:.1f} MB, {dur:.1f} s")
+              if ph:
+                  out = Path("data/fetch") / f"{stem}_{ph}p.mp4"
+                  subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", str(src), "-vf", f"scale=-2:{ph}", "-c:v", "libx264", "-preset", "veryfast", "-crf", "28", "-c:a", "aac", "-b:a", "96k", "-movflags", "+faststart", str(out)], check=True)
+                  print(f"  proxy {out} {out.stat().st_size/1e6:.1f} MB")
+              # frame sheet: one frame a second, 6 per row
+              n = max(1, int(dur) + 1)
+              cols = 6 if dur < 70 else 10
+              rows = (n + cols - 1) // cols
+              sheet = Path("data/fetch") / f"{stem}_sheet.jpg"
+              subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", str(src), "-vf", f"fps=1,scale=-2:{480 if dur < 70 else 240},tile={cols}x{rows}", "-frames:v", "1", "-q:v", "4", str(sheet)], check=True)
+              print(f"  sheet {sheet} {sheet.stat().st_size/1e6:.1f} MB")
+          PY
+      - name: save
+        run: |
+          git config user.name clipping-bot && git config user.email bot@users.noreply.github.com
+          git add data/fetch && (git diff --cached --quiet || (git commit -m "fetch" && git pull --rebase origin main && git push))
