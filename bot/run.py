@@ -13,6 +13,7 @@ Drive access: rclone (bot/drive.py); tests: CLIPPING_LOCAL=/some/dir uses a plai
 import json
 import re
 import os
+import shutil
 import subprocess
 import sys
 import time
@@ -28,6 +29,9 @@ import pipeline  # noqa: E402
 import post_kit  # noqa: E402
 
 WORK = Path(os.environ.get("CLIP_WORK", "/tmp/clipwork"))
+PREP = WORK / "prep"    # what the render machines need (specs, transcript, graphics map): a GitHub artifact
+OUT = WORK / "out"      # what each render machine sends back (clip folder + result.json)
+MATRIX_MAX = 4          # candidates rendered at once on separate machines (3 clips wanted; one spare)
 REQ_EXT = (".pdf", ".docx", ".doc", ".txt", ".md")
 VID_EXT = (".mp4", ".mov", ".mkv", ".webm", ".m4v")
 
@@ -230,7 +234,8 @@ def get_source(name, st, stage, cdir):
     return None
 
 
-def do_campaign(name, cpath):
+def do_campaign(name, cpath, phase="all"):
+    """phase 'all': cut on this machine. 'prepare': stop after the picks and return the render jobs."""
     st = load_state(name)
     cdir = ROOT / "campaigns" / name
     cdir.mkdir(parents=True, exist_ok=True)
@@ -336,13 +341,95 @@ def do_campaign(name, cpath):
         note(st, "transcribing the whole episode")
     used = [(c["start"], c["end"]) for c in st.get("used_moments", [])]
     t0 = time.time()
+    if phase == "prepare":
+        specs, origin, wpath, notes = pipeline.prepare(WORK / name, src, st["brief"], words if words.exists() else None, campaign=name,
+                                                       log=log, used=used, plan_dir=cdir)
+        if not words.exists():
+            shutil.copy(wpath, words)
+        d = PREP / name
+        d.mkdir(parents=True, exist_ok=True)
+        shutil.copy(wpath, d / "words.json")
+        if (WORK / name / "gfx.json").exists():
+            shutil.copy(WORK / name / "gfx.json", d / "gfx.json")
+        (d / "notes.json").write_text(json.dumps(notes))
+        jobs = [{"campaign": name, "cpath": cpath, "spec": sp, "origin": origin, "t0": t0} for sp in specs[:MATRIX_MAX]]
+        note(st, f"{len(jobs)} candidate(s) picked ({origin}); rendering on {len(jobs)} machines")
+        save_state(name, st)
+        return jobs
     kept, summary = pipeline.run(WORK / name, src, st["brief"], words if words.exists() else None, campaign=name, log=log,
                                  used=used, plan_dir=cdir)   # cdir holds the reviewer's plan.json; used = moments rico already saw
     st["used_moments"] = (st.get("used_moments", []) + [{"start": p[0], "end": p[1], "hook": c["hook"]} for c in kept for p in c.get("parts", [])])[-30:]
     if (WORK / name / "words.json").exists() and not words.exists():
-        import shutil
         shutil.copy(WORK / name / "words.json", words)   # /tmp and the repo are different disks on the runner
     publish(name, st, stage, kept, summary, t0)
+
+
+def render_job(n):
+    """One candidate on one machine: source from Drive (cache), render, QA, judge -> OUT/<n>/."""
+    jobs = json.loads((PREP / "jobs.json").read_text())
+    j = jobs[n]
+    name, spec = j["campaign"], j["spec"]
+    st = load_state(name)
+    stage = drive.stages(j["cpath"], create=False)
+    cdir = ROOT / "campaigns" / name
+    work = WORK / name
+    work.mkdir(parents=True, exist_ok=True)
+    for f in ("words.json", "gfx.json"):
+        if (PREP / name / f).exists():
+            shutil.copy(PREP / name / f, work / f)
+    words = work / "words.json"
+    spec["words"] = str(words)
+    src = get_source(name, st, stage, cdir)
+    if not src:
+        raise RuntimeError("source not available on the render machine")
+    spec["source"] = str(src)
+    (work / "renders").mkdir(exist_ok=True)
+    log(f"render {n + 1}: {spec['hook']}")
+    res = pipeline.one_clip(spec, work, src, words, f"c{n + 1:02d}")
+    out = OUT / str(n)
+    out.mkdir(parents=True, exist_ok=True)
+    if res.get("folder"):
+        fname = Path(res["folder"]).name
+        shutil.copytree(res["folder"], out / fname, dirs_exist_ok=True)
+        res["folder"], res["mp4"] = fname, fname + "/" + Path(res["mp4"]).name
+    (out / "result.json").write_text(json.dumps(res, default=str))
+    log(f"done: qa {res.get('qa')} judge {res.get('judge')} {res.get('minutes', '?')} min" + (f"  {res['error']}" if res.get("error") else ""))
+
+
+def collect():
+    """All render results -> keep up to 3 per campaign -> 1_CHECK + SUMMARY, state."""
+    jobs = json.loads((PREP / "jobs.json").read_text())
+    by = {}
+    for n, j in enumerate(jobs):
+        by.setdefault(j["campaign"], []).append((n, j))
+    for name, items in by.items():
+        st = load_state(name)
+        try:
+            stage = drive.stages(items[0][1]["cpath"], create=False)
+            work = WORK / name
+            work.mkdir(parents=True, exist_ok=True)
+            notes = json.loads((PREP / name / "notes.json").read_text()) if (PREP / name / "notes.json").exists() else []
+            results = []
+            for n, j in items:
+                d = next((x for x in (OUT / str(n), OUT / f"clip-{n}") if (x / "result.json").exists()), None)
+                if not d:
+                    results.append({"hook": j["spec"]["hook"], "error": "render machine returned nothing (timeout or crash)"})
+                    continue
+                res = json.loads((d / "result.json").read_text())
+                if res.get("folder"):
+                    res["folder"] = str(d / res["folder"]); res["mp4"] = str(d / res["mp4"])
+                results.append(res)
+            kept, notes = pipeline.decide(results, work, [], notes)
+            mins = [r.get("minutes", 0) for r in results if r.get("minutes")]
+            notes.append(f"{len(kept)} clip(s) kept of {len(results)} rendered on {len(results)} machines, "
+                         f"longest render {max(mins) if mins else 0:.1f} min")
+            summary = "\n".join(notes)
+            log(summary)
+            st["used_moments"] = (st.get("used_moments", []) + [{"start": p[0], "end": p[1], "hook": c["hook"]} for c in kept for p in c.get("parts", [])])[-30:]
+            publish(name, st, stage, kept, summary, items[0][1].get("t0") or time.time())
+        except Exception as e:
+            note(st, f"ERROR {type(e).__name__}: {str(e)[:200]}")
+            save_state(name, st)
 
 
 def publish(name, st, stage, kept, summary, t0):
@@ -360,7 +447,7 @@ def publish(name, st, stage, kept, summary, t0):
     note(st, f"{len(kept)} clip(s) uploaded to 1_CHECK")
     save_state(name, st)
 
-def main(only=None):
+def main(only=None, phase="all"):
     rt = drive.root()
     log(f"CLIPPING root {rt}")
     dropped = [l.strip() for l in (ROOT / "config" / "dropped.txt").read_text().splitlines() if l.strip() and not l.startswith("#")] if (ROOT / "config" / "dropped.txt").exists() else []
@@ -369,18 +456,27 @@ def main(only=None):
         if moved:
             log(f"dropped {d}: moved {', '.join(moved)} to _trash")
         if state_path(d).exists():
-            import shutil
             shutil.rmtree(state_path(d).parent, ignore_errors=True)
     camps = [c for c in drive.campaigns() if c[0] not in dropped]
     if only:
         camps = [c for c in camps if c[0] == only]
+    jobs = []
     for name, cpath in camps:
         try:
-            do_campaign(name, cpath)
+            got = do_campaign(name, cpath, phase)
+            if phase == "prepare" and got:
+                jobs += got
         except Exception as e:  # one campaign must not stop the others
             st = load_state(name)
             note(st, f"ERROR {type(e).__name__}: {str(e)[:200]}")
             save_state(name, st)
+    if phase == "prepare":
+        PREP.mkdir(parents=True, exist_ok=True)
+        (PREP / "jobs.json").write_text(json.dumps(jobs, default=str))
+        log(f"{len(jobs)} render job(s)")
+        if os.environ.get("GITHUB_OUTPUT"):
+            with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+                f.write(f"count={len(jobs)}\njobs={json.dumps(list(range(len(jobs))))}\n")
     try:
         import campaign_scan
         campaign_scan.main()
@@ -389,4 +485,11 @@ def main(only=None):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1] if len(sys.argv) > 1 else None)
+    a = sys.argv[1:]
+    ph = a[a.index("--phase") + 1] if "--phase" in a else "all"
+    if ph == "render":
+        render_job(int(a[a.index("--job") + 1]))
+    elif ph == "collect":
+        collect()
+    else:
+        main(a[0] if a and not a[0].startswith("--") else None, ph)

@@ -72,13 +72,14 @@ def one_clip(spec, work, source, words, tag):
     qa, fails = qa_verdict(folder)
     js = judge_score(folder)
     dur = sum(b - a for a, b in json.loads((folder / "cut_details.json").read_text()).get("cuts", [[0, 0]]))
-    res.update({"folder": folder, "mp4": folder / f"{folder.name}.mp4", "qa": qa, "fails": fails, "judge": js, "dur": round(dur, 1),
+    res.update({"folder": folder, "mp4": folder / f"{folder.name}.mp4", "qa": qa, "fails": fails, "judge": js, "dur": round(dur, 1), "caption": spec.get("caption", ""),
                 "ok": qa == "PASS" and js >= JUDGE_BAR, "captions": (folder / "captions.txt").read_text() if (folder / "captions.txt").exists() else "",
                 "minutes": round((time.time() - t0) / 60, 1)})
     return res
 
 
-def run(work, source, brief, words=None, campaign="campaign", log=print, used=(), plan_dir=None):
+def prepare(work, source, brief, words=None, campaign="campaign", log=print, used=(), plan_dir=None):
+    """Everything before rendering: transcript, graphics map, the picks. Returns (specs, origin, words, notes)."""
     work, source = Path(work), Path(source)
     work.mkdir(parents=True, exist_ok=True)
     t0 = time.time()
@@ -93,7 +94,36 @@ def run(work, source, brief, words=None, campaign="campaign", log=print, used=()
         sh([PY, str(HERE / "graphics_map.py"), str(source), str(gfx)], work / "gfx.log")
     specs, origin = planner.load(plan_dir or work, words, gfx if gfx.exists() else None, source, brief, campaign, work / "renders", used=used)
     (work / "renders").mkdir(exist_ok=True)
-    kept, tried, notes = [], 0, [f"moments from: {origin}", f"transcript + graphics ready after {(time.time() - t0) / 60:.1f} min"]
+    return specs, origin, words, [f"moments from: {origin}", f"transcript + graphics ready after {(time.time() - t0) / 60:.1f} min"]
+
+
+def decide(results, work, kept=None, notes=None):
+    """Keep the first MAX_CLIPS results that passed QA and the judge; move the rest to work/dropped."""
+    kept, notes = kept if kept is not None else [], notes if notes is not None else []
+    for res in results:
+        if res.get("error"):
+            notes.append(f"render failed: {res['hook']} {res['error']}")
+            continue
+        line = f"{Path(res['folder']).name}: {res['dur']:.0f}s  qa {res['qa']}  judge {res['judge']}  {res.get('minutes', '?')} min  hook: {res['hook']}  [{res['why']}]"
+        if res["ok"] and len(kept) < planner.MAX_CLIPS:
+            kept.append({"folder": str(res["folder"]), "mp4": str(res["mp4"]), "hook": res["hook"], "parts": res["parts"], "judge": res["judge"],
+                         "dur": res["dur"], "why": res["why"], "captions": res["captions"], "caption": res.get("caption", "")})
+            notes.append("KEPT  " + line)
+        else:
+            notes.append("DROP  " + line + ("  " + "; ".join(res["fails"]) if res["fails"] else ""))
+            dropped = Path(work) / "dropped" / Path(res["folder"]).name
+            if Path(res["folder"]).exists() and not dropped.exists():
+                dropped.parent.mkdir(parents=True, exist_ok=True)
+                shutil.move(str(res["folder"]), str(dropped))
+    return kept, notes
+
+
+def run(work, source, brief, words=None, campaign="campaign", log=print, used=(), plan_dir=None):
+    """One machine: prepare, then render PAR candidates at a time until MAX_CLIPS pass (local runs, fallback)."""
+    t0 = time.time()
+    specs, origin, words, notes = prepare(work, source, brief, words, campaign, log, used, plan_dir)
+    work = Path(work)
+    kept, tried = [], 0
     queue = list(specs[:planner.MAX_TRIES])
     # batches of up to PAR candidates rendered at the same time; the next batch only fills what is still missing
     while queue and len(kept) < planner.MAX_CLIPS:
@@ -103,20 +133,7 @@ def run(work, source, brief, words=None, campaign="campaign", log=print, used=()
             tried += 1
         with ThreadPoolExecutor(max_workers=len(batch)) as ex:
             results = list(ex.map(lambda sp: one_clip(sp[1], work, source, words, f"c{sp[0]:02d}"), enumerate(batch, tried - len(batch) + 1)))
-        for res in results:
-            if res.get("error"):
-                notes.append(f"render failed: {res['hook']} {res['error']}")
-                continue
-            line = f"{Path(res['folder']).name}: {res['dur']:.0f}s  qa {res['qa']}  judge {res['judge']}  {res.get('minutes', '?')} min  hook: {res['hook']}  [{res['why']}]"
-            if res["ok"] and len(kept) < planner.MAX_CLIPS:
-                kept.append({"folder": str(res["folder"]), "mp4": str(res["mp4"]), "hook": res["hook"], "parts": res["parts"], "judge": res["judge"],
-                             "dur": res["dur"], "why": res["why"], "captions": res["captions"]})
-                notes.append("KEPT  " + line)
-            else:
-                notes.append("DROP  " + line + ("  " + "; ".join(res["fails"]) if res["fails"] else ""))
-                dropped = work / "dropped" / Path(res["folder"]).name
-                if not dropped.exists():
-                    shutil.move(str(res["folder"]), str(dropped))
+        decide(results, work, kept, notes)
     notes.append(f"{len(kept)} clip(s) kept of {tried} rendered, {PAR} at a time, in {(time.time() - t0) / 60:.0f} min")
     summary = "\n".join(notes)
     (work / "summary.txt").write_text(summary)

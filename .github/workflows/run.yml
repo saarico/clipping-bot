@@ -13,12 +13,22 @@ concurrency:
   cancel-in-progress: false
 permissions:
   contents: write
+
+# Three stages so that every clip is cut on its own machine (rico, 2026-10-28: "speed it up 20x"):
+#   prepare  one machine: Drive -> brief, episode (cache), transcript, the picks   -> artifact "prep"
+#   render   one machine per candidate (up to 4 at once): render + QA + judge     -> artifact "clip-N"
+#   collect  one machine: keep up to 3, upload to 1_CHECK + SUMMARY, commit state
 jobs:
-  run:
+  prepare:
     runs-on: ubuntu-latest
-    timeout-minutes: 340
+    timeout-minutes: 120
+    outputs:
+      count: ${{ steps.prep.outputs.count }}
+      jobs: ${{ steps.prep.outputs.jobs }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -42,12 +52,103 @@ jobs:
         with:
           path: ~/.cache/huggingface
           key: whisper-small-v1
-      - name: run
+      - name: prepare
+        id: prep
         env:
           RCLONE_TOKEN: ${{ secrets.RCLONE_TOKEN }}
         run: |
           set -o pipefail
-          python bot/run.py "${{ inputs.campaign }}" 2>&1 | tee data/last_run.log
+          python bot/run.py "${{ inputs.campaign }}" --phase prepare 2>&1 | tee data/prepare.log
+          grep -q '^count=' "$GITHUB_OUTPUT" || { echo "count=0" >> "$GITHUB_OUTPUT"; echo "jobs=[]" >> "$GITHUB_OUTPUT"; }
+      - uses: actions/upload-artifact@v4
+        if: steps.prep.outputs.count != '0'
+        with:
+          name: prep
+          path: /tmp/clipwork/prep
+          retention-days: 1
+          include-hidden-files: true
+      - name: save state
+        if: always()
+        run: |
+          git config user.name "clipping-bot"
+          git config user.email "clipping-bot@users.noreply.github.com"
+          git add campaigns data
+          git diff --cached --quiet || (git commit -m "prepare $(date -u +%Y-%m-%d_%H:%M)" && git pull --rebase origin main && git push)
+
+  render:
+    needs: prepare
+    if: needs.prepare.outputs.count != '0'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        job: ${{ fromJson(needs.prepare.outputs.jobs) }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: ffmpeg + rclone
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          curl -fsSL https://rclone.org/install.sh | sudo bash
+      - name: deps
+        run: pip install -q -r requirements.txt
+      - uses: actions/download-artifact@v4
+        with:
+          name: prep
+          path: /tmp/clipwork/prep
+      - name: render
+        env:
+          RCLONE_TOKEN: ${{ secrets.RCLONE_TOKEN }}
+        run: |
+          set -o pipefail
+          mkdir -p /tmp/clipwork/out/${{ matrix.job }}
+          python bot/run.py --phase render --job ${{ matrix.job }} 2>&1 | tee /tmp/clipwork/out/${{ matrix.job }}/render.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: clip-${{ matrix.job }}
+          path: /tmp/clipwork/out/${{ matrix.job }}
+          retention-days: 3
+          include-hidden-files: true
+
+  collect:
+    needs: [prepare, render]
+    if: always() && needs.prepare.result == 'success' && needs.prepare.outputs.count != '0'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: rclone
+        run: curl -fsSL https://rclone.org/install.sh | sudo bash
+      - name: deps
+        run: pip install -q -r requirements.txt
+      - uses: actions/download-artifact@v4
+        with:
+          name: prep
+          path: /tmp/clipwork/prep
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: clip-*
+          path: /tmp/clipwork/out
+      - name: collect
+        env:
+          RCLONE_TOKEN: ${{ secrets.RCLONE_TOKEN }}
+        run: |
+          set -o pipefail
+          cat data/prepare.log > data/last_run.log || true
+          python bot/run.py --phase collect 2>&1 | tee -a data/last_run.log
       - name: save state
         if: always()
         run: |
