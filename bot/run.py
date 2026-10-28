@@ -115,15 +115,51 @@ def fetch_link(url, dest, st):
     return join_videos(vids, dest)   # several files: one episode in name order
 
 
-def join_videos(parts, dest):
-    norm = []
+def video_info(path):
+    r = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height:format=duration",
+                        "-of", "json", str(path)], capture_output=True, text=True)
+    try:
+        j = json.loads(r.stdout)
+        st0 = (j.get("streams") or [{}])[0]
+        return int(st0.get("width", 0)), int(st0.get("height", 0)), float(j["format"]["duration"])
+    except Exception:
+        return 0, 0, 0.0
+
+
+def bars_crop(path, dur):
+    """ffmpeg cropdetect on a few seconds in the middle: 'crop=w:h:x:y' of the picture without black bars."""
+    r = subprocess.run(["ffmpeg", "-ss", f"{max(dur / 2 - 4, 0):.1f}", "-t", "8", "-i", str(path), "-vf", "cropdetect=24:16:0",
+                        "-f", "null", "-"], capture_output=True, text=True)
+    m = re.findall(r"crop=\d+:\d+:\d+:\d+", r.stderr)
+    return m[-1] if m else None
+
+
+def join_videos(parts, dest, log=print):
+    """Several source files -> one 1920x1080 30 fps episode. Duplicate downloads (same size) are dropped,
+    vertical files are left out (they are finished social cuts, not raw material), black bars are cut
+    away and wide pictures are centre-cropped to 16:9 so no clip ever shows a letterbox."""
+    norm, seen = [], set()
     for i, pth in enumerate(sorted(parts, key=lambda p: p.name)):
+        size = pth.stat().st_size
+        if size in seen:
+            log(f"skipped duplicate {pth.name}")
+            continue
+        seen.add(size)
+        w, h, dur = video_info(pth)
+        if h > w:
+            log(f"skipped vertical file {pth.name} ({w}x{h})")
+            continue
+        crop = bars_crop(pth, dur)
+        vf = ((crop + ",") if crop else "") + "scale=-2:1080:flags=lanczos,crop='min(iw,1920)':1080,pad=1920:1080:(ow-iw)/2:(oh-ih)/2,fps=30,setsar=1"
         o = dest.parent / "parts" / f"n{i:02d}.mp4"
         o.parent.mkdir(parents=True, exist_ok=True)
-        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(pth), "-vf", "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2,fps=30",
-                        "-r", "30", "-c:v", "libx264", "-preset", "veryfast", "-crf", "18", "-c:a", "aac", "-ar", "48000", "-ac", "2", str(o)], check=False)
+        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(pth), "-vf", vf, "-r", "30", "-c:v", "libx264", "-preset", "veryfast",
+                        "-crf", "18", "-c:a", "aac", "-ar", "48000", "-ac", "2", "-af", "aresample=async=1", str(o)], check=False)
         if o.exists():
             norm.append(o)
+            log(f"part {i:02d}: {pth.name[:60]} {w}x{h} {dur:.0f}s" + (f" ({crop})" if crop else ""))
+    if not norm:
+        return None
     lst = dest.parent / "parts" / "list.txt"
     lst.write_text("".join(f"file '{p}'\n" for p in norm))
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", str(lst), "-c", "copy", str(dest)], check=False)
@@ -139,21 +175,12 @@ def get_source(name, st, stage, cdir):
     if len(vids) == 1:
         note(st, f"downloading {vids[0]['Name']} from 0_START")
         return drive.download(vids[0]["Path"], dest)
-    if vids:   # several files (brand assets, episode parts): one episode in name order
+    if vids:   # several files (scene clips, trailers, episode parts): one landscape episode in name order
         note(st, f"downloading {len(vids)} videos from 0_START and joining them")
-        parts = [drive.download(v["Path"], dest.parent / "parts" / f"{i:02d}.mp4") for i, v in enumerate(vids)]
-        norm = []
-        for i, pth in enumerate(parts):
-            o = dest.parent / "parts" / f"n{i:02d}.mp4"
-            subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(pth), "-vf", "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2,fps=30",
-                            "-r", "30", "-c:v", "libx264", "-preset", "veryfast", "-crf", "18", "-c:a", "aac", "-ar", "48000", "-ac", "2", str(o)], check=False)
-            if o.exists():
-                norm.append(o)
-        lst = dest.parent / "parts" / "list.txt"
-        lst.write_text("".join(f"file '{p}'\n" for p in norm))
-        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", str(lst), "-c", "copy", str(dest)], check=False)
-        if dest.exists():
-            return dest
+        parts = [drive.download(v["Path"], dest.parent / "parts" / f"{i:02d}_{v['Name']}") for i, v in enumerate(vids)]
+        out = join_videos(parts, dest, log=lambda m: note(st, m))
+        if out:
+            return out
     links = st.get("brief", {}).get("links", [])
     if links and not st.get("download_failed"):
         errors = []
