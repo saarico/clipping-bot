@@ -442,7 +442,16 @@ def collect():
 
 
 def publish(name, st, stage, kept, summary, t0):
-    """Kept clips -> 1_CHECK/<campaign>/ with the SUMMARY doc; state remembers them."""
+    """Kept clips -> 1_CHECK/<campaign>/ with the SUMMARY doc; state remembers them.
+    Clips from an earlier run are moved to _trash first (nothing is deleted), so 1_CHECK never mixes
+    old and new renders (2026-10-28: run 5 left run 4's clips beside its own)."""
+    if kept:
+        try:
+            r = drive.root()
+            for f in drive.files(stage["1_CHECK"], VID_EXT):
+                drive.move(f["Path"], f"{r}/_trash/1_CHECK_{name}_{f['Name']}")
+        except Exception as e:
+            log(f"could not clear old clips from 1_CHECK: {e}")
     for k, c in enumerate(kept, 1):
         drive.upload(c["mp4"], stage["1_CHECK"], name=f"{k:02d}_{Path(c['mp4']).name.split('_', 1)[-1]}")
     body = [f"SUMMARY  ({now()}, {(time.time() - t0) / 60:.0f} min)", "", f"{len(kept)} clip(s) in 1_CHECK. Max 3 per campaign.", ""]
