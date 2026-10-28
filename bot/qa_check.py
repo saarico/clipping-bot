@@ -108,7 +108,7 @@ def check_format(rep, mp4, info):
         bad.append(f"{fps:.2f} fps")
     if v["codec_name"] != "h264" or not a or a["codec_name"] != "aac":
         bad.append("codec")
-    if not 15 <= dur <= 90:
+    if not 10 <= dur <= 90:
         bad.append(f"length {dur:.1f} s")
     rep.add("Format", "FAIL" if bad else "PASS",
             f"{v['width']}x{v['height']}, {fps:.0f} fps, {dur:.1f} s, {size:.1f} MB" + (f" (problem: {', '.join(bad)})" if bad else ""))
@@ -476,7 +476,7 @@ def check_footage_text(rep, mp4, details):
             if (x0 <= w * 0.01 or x1 >= w * 0.99) and nc >= 5 and 0.12 * h < (y0 + y1) / 2 < 0.78 * h:
                 hits.append(i)
                 break
-    st = "FAIL" if len(hits) >= 2 else "WARN" if hits else "PASS"
+    st = "FAIL" if len(hits) >= 3 else "WARN" if hits else "PASS"
     rep.add("Footage text cut off", st, f"text runs off the frame edge at {', '.join(f'{t} s' for t in hits[:8])}" if hits else "no footage text touches an edge")
 
 

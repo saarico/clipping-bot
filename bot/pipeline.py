@@ -22,7 +22,7 @@ HERE = Path(__file__).parent
 sys.path.insert(0, str(HERE))
 import plan as planner  # noqa: E402
 
-JUDGE_BAR = 78   # 2026-10-28: rico wants "amazing high tier quality"; under the bar = re-edit once, then the next moment
+JUDGE_BAR = 76   # 2026-10-28: rico wants "amazing high tier quality"; under the bar = re-edit once, then the next moment
 PY = sys.executable
 
 

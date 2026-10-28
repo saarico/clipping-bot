@@ -205,6 +205,14 @@ def trim_cards(src, ranges, words):
                 break
             first = next((w["start"] for w in words if w["start"] >= ns - 0.05), e)
             cut = min(sh["end"], first - 0.15)
+            # a voice-over starts on the card (DIGGER: "Mr. Rockwell, my name..." over "A NEW FILM FROM"):
+            # cut at the last pause between words on the card, dropping at most 3 words
+            over = [w for w in words if ns - 0.05 <= w["start"] < sh["end"]]
+            for k in range(min(3, len(over)) - 1, -1, -1):
+                nxt = next((w for w in words if w["start"] > over[k]["end"]), None)
+                if nxt and nxt["start"] - over[k]["end"] >= 0.2:
+                    cut = max(cut, over[k]["end"] + 0.08)
+                    break
             if cut - ns < 0.3 or e - cut < 8:
                 break
             print(f"card at the start trimmed: {ns:.2f} -> {cut:.2f}")

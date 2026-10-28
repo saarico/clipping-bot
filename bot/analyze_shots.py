@@ -34,6 +34,8 @@ def _decode(source, start, end, fps, w, h):
             i, j = int(round((start - s0) * fps)), int(round((end - s0) * fps))
             if j - i >= 1:
                 return fr[i:max(j, i + 1)]
+    if end - start < 0.05:
+        return np.zeros((0, h, w, 3), np.uint8)                        # a sliver (end before start after snapping): nothing to decode
     cmd = ["ffmpeg", "-loglevel", "error", "-ss", f"{start:.3f}", "-to", f"{end:.3f}", "-i", source,
            "-vf", f"fps={fps},scale={w}:{h}", "-f", "rawvideo", "-pix_fmt", "bgr24", "-"]
     raw = subprocess.run(cmd, capture_output=True, check=True).stdout
@@ -295,6 +297,9 @@ def _text_rows(gray):
                 continue
             xs = sorted(comps[j][0] for j in line)
             gaps = np.diff(xs)
+            ws = [comps[j][2] for j in line]
+            if np.std(ws) / max(np.mean(ws), 1) < 0.12:
+                continue                                               # identical glyph widths = window panes, a grid, a keyboard
             if np.std(hs) / np.mean(hs) > 0.3 or (len(gaps) and np.max(gaps) > 3.0 * max(np.median(gaps), 1)):
                 continue
             x1 = max(comps[j][0] + comps[j][2] for j in line)
