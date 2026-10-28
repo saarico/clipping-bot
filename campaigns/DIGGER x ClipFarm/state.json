@@ -25,7 +25,8 @@
   "2026-10-28 03:13 UTC  transcribing the whole episode",
   "2026-10-28 03:29 UTC  0 clip(s) uploaded to 1_CHECK",
   "2026-10-28 03:44 UTC  episode taken from the Drive cache (same source files as last time)",
-  "2026-10-28 03:49 UTC  3 clip(s) uploaded to 1_CHECK"
+  "2026-10-28 03:49 UTC  3 clip(s) uploaded to 1_CHECK",
+  "2026-10-28 04:58 UTC  re-cut requested: new grading, fonts, captions (rico: clips were bad)"
  ],
  "updated": "2026-10-28 04:47 UTC",
  "brief": {
@@ -105,5 +106,5 @@
    "caption": ""
   }
  ],
- "needs_redo": false
+ "needs_redo": true
 }
