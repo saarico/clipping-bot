@@ -275,7 +275,18 @@ def check_title(rep, events, spec):
     rep.add("Title", st, "; ".join(notes))
 
 
+_FR = {}
+
+
 def frames(mp4, fps=2):
+    """Decoded once per clip (three checks asked for the same 2 fps frames: 9 s of a 35 s QA, 2026-10-28)."""
+    k = (str(mp4), fps)
+    if k not in _FR:
+        _FR[k] = _frames_raw(mp4, fps)
+    return _FR[k]
+
+
+def _frames_raw(mp4, fps=2):
     raw = subprocess.run(["ffmpeg", "-loglevel", "error", "-i", str(mp4), "-vf", f"fps={fps},scale=540:960",
                           "-f", "rawvideo", "-pix_fmt", "bgr24", "-"], capture_output=True, check=True).stdout
     n = len(raw) // (540 * 960 * 3)

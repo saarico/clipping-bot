@@ -29,7 +29,8 @@ PROFILES = {
     "cinematic": dict(wps=(0.8, 3.8), pause_penalty=False, filler=False, clarity=False, back_refs=False,
                       length=(15, 40), ok_len=(10, 60), energy=6, quotes=10, reactions=1, cards=False,
                       soft_qa={"Speaker centred", "Somebody in frame", "Smooth transitions", "Clean first 2 seconds", "Audio",
-                               "Captions cover the whole clip", "Ends on a finished sentence", "Faces clear of the title"}),
+                               "Captions cover the whole clip", "Ends on a finished sentence", "Faces clear of the title",
+                               "Cut edges (no clipped words)", "Picture (black, frozen, flicker)"}),   # music under every edge; black title cards
     "stream": dict(wps=(1.2, 4.2), pause_penalty=False, filler=False, clarity=False, back_refs=False,
                    length=(15, 45), ok_len=(10, 60), energy=10, quotes=4, reactions=3, cards=False,
                    soft_qa={"Speaker centred", "Somebody in frame", "Smooth transitions", "Clean first 2 seconds",

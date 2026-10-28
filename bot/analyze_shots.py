@@ -9,6 +9,7 @@ Cuts are found where one frame differs sharply from the last (frames sampled at 
 Faces are found with OpenCV's bundled Haar detectors (frontal + profile) on
 a few frames per shot, then clustered so each person counts once.
 """
+import functools
 import re
 import subprocess
 
@@ -21,12 +22,36 @@ _front = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_
 _prof = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_profileface.xml")
 
 
-def _frames(source, start, end):
+_DEC = []   # (source, start, end, fps, w, h, frames): decoded stretches, newest last
+
+
+def _decode(source, start, end, fps, w, h):
+    """Frames of [start, end] at fps, w x h. A stretch inside one decoded earlier is sliced from it:
+    shots() decodes a whole piece, then faces_in() / track() / small_faces() ask for parts of it
+    (2026-10-28 profiling: 35 decodes per render, most of them repeats)."""
+    for s0, e0, f0, w0, h0, fr in _DEC:
+        if f0 == fps and w0 == w and h0 == h and s0 - 1e-3 <= start and end <= e0 + 1e-3 and _DEC_SRC[0] == source:
+            i, j = int(round((start - s0) * fps)), int(round((end - s0) * fps))
+            if j - i >= 1:
+                return fr[i:max(j, i + 1)]
     cmd = ["ffmpeg", "-loglevel", "error", "-ss", f"{start:.3f}", "-to", f"{end:.3f}", "-i", source,
-           "-vf", f"fps={FPS},scale={W}:{H}", "-f", "rawvideo", "-pix_fmt", "bgr24", "-"]
+           "-vf", f"fps={fps},scale={w}:{h}", "-f", "rawvideo", "-pix_fmt", "bgr24", "-"]
     raw = subprocess.run(cmd, capture_output=True, check=True).stdout
-    n = len(raw) // (W * H * 3)
-    return np.frombuffer(raw[: n * W * H * 3], np.uint8).reshape(n, H, W, 3)
+    n = len(raw) // (w * h * 3)
+    fr = np.frombuffer(raw[: n * w * h * 3], np.uint8).reshape(n, h, w, 3)
+    if _DEC_SRC[0] != source:
+        _DEC.clear(); _DEC_SRC[0] = source
+    _DEC.append((start, end, fps, w, h, fr))
+    while sum(x[5].nbytes for x in _DEC) > 600e6:   # keep the cache under ~600 MB
+        _DEC.pop(0)
+    return fr
+
+
+_DEC_SRC = [None]
+
+
+def _frames(source, start, end):
+    return _decode(source, start, end, FPS, W, H)
 
 
 def _hist(f):
@@ -112,11 +137,7 @@ def _mouth_motion(frames, cx, cy, s):
 
 
 def _frames_at(source, start, end, fps, w=W, h=H):
-    cmd = ["ffmpeg", "-loglevel", "error", "-ss", f"{start:.3f}", "-to", f"{end:.3f}", "-i", source,
-           "-vf", f"fps={fps},scale={w}:{h}", "-f", "rawvideo", "-pix_fmt", "bgr24", "-"]
-    raw = subprocess.run(cmd, capture_output=True, check=True).stdout
-    n = len(raw) // (w * h * 3)
-    return np.frombuffer(raw[: n * w * h * 3], np.uint8).reshape(n, h, w, 3)
+    return _decode(source, start, end, fps, w, h)
 
 
 def track(source, start, end, fps=4, box=None, src_w=1920, src_h=1080):
@@ -152,30 +173,34 @@ def track(source, start, end, fps=4, box=None, src_w=1920, src_h=1080):
     return out
 
 
+@functools.lru_cache(maxsize=32)
 def small_faces(source, start, end):
     """People too small for the normal pass (the wide two-shot: faces ~45 px in 1080p). Runs the
-    frontal + profile detectors on a few full-resolution frames. Returns [(cx, cy, size)] clustered
-    by x, biggest first, in 0-1 of the frame."""
-    frames = _frames_at(source, start, end, 2, 1920, 1080)
+    frontal + profile detectors on three 1280x720 frames (faces ~30 px). Returns [(cx, cy, size)]
+    clustered by x, biggest first, in 0-1 of the frame.
+    2026-10-28: this pass was 55% of a render (8 full-HD frames, scale step 1.06, called once per
+    piece of the same shot); now 3 frames at 720p, step 1.1, cached per shot: ~15x cheaper."""
+    SW, SH = 1280, 720
+    frames = _frames_at(source, start, end, 2, SW, SH)
     if len(frames) == 0:
         return []
-    idx = np.linspace(0, len(frames) - 1, min(8, len(frames))).astype(int)
+    idx = np.linspace(0, len(frames) - 1, min(3, len(frames))).astype(int)
     hits = []
     for i in idx:
         g = cv2.equalizeHist(cv2.cvtColor(frames[i], cv2.COLOR_BGR2GRAY))
         for det, flip in ((_front, False), (_prof, False), (_prof, True)):
             img = cv2.flip(g, 1) if flip else g
-            for (x, y, w, h) in det.detectMultiScale(img, 1.06, 3, minSize=(32, 32), maxSize=(220, 220)):
+            for (x, y, w, h) in det.detectMultiScale(img, 1.1, 3, minSize=(20, 20), maxSize=(150, 150)):
                 if flip:
-                    x = 1920 - x - w
-                hits.append(((x + w / 2) / 1920, (y + h / 2) / 1080, w / 1920))
+                    x = SW - x - w
+                hits.append(((x + w / 2) / SW, (y + h / 2) / SH, w / SW))
     people = []
     for cx, cy, sz in sorted(hits):
         if people and abs(cx - people[-1][-1][0]) < 0.06:
             people[-1].append((cx, cy, sz))
         else:
             people.append([(cx, cy, sz)])
-    keep = [p for p in people if len(p) >= max(2, len(idx) // 3)]
+    keep = [p for p in people if len(p) >= 2]
     faces = [tuple(float(np.median([q[k] for q in p])) for k in range(3)) for p in keep]
     faces = [f for f in faces if f[1] <= 0.7]
     faces.sort(key=lambda t: -t[2])

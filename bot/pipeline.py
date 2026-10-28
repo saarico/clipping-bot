@@ -53,7 +53,7 @@ PAR = int(os.environ.get("CLIP_PARALLEL", "3"))   # renders at the same time (Gi
 def one_clip(spec, work, source, words, tag):
     """Render one candidate, build its folder, run QA + judge. Returns a result dict (never raises)."""
     why = spec.pop("_why", "")
-    spec_path = work / "renders" / (Path(spec["out"]).stem + "_spec.json")
+    spec_path = work / "renders" / f"{tag}_{Path(spec['out']).stem}_spec.json"   # unique per try: two renders of one slug raced on this file (run 2)
     spec_path.write_text(json.dumps(spec, indent=1))
     t0 = time.time()
     r = sh([PY, str(HERE / "render_clip.py"), str(spec_path)], spec_path.with_suffix(".log"), timeout=2400)

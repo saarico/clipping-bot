@@ -699,7 +699,8 @@ def main(spec_path):
                             # pair found earlier in this render, then to the spec's "wide_split", so the
                             # window never lands on an empty room (rico, 2026-10-26: v1 MM-005/006 showed
                             # 6 s of empty room where the wide shot was cropped down the middle).
-                            small = analyze_shots.small_faces(src, vs, vs + b - a)
+                            # the whole shot, not this piece of it: the pair does not move and the result is cached
+                            small = analyze_shots.small_faces(src, *((vs, vs + b - a) if sw else (sh["start"], sh["end"])))
                             fixed = [tuple(p) for p in spec.get("wide_split", [])]
                             if len(small) == 2 and len(fixed) == 2 and any(
                                     min(abs(f[0] - q[0]) for f in fixed) > 0.12 for q in small):
@@ -743,7 +744,7 @@ def main(spec_path):
                     out = tmp / f"v{len(segs):03d}.mp4"
                     run(["ffmpeg", "-loglevel", "error", "-y", "-ss", f"{vs:.3f}", "-i", src, *extra,
                          "-filter_complex", graph, "-map", "[v]", "-an", "-r", str(FPS), "-frames:v", str(n),
-                         "-c:v", "libx264", "-preset", "veryfast", "-crf", "16", "-pix_fmt", "yuv420p", str(out)])
+                         "-c:v", "libx264", "-preset", "ultrafast", "-crf", "14", "-pix_fmt", "yuv420p", str(out)])
                     o = poff + (a - s)
                     layouts.append((o, o + n / FPS, lay + ("+zoom" if zoom > 1 and lay == "face" else "")))
                     segs.append(out)
@@ -784,8 +785,8 @@ def main(spec_path):
             pre = (f"trim=end={h:.3f},setpts=PTS-STARTPTS,tpad=stop_duration={total - h + 0.1:.3f}:stop_mode=clone,"
                    f"fade=out:st={h - 0.1:.3f}:d={total - h + 0.1:.3f},")
         run(["ffmpeg", "-loglevel", "error", "-y", "-i", str(tmp / "video.mp4"), "-i", str(tmp / "audio.m4a"),
-             "-vf", f"{pre}pad={W}:{H}:0:{TOP}:color=0x0E0E0E,ass={tmp / 'caps.ass'}:fontsdir={FONTS_DIR}", "-map", "0:v", "-map", "1:a", "-c:v", "libx264", "-preset", "medium",
-             "-crf", "22", "-pix_fmt", "yuv420p", "-c:a", "copy", "-shortest", "-movflags", "+faststart",
+             "-vf", f"{pre}pad={W}:{H}:0:{TOP}:color=0x0E0E0E,ass={tmp / 'caps.ass'}:fontsdir={FONTS_DIR}", "-map", "0:v", "-map", "1:a", "-c:v", "libx264", "-preset", "veryfast",
+             "-crf", "21", "-pix_fmt", "yuv420p", "-c:a", "copy", "-shortest", "-movflags", "+faststart",
              spec["out"]])
         Path(spec["out"]).with_suffix(".layout.json").write_text(json.dumps(
             {"cuts": ranges, "shots": [{"from": round(a, 2), "to": round(b, 2), "layout": l}
