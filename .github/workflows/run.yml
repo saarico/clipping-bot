@@ -56,9 +56,10 @@ jobs:
         id: prep
         env:
           RCLONE_TOKEN: ${{ secrets.RCLONE_TOKEN }}
+          CAMPAIGN: ${{ inputs.campaign }}   # through env, never inlined: a "$" in a name ("TJR $23,100 ...") was shell-expanded
         run: |
           set -o pipefail
-          python bot/run.py "${{ inputs.campaign }}" --phase prepare 2>&1 | tee data/prepare.log
+          python bot/run.py "$CAMPAIGN" --phase prepare 2>&1 | tee data/prepare.log
           grep -q '^count=' "$GITHUB_OUTPUT" || { echo "count=0" >> "$GITHUB_OUTPUT"; echo "jobs=[]" >> "$GITHUB_OUTPUT"; }
       - uses: actions/upload-artifact@v4
         if: steps.prep.outputs.count != '0'
