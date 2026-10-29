@@ -1,16 +1,19 @@
-[22:36:28] CLIPPING root CLIPPING
-[22:36:39] episode taken from the Drive cache (same source files as last time)
-[22:37:13] 4 candidate(s) picked (plan.json (reviewer)), 1 fallback(s); rendering on 4 machines with grade-and-retry
-[22:37:13] 4 render job(s)
-Discover page read: 71 campaigns found.
+[01:43:29] CLIPPING root CLIPPING
+[01:43:47] episode taken from the Drive cache (same source files as last time)
+[01:44:37] 4 candidate(s) picked (plan.json (reviewer)), 0 fallback(s); rendering on 4 machines with grade-and-retry
+[01:44:37] 4 render job(s)
+Discover page read: 65 campaigns found.
 scored 6 JOIN candidates; new folders in 0_START: none
 live: DIGGER x ClipFarm, Higgsfield 20VC Clipping, The Iced Coffee Hour Podcast x Greg Lav
-[22:44:24] moments from: plan.json (reviewer)
-transcript + graphics ready after 0.3 min
-TRY   c03_the-richest-man-on-earth-hea: qa PASS judge 74 
-KEPT  c02_wait-that-s-tom-cruise: 17s  qa PASS  judge 80  1.3 min  hook: Wait... that's Tom Cruise?  [Reviewer picks (2026-10-28 03:50 UTC) on the WB hook angles: a no-context premise line, 'Wait, that's Tom Cruise?', the strangest line. Approved scene clips + trailer 2A only. tighten off: the footage's own pauses and music beats stay.]
-KEPT  c01_shut-down-a-billion-dollar-r: 33s  qa PASS  judge 77  2.5 min  hook: Shut down a billion-dollar rig over a five-foot crack?  [Reviewer picks (2026-10-28 03:50 UTC) on the WB hook angles: a no-context premise line, 'Wait, that's Tom Cruise?', the strangest line. Approved scene clips + trailer 2A only. tighten off: the footage's own pauses and music beats stay.]
-KEPT  c04_you-know-the-hard-truth-just: 41s  qa PASS  judge 77  4.8 min  hook: You know the hard truth, just bang bang bang!.  [fallback: score 71: stakes 13, entertainment 12, comedy 4, names 2, shape 3, clarity 6, pace 10, quotes 10, energy 1, payoff 10 [drama 18, comedy 8, romance 2]]
-DROP  c03_the-richest-man-on-earth-hea: 21s  qa PASS  judge 74  1.6 min  hook: The richest man on Earth hears the bad news.  [Reviewer picks (2026-10-28 03:50 UTC) on the WB hook angles: a no-context premise line, 'Wait, that's Tom Cruise?', the strangest line. Approved scene clips + trailer 2A only. tighten off: the footage's own pauses and music beats stay.]
-3 clip(s) kept of 4 rendered on 4 machines, longest render 4.8 min
-[22:44:38] 3 clip(s) uploaded to 1_CHECK
+[01:51:42] moments from: plan.json (reviewer)
+transcript + graphics ready after 0.4 min
+TRY   c01_shut-down-a-billion-dollar-r: qa PASS judge 76 
+TRY   c02_wait-that-s-tom-cruise: qa FAIL judge 76 | Speaker centred | FAIL | 26 frames measured; off centre in 12% (at 2.5s, 6.0s, 8.0s); mean offset 6% of width |; | Somebody in frame | FAIL | no face for 1.5-2.5s, 8.5-11.0s |
+TRY   c03_the-richest-man-on-earth-hea: qa PASS judge 75 
+TRY   c04_you-know-one-day-you-re-a-ca: qa FAIL judge 72 | Audio | FAIL | loudness -14.1 LUFS; peak 1.0 dBFS; range 1.9 LU; clipping |; | Somebody in frame | FAIL | no face for 0.0-1.5s, 2.5-7.5s, 8.0-9.0s |
+DROP  c01_shut-down-a-billion-dollar-r: 32s  qa PASS  judge 76  2.0 min  hook: Shut down a billion-dollar rig over a five-foot crack?  [Reviewer picks (2026-10-28 03:50 UTC) on the WB hook angles: a no-context premise line, 'Wait, that's Tom Cruise?', the strangest line. Approved scene clips + trailer 2A only. tighten off: the footage's own pauses and music beats stay.]
+DROP  c02_wait-that-s-tom-cruise: 17s  qa FAIL  judge 76  1.3 min  hook: Wait... that's Tom Cruise?  [Reviewer picks (2026-10-28 03:50 UTC) on the WB hook angles: a no-context premise line, 'Wait, that's Tom Cruise?', the strangest line. Approved scene clips + trailer 2A only. tighten off: the footage's own pauses and music beats stay.]  | Speaker centred | FAIL | 26 frames measured; off centre in 12% (at 2.5s, 6.0s, 8.0s); mean offset 6% of width |; | Somebody in frame | FAIL | no face for 1.5-2.5s, 8.5-11.0s |; | Footage text cut off | FAIL | text runs off the frame edge at 9 s, 10 s |
+DROP  c03_the-richest-man-on-earth-hea: 21s  qa PASS  judge 75  1.2 min  hook: The richest man on Earth hears the bad news.  [Reviewer picks (2026-10-28 03:50 UTC) on the WB hook angles: a no-context premise line, 'Wait, that's Tom Cruise?', the strangest line. Approved scene clips + trailer 2A only. tighten off: the footage's own pauses and music beats stay.]
+DROP  c04_you-know-one-day-you-re-a-ca: 12s  qa FAIL  judge 72  1.0 min  hook: You know, one day you're a cat.  [fallback: score 46: stakes 2, entertainment 4, comedy 2, names 2, shape 3, clarity 6, pace 10, energy 2, payoff 10, length 5 [comedy 4, drama 3]]  | Audio | FAIL | loudness -14.1 LUFS; peak 1.0 dBFS; range 1.9 LU; clipping |; | Somebody in frame | FAIL | no face for 0.0-1.5s, 2.5-7.5s, 8.0-9.0s |; | Actors fill the frame | FAIL | a face in 50% of the seconds (a person without a face in 8%), typical face height 9% of the picture |
+0 clip(s) kept of 4 rendered on 4 machines, longest render 2.0 min
+[01:51:46] 0 clip(s) uploaded to 1_CHECK
