@@ -14,7 +14,11 @@ Per campaign under `campaigns/<c>/`:
    Max 3 clips. Optional per clip: `"lane": "youtube" | "instagram" | "tiktok"` to pin the platform (otherwise
    bot/lanes.py picks it from the clip's words), `"style"` via `brief_overrides.style`, `"thumb_text"` (2-6 words
    on the thumbnail; else a cut of the hook) and `"thumb_t"` (episode second of the thumbnail frame; else the
-   picker's choice; take it from the clip's `_thumbnail_options.jpg` when rico names an option). After a critique: change only
+   picker's choice; take it from the clip's `_thumbnail_options.jpg` when rico names an option).
+   `brief_overrides.look` pins the campaign's look (accent colour in ASS BGR, cap_size, cap_group, title_max,
+   outline, shadow; RULES 35). Before pushing picks, run `python3 bot/pitch.py campaigns/<c>/words.json
+   campaigns/<c>/plan.json campaigns/<c>/brief.json`: a pick under 60 will not be rendered (RULES 34), so pick
+   another moment or fix the title. After a critique: change only
    what rico flagged. Every clip must pass scorecards/acceptance.md and the judge bar of 80, so pick moments with the
    actors on screen, no montage, a title with a number, question, quote or name.
 4. Commit and push `plan.json`; the next bot run renders it and refreshes 1_CHECK. To run the bot at

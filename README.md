@@ -23,6 +23,8 @@ Drive: CLIPPING/
 | Cut, inspect, judge, retry | bot | `bot/render_clip.py` (YuNet face tracking, one 9:16 look), `bot/qa_check.py` (hard gates, `scorecards/acceptance.md`), `bot/judge_clip.py` (bar 80, `scorecards/judgment.md`), `bot/pipeline.py` grade-and-retry (re-edit once, then the next moment; clips that pass every gate at 75-79 go up marked UNDER THE BAR when nothing reaches 80) |
 | Lane: one platform per clip | bot | `bot/lanes.py` (YouTube = business/money, Instagram = celebrity/drama, TikTok = entertainment), shown in the SUMMARY |
 | Review | rico | 1_CHECK → 2_REDO or 3_APPROVED |
+| Pitch: every candidate's words graded on the campaign's style before rendering, under 60 not rendered | bot | `bot/pitch.py` |
+| Campaign look (accent, caption size, grouping) on top of the profile | reviewer + bot | `plan.json brief_overrides.look`, `bot/profiles.py` |
 | Thumbnail (most clickable face, not at a shout; 2-6 words, one yellow; 4-frame options sheet; appended as the last frame for the Shorts/TikTok pickers) | bot | `bot/thumbnail.py` |
 | Post kit (one platform, title, description, tags, thumbnail) | bot | `bot/post_kit.py`, `config/accounts.json` |
 | Post, paste the link into Content Rewards | rico (one click from the POST KIT) | see SETUP.md |

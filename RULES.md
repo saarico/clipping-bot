@@ -85,6 +85,22 @@ Round-by-round reasons: rico's critiques in campaigns/<c>/critiques/.
 
 ---
 
+34. **The pitch (rico 2026-10-29: "reading the script / captions and the bot deciding if it's good or entertaining enough per the campaign's style, so we aren't wasting time making clips").** Before any render, bot/pitch.py reads the WORDS of every candidate (reviewer pick or scorecard moment) against the campaign's profile and genre mix: hook (name, number, question or quote in the title; a first line that names who and what), story (stakes, a contrast, a finished ending, no podcast back-references), entertainment and comedy on the campaign's genres, pace and length. Under 60/100 the moment is not rendered. The SUMMARY lists every pitch with its score, verdict and reasons. When nothing passes, the single best pitch is rendered anyway, marked PITCH UNDER THE BAR, so a campaign still gets one try and rico sees why the material is thin.
+
+35. **Each campaign gets its own look (rico 2026-10-29: "ensure editing is altered to represent the style of the campaign").** The profile (podcast / cinematic / stream / performance, RULES 25) sets the base; the reviewer pins the campaign's look in plan.json `brief_overrides.look`: accent colour (ASS BGR, e.g. `&H2BC6FF&` warm gold for a movie, `&H00D7FF&` yellow for a podcast), caption size, words per caption, title size, outline and shadow. Fonts stay Montserrat (rule 31). The SUMMARY's run notes show `style:` and `look:` so the choice is visible on every run.
+
+36. **Accounts and campaign fit (rico 2026-10-29: "distinctly categorize my different accounts and what I post there and have a better judgment on the campaigns selected").** config/accounts.json holds each account's identity (what it posts, what it never posts, see the Accounts section below). The scan rejects a campaign that fits none of the three identities (no clear topic) and any promo: brand, app, product, token, or game footage with no person in it (the MW4 "Campaign Moments" offer of 2026-10-29 was withdrawn for this). The JOIN doc names the account the campaign would feed.
+
+# Accounts: what each one posts (config/accounts.json)
+
+| Account | Posts | Never |
+|---|---|---|
+| YouTube @fedsaa | business, money, careers, founders, investing, self-help with stakes: podcast and interview moments where someone with a track record says something a stranger can use | product demos, app promos, brand ads, gaming, music, drama |
+| Instagram @fesavoo | celebrity, pop culture, drama, gossip, relationships, dating, reality TV, fashion and beauty talk: moments people screenshot and send to a friend | finance talk, gaming, software, brand ads |
+| TikTok (handle TBD) | entertainment: streamers, gaming WITH a personality on screen, comedy, music and live performance, movie and show scenes with actors, sports moments | silent game footage, product trailers, app promos, brand ads, AI voice-overs |
+
+A campaign must fit exactly one account or it is rejected at the scan; a clip is posted to the one account its own words fit (rule 33).
+
 # Story structure: how every short must flow
 
 rico approved this structure on 2026-10-25 with the Kylie Jenner clip (ICH-004 v8): "I love the context behind the post and the way the viewer can easily follow along." Every new clip follows it. Read it before picking the cut, and check the finished clip against it before sending it to rico.

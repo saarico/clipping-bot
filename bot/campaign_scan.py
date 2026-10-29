@@ -140,6 +140,10 @@ def lane_for(platforms):
 
 
 SEEN = Path(__file__).resolve().parent.parent / "data" / "scan_seen.json"
+try:
+    ACCOUNTS = json.loads((Path(__file__).resolve().parent.parent / "config" / "accounts.json").read_text())
+except Exception:
+    ACCOUNTS = {}
 MAX_NEW = 3
 
 
@@ -169,6 +173,16 @@ def is_ad(c):
     if cat in AD_CATS and show < 2:
         return True
     return ad >= 2 and ad > show
+
+
+PERSON = r"\b(streamer|streamers|twitch|kick|youtuber|youtubers|creator|creators|podcast|podcasts|show|host|reacts?|reaction|vlog|vlogs|clipping army|his|her|their|he|she|comedian|caster|commentary|facecam|irl)\b"
+GAME = r"\b(gaming|game|games|roblox|minecraft|fortnite|call of duty|cod|warfare|warzone|gta|valorant|esports|multiplayer|dlc|gameplay|teasers?|campaign moments|launch)\b"
+
+
+def game_promo(c):
+    """Game or launch footage with nobody in it: a publisher's ad, not a person's content."""
+    blob = " ".join(str(c.get(k, "")) for k in ("name", "org", "category", "description")).lower()
+    return bool(re.search(GAME, blob)) and not re.search(PERSON, blob)
 
 
 LANE_PLATFORM = {"A": "youtube", "B": "instagram", "C": "tiktok"}
@@ -219,6 +233,8 @@ def auto_score(c):
         stops.append("rico said never")
     if is_ad(c):
         stops.append("brand ad, not a show (rico: clips must grow the channels)")
+    if game_promo(c):
+        stops.append("game footage with no person in it = a game-launch ad (rico 2026-10-29: the page would look like it just posts ads)")
     if re.search(r"[\u0600-\u06FF\u0400-\u04FF\u0E00-\u0E7F\u3040-\u30FF\u4E00-\u9FFF\uAC00-\uD7AF]", name) or \
        re.search(r"\b(en fran[cç]ais|espa[ñn]ol|hablando|portugu[eê]s|deutsch|italiano|international|arabic|hindi|\(fr\)|\(es\)|\(de\)|\(pt\)|con|para|sobre|pour|avec|und|vistas|clips en)\b|€", name, re.I):
         stops.append("not an English campaign (our accounts post in English)")
@@ -235,6 +251,8 @@ def auto_score(c):
         stops.append("under 7 days left")
     lane, topic, fun = content_fit(c)               # 0-10 lane fit, 0-15 entertainment
     c["lane"] = lane
+    if lane == "?" or topic < 5:                    # rico 2026-10-29: every campaign must fit ONE account's identity (config/accounts.json)
+        stops.append("fits none of the three accounts (no clear topic for YouTube money, Instagram drama or TikTok entertainment)")
     guess = 3 if c.get("platforms_guessed") else 0
     c["pts"] = {"pay+budget": a, "paid out": tr, "competition": comp, "lane fit": topic, "entertainment": fun, "platform guessed": -guess}
     total = round(max(0, a + tr + comp + topic + fun - guess) / 72 * 100)   # 72 = every point a card can earn
@@ -316,6 +334,7 @@ def main():
             f"Link: {c['link']}",
             f"Pay: ${c.get('rate', '?')} per 1k views   Budget left: ${c.get('budget_left', '?'):,.0f}" if isinstance(c.get("budget_left"), float) else f"Pay: ${c.get('rate', '?')} per 1k views",
             f"Lane: {c['lane']} ({ {'A': 'YouTube business/money', 'B': 'Instagram girly/drama', 'C': 'TikTok entertainment'}[c['lane']] })   Score: {tot}/100 ({verdict})",
+            f"Account: {ACCOUNTS.get(LANE_PLATFORM[c['lane']], '?')}   posts: {ACCOUNTS.get('identity', {}).get(LANE_PLATFORM[c['lane']], {}).get('posts', '')}",
             "Points: " + ", ".join(f"{k} {v}" for k, v in c.get("pts", {}).items() if v),
             "",
             "1. Open the link and join the campaign.",

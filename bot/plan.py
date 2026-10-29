@@ -60,7 +60,7 @@ def auto_specs(words_path, gfx_path, source, brief, campaign, out_dir, used=()):
             "parts": [[c["start"], c["end"]]], "hook": hook_text(c), "emphasis": emph,
             "focus": [], "overlays": [], "callouts": [], "sfx": False,
             "wide_split": [[0.25, 0.40, 0.06], [0.75, 0.40, 0.06]],   # generic two-shot seats; the reviewer's plan.json overrides
-            "disclosure": brief.get("disclosure", ""), "style": brief.get("style", ""), "genres": mix,
+            "disclosure": brief.get("disclosure", ""), "style": brief.get("style", ""), "genres": mix, "look": brief.get("look") or {},
             "out": str(Path(out_dir) / f"{slug(c['hook'])}.mp4"),
             "_why": f"score {c['score']}: " + ", ".join(f"{k} {v}" for k, v in c["reasons"].items() if v and k != "genres") + f" [{c['reasons'].get('genres', '')}]",
         })
@@ -134,6 +134,8 @@ def load(campaign_dir, words_path, gfx_path, source, brief, campaign, out_dir, u
             s.setdefault("_why", p.get("why", "reviewer's plan"))
             s.setdefault("disclosure", brief.get("disclosure", ""))
             s.setdefault("style", brief.get("style", ""))
+            if brief.get("look"):
+                s.setdefault("look", brief["look"])
         # behind the reviewer's picks: the scorecard's best other moments, for the grade-and-retry loop
         try:
             taken = tuple(used) + tuple((p[0], p[1]) for sp in specs for p in sp.get("parts", []))

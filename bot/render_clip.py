@@ -682,7 +682,7 @@ def build_ass(spec, pieces, layouts):
                 return lay
         return "face"
 
-    lk = profiles.look(spec.get("style"))
+    lk = profiles.look(spec.get("style"), spec.get("look"))   # the campaign's own look on top of the profile's
     ACCENT[0] = lk["accent"]
     mask = spec.get("profanity", "mask") != "show"
     hook = " ".join(mask_swear(t) if mask else t for t in spec["hook"].split())

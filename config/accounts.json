@@ -6,5 +6,20 @@
     "youtube": "A business / money",
     "instagram": "B celebrity / pop culture",
     "tiktok": "C streamers / gaming / music"
-  }
+  },
+  "identity": {
+    "youtube": {
+      "posts": "business, money, careers, founders, investing, self-help with stakes: podcast and interview moments where someone with a track record says something a stranger can use",
+      "never": "product demos, app promos, brand ads, gaming, music, drama"
+    },
+    "instagram": {
+      "posts": "celebrity, pop culture, drama, gossip, relationships, dating, reality TV, fashion and beauty talk: moments people screenshot and send to a friend",
+      "never": "finance talk, gaming, software, brand ads"
+    },
+    "tiktok": {
+      "posts": "entertainment: streamers, gaming WITH a personality on screen, comedy, music and live performance, movie and show scenes with actors, sports moments",
+      "never": "silent game footage, trailers of products, app promos, brand ads, anything with an AI voice-over"
+    }
+  },
+  "rule": "A campaign must fit exactly one account's identity or it is rejected at the scan. A promo of any kind (app, brand, product, game launch, token) never fits."
 }

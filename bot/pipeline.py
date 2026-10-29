@@ -126,7 +126,12 @@ def prepare(work, source, brief, words=None, campaign="campaign", log=print, use
         sh([PY, str(HERE / "graphics_map.py"), str(source), str(gfx)], work / "gfx.log")
     specs, origin = planner.load(plan_dir or work, words, gfx if gfx.exists() else None, source, brief, campaign, work / "renders", used=used)
     (work / "renders").mkdir(exist_ok=True)
-    return specs, origin, words, [f"moments from: {origin}", f"transcript + graphics ready after {(time.time() - t0) / 60:.1f} min"]
+    notes = [f"moments from: {origin}", f"style: {brief.get('style') or 'podcast'}" + (f", look: {json.dumps(brief['look'])}" if brief.get("look") else ""),
+             f"transcript + graphics ready after {(time.time() - t0) / 60:.1f} min"]
+    # the pitch (rico 2026-10-29): read every candidate's words against the campaign's style before spending a render on it
+    import pitch
+    specs, pnotes = pitch.gate(specs, json.loads(Path(words).read_text()), brief, log=log)
+    return specs, origin, words, notes + pnotes
 
 
 def reedit(spec, res):

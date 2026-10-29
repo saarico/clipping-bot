@@ -3,6 +3,22 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-10-29 (04:30 UTC): accounts, the pitch gate, campaign looks, MW4 withdrawn
+- rico: "where would these clips go, what site and why; why Call of Duty, isn't it supposed to be more girly; it leans
+  heavily on ad; categorize my accounts and judge campaigns better; tailor the editing to each campaign's style;
+  have the bot read the script and decide if it's entertaining enough before making clips; audit the code."
+- MW4 Campaign Moments withdrawn (config/dropped.txt; a game-launch promo). It's Personal Podcast stays offered
+  as the Instagram candidate.
+- Bot: `config/accounts.json` identities + RULES.md "Accounts" table; `campaign_scan.py` rejects campaigns that fit
+  no account and game footage with no person in it (`game_promo`), and the JOIN doc names the account.
+- Bot: `bot/pitch.py`, the pre-render judge (RULES 34): every candidate's words are graded on the campaign's
+  profile and genres; under 60 it is not rendered; SUMMARY lists every pitch. DIGGER's three reviewer picks pitch
+  83 / 82 / 74 on the current words.
+- Bot: per-campaign look (RULES 35): `brief_overrides.look` in plan.json overrides accent colour, caption size,
+  words per caption, title size, outline, shadow; `profiles.look(name, overrides)`; the SUMMARY shows style and look.
+- Parallel workers already exist since 2026-10-28 (one render machine per candidate, up to 4); unchanged.
+- Code audit requested; see the next entry.
+
 ## 2026-10-29 (04:00 UTC): the gender detector was wrong, automatic "women first" switched off
 - rico: "THAT'S NOT A FEMALE ... AUDIT AND CHECK AGAIN AND NEXT TIME FULLY CONFIRM." The bot had told him the
   clip 02 option 4 frame (194.5 s, the long-haired person at the window) was a woman, on the strength of the gender

@@ -67,8 +67,18 @@ LOOK = {
 }
 
 
-def look(name):
-    return LOOK.get(name or "", LOOK["podcast"])
+LOOK_KEYS = ("title_max", "cap_size", "outline", "shadow", "cap_group", "accent", "title_spacing")
+
+
+def look(name, overrides=None):
+    """The profile's look, with the campaign's own overrides on top (plan.json brief_overrides "look":
+    {"accent": "&H2BC6FF&" (ASS BGR), "cap_size": 86, "cap_group": [2, 4], "title_max": 88, "outline": 8, "shadow": 3}).
+    Fonts stay Montserrat (rico's rule 31); only sizes, colours and grouping change per campaign."""
+    base = dict(LOOK.get(name or "", LOOK["podcast"]))
+    for k, v in (overrides or {}).items():
+        if k in LOOK_KEYS and v not in (None, ""):
+            base[k] = tuple(v) if k == "cap_group" else v
+    return base
 
 
 def profile(name):
