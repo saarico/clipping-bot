@@ -5,7 +5,7 @@
   "category": "Entertainment",
   "lane": "C",
   "rate": 1.75,
-  "budget_left": 12827,
+  "budget_left": 12788.130000000001,
   "budget_total": 15000,
   "views": null,
   "clippers": 15,
@@ -36,7 +36,7 @@
   "category": "Entertainment",
   "lane": "C",
   "rate": 2.0,
-  "budget_left": 1262.3999999999996,
+  "budget_left": 1259.4099999999999,
   "budget_total": 10500,
   "views": null,
   "clippers": 190,
@@ -68,7 +68,7 @@
   "category": "Entertainment",
   "lane": "C",
   "rate": 1.0,
-  "budget_left": 19993.52,
+  "budget_left": 19992.96,
   "budget_total": 26300,
   "views": null,
   "clippers": 36,
@@ -135,7 +135,7 @@
   "category": "",
   "lane": "C",
   "rate": 3.0,
-  "budget_left": 3748.2199999999993,
+  "budget_left": 3748.2000000000007,
   "budget_total": 18000,
   "views": null,
   "clippers": 72,
@@ -170,7 +170,7 @@
   "category": "Entertainment",
   "lane": "C",
   "rate": 1.75,
-  "budget_left": 21302.649999999998,
+  "budget_left": 21265.32,
   "budget_total": 23057.55,
   "views": null,
   "clippers": 42,
@@ -203,7 +203,7 @@
   "category": "Roblox",
   "lane": "C",
   "rate": 1.0,
-  "budget_left": 21500.05,
+  "budget_left": 21496.370000000003,
   "budget_total": 32000,
   "views": null,
   "clippers": 855,
@@ -269,7 +269,7 @@
   "category": "Entertainment",
   "lane": "C",
   "rate": 0.5,
-  "budget_left": 1709.16,
+  "budget_left": 1709.02,
   "budget_total": 2000,
   "views": null,
   "clippers": 16,
@@ -304,7 +304,7 @@
   "category": "Technology",
   "lane": "C",
   "rate": 1.5,
-  "budget_left": 58380.97999999998,
+  "budget_left": 58352.57000000001,
   "budget_total": 359306,
   "views": null,
   "clippers": 3771,
@@ -336,7 +336,7 @@
   "category": "Business",
   "lane": "A",
   "rate": 0.5,
-  "budget_left": 63316.740000000005,
+  "budget_left": 63311.69,
   "budget_total": 85000,
   "views": null,
   "clippers": 870,
@@ -347,7 +347,7 @@
    "x",
    "youtube"
   ],
-  "submissions": 3831,
+  "submissions": 3832,
   "application_only": false,
   "pts": {
    "pay+budget": 14,
@@ -404,17 +404,17 @@
   "category": "Content Creator",
   "lane": "C",
   "rate": 0.75,
-  "budget_left": 12638.56,
+  "budget_left": 12595.58,
   "budget_total": 23100,
   "views": null,
-  "clippers": 240,
+  "clippers": 241,
   "days_left": null,
   "platforms": [
    "instagram",
    "tiktok",
    "youtube"
   ],
-  "submissions": 567,
+  "submissions": 570,
   "application_only": false,
   "pts": {
    "pay+budget": 14,
@@ -431,44 +431,12 @@
   "stops": []
  },
  {
-  "name": "Open Road Clipping | $5.25K Budget | $1.25 CPM",
-  "org": "Clipix",
-  "category": "Apps",
-  "lane": "C",
-  "rate": 1.25,
-  "budget_left": 3695.1800000000003,
-  "budget_total": 5250,
-  "views": null,
-  "clippers": 39,
-  "days_left": null,
-  "platforms": [
-   "tiktok"
-  ],
-  "submissions": 212,
-  "application_only": false,
-  "pts": {
-   "pay+budget": 12,
-   "paid out": 14,
-   "competition": 10,
-   "lane fit": 7,
-   "entertainment": 0,
-   "platform guessed": 0
-  },
-  "link": "https://contentrewards.com/c/campaigns/23022f84-5715-4ba5-a647-abc4baf4f0f8",
-  "raw": "json",
-  "total": 60,
-  "verdict": "STOP",
-  "stops": [
-   "brand ad, not a show (rico: clips must grow the channels)"
-  ]
- },
- {
   "name": "ClipFarm x Solved w/ Mark Manson",
   "org": "Clip Farm",
   "category": "Podcasts",
   "lane": "B",
   "rate": 1.25,
-  "budget_left": 11893.26,
+  "budget_left": 11891.66,
   "budget_total": 20000,
   "views": null,
   "clippers": 502,
@@ -504,14 +472,14 @@
   "budget_left": 10000,
   "budget_total": 10000,
   "views": null,
-  "clippers": 3,
+  "clippers": 10,
   "days_left": null,
   "platforms": [
    "instagram",
    "tiktok",
    "youtube"
   ],
-  "submissions": 4,
+  "submissions": 12,
   "application_only": false,
   "pts": {
    "pay+budget": 24,
@@ -567,7 +535,7 @@
   "category": "Entertainment",
   "lane": "C",
   "rate": 1.0,
-  "budget_left": 2376.3999999999996,
+  "budget_left": 2375.9799999999996,
   "budget_total": 6476.4,
   "views": null,
   "clippers": 404,
@@ -629,12 +597,46 @@
   ]
  },
  {
+  "name": "Sui BaseCamp LIVE STREAM clip campaign",
+  "org": "Expos3d Nation",
+  "category": null,
+  "lane": "?",
+  "rate": 4.0,
+  "budget_left": 800.0,
+  "budget_total": 1800.0,
+  "views": null,
+  "clippers": 90,
+  "days_left": null,
+  "platforms": [
+   "youtube",
+   "tiktok",
+   "instagram"
+  ],
+  "submissions": null,
+  "application_only": null,
+  "pts": {
+   "pay+budget": 13,
+   "paid out": 12,
+   "competition": 10,
+   "lane fit": 0,
+   "entertainment": 8,
+   "platform guessed": -3
+  },
+  "link": "https://contentrewards.com/c/campaigns/1c64ec71-ba0e-4798-b017-869635798747",
+  "raw": " Expos3d Nation \u00b7 3w Sui BaseCamp LIVE STREAM clip campaign $1K / $1.8K 90 $4 /1K ",
+  "total": 56,
+  "verdict": "STOP",
+  "stops": [
+   "budget left under $1,000"
+  ]
+ },
+ {
   "name": "Survive the Horde [ROBLOX]",
   "org": "BloxClips",
   "category": "Roblox",
   "lane": "C",
   "rate": 0.8,
-  "budget_left": 3576.6,
+  "budget_left": 3576.29,
   "budget_total": 4200,
   "views": null,
   "clippers": 78,
@@ -700,7 +702,7 @@
   "category": "Roblox",
   "lane": "C",
   "rate": 0.8,
-  "budget_left": 1871.75,
+  "budget_left": 1868.71,
   "budget_total": 7000,
   "views": null,
   "clippers": 969,
@@ -710,7 +712,7 @@
    "tiktok",
    "youtube"
   ],
-  "submissions": 3140,
+  "submissions": 3142,
   "application_only": false,
   "pts": {
    "pay+budget": 5,
@@ -859,6 +861,37 @@
   "stops": []
  },
  {
+  "name": "Daimon X Syndicate",
+  "org": "Distributed",
+  "category": "",
+  "lane": "C",
+  "rate": 1.0,
+  "budget_left": 2286.980000000003,
+  "budget_total": 53125,
+  "views": null,
+  "clippers": 121,
+  "days_left": null,
+  "platforms": [
+   "instagram",
+   "tiktok"
+  ],
+  "submissions": 5516,
+  "application_only": false,
+  "pts": {
+   "pay+budget": 10,
+   "paid out": 17,
+   "competition": 6,
+   "lane fit": 2,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/bb7a286d-c388-4550-b2c2-8beca19cd6d0",
+  "raw": "json",
+  "total": 49,
+  "verdict": "SKIP",
+  "stops": []
+ },
+ {
   "name": "Reuben A Geimah",
   "org": "Reuben A Geimah",
   "category": null,
@@ -896,7 +929,7 @@
   "category": "Health & Wellness",
   "lane": "C",
   "rate": 1.5,
-  "budget_left": 4663.87,
+  "budget_left": 4663.38,
   "budget_total": 4813.76,
   "views": null,
   "clippers": 44,
@@ -992,7 +1025,7 @@
   "category": null,
   "lane": "?",
   "rate": 2.0,
-  "budget_left": 1000.0,
+  "budget_left": 900.0,
   "budget_total": 3500.0,
   "views": null,
   "clippers": 57,
@@ -1013,10 +1046,12 @@
    "platform guessed": -3
   },
   "link": "https://contentrewards.com/c/campaigns/10b9e68d-6004-4730-a741-4b5b37ae0a20",
-  "raw": " ReelsBuilder \u00b7 4d John Furrier + NYSE/theCUBE $2.5K / $3.5K 57 $2 /1K ",
+  "raw": " ReelsBuilder \u00b7 4d John Furrier + NYSE/theCUBE $2.6K / $3.5K 57 $2 /1K ",
   "total": 44,
-  "verdict": "SKIP",
-  "stops": []
+  "verdict": "STOP",
+  "stops": [
+   "budget left under $1,000"
+  ]
  },
  {
   "name": "Pablo P\u00e9rez - Sobreviviendo en Bali con 100\u20ac",
@@ -1061,7 +1096,7 @@
   "budget_left": 30000,
   "budget_total": 30000,
   "views": null,
-  "clippers": 2069,
+  "clippers": 2075,
   "days_left": null,
   "platforms": [
    "instagram",
@@ -1069,7 +1104,7 @@
    "x",
    "youtube"
   ],
-  "submissions": 15483,
+  "submissions": 15558,
   "application_only": false,
   "pts": {
    "pay+budget": 12,
@@ -1314,6 +1349,38 @@
   "stops": [
    "budget left under $1,000"
   ]
+ },
+ {
+  "name": "Open Road Clipping",
+  "org": "Clipix",
+  "category": null,
+  "lane": "?",
+  "rate": 1.25,
+  "budget_left": 3700.0,
+  "budget_total": 5300.0,
+  "views": null,
+  "clippers": 39,
+  "days_left": null,
+  "platforms": [
+   "youtube",
+   "tiktok",
+   "instagram"
+  ],
+  "submissions": null,
+  "application_only": null,
+  "pts": {
+   "pay+budget": 12,
+   "paid out": 9,
+   "competition": 10,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": -3
+  },
+  "link": "https://contentrewards.com/c/campaigns/23022f84-5715-4ba5-a647-abc4baf4f0f8",
+  "raw": " Clipix \u00b7 1mo Open Road Clipping $5.25K Budget $1.25 CPM $1.6K / $5.3K 39 $1.25 /1K ",
+  "total": 39,
+  "verdict": "SKIP",
+  "stops": []
  },
  {
   "name": "Antoine Sallis Clipping",
@@ -1653,7 +1720,7 @@
   "category": null,
   "lane": "?",
   "rate": 0.6,
-  "budget_left": 2622.0,
+  "budget_left": 2619.0,
   "budget_total": 3500.0,
   "views": null,
   "clippers": 75,
@@ -1674,7 +1741,7 @@
    "platform guessed": -3
   },
   "link": "https://contentrewards.com/c/campaigns/dc73902e-bfaf-4a15-9ed2-40a62999a119",
-  "raw": " Clipix \u00b7 5d FRENZY By SV2 Clipping $3.5K Budget $0.75 CPM $878 / $3.5K 75 $0.60 /1K ",
+  "raw": " Clipix \u00b7 5d FRENZY By SV2 Clipping $3.5K Budget $0.75 CPM $881 / $3.5K 75 $0.60 /1K ",
   "total": 35,
   "verdict": "STOP",
   "stops": [
@@ -1883,72 +1950,6 @@
    "pays under $0.75/1k, or an auction/pool with no fixed rate",
    "budget left under $1,000"
   ]
- },
- {
-  "name": "Sofiane Pamart",
-  "org": "Clipperazzi",
-  "category": null,
-  "lane": "?",
-  "rate": 1.0,
-  "budget_left": 100.0,
-  "budget_total": 2800.0,
-  "views": null,
-  "clippers": 44,
-  "days_left": null,
-  "platforms": [
-   "youtube",
-   "tiktok",
-   "instagram"
-  ],
-  "submissions": null,
-  "application_only": null,
-  "pts": {
-   "pay+budget": 8,
-   "paid out": 9,
-   "competition": 10,
-   "lane fit": 0,
-   "entertainment": 0,
-   "platform guessed": -3
-  },
-  "link": "https://contentrewards.com/c/campaigns/667adb2b-0423-4930-9385-95cdd207a096",
-  "raw": " Clipperazzi \u00b7 6d Movie Edit Sofiane Pamart $2.7K / $2.8K 44 $1 /1K ",
-  "total": 33,
-  "verdict": "STOP",
-  "stops": [
-   "budget left under $1,000"
-  ]
- },
- {
-  "name": "Daimon X Syndicate",
-  "org": "Distributed",
-  "category": null,
-  "lane": "?",
-  "rate": 1.0,
-  "budget_left": 2400.0,
-  "budget_total": 53100.0,
-  "views": null,
-  "clippers": 121,
-  "days_left": null,
-  "platforms": [
-   "youtube",
-   "tiktok",
-   "instagram"
-  ],
-  "submissions": null,
-  "application_only": null,
-  "pts": {
-   "pay+budget": 10,
-   "paid out": 9,
-   "competition": 6,
-   "lane fit": 0,
-   "entertainment": 0,
-   "platform guessed": -3
-  },
-  "link": "https://contentrewards.com/c/campaigns/bb7a286d-c388-4550-b2c2-8beca19cd6d0",
-  "raw": " Distributed \u00b7 4mo Daimon X Syndicate $50.7K / $53.1K 121 $1 /1K ",
-  "total": 31,
-  "verdict": "SKIP",
-  "stops": []
  },
  {
   "name": "The Up Next Fighting Clipping Campaign",
