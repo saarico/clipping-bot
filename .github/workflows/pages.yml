@@ -1,0 +1,40 @@
+name: pages
+# Read campaign pages (end date, rules) with a browser: the Discover feed has neither, and the sandbox cannot reach the site.
+on:
+  workflow_dispatch:
+    inputs:
+      campaigns:
+        description: "campaign ids or links, comma-separated (empty = every unstopped card of the last scan)"
+        required: false
+        default: ""
+concurrency:
+  group: clipping-pages
+  cancel-in-progress: false
+jobs:
+  pages:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-chromium-v1
+      - name: playwright
+        run: |
+          pip install -q playwright
+          (python -m playwright install --with-deps chromium || python -m playwright install chromium) >/dev/null 2>&1
+      - name: read pages
+        run: |
+          set -o pipefail
+          python bot/campaign_pages.py $(echo "${{ inputs.campaigns }}" | tr ',' ' ') 2>&1 | tee data/last_pages.log
+      - name: save
+        if: always()
+        run: |
+          git config user.name "clipping-bot"
+          git config user.email "clipping-bot@users.noreply.github.com"
+          git add data
+          git diff --cached --quiet || (git commit -m "pages $(date -u +%Y-%m-%d_%H:%M)" && git pull --rebase origin main && git push)
