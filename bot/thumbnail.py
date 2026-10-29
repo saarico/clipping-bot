@@ -36,8 +36,37 @@ DW, DH = 1280, 720          # detection size
 STOP = {"a", "an", "the", "of", "to", "and", "or", "over", "on", "in", "at", "for", "with", "is", "it", "that", "this"}
 
 
+# ---------------------------------------------------------------- gender (rico 2026-10-29: "females get more clicks, lean in on that")
+GENDER_MODEL = Path(__file__).parent / "models" / "genderage.onnx"   # InsightFace buffalo_l attribute head (1.3 MB, MIT), 96x96 face
+_GNET = {}
+
+
+def _gender_net():
+    if "net" not in _GNET:
+        try:
+            _GNET["net"] = cv2.dnn.readNetFromONNX(str(GENDER_MODEL))
+        except Exception:
+            _GNET["net"] = None
+    return _GNET["net"]
+
+
+def woman_margin(frame, x, y, bw, bh):
+    """How clearly the face reads as a woman: female logit minus male logit (> 1 is clear, < -1 clearly a man,
+    around 0 unsure, e.g. a 3/4 view). 0.0 when the model is missing."""
+    net = _gender_net()
+    if net is None:
+        return 0.0
+    cx, cy, sz = x + bw / 2, y + bh / 2, max(bw, bh) * 1.15
+    crop = frame[max(int(cy - sz / 2), 0):int(cy + sz / 2), max(int(cx - sz / 2), 0):int(cx + sz / 2)]
+    if crop.size == 0:
+        return 0.0
+    net.setInput(cv2.dnn.blobFromImage(cv2.resize(crop, (96, 96)), 1.0, (96, 96), (0, 0, 0), swapRB=True))
+    out = net.forward()[0]
+    return float(out[0] - out[1])
+
+
 # ---------------------------------------------------------------- faces with landmarks
-def faces_lm(frame, min_conf=0.7):
+def faces_lm(frame, min_conf=0.7, gender=False):
     """YuNet faces with the measures the picker needs: cx, cy, size (box width / frame width), conf,
     frontal (eye distance / box width: ~0.4 facing camera, ~0.2 profile), mouth (nose-to-mouth drop / eye distance:
     ~0.3-0.6 closed, 0.75+ open, 1.0 screaming), sharp (Laplacian variance), bright (mean grey)."""
@@ -59,7 +88,8 @@ def faces_lm(frame, min_conf=0.7):
         g = cv2.cvtColor(cv2.resize(crop, (96, 96)), cv2.COLOR_BGR2GRAY)
         out.append({"cx": (x + bw / 2) / w, "cy": (y + bh / 2) / h, "size": bw / w, "conf": conf,
                     "frontal": eye / bw, "mouth": ((rm[1] + lm[1]) / 2 - no[1]) / eye,
-                    "sharp": float(cv2.Laplacian(g, cv2.CV_64F).var()), "bright": float(g.mean())})
+                    "sharp": float(cv2.Laplacian(g, cv2.CV_64F).var()), "bright": float(g.mean()),
+                    "fem": woman_margin(frame, x, y, bw, bh) if gender else 0.0})
     out.sort(key=lambda d: -d["size"])
     return out
 
@@ -76,7 +106,8 @@ def face_score(d):
     frontal = 0.25 + 0.75 * _ramp(d["frontal"], 0.22, 0.38)                      # facing the camera
     sharp = min(1.0, math.log1p(d["sharp"]) / math.log1p(250))
     bright = 0.5 + 0.5 * _ramp(d["bright"], 35, 70)
-    return d["conf"] * size_pref * frontal * sharp * bright
+    woman = 1.0 + 0.6 * _ramp(d.get("fem", 0.0), 0.6, 1.5)        # rico: a woman's face gets the click; clear reads only
+    return d["conf"] * size_pref * frontal * sharp * bright * woman
 
 
 def loudness(source, a, b, step=0.2):
@@ -105,7 +136,7 @@ def candidates(source, parts, fps=5):
             t = a + i / fps
             here = db[min(int((t - a) / 0.2), len(db) - 1)] if db else med
             quiet = 1.0 - 0.65 * _ramp(here - med, 2.0, 8.0)      # a shout: down to 0.35; a pause or the other's line: 1.0
-            faces = [d for d in faces_lm(f, 0.7) if d["size"] >= 0.05 and d["cy"] <= 0.8]
+            faces = [d for d in faces_lm(f, 0.7, gender=True) if d["size"] >= 0.05 and d["cy"] <= 0.8]
             if not faces:
                 continue
             main = faces[0]
@@ -132,6 +163,11 @@ def top_picks(cands, n=4, gap=1.5):
         picks.append(c)
         if len(picks) >= n:
             break
+    # a woman's face is always among the options when the clip has one (rico 2026-10-29)
+    if n > 1 and picks and not any(p[2][0].get("fem", 0) > 0.8 for p in picks):
+        women = [c for c in cands if c[2][0].get("fem", 0) > 0.8 and not any(abs(c[1] - p[1]) < gap for p in picks[:-1])]
+        if women:
+            picks[-1] = women[0]
     return picks
 
 

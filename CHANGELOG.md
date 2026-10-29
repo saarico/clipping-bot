@@ -3,6 +3,13 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-10-29 (03:50 UTC): women in thumbnails, rico picks frames by number
+- rico: "number 2 choose option 4" and "I think females get more clicks so let's lean in on that."
+- DIGGER clip 02's thumbnail pinned at 194.5 s (the window shot with Sandra Hüller) via `thumb_t` in plan.json.
+- Bot: `bot/models/genderage.onnx` (InsightFace buffalo_l attribute head, 1.3 MB, read with OpenCV's DNN, no new
+  dependency) scores every candidate face; a clear woman's face gets up to 1.6x in the thumbnail picker, and the
+  4-frame options sheet always includes one when the clip has one. RULES.md 20 updated.
+
 ## 2026-10-29 (03:20 UTC): thumbnails rebuilt after rico's verdict
 - rico: "are you able to pull images or make the clips better as in clickbaity... the one you made is very creepy and
   no one would want to watch that, it's weird. also the text is bad."
