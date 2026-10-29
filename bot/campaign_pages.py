@@ -59,7 +59,9 @@ def read(page, cid):
                 texts.append(f"\n\n=== tab {label} ===\n" + page.evaluate("document.body.innerText"))
         except Exception:
             pass
-    return url, "\n".join(texts)
+    html = page.content()
+    html = re.sub(r"<script[^>]+src=[^>]*></script>|<svg.*?</svg>|<style.*?</style>", "", html, flags=re.S)   # keep the inline data scripts
+    return url, "\n".join(texts), html
 
 
 def summarise(cid, url, text):
@@ -87,10 +89,11 @@ def main(args):
                           user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/130 Safari/537.36")
         for cid in ids:
             try:
-                url, text = read(page, cid)
+                url, text, html = read(page, cid)
             except Exception as e:
-                url, text = BASE + cid, f"ERROR {type(e).__name__}: {str(e)[:200]}"
+                url, text, html = BASE + cid, f"ERROR {type(e).__name__}: {str(e)[:200]}", ""
             (OUT / f"{cid}.txt").write_text(text)
+            (OUT / f"{cid}.html").write_text(html)      # the page's own data (Next.js flight JSON) for fields the text hides
             s = summarise(cid, url, text)
             summary[cid] = s
             print(f"{cid[:8]}  {s['chars']:6d} chars  {s['title'][:60]}  | time: {'; '.join(s['time_left'][:3]) or '?'}")

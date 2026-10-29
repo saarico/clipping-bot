@@ -7,6 +7,8 @@ on:
         description: "campaign ids or links, comma-separated (empty = every unstopped card of the last scan)"
         required: false
         default: ""
+permissions:
+  contents: write
 concurrency:
   group: clipping-pages
   cancel-in-progress: false
