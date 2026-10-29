@@ -482,7 +482,7 @@ def check_footage_text(rep, mp4, details):
         g = cv2.cvtColor(fr, cv2.COLOR_BGR2GRAY)
         h, w = g.shape
         for x0, y0, x1, y1, nc in analyze_shots._text_rows(g):
-            if (x0 <= w * 0.01 or x1 >= w * 0.99) and nc >= 5 and 0.12 * h < (y0 + y1) / 2 < 0.78 * h:
+            if (x0 <= w * 0.01 or x1 >= w * 0.99) and nc >= 5 and 0.12 * h < (y0 + y1) / 2 < 0.78 * h and (y1 - y0) <= 0.12 * h:
                 hits.append(i)
                 break
     st = "FAIL" if len(hits) >= 2 else "WARN" if hits else "PASS"

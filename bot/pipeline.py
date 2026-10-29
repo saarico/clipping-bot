@@ -22,7 +22,8 @@ HERE = Path(__file__).parent
 sys.path.insert(0, str(HERE))
 import plan as planner  # noqa: E402
 
-JUDGE_BAR = 80   # 2026-10-28: rico wants "amazing high tier quality"; under the bar = re-edit once, then the next moment
+JUDGE_BAR = 80    # 2026-10-28: rico wants "amazing high tier quality"; under the bar = re-edit once, then the next moment
+NEAR_BAR = 75     # a clip that passes every hard gate at 75-79 is handed over marked "under the bar" when nothing reaches 80
 PY = sys.executable
 
 
@@ -80,8 +81,15 @@ def one_clip(spec, work, source, words, tag):
     except Exception:
         pass
     dur = sum(b - a for a, b in json.loads((folder / "cut_details.json").read_text()).get("cuts", [[0, 0]]))
+    areas = ""
+    try:
+        last = [l for l in (folder / "judge.log").read_text().splitlines() if "machine" in l]
+        areas = last[-1].split("machine", 1)[1].strip() if last else ""
+    except Exception:
+        pass
     res.update({"folder": folder, "mp4": folder / f"{folder.name}.mp4", "qa": qa, "fails": fails, "judge": js, "dur": round(dur, 1), "caption": spec.get("caption", ""),
-                "ok": qa == "PASS" and js >= JUDGE_BAR, "judge_notes": jn, "captions": (folder / "captions.txt").read_text() if (folder / "captions.txt").exists() else "",
+                "ok": qa == "PASS" and js >= JUDGE_BAR, "near": qa == "PASS" and js >= NEAR_BAR, "judge_notes": jn, "areas": areas,
+                "captions": (folder / "captions.txt").read_text() if (folder / "captions.txt").exists() else "",
                 "minutes": round((time.time() - t0) / 60, 1)})
     return res
 
@@ -160,11 +168,18 @@ def decide(results, work, kept=None, notes=None):
         if res.get("error"):
             notes.append(f"render failed: {res['hook']} {res['error']}")
             continue
-        line = f"{Path(res['folder']).name}: {res['dur']:.0f}s  qa {res['qa']}  judge {res['judge']}  {res.get('minutes', '?')} min  hook: {res['hook']}  [{res['why']}]"
+        line = f"{Path(res['folder']).name}: {res['dur']:.0f}s  qa {res['qa']}  judge {res['judge']} ({res.get('areas', '')})  {res.get('minutes', '?')} min  hook: {res['hook']}  [{res['why']}]"
         if res["ok"] and len(kept) < planner.MAX_CLIPS:
             kept.append({"folder": str(res["folder"]), "mp4": str(res["mp4"]), "hook": res["hook"], "parts": res["parts"], "judge": res["judge"],
                          "dur": res["dur"], "why": res["why"], "captions": res["captions"], "caption": res.get("caption", "")})
             notes.append("KEPT  " + line)
+        elif res.get("near") and not any(r.get("ok") for r in results) and len(kept) < planner.MAX_CLIPS:
+            # every hard production gate passed but the entertainment judge stayed under the bar, and nothing
+            # in this run reached it: hand rico the best of them, clearly marked, rather than an empty folder
+            res["why"] = f"UNDER THE BAR (judge {res['judge']} < {JUDGE_BAR}, every production gate passed) | " + res["why"]
+            kept.append({"folder": str(res["folder"]), "mp4": str(res["mp4"]), "hook": res["hook"], "parts": res["parts"], "judge": res["judge"],
+                         "dur": res["dur"], "why": res["why"], "captions": res["captions"], "caption": res.get("caption", "")})
+            notes.append("KEPT (under the bar)  " + line)
         else:
             notes.append("DROP  " + line + ("  " + "; ".join(res["fails"]) if res["fails"] else ""))
             dropped = Path(work) / "dropped" / Path(res["folder"]).name

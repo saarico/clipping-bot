@@ -332,11 +332,11 @@ def panel_crop(f, right_limit=SRC_W, left_limit=0, cw=630, keys=None):
     return f"crop={cw}:{ch}:'{x}':{y},scale={W}:{HC // 2}"
 
 
-def pan_keys(src, a, b, box=None, start_cx=None, min_size=0.10, dead=0.04, anchor=None, smooth=2):
+def pan_keys(src, a, b, box=None, start_cx=None, min_size=0.10, dead=0.04, anchor=None, smooth=2, hi=False):
     """Face-tracking change points [(t_rel, cx)] for one segment, or None when nobody is found.
     Median-smoothed over 1.25 s, with a dead zone: the window only moves once the face has drifted
     more than 4% of the frame width, so breathing and nodding never make the picture wobble."""
-    tr = analyze_shots.track(src, a, b, box=box, min_size=min_size, anchor=anchor)
+    tr = analyze_shots.track(src, a, b, box=box, min_size=min_size, anchor=anchor, hi=hi)
     seen = [p[0] for _, p in tr if p]
     if not seen:
         return None, None
@@ -501,7 +501,8 @@ def plain_gain(wav):
     m = re.findall(r"I:\s+(-?[\d.]+) LUFS", log)
     i = float(m[-1]) if m else -20.0
     gain = max(-10.0, min(14.0, -14.0 - i))
-    return f"volume={gain:.2f}dB,alimiter=limit=0.84:attack=5:release=60:level=false"
+    # limit 0.7 (-3 dBFS): true peaks of hot music sat above the -0.5 dBFS gate at 0.84 (run 7)
+    return f"volume={gain:.2f}dB,alimiter=limit=0.7:attack=5:release=60:level=false"
 
 
 def deflash(video):
@@ -892,7 +893,7 @@ def main(spec_path):
                             # never split; burned-in text that fits the window is centred (wide credit cards at the
                             # clip's edges were trimmed off by trim_cards).
                             # YuNet sees small and turned faces: take any face from 4% of the width up
-                            allf = analyze_shots.faces_in(src, vs, vs + b - a) if sw or part_of_shot else sh["faces"]
+                            allf = analyze_shots.faces_in(src, vs, vs + b - a, hi=True)   # 720p search: small faces count
                             ppl = people(allf, min_size=CINE_MIN_FACE, max_size=0.6)
                             # burned-in text wins only when nobody is on screen, or when it is a real card
                             # (a third of the width or more): the globe's map labels and a video-call window
@@ -926,7 +927,8 @@ def main(spec_path):
                                            min_size=CINE_MIN_FACE if whole_when_lost else 0.10,
                                            dead=0.06 * win_w if whole_when_lost else 0.04,
                                            anchor=ppl[0][0] if whole_when_lost else None,
-                                           smooth=1 if whole_when_lost else 2)   # movies: 0.75 s window, less lag behind a walking actor
+                                           smooth=1 if whole_when_lost else 2,   # movies: 0.75 s window, less lag behind a walking actor
+                                           hi=whole_when_lost)
                         if keys:
                             ppl = [(keys[0][1], ppl[0][1], ppl[0][2])] + ppl[1:]
                             last_cx = keys[-1][1]

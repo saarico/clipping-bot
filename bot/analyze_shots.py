@@ -197,9 +197,10 @@ def _mouth_motion(frames, cx, cy, s):
     """Mean frame-to-frame change in the lower third of the face box (0 when only one frame)."""
     if len(frames) < 2:
         return 0.0
-    w = int(s * W)
-    x0, x1 = max(int(cx * W - w / 2), 0), min(int(cx * W + w / 2), W)
-    y0, y1 = max(int(cy * H + w * 0.15), 0), min(int(cy * H + w * 0.6), H)
+    fh, fw = frames[0].shape[:2]          # the frames' own size (720p for the movie search, 360p otherwise)
+    w = int(s * fw)
+    x0, x1 = max(int(cx * fw - w / 2), 0), min(int(cx * fw + w / 2), fw)
+    y0, y1 = max(int(cy * fh + w * 0.15), 0), min(int(cy * fh + w * 0.6), fh)
     if x1 - x0 < 4 or y1 - y0 < 4:
         return 0.0
     crops = [cv2.cvtColor(f[y0:y1, x0:x1], cv2.COLOR_BGR2GRAY).astype(float) for f in frames]
@@ -210,7 +211,7 @@ def _frames_at(source, start, end, fps, w=W, h=H):
     return _decode(source, start, end, fps, w, h)
 
 
-def track(source, start, end, fps=4, box=None, src_w=1920, src_h=1080, min_size=0.10, anchor=None):
+def track(source, start, end, fps=4, box=None, src_w=1920, src_h=1080, min_size=0.10, anchor=None, hi=False):
     """The speaker's face over time: [(t_source, (cx, cy, size) or None), ...] sampled at `fps`.
     One identity is followed: the first pick is the face nearest `anchor` (the person chosen for the
     segment) or else the biggest; after that the hit nearest the previous position wins, and a hit
@@ -219,7 +220,7 @@ def track(source, start, end, fps=4, box=None, src_w=1920, src_h=1080, min_size=
     confidence for a frame (c02 2026-10-29: the window drifted from Rockwell to the woman beside him).
     Faces inside `box` (an on-screen graphic, source px) are ignored."""
     out, prev = [], None
-    for i, f in enumerate(_frames_at(source, start, end, fps)):
+    for i, f in enumerate(_frames_at(source, start, end, fps, 1280, 720) if hi else _frames_at(source, start, end, fps)):
         hits = [(cx, cy, sz, c) for cx, cy, sz, c in detect_faces(f, 0.5)]
         ok = []
         for cx, cy, sz, c in hits:
@@ -292,9 +293,10 @@ def small_faces(source, start, end):
     return faces[:2]
 
 
-def faces_in(source, start, end):
-    """Faces in one stretch, for when a graphic slides in mid-shot and changes the picture."""
-    frames = _frames(source, start, end)
+def faces_in(source, start, end, hi=False):
+    """Faces in one stretch, for when a graphic slides in mid-shot and changes the picture.
+    hi=True searches 1280x720 frames (movies: an actor across the room is 20 px wide at 640)."""
+    frames = _frames_at(source, start, end, FPS, 1280, 720) if hi else _frames(source, start, end)
     idx = np.linspace(0, len(frames) - 1, min(6, len(frames))).astype(int)
     return _cluster([frames[i] for i in idx])
 

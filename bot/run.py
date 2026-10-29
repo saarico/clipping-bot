@@ -391,7 +391,7 @@ def render_job(n):
         sp["words"], sp["source"] = str(words), str(src)
     res, tries = pipeline.try_until(lane, work, src, words, f"c{n + 1:02d}", log=log)
     res = res or {"hook": spec["hook"], "error": "no render finished", "ok": False, "judge": 0, "qa": "FAIL", "fails": [], "why": "", "parts": spec.get("parts", []), "dur": 0}
-    res["tries"] = [f"{Path(str(r.get('folder', r['hook']))).name}: qa {r.get('qa')} judge {r.get('judge')} {'; '.join(r.get('fails', [])[:2])}" for r in tries]
+    res["tries"] = [f"{Path(str(r.get('folder', r['hook']))).name}: qa {r.get('qa')} judge {r.get('judge')} ({r.get('areas', '')}) {'; '.join(r.get('fails', [])[:2])}" for r in tries]
     out = OUT / str(n)
     out.mkdir(parents=True, exist_ok=True)
     if res.get("folder"):

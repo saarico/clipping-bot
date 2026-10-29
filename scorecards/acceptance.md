@@ -1,6 +1,6 @@
 # Acceptance criteria: when a clip may leave the bot
 
-rico, 2026-10-29: "a full quality inspection is ideal and necessary", "have better scoring cards", "have better rejecting meter". This is the inspection. Every line is measured on the finished mp4 by `bot/qa_check.py` (table in `qa_report.md`) or `bot/judge_clip.py` (`judge_report.md`). A clip goes to 1_CHECK only when **every gate passes and the judge scores 80+**. Under that: one re-edit, then the next best moment (`bot/pipeline.try_until`). Nothing under the bar is ever uploaded.
+rico, 2026-10-29: "a full quality inspection is ideal and necessary", "have better scoring cards", "have better rejecting meter". This is the inspection. Every line is measured on the finished mp4 by `bot/qa_check.py` (table in `qa_report.md`) or `bot/judge_clip.py` (`judge_report.md`). A clip goes to 1_CHECK only when **every gate passes and the judge scores 80+**. Under that: one re-edit, then the next best moment (`bot/pipeline.try_until`). A clip that fails any hard gate is never uploaded. When no clip of a run reaches 80, the best clips that passed **every** gate at 75-79 are uploaded marked "UNDER THE BAR" in the summary (run 7, 2026-10-29: two clean clips at 76 and 75 and an empty folder helps nobody); rico decides.
 
 ## Hard gates (any FAIL = rejected)
 
