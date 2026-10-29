@@ -62,7 +62,8 @@ def cards_from_json(html):
              "clippers": obj.get("creatorCountRaw"), "submissions": obj.get("submissionCountRaw"),
              "budget_total": obj.get("budgetTotalRaw"), "budget_left": obj.get("availableBudgetRaw"),
              "application_only": bool(obj.get("requiresApplication")), "verified": bool(obj.get("isVerified")),
-             "pay_type": obj.get("type"), "funded_ago": obj.get("fundedAgo"), "raw": "json"}
+             "pay_type": obj.get("type"), "funded_ago": obj.get("fundedAgo"), "launched_ms": obj.get("launchedAtMs"),
+             "budget_spent": obj.get("budgetSpentRaw"), "raw": "json"}
         if obj.get("type") == "cpm" and obj.get("payoutSortRaw") is not None:
             c["rate"] = float(obj["payoutSortRaw"])
         low = f"{c['name']} {c['org']} {c['description']}".lower()
@@ -140,7 +141,7 @@ FUN = r"\b(podcast|interview|episode|show|story|stories|stream|streamer|concert|
 # rico (2026-10-27 05:20 UTC): never again a brand ad. Clips must grow the channels, so a campaign has to
 # be about a SHOW or a PERSON (podcast, streamer, performer, game footage), not a product.
 SHOW = r"\b(podcasts?|interviews?|episodes?|show|shows|streamer|streamers|streams?|streaming|live|concert|performance|tour|comedy|comedian|reaction|reacts|highlights|moments|vlogs?|talks?|debate|panel|rant|kick|twitch|youtuber|creator|influencer|clip the show|clipping army|fight|fighter|match|game|games|gaming|roblox|minecraft|fortnite|warfare|warzone|esports|speedrun|music|rapper|singer|band|dj)\b"
-AD = r"\b(ugc|split[- ]screen|app|apps|software|saas|download|install|sign[- ]?up|referral|use my link|promo code|promo|discount|extension|wallet|product|products|brand awareness|launch|early access|pre-?orders?|crowdfund|invest in|token|nft|metaverse|airdrop|web3|crypto|blockchain|virtual world|decentraland|teasers?|ai tool|ai video|generator|fintech|bitcoin rewards|debit card|credit card|subscription|supplement|skincare brand)\b"
+AD = r"\b(ugc|split[- ]screen|app|apps|software|saas|download|install|sign[- ]?up|referral|use my link|promo code|promo|discount|extension|wallet|product|products|brand awareness|launch|early access|pre-?orders?|crowdfund|invest in|token|nft|metaverse|airdrop|web3|crypto|blockchain|virtual world|decentraland|teasers?|content bank|trading cards?|collectibles?|merch|ai tool|ai video|generator|fintech|bitcoin rewards|debit card|credit card|subscription|supplement|skincare brand)\b"
 AD_CATS = {"apps", "finance", "technology", "health & wellness", "crypto", "software", "ecommerce", "e-commerce", "product", "brand", "business", "saas"}
 
 
@@ -233,6 +234,15 @@ def auto_score(c):
     dl = c.get("days_left")
     if dl is not None and dl < 7:
         stops.append("under 7 days left")
+    # Content Rewards campaigns have no end date: they close when the budget is spent (pages read 2026-10-29). So
+    # "close to ending" = budget left at the pace it has been paid out since launch; under 10 days is a stop.
+    if c.get("launched_ms") and tot_b:
+        age = (datetime.now(timezone.utc).timestamp() - c["launched_ms"] / 1000) / 86400
+        paid = c.get("budget_spent") if c.get("budget_spent") is not None else tot_b - (c.get("budget_left") or 0)
+        if age >= 1 and paid > 0:
+            c["days_est"] = round((c.get("budget_left") or 0) / (paid / age))
+            if c["days_est"] < 10:
+                stops.append(f"budget runs out in about {c['days_est']} day(s) at its current pace")
     lane, topic, fun = content_fit(c)               # 0-10 lane fit, 0-15 entertainment
     c["lane"] = lane
     if lane == "?" or topic < 5:                    # rico 2026-10-29: every campaign must fit ONE account's identity (config/accounts.json)
@@ -280,7 +290,7 @@ def main():
         except Exception as e:
             dump.append({"name": c.get("name"), "error": f"{type(e).__name__}: {e}"})
             continue
-        dump.append({k: c.get(k) for k in ("name", "org", "category", "lane", "rate", "budget_left", "budget_total", "views", "clippers", "days_left", "platforms", "submissions", "application_only", "pts", "link", "raw")}
+        dump.append({k: c.get(k) for k in ("name", "org", "category", "lane", "rate", "budget_left", "budget_total", "views", "clippers", "days_left", "days_est", "funded_ago", "platforms", "submissions", "application_only", "pts", "link", "raw")}
                     | {"total": total, "verdict": verdict, "stops": stops})
         if stops or total < 55:
             continue
