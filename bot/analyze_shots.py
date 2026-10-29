@@ -6,8 +6,8 @@ Usage (as a module): shots(source, start, end) -> list of
   cut_in(source, a, b) -> time of a camera cut inside [a, b], or None
 
 Cuts are found where one frame differs sharply from the last (frames sampled at 10 fps).
-Faces are found with OpenCV's bundled Haar detectors (frontal + profile) on
-a few frames per shot, then clustered so each person counts once.
+Faces are found with YuNet (bot/models, OpenCV DNN) on a few frames per shot, then clustered so
+each person counts once; people without a visible face come from the HOG people detector.
 """
 import functools
 import re
@@ -20,6 +20,82 @@ FPS = 10
 W, H = 640, 360
 _front = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 _prof = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_profileface.xml")
+
+# 2026-10-29 (rico: "faces are not in frame", "still not centering"): the Haar cascades missed profiles,
+# dark faces and anything under 40 px. YuNet (OpenCV zoo, 230 KB, CPU) finds faces down to ~12 px at any
+# angle; it is the detector for everything now. The Haar objects above stay only as a fallback when the
+# model file is missing.
+from pathlib import Path as _P
+_YN_MODEL = str(_P(__file__).parent / "models" / "face_detection_yunet_2023mar.onnx")
+_YN = {}
+
+
+def _yunet(w, h):
+    k = (w, h)
+    if k not in _YN:
+        try:
+            _YN[k] = cv2.FaceDetectorYN.create(_YN_MODEL, "", (w, h), 0.55, 0.3, 5000)
+        except Exception:
+            _YN[k] = None
+    return _YN[k]
+
+
+def detect_faces(frame, min_conf=0.6):
+    """[(cx, cy, size, conf)] in 0-1 of the frame (size = box width / frame width), biggest first."""
+    h, w = frame.shape[:2]
+    det = _yunet(w, h)
+    out = []
+    if det is not None:
+        _, res = det.detect(frame)
+        for r in (res if res is not None else []):
+            x, y, bw, bh, conf = float(r[0]), float(r[1]), float(r[2]), float(r[3]), float(r[14])
+            if conf >= min_conf and bw > 0:
+                out.append(((x + bw / 2) / w, (y + bh / 2) / h, bw / w, conf))
+    else:
+        g = cv2.equalizeHist(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY))
+        for (x, y, bw, bh) in _front.detectMultiScale(g, 1.1, 6, minSize=(24, 24)):
+            out.append(((x + bw / 2) / w, (y + bh / 2) / h, bw / w, 0.6))
+    out.sort(key=lambda t: -t[2])
+    return out
+
+
+_HOG = None
+
+
+def persons(frame):
+    """Standing or seated people without a visible face (OpenCV's HOG people detector):
+    [(cx, cy_top_third, width)] in 0-1, biggest first. Weak on close-ups; used only when no face is found."""
+    global _HOG
+    if _HOG is None:
+        _HOG = cv2.HOGDescriptor()
+        _HOG.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
+    h, w = frame.shape[:2]
+    rects, weights = _HOG.detectMultiScale(frame, winStride=(8, 8), padding=(8, 8), scale=1.05)
+    out = []
+    for (x, y, bw, bh), wt in zip(rects, weights):
+        if wt > 0.9:                       # 0.4 took a grandfather clock for a person (c01, 2026-10-29)
+            out.append(((x + bw / 2) / w, (y + bh * 0.3) / h, bw / w))
+    out.sort(key=lambda t: -t[2])
+    return out[:2]
+
+
+def people_in(source, start, end):
+    """People (no face needed) seen in at least 2 of 3 frames of a stretch, at 1280x720."""
+    frames = _frames_at(source, start, end, 2, 1280, 720)
+    if len(frames) == 0:
+        return []
+    idx = np.linspace(0, len(frames) - 1, min(3, len(frames))).astype(int)
+    hits = [p for i in idx for p in persons(frames[i])]
+    groups = []
+    for cx, cy, bw in sorted(hits):
+        if groups and abs(cx - groups[-1][-1][0]) < 0.1:
+            groups[-1].append((cx, cy, bw))
+        else:
+            groups.append([(cx, cy, bw)])
+    keep = [g for g in groups if len(g) >= 2]
+    out = [tuple(float(np.median([q[k] for q in g])) for k in range(3)) for g in keep]
+    out.sort(key=lambda t: -t[2])
+    return out[:2]
 
 
 _DEC = []   # (source, start, end, fps, w, h, frames): decoded stretches, newest last
@@ -63,19 +139,11 @@ def _hist(f):
 
 
 def _faces(f):
-    g = cv2.equalizeHist(cv2.cvtColor(f, cv2.COLOR_BGR2GRAY))
-    found = []
-    for det, flip in ((_front, False), (_prof, False), (_prof, True)):
-        img = cv2.flip(g, 1) if flip else g
-        for (x, y, w, h) in det.detectMultiScale(img, 1.1, 6, minSize=(40, 40)):
-            if flip:
-                x = W - x - w
-            found.append(((x + w / 2) / W, (y + h / 2) / H, w / W))
-    # merge overlapping hits from the different detectors
+    found = [(cx, cy, sz) for cx, cy, sz, _ in detect_faces(f)]
     merged = []
-    for cx, cy, s in sorted(found, key=lambda t: -t[2]):
-        if all(abs(cx - m[0]) > max(s, m[2]) * 0.6 for m in merged):
-            merged.append((cx, cy, s))
+    for cx, cy, sz in sorted(found, key=lambda t: -t[2]):
+        if all(abs(cx - m[0]) > max(sz, m[2]) * 0.6 for m in merged):
+            merged.append((cx, cy, sz))
     return merged
 
 
@@ -142,37 +210,56 @@ def _frames_at(source, start, end, fps, w=W, h=H):
     return _decode(source, start, end, fps, w, h)
 
 
-def track(source, start, end, fps=4, box=None, src_w=1920, src_h=1080):
+def track(source, start, end, fps=4, box=None, src_w=1920, src_h=1080, min_size=0.10, anchor=None):
     """The speaker's face over time: [(t_source, (cx, cy, size) or None), ...] sampled at `fps`.
-    The frontal detector goes first (the profile one invents faces on mics and ears); of several hits
-    the one nearest the previous position wins, so the crop follows one person and never jumps to a
-    stray hit. Faces inside `box` (an on-screen graphic, source px) are ignored. Added 2026-10-26 after
-    rico's "horribly off centre" review: shot-median positions let the face drift to the edge."""
+    One identity is followed: the first pick is the face nearest `anchor` (the person chosen for the
+    segment) or else the biggest; after that the hit nearest the previous position wins, and a hit
+    further than 15% of the width away is treated as somebody else (the position is held), so the
+    crop never slides over to the other actor when the speaker's profile dips under the detector's
+    confidence for a frame (c02 2026-10-29: the window drifted from Rockwell to the woman beside him).
+    Faces inside `box` (an on-screen graphic, source px) are ignored."""
     out, prev = [], None
     for i, f in enumerate(_frames_at(source, start, end, fps)):
-        g = cv2.equalizeHist(cv2.cvtColor(f, cv2.COLOR_BGR2GRAY))
-        hits = [((x + w / 2) / W, (y + h / 2) / H, w / W)
-                for (x, y, w, h) in _front.detectMultiScale(g, 1.1, 5, minSize=(40, 40))]
-        if not hits:
-            for det, flip in ((_prof, False), (_prof, True)):
-                img = cv2.flip(g, 1) if flip else g
-                for (x, y, w, h) in det.detectMultiScale(img, 1.1, 6, minSize=(40, 40)):
-                    if flip:
-                        x = W - x - w
-                    hits.append(((x + w / 2) / W, (y + h / 2) / H, w / W))
+        hits = [(cx, cy, sz, c) for cx, cy, sz, c in detect_faces(f, 0.5)]
         ok = []
-        for cx, cy, sz in hits:
-            if not (0.10 <= sz <= 0.34 and cy <= 0.65):
+        for cx, cy, sz, c in hits:
+            if not (min_size <= sz <= 0.5 and cy <= 0.7):
                 continue
             if box and box[0] <= cx * src_w <= box[0] + box[2] and box[1] <= cy * src_h <= box[1] + box[3]:
                 continue
+            if c < 0.6 and prev is None and anchor is None:
+                continue                      # a weak hit may only continue an identity, never start one
             ok.append((cx, cy, sz))
         pick = None
         if ok:
-            pick = min(ok, key=lambda h: abs(h[0] - prev[0])) if prev else max(ok, key=lambda h: h[2])
-            prev = pick
+            ref = prev[0] if prev else anchor
+            if ref is not None:
+                cand = min(ok, key=lambda h: abs(h[0] - ref))
+                pick = cand if abs(cand[0] - ref) <= 0.15 else None
+                if pick is None and prev:
+                    # the speaker turned away while somebody else's face is on screen: keep the window
+                    # as close to the speaker as possible but with the other face inside it (c02
+                    # 2026-10-29: she turned to the window and his face sat cut off at the edge)
+                    pick = (min(max(prev[0], cand[0] - 0.07), cand[0] + 0.07), prev[1], prev[2])
+            else:
+                pick = max(ok, key=lambda h: h[2])
+            if pick:
+                prev = pick
         out.append((start + i / fps, pick))
     return out
+
+
+def card_end(source, start, end):
+    """When a dark title/credit card at `start` gives way to the picture: the first moment the mean
+    brightness steps up by 12+ (checked at 10 fps, 320x180), or None when the stretch stays a card."""
+    fr = _decode(source, start, end, 10, 320, 180)
+    if len(fr) < 2:
+        return None
+    lum = [float(f.mean()) for f in fr]
+    for i in range(1, len(lum)):
+        if lum[i] - lum[i - 1] >= 12 and lum[i - 1] < 40:
+            return start + i / 10
+    return None
 
 
 @functools.lru_cache(maxsize=32)
@@ -189,13 +276,9 @@ def small_faces(source, start, end):
     idx = np.linspace(0, len(frames) - 1, min(3, len(frames))).astype(int)
     hits = []
     for i in idx:
-        g = cv2.equalizeHist(cv2.cvtColor(frames[i], cv2.COLOR_BGR2GRAY))
-        for det, flip in ((_front, False), (_prof, False), (_prof, True)):
-            img = cv2.flip(g, 1) if flip else g
-            for (x, y, w, h) in det.detectMultiScale(img, 1.1, 3, minSize=(20, 20), maxSize=(150, 150)):
-                if flip:
-                    x = SW - x - w
-                hits.append(((x + w / 2) / SW, (y + h / 2) / SH, w / SW))
+        for cx, cy, sz, _ in detect_faces(frames[i], 0.5):
+            if sz <= 0.14:
+                hits.append((cx, cy, sz))
     people = []
     for cx, cy, sz in sorted(hits):
         if people and abs(cx - people[-1][-1][0]) < 0.06:
@@ -300,6 +383,8 @@ def _text_rows(gray):
             ws = [comps[j][2] for j in line]
             if np.std(ws) / max(np.mean(ws), 1) < 0.12:
                 continue                                               # identical glyph widths = window panes, a grid, a keyboard
+            if sum(1 for j in line if comps[j][3] > 4 * comps[j][2]) > len(line) // 2:
+                continue                                               # mostly thin bars: window mullions, railings, not letters
             if np.std(hs) / np.mean(hs) > 0.3 or (len(gaps) and np.max(gaps) > 3.0 * max(np.median(gaps), 1)):
                 continue
             x1 = max(comps[j][0] + comps[j][2] for j in line)

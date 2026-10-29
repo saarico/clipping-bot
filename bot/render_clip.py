@@ -190,7 +190,7 @@ def trim_to_cuts(src, ranges, words):
 
 # ---------- 2. framing ----------
 
-def trim_cards(src, ranges, words):
+def trim_cards(src, ranges, words, spec=None):
     """Movies and trailers: a wide credit or title card at the start or end of a moment is cut off; there
     is nobody to focus on and it cannot fit a 9:16 window (rico, 2026-10-28). Spoken words are kept."""
     out = []
@@ -213,6 +213,19 @@ def trim_cards(src, ranges, words):
                 if nxt and nxt["start"] - over[k]["end"] >= 0.2:
                     cut = max(cut, over[k]["end"] + 0.08)
                     break
+            # the card's real end (brightness step): the shot detector can merge a fading card with the
+            # picture after it. Move the cut up to it, stopping just before the next spoken word, so no
+            # readable credit is left in the window (c01 2026-10-29: "A NEW FILM FROM" showed for 0.35 s)
+            ce = analyze_shots.card_end(src, cut, min(sh["end"], cut + 3.0))
+            if ce:
+                nxt = next((w for w in words if w["start"] > cut + 0.02), None)
+                cut = max(cut, min(ce, (nxt["start"] - 0.02) if nxt else ce))
+                if ce - cut > 0.04 and spec is not None:
+                    # the next word starts while the card is still fading: keep the word, show the first
+                    # frames of the picture after the card instead of the card's tail (a 0.1-0.3 s repeat
+                    # of a slow scene is invisible; a readable credit sliced in half is not)
+                    spec.setdefault("video_swap", []).append([round(cut, 3), round(ce, 3), round(ce, 3)])
+                    print(f"card tail {cut:.2f}-{ce:.2f} covered with the picture after it")
             if cut - ns < 0.3 or e - cut < 8:
                 break
             print(f"card at the start trimmed: {ns:.2f} -> {cut:.2f}")
@@ -233,14 +246,17 @@ def trim_cards(src, ranges, words):
     return out
 
 
-def people(faces, box=None):
+CINE_MIN_FACE = 0.025   # YuNet finds a 1080p actor across a room at ~3% of the width (c01's wide office shot)
+
+
+def people(faces, box=None, min_size=0.12, max_size=0.26):
     """The 1-2 people worth framing; faces inside an on-screen graphic (box, source px) don't count."""
     def in_box(f):
         if not box:
             return False
         bx, by, bw, bh = box
         return bx <= f[0] * SRC_W <= bx + bw and by <= f[1] * SRC_H <= by + bh
-    keep = [f for f in faces if 0.12 <= f[2] <= 0.26 and f[1] <= 0.6 and not in_box(f)]
+    keep = [f for f in faces if min_size <= f[2] <= max_size and f[1] <= 0.7 and not in_box(f)]
     keep.sort(key=lambda f: -f[2])
     chosen = []
     for f in keep:
@@ -284,8 +300,12 @@ def pan_expr(keys, cw, place, left_limit, right_limit, ease=0.5):
     if len(xs) == 1:
         return str(xs[0][1])
     expr = str(xs[-1][1])
-    for (t0, x0), (t1, x1) in reversed(list(zip(xs, xs[1:]))):
-        expr = f"if(lt(t,{t1:.3f}),{x0},if(lt(t,{t1 + ease:.3f}),{x0}+({x1}-{x0})*(t-{t1:.3f})/{ease},{expr}))"
+    pairs = list(zip(xs, xs[1:]))
+    for k, ((t0, x0), (t1, x1)) in reversed(list(enumerate(pairs))):
+        # a glide never outlasts the gap to the next key (it used to restart from x0 mid-glide: a jerk)
+        ez = min(ease, pairs[k + 1][1][0] - t1) if k + 1 < len(pairs) else ease
+        ez = max(ez, 0.05)
+        expr = f"if(lt(t,{t1:.3f}),{x0},if(lt(t,{t1 + ez:.3f}),{x0}+({x1}-{x0})*(t-{t1:.3f})/{ez:.3f},{expr}))"
     return expr
 
 
@@ -298,8 +318,8 @@ def face_crop(cx, zoom=1.0, place=0.5, right_limit=SRC_W, left_limit=0, max_h=SR
     x = pan_expr(keys, cw, place, left_limit, right_limit) if keys else str(crop_x(cx, cw, place, left_limit, right_limit))
     if ch == SRC_H or max_h < SRC_H:
         y = 0
-    elif cy is not None:        # zoomed: eyes about 40% down the window, never a head at the bottom edge
-        y = int(min(max(cy * SRC_H - ch * 0.40, 0), SRC_H - ch))
+    elif cy is not None:        # zoomed: eyes about 45% down the window, headroom above (title band sits right above)
+        y = int(min(max(cy * SRC_H - ch * 0.45, 0), SRC_H - ch))
     else:
         y = int((SRC_H - ch) * 0.18)
     return f"crop={cw}:{ch}:'{x}':{y},scale={W}:{HC}"
@@ -312,11 +332,11 @@ def panel_crop(f, right_limit=SRC_W, left_limit=0, cw=630, keys=None):
     return f"crop={cw}:{ch}:'{x}':{y},scale={W}:{HC // 2}"
 
 
-def pan_keys(src, a, b, box=None, start_cx=None):
+def pan_keys(src, a, b, box=None, start_cx=None, min_size=0.10, dead=0.04, anchor=None, smooth=2):
     """Face-tracking change points [(t_rel, cx)] for one segment, or None when nobody is found.
     Median-smoothed over 1.25 s, with a dead zone: the window only moves once the face has drifted
     more than 4% of the frame width, so breathing and nodding never make the picture wobble."""
-    tr = analyze_shots.track(src, a, b, box=box)
+    tr = analyze_shots.track(src, a, b, box=box, min_size=min_size, anchor=anchor)
     seen = [p[0] for _, p in tr if p]
     if not seen:
         return None, None
@@ -324,11 +344,11 @@ def pan_keys(src, a, b, box=None, start_cx=None):
     for _, p in tr:
         last = p[0] if p else last
         seq.append(last)
-    sm = [float(np.median(seq[max(0, i - 2):i + 3])) for i in range(len(seq))]
+    sm = [float(np.median(seq[max(0, i - smooth):i + smooth + 1])) for i in range(len(seq))]
     cur = start_cx if start_cx is not None and abs(start_cx - sm[0]) < 0.08 else sm[0]
     keys = [(0.0, cur)]
     for i, x in enumerate(sm):
-        if abs(x - cur) > 0.04:
+        if abs(x - cur) > dead:
             cur = x
             keys.append((i / 4.0, cur))
     size = float(np.median([p[2] for _, p in tr if p]))
@@ -471,6 +491,17 @@ def loudnorm_pass2(wav):
     m = json.loads(log[log.rindex("{"):log.rindex("}") + 1])
     return (f"loudnorm=I=-14:TP=-1.5:LRA=11:measured_I={m['input_i']}:measured_TP={m['input_tp']}:"
             f"measured_LRA={m['input_lra']}:measured_thresh={m['input_thresh']}:offset={m['target_offset']}:linear=true")
+
+
+def plain_gain(wav):
+    """Measure integrated loudness, then one fixed gain to -14 LUFS and a brick-wall limiter at -1.5 dBTP:
+    the music keeps its dynamics, nothing pumps."""
+    log = subprocess.run(["ffmpeg", "-hide_banner", "-nostats", "-i", str(wav), "-af", "ebur128=peak=true", "-f", "null", "-"],
+                         capture_output=True, text=True).stderr
+    m = re.findall(r"I:\s+(-?[\d.]+) LUFS", log)
+    i = float(m[-1]) if m else -20.0
+    gain = max(-10.0, min(14.0, -14.0 - i))
+    return f"volume={gain:.2f}dB,alimiter=limit=0.84:attack=5:release=60:level=false"
 
 
 def deflash(video):
@@ -780,7 +811,7 @@ def main(spec_path):
         ranges[0] = list(spec["teaser"])   # hand-checked cut (e.g. the next speaker starts mid-word)
     ranges = trim_to_cuts(src, ranges, words)
     if not profiles.profile(spec.get("style"))["cards"]:
-        ranges = trim_cards(src, ranges, words)
+        ranges = trim_cards(src, ranges, words, spec)
     overlays = spec.get("overlays", [])
     focus = spec.get("focus", [])
     marks = [m for o in overlays for m in (o["from"], o["to"])] + [m for f in focus for m in f]
@@ -801,7 +832,7 @@ def main(spec_path):
         for pi, (s, e, poff) in enumerate(pieces):
             # pieces alternate a light punch-in (1.0 / 1.06), so every join between two moments or
             # across a cut pause reads as an edit, not a glitch
-            piece_zoom = 1.0 if pi % 2 == 0 else 1.06
+            piece_zoom = (1.0 if pi % 2 == 0 else 1.06) if not whole_when_lost else 1.0   # movies: no punch-in games between pieces
             for sh in analyze_shots.shots(src, s, e):
                 subs = sub_ranges(max(sh["start"], s), min(sh["end"], e), marks)
                 for w in spec.get("video_swap", []):   # always split where a swap ends
@@ -816,7 +847,7 @@ def main(spec_path):
                     vs = sw[2] + (a - sw[0]) if sw else a
                     ov = next((o for o in overlays if o["from"] <= mid < o["to"]), None)
                     zoom = 1.17 if any(f[0] <= mid < f[1] for f in focus) else piece_zoom
-                    keys, panel_w, small_used = None, 630, False
+                    keys, panel_w, small_used, tb = None, 630, False, None
                     same_shot = last_shot is not None and abs(last_shot - sh["start"]) < 0.01
                     if ov and ov["style"] == "hide" and not people(analyze_shots.faces_in(src, a, b), box=ov["box"]):
                         ov = None      # nobody to crop the strip away from (wide shot, b-roll): frame as usual
@@ -860,7 +891,17 @@ def main(spec_path):
                             # follows the actors and punches in on wide shots; a two-shot is cropped on whoever talks,
                             # never split; burned-in text that fits the window is centred (wide credit cards at the
                             # clip's edges were trimmed off by trim_cards).
-                            tb = analyze_shots.text_box(src, vs, vs + b - a) if not ppl or ppl[0][2] < 0.12 else None
+                            # YuNet sees small and turned faces: take any face from 4% of the width up
+                            allf = analyze_shots.faces_in(src, vs, vs + b - a) if sw or part_of_shot else sh["faces"]
+                            ppl = people(allf, min_size=CINE_MIN_FACE, max_size=0.6)
+                            # burned-in text wins only when nobody is on screen, or when it is a real card
+                            # (a third of the width or more): the globe's map labels and a video-call window
+                            # pulled the crop off Rockwell in c01 (2026-10-29)
+                            tb = analyze_shots.text_box(src, vs, vs + b - a) if not ppl or ppl[0][2] < 0.10 else None
+                            if tb and ppl and (tb[2] - tb[0]) < 0.35:
+                                tb = None
+                            if tb and not ppl and (tb[2] - tb[0]) < 0.30 and abs((tb[0] + tb[2]) / 2 - 0.5) > 0.15:
+                                tb = None      # a narrow "text" off to one side with nobody around is a window grid, not a card (c02)
                             if tb:
                                 ppl = [((tb[0] + tb[2]) / 2, (tb[1] + tb[3]) / 2, 0.2)]
                                 lay, zoom = "face", 1.0          # centred on the text, never zoomed (the detector can miss letters)
@@ -868,13 +909,24 @@ def main(spec_path):
                                 if len(ppl) == 2:
                                     ppl = [talker(ppl)]
                                 lay = "face"
-                                zoom = max(zoom, min(1.5, max(1.0, 0.17 / max(ppl[0][2], 0.02))))
+                                zoom = max(zoom, min(1.4, max(1.0, 0.16 / max(ppl[0][2], 0.02))))
                             else:
-                                lay = "wide"
-                            zoom = min(1.6, zoom * spec.get("zoom_boost", 1.0))
-                    if lay in ("face", "side", "bottom", "banner", "hide") and ppl and ppl[0][2] >= 0.1:
+                                pp = analyze_shots.people_in(src, vs, vs + b - a)
+                                if pp:
+                                    ppl, lay, zoom = [(pp[0][0], pp[0][1], 0.2)], "face", 1.0   # a person, no face: frame the body
+                                else:
+                                    lay = "wide"
+                            zoom = min(1.5, zoom * spec.get("zoom_boost", 1.0))
+                    if lay in ("face", "side", "bottom", "banner", "hide") and ppl and ppl[0][2] >= (CINE_MIN_FACE if whole_when_lost else 0.1) and not (whole_when_lost and tb):
+                        # movies: the dead zone is 6% of the WINDOW width (a zoomed-in window is narrow: 8% of the
+                        # source width was a third of the picture, which left Rockwell at the edge, c01 2026-10-29)
+                        win_w = (SRC_H / zoom) * W / HC / SRC_W
                         keys, _ = pan_keys(src, vs, vs + b - a, box=ov["box"] if ov else None,
-                                           start_cx=last_cx if same_shot else None)
+                                           start_cx=last_cx if same_shot else None,
+                                           min_size=CINE_MIN_FACE if whole_when_lost else 0.10,
+                                           dead=0.06 * win_w if whole_when_lost else 0.04,
+                                           anchor=ppl[0][0] if whole_when_lost else None,
+                                           smooth=1 if whole_when_lost else 2)   # movies: 0.75 s window, less lag behind a walking actor
                         if keys:
                             ppl = [(keys[0][1], ppl[0][1], ppl[0][2])] + ppl[1:]
                             last_cx = keys[-1][1]
@@ -922,7 +974,10 @@ def main(spec_path):
         # loudnorm works at 192 kHz inside and the resample back can leave bunched or jumping packet
         # timestamps (rico heard Kylie's first 2 s sped up on YouTube, 2026-10-26). So: normalise into a
         # wav (no timestamps to get wrong), then encode that wav to AAC plainly.
-        run(["ffmpeg", "-loglevel", "error", "-y", "-i", str(tmp / "audio_raw.wav"), "-af", loudnorm_pass2(tmp / "audio_raw.wav"),
+        # podcasts: linear loudnorm. Movies/streams/concerts: a plain gain + limiter (rico, 2026-10-29: "the audio
+        # sounds weird" on the trailer: loudnorm falls back to dynamic mode when the music's range beats LRA=11)
+        af = loudnorm_pass2(tmp / "audio_raw.wav") if not whole_when_lost else plain_gain(tmp / "audio_raw.wav")
+        run(["ffmpeg", "-loglevel", "error", "-y", "-i", str(tmp / "audio_raw.wav"), "-af", af,
              "-ar", "48000", "-c:a", "pcm_s16le", str(tmp / "audio_norm.wav")])
         if spec.get("sfx"):
             add_sfx(tmp / "audio_norm.wav", pieces, overlays + list(spec.get("callouts", [])), tmp)

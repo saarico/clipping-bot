@@ -44,6 +44,8 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).parent))
 from render_clip import STUTTER  # noqa: E402
+import analyze_shots  # noqa: E402
+import profiles  # noqa: E402
 
 W, H, TOP = 1080, 1920, 240
 FILLER = {"mm", "mmhmm", "um", "uh", "hmm"}
@@ -124,10 +126,14 @@ def check_audio(rep, mp4):
     lufs = float(lufs[-1]) if lufs else None
     peak = float(peak[-1]) if peak else None
     silences = [float(x) for x in re.findall(r"silence_duration: ([\d.]+)", log)]
+    lra = re.findall(r"LRA:\s+(-?[\d.]+) LU", log)
+    lra = float(lra[-1]) if lra else None
     st = "PASS"
-    notes = [f"loudness {lufs} LUFS", f"peak {peak} dBFS"]
+    notes = [f"loudness {lufs} LUFS", f"peak {peak} dBFS", f"range {lra} LU"]
     if lufs is None or abs(lufs + 14) > 2:
         st = "WARN"
+    if lufs is not None and abs(lufs + 14) > 3.5:
+        st = "FAIL"; notes.append("loudness off target")
     if peak is not None and peak > -0.5:
         st = "FAIL"
         notes.append("clipping")
@@ -335,16 +341,17 @@ def _frames_raw(mp4, fps=2):
 
 
 def check_faces(rep, mp4, events):
-    det = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
     caps = [e for e in events if e["style"] == "Cap"]
     pos = lambda e: int(re.search(r"\\pos\(\d+,(\d+)\)", e["text"]).group(1)) if "\\pos" in e["text"] else 1480
     in_band, on_caption = [], []
     for i, f in enumerate(frames(mp4)):
         t = i / 2
         # look only below the title band: its lettering can fool the face detector
-        g = cv2.equalizeHist(cv2.cvtColor(f[TOP // 2:], cv2.COLOR_BGR2GRAY))
-        for (x, y, w, h) in det.detectMultiScale(g, 1.1, 7, minSize=(50, 50)):
-            x, y, w, h = [v * 2 for v in (x, y, w, h)]          # back to 1080x1920
+        pic = f[TOP // 2:]
+        ph, pw = pic.shape[:2]
+        for cx, cy, sz, _ in analyze_shots.detect_faces(pic, 0.7):
+            w = h = int(sz * pw * 2)
+            x, y = int(cx * pw * 2 - w / 2), int(cy * ph * 2 - h / 2)           # back to 1080x1920
             if y < 0.1 * h:                                     # forehead under the band: head cut off
                 in_band.append(t)
             y += TOP
@@ -364,7 +371,6 @@ def check_faces(rep, mp4, events):
 def check_centred(rep, mp4, details):
     """PLAYBOOK 22: on single-speaker layouts the face centre stays within 12% of the middle of the
     picture. Measured on the finished video every 0.5 s with the frontal detector (biggest face)."""
-    det = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
     single = [(s["from"], s["to"]) for s in details["shots"] if s["layout"].split("+")[0] in ("face", "hide", "wide")]
     side = [(s["from"], s["to"]) for s in details["shots"] if s["layout"].split("+")[0] == "side"]
     offs, bad, n = [], [], 0
@@ -373,12 +379,11 @@ def check_centred(rep, mp4, details):
         lay = "single" if any(a <= t < b for a, b in single) else "side" if any(a <= t < b for a, b in side) else None
         if not lay:
             continue
-        g = cv2.equalizeHist(cv2.cvtColor(f[TOP // 2:], cv2.COLOR_BGR2GRAY))
-        faces = det.detectMultiScale(g, 1.1, 6, minSize=(60, 60))
-        if len(faces) == 0:
+        # a face, not a globe: confident hits in the upper 72% of the picture, the surest one first
+        faces = [fc for fc in analyze_shots.detect_faces(f[TOP // 2:], 0.7) if fc[2] >= 0.08 and fc[1] <= 0.72]
+        if not faces:
             continue
-        x, y, w, h = max(faces, key=lambda r: r[2])
-        cx = (x + w / 2) / 540
+        cx = max(faces, key=lambda fc: fc[3] * min(fc[2], 0.3))[0]
         n += 1
         if lay == "single":
             off = abs(cx - 0.5)
@@ -393,7 +398,7 @@ def check_centred(rep, mp4, details):
         rep.add("Speaker centred", "WARN", "no face found to measure")
         return
     share = len(bad) / n
-    st = "FAIL" if share > 0.15 else "WARN" if share > 0.05 else "PASS"
+    st = "FAIL" if share > 0.10 else "WARN" if share > 0.04 else "PASS"
     rep.add("Speaker centred", st, f"{n} frames measured; off centre in {share:.0%}"
             + (f" (at {', '.join(f'{t:.1f}s' for t in bad[:6])})" if bad else "")
             + (f"; mean offset {np.mean(offs):.0%} of width" if offs else ""))
@@ -403,19 +408,18 @@ def check_nobody(rep, mp4, details):
     """PLAYBOOK 23: a single-speaker window must have a person in it. Frames at 2 fps on face/wide/hide
     layouts with no frontal or profile face for 1.5 s or more = FAIL (the empty-room crop of the wide
     two-shot that rico saw in v1 MM-005/006, 2026-10-26); 1.0-1.5 s = WARN."""
-    front = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
-    prof = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_profileface.xml")
     single = [(s["from"], s["to"]) for s in details["shots"] if s["layout"].split("+")[0] in ("face", "hide", "wide")]
+    movie = not profiles.profile(details.get("spec", {}).get("style"))["cards"]
     empty = []
     for i, f in enumerate(frames(mp4)):
         t = i / 2
         if not any(a <= t < b for a, b in single):
             continue
-        g = cv2.equalizeHist(cv2.cvtColor(f[TOP // 2:], cv2.COLOR_BGR2GRAY))
-        # a person in a single-speaker window is big: the face is 140+ px of the 540 px width. The
-        # empty-room crop of a podcast's wide shot gives a steady 104 px false hit on the windows (measured).
-        found = len(front.detectMultiScale(g, 1.1, 6, minSize=(140, 140))) or len(prof.detectMultiScale(g, 1.1, 6, minSize=(140, 140))) \
-            or len(prof.detectMultiScale(cv2.flip(g, 1), 1.1, 6, minSize=(140, 140)))
+        pic = f[TOP // 2:]
+        # a podcast speaker is big (face 25%+ of the width); on a movie any face from 8% up, or a person, counts
+        found = [fc for fc in analyze_shots.detect_faces(pic, 0.6) if fc[2] >= (0.08 if movie else 0.25)]
+        if not found and movie:
+            found = analyze_shots.persons(pic)
         if not found:
             empty.append(t)
     runs, cur = [], []
@@ -426,7 +430,12 @@ def check_nobody(rep, mp4, details):
     if cur:
         runs.append(cur)
     runs = [(r[0], r[-1] + 0.5) for r in runs if r[-1] + 0.5 - r[0] >= 1.0]
-    bad = [r for r in runs if r[1] - r[0] >= 1.5]
+    # a movie may cut to scenery for a beat (the ocean under a line of dialogue): up to 3 s on a segment the
+    # renderer itself framed as "wide" is a WARN; longer, or an empty window where an actor was expected, FAILs
+    wide = [(s["from"], s["to"]) for s in details["shots"] if s["layout"].split("+")[0] == "wide"]
+    def scenery(r):
+        return movie and r[1] - r[0] <= 3.0 and any(a - 0.6 <= r[0] and r[1] <= b + 0.6 for a, b in wide)
+    bad = [r for r in runs if r[1] - r[0] >= 1.5 and not scenery(r)]
     st = "FAIL" if bad else "WARN" if runs else "PASS"
     rep.add("Somebody in frame", st, "no empty-room stretch" if not runs else
             "no face for " + ", ".join(f"{a:.1f}-{b:.1f}s" for a, b in runs))
@@ -476,7 +485,7 @@ def check_footage_text(rep, mp4, details):
             if (x0 <= w * 0.01 or x1 >= w * 0.99) and nc >= 5 and 0.12 * h < (y0 + y1) / 2 < 0.78 * h:
                 hits.append(i)
                 break
-    st = "FAIL" if len(hits) >= 3 else "WARN" if hits else "PASS"
+    st = "FAIL" if len(hits) >= 2 else "WARN" if hits else "PASS"
     rep.add("Footage text cut off", st, f"text runs off the frame edge at {', '.join(f'{t} s' for t in hits[:8])}" if hits else "no footage text touches an edge")
 
 
@@ -491,21 +500,77 @@ def check_one_look(rep, details):
 def check_actor_size(rep, mp4, details):
     """rico, 2026-10-28: "the screen is not focusing on actors". Measured on the finished clip once a second:
     how often a face is on screen and how tall it is (share of the picture height)."""
-    det = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
-    prof = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_profileface.xml")
-    sizes, n = [], 0
-    ph = (H - TOP) // 2
+    sizes, n, body = [], 0, 0
     for f in frames(mp4, 1):
-        g = cv2.equalizeHist(cv2.cvtColor(f[TOP // 2:], cv2.COLOR_BGR2GRAY))
-        faces = list(det.detectMultiScale(g, 1.1, 5, minSize=(36, 36))) + list(prof.detectMultiScale(g, 1.1, 5, minSize=(36, 36)))
+        pic = f[TOP // 2:]
+        ph, pw = pic.shape[:2]
+        faces = analyze_shots.detect_faces(pic, 0.6)
         n += 1
-        if len(faces):
-            sizes.append(max(r[3] for r in faces) / ph)
+        if faces:
+            sizes.append(faces[0][2] * pw / ph)              # face height as a share of the picture height (boxes are ~square)
+        elif analyze_shots.persons(pic):
+            body += 1
     if n == 0:
         return
-    present, med = len(sizes) / n, (float(np.median(sizes)) if sizes else 0.0)
-    st = "FAIL" if present < 0.3 or (sizes and med < 0.08) else "WARN" if present < 0.6 or med < 0.12 else "PASS"
-    rep.add("Actors fill the frame", st, f"a face in {present:.0%} of the seconds, typical face height {med:.0%} of the picture")
+    present, med = (len(sizes) + body) / n, (float(np.median(sizes)) if sizes else 0.0)
+    # acceptance (2026-10-29): a face or a person in at least 80% of the seconds, faces typically 12%+ of the picture
+    st = "FAIL" if present < 0.6 or (sizes and med < 0.09) else "WARN" if present < 0.8 or med < 0.12 else "PASS"
+    rep.add("Actors fill the frame", st, f"a face in {len(sizes) / n:.0%} of the seconds (a person without a face in {body / n:.0%}), typical face height {med:.0%} of the picture")
+
+
+def _frame_pair(path, t, w=64, h=36, gap=0.07):
+    """Two small gray frames just before and after t (None when the file is too short)."""
+    out = []
+    for tt in (t - gap, t + gap):
+        raw = subprocess.run(["ffmpeg", "-loglevel", "error", "-ss", f"{max(tt, 0):.3f}", "-i", str(path), "-frames:v", "1",
+                              "-vf", f"scale={w}:{h},format=gray", "-f", "rawvideo", "-"], capture_output=True).stdout
+        if len(raw) < w * h:
+            return None
+        out.append(np.frombuffer(raw[:w * h], np.uint8).reshape(h, w).astype(float))
+    return out
+
+
+def check_crop_jumps(rep, mp4, details, source):
+    """rico, 2026-10-29: "the transitions are ass". Every join between two of our segments is compared with
+    the source at the same moment: if the source is continuous there but the output jumps, the crop moved
+    inside one shot (a jump cut we made). Also counts joins per 10 s: a montage is not a story."""
+    shots = details.get("shots", [])
+    cuts = details.get("cuts", [])
+    if not shots or not cuts or not source or not Path(source).exists():
+        rep.add("Crop jumps", "WARN", "no layout or source to compare")
+        return
+    offs, acc = [], 0.0
+    for a, b in cuts:
+        offs.append((acc, acc + (b - a), a)); acc += b - a
+    def src_t(t):
+        for o0, o1, a in offs:
+            if o0 <= t < o1 + 1e-3:
+                return a + (t - o0)
+        return None
+    jumps, joins = [], 0
+    for prev, cur in zip(shots, shots[1:]):
+        t = cur["from"]
+        if any(abs(t - o0) < 0.05 for o0, _, _ in offs):
+            continue                                        # a join between two moments is a cut by design
+        joins += 1
+        st = src_t(t)
+        po = _frame_pair(mp4, t)
+        if not po or st is None:
+            continue
+        d_out = float(np.abs(po[0] - po[1]).mean())
+        if d_out <= 22:
+            continue
+        # the picture jumps at this join: is there a real cut in the source within 0.3 s of it? (frame pairs
+        # 0.07 s apart missed the source's own cuts, 2026-10-29: four real cuts were reported as crop jumps)
+        if analyze_shots.cut_in(source, max(st - 0.3, 0), st + 0.3) is None:
+            jumps.append((t, d_out, 0.0))
+    dur = sum(b - a for a, b in cuts)
+    per10 = 10 * joins / max(dur, 1)
+    notes = [f"{joins} join(s), {per10:.1f} per 10 s"]
+    if jumps:
+        notes.append("crop jumps inside a shot at " + ", ".join(f"{t:.1f}s" for t, _, _ in jumps[:6]))
+    st = "FAIL" if len(jumps) >= 2 else "WARN" if jumps or per10 > 8 else "PASS"
+    rep.add("Crop jumps", st, "; ".join(notes))
 
 
 def check_transitions(rep, mp4, details, dur):
@@ -614,10 +679,10 @@ def main(folder, source=None):
     check_footage_text(rep, mp4, details)
     check_one_look(rep, details)
     check_actor_size(rep, mp4, details)
+    check_crop_jumps(rep, mp4, details, source)
     check_transitions(rep, mp4, details, dur)
     check_audio_timing(rep, mp4)
     check_post_text(rep, folder, spec)
-    import profiles
     soft = profiles.profile(spec.get("style"))["soft_qa"]   # per kind of footage: what is a warning, not a failure
     if soft:
         rep.rows = [(a, "WARN" if (s == "FAIL" and a in soft) else s, e + (f" ({spec.get('style')}: warn only)" if (s == "FAIL" and a in soft) else "")) for a, s, e in rep.rows]

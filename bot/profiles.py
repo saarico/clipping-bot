@@ -26,20 +26,20 @@ PROFILES = {
     "podcast": dict(wps=(2.2, 3.6), pause_penalty=True, filler=True, clarity=True, back_refs=True,
                     length=(30, 55), ok_len=(22, 60), energy=0, quotes=0, reactions=1, cards=True,
                     soft_qa=set()),
-    "cinematic": dict(wps=(0.8, 3.8), pause_penalty=False, filler=False, clarity=False, back_refs=False,
+    "cinematic": dict(wps=(1.3, 3.8), pause_penalty=False, filler=False, clarity=False, back_refs=False,
                       length=(12, 30), ok_len=(10, 45), energy=6, quotes=10, reactions=1, cards=False,   # rico 2026-10-28: "boring" at 34 s; fan-edit energy = short
-                      soft_qa={"Speaker centred", "Somebody in frame", "Smooth transitions", "Clean first 2 seconds", "Audio",
+                      soft_qa={"Smooth transitions", "Clean first 2 seconds",
                                "Captions cover the whole clip", "Ends on a finished sentence", "Faces clear of the title",
-                               "Cut edges (no clipped words)", "Picture (black, frozen, flicker)"}),   # music under every edge; black title cards. "One 9:16 look" and "Actors fill the frame" are never soft
+                               "Cut edges (no clipped words)", "Picture (black, frozen, flicker)"}),   # 2026-10-29: centring, somebody in frame and audio are hard again   # music under every edge; black title cards. "One 9:16 look" and "Actors fill the frame" are never soft
     "stream": dict(wps=(1.2, 4.2), pause_penalty=False, filler=False, clarity=False, back_refs=False,
                    length=(15, 45), ok_len=(10, 60), energy=10, quotes=4, reactions=3, cards=False,
-                   soft_qa={"Speaker centred", "Somebody in frame", "Smooth transitions", "Clean first 2 seconds",
+                   soft_qa={"Smooth transitions", "Clean first 2 seconds",
                             "Captions cover the whole clip", "Ends on a finished sentence", "Caption text reads clean"}),
     "performance": dict(wps=(0.0, 9.0), pause_penalty=False, filler=False, clarity=False, back_refs=False,
                         length=(15, 45), ok_len=(10, 60), energy=14, quotes=0, reactions=0, cards=False,
                         soft_qa={"Speaker centred", "Somebody in frame", "Smooth transitions", "Clean first 2 seconds", "Audio",
                                  "Captions cover the whole clip", "Ends on a finished sentence", "Nothing said twice",
-                                 "Caption spelling", "Caption text reads clean"}),
+                                 "Caption spelling", "Caption text reads clean"}),   # concerts: crowd shots are the material
 }
 
 TEXT_HINTS = {

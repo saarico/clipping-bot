@@ -55,6 +55,7 @@ def main(folder):
     prof = profiles.profile(spec.get("style"))
 
     # hook
+    title = spec.get("hook", "")
     first = body.splitlines()[0] if body.splitlines() else ""
     head = " ".join(first.split()[:8])
     h = 20
@@ -68,9 +69,14 @@ def main(folder):
         if t[:1].isupper() and len(t) > 2 and prev and not prev["text"].rstrip('"\'').endswith((".", "?", "!")):
             proper.add(t.lower())
     has_name = any(t.strip('",.?!()\'').lower() in proper for t in head.split()[1:])
-    if prof["clarity"] and not (re.search(fm.NUMBER, head, re.I) or has_name or re.search(r"\b(I|we|my)\b", head, re.I)):
+    concrete = re.search(fm.NUMBER, head, re.I) or has_name or re.search(r"\b(I|we|my)\b", head, re.I)
+    if prof["clarity"] and not concrete:
         h -= 5; notes.setdefault("hook", []).append("first line names no one and nothing")
-    title = spec.get("hook", "")
+    # every profile (2026-10-29, rico: "heavy increase in judgement"): the title must carry a name, a number,
+    # a question or a quoted line, or it is wallpaper
+    if not (re.search(fm.NUMBER, title, re.I) or "?" in title or '"' in title or re.search(fm.FAMOUS, title, re.I)
+            or any(t.strip('",.?!()\'').lower() in proper for t in title.split()) or re.search(r"\b(I|we|my|you)\b", title)):
+        h -= 5; notes.setdefault("hook", []).append("title has no name, number, question or quote")
     if len(title.split()) > 14:
         h -= 3; notes.setdefault("hook", []).append("title over 14 words")
     if prof["back_refs"] and re.search(fm.PODCAST_TALK, " ".join(words[:25]).lower()):
@@ -111,6 +117,9 @@ def main(folder):
     v = 15
     if longest > 12: v -= 6
     elif longest > 8: v -= 3
+    lens = sorted(s["to"] - s["from"] for s in shots)
+    if len(lens) >= 6 and lens[len(lens) // 2] < 1.2 and sum(1 for l in lens if l < 1.0) > 0.6 * len(lens):
+        v -= 6; notes.setdefault("variety", []).append("montage: most shots under a second, no scene to follow")
     share = cards / max(dur, 1)
     if prof["cards"]:   # podcasts need b-roll; trailers and streams carry their own visual change
         if share < 0.1: v -= 5
@@ -133,6 +142,12 @@ def main(folder):
     m = re.search(r"\| Actors fill the frame \| (\w+) \| ([^|]*)", qa)
     if m and m.group(1) != "PASS":
         f -= 6 if m.group(1) == "FAIL" else 3; notes.setdefault("framing", []).append(m.group(2).strip())
+    m = re.search(r"\| Crop jumps \| (\w+) \| ([^|]*)", qa)
+    if m and m.group(1) != "PASS":
+        f -= 5 if m.group(1) == "FAIL" else 2; notes.setdefault("framing", []).append(m.group(2).strip()[:80])
+    m = re.search(r"\| Somebody in frame \| (\w+) \| ([^|]*)", qa)
+    if m and m.group(1) != "PASS":
+        f -= 4 if m.group(1) == "FAIL" else 2; notes.setdefault("framing", []).append(m.group(2).strip()[:80])
     if any(s["layout"].split("+")[0] in ("center", "fit") for s in shots):
         f -= 6; notes.setdefault("framing", []).append("format switch (16:9 picture shown whole)")
     if any(s["to"] - s["from"] < 0.5 for s in shots):
