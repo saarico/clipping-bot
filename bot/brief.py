@@ -35,10 +35,13 @@ def parse(text):
     m = re.search(r"\$\s?(\d+(?:\.\d+)?)\s*(?:per|/|for every)\s*(?:1,?000|1k)", low)
     if m:
         b["rate_per_1k"] = float(m.group(1))
-    m = re.search(r"min(?:imum)?\s*(?:payout|earning|payment)?[^$\n]{0,25}\$\s?(\d+(?:\.\d+)?)", low)
+    # "min payout $3.75" and Reach's "$3.75 Min / $750 Max" (amount first; the old pattern read "$3.75 min $750" as min 750)
+    m = re.search(r"\$\s?(\d+(?:\.\d+)?)\s*(?:min|minimum)\b", low) or \
+        re.search(r"min(?:imum)?\s*(?:payout|earning|payment)?[^$\n]{0,25}\$\s?(\d+(?:\.\d+)?)(?!\s*max)", low)
     if m:
         b["min_payout"] = float(m.group(1))
-    m = re.search(r"max(?:imum)?\s*(?:payout|earning|payment)?[^$\n]{0,25}\$\s?(\d+(?:,\d{3})*(?:\.\d+)?)", low)
+    m = re.search(r"\$\s?(\d+(?:,\d{3})*(?:\.\d+)?)\s*(?:max|maximum)\b", low) or \
+        re.search(r"max(?:imum)?\s*(?:payout|earning|payment)?[^$\n]{0,25}\$\s?(\d+(?:,\d{3})*(?:\.\d+)?)", low)
     if m:
         b["max_per_clip"] = float(m.group(1).replace(",", ""))
     m = re.search(r"face[^.\n]{0,60}?(\d{1,2})\s*(?:s|sec|seconds)", low) or re.search(r"(?:first|within)\s*(\d{1,2})\s*(?:s|sec|seconds)[^.\n]{0,60}face", low)
