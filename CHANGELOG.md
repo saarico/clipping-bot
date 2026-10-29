@@ -14,6 +14,10 @@ RULES.md; the acceptance gates are scorecards/acceptance.md.
   "trading cards", "collectibles", "merch") count as ads: the hourly scan had offered Topps x Clipfarm at 13:21.
 - Offered: TJR $23,100 Weekly (Reach; streamer, lane C) with a JOIN doc in 0_START; decision card to rico with
   TJR / It's Personal / Topps / keep scanning. RULES.md 36 extended.
+- 16:20-16:35: rico joined TJR; Topps withdrawn (config/dropped.txt). Rules read from reachclipping.com/TJR and pinned in
+  campaigns/TJR .../plan.json (stream profile, #TJR, 10-60 s, account niche rule). Bug: run.yml inlined the campaign
+  name in the shell, so the "$" in "TJR $23,100 ..." was expanded and the run matched no campaign; the name now goes
+  through an env variable. First TJR run read the brief (8 rules); waiting for rico's episode.mp4.
 
 ## 2026-10-29 (05:10 UTC): code audit round 2, 21 fixes
 - rico: "audit the code fully for improvements, bugs, updates and fixes." Round 1 (10 findings, pitch/judge shared
