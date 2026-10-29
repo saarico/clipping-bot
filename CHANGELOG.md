@@ -3,6 +3,15 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-10-29 (04:00 UTC): the gender detector was wrong, automatic "women first" switched off
+- rico: "THAT'S NOT A FEMALE ... AUDIT AND CHECK AGAIN AND NEXT TIME FULLY CONFIRM." The bot had told him the
+  clip 02 option 4 frame (194.5 s, the long-haired person at the window) was a woman, on the strength of the gender
+  model. An audit of all 386 faces in the DIGGER footage: the model also called two cats, the man in the parka and
+  the old man on oxygen "women" with high margins. Unusable on this footage.
+- Bot: `thumbnail.WOMAN_BOOST = 0` (the preference and the "one woman on the options sheet" rule are off; the
+  margin is still measured). "Women first" is applied by the reviewer by eye through `thumb_t`, and only after
+  rico confirms the frame. RULES.md 20 updated. Clip 02 keeps the frame rico chose (option 4) unless he says otherwise.
+
 ## 2026-10-29 (03:50 UTC): women in thumbnails, rico picks frames by number
 - rico: "number 2 choose option 4" and "I think females get more clicks so let's lean in on that."
 - DIGGER clip 02's thumbnail pinned at 194.5 s (the window shot with Sandra Hüller) via `thumb_t` in plan.json.

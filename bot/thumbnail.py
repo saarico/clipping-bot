@@ -39,6 +39,12 @@ STOP = {"a", "an", "the", "of", "to", "and", "or", "over", "on", "in", "at", "fo
 # ---------------------------------------------------------------- gender (rico 2026-10-29: "females get more clicks, lean in on that")
 GENDER_MODEL = Path(__file__).parent / "models" / "genderage.onnx"   # InsightFace buffalo_l attribute head (1.3 MB, MIT), 96x96 face
 _GNET = {}
+# 2026-10-29 03:59 UTC: on DIGGER the model called two cats, the man in the parka, the old man on oxygen and the
+# long-haired man at the window "women" (margins 2-6), and the bot told rico the window shot was a woman. It was
+# not. The automatic preference is OFF until a detector is proven on real footage; "women first" is applied by the
+# reviewer by eye through thumb_t, and only after rico confirms the frame. The margin is still measured and kept
+# in the candidate so the options sheet can be checked against it.
+WOMAN_BOOST = 0.0
 
 
 def _gender_net():
@@ -106,7 +112,7 @@ def face_score(d):
     frontal = 0.25 + 0.75 * _ramp(d["frontal"], 0.22, 0.38)                      # facing the camera
     sharp = min(1.0, math.log1p(d["sharp"]) / math.log1p(250))
     bright = 0.5 + 0.5 * _ramp(d["bright"], 35, 70)
-    woman = 1.0 + 0.6 * _ramp(d.get("fem", 0.0), 0.6, 1.5)        # rico: a woman's face gets the click; clear reads only
+    woman = 1.0 + WOMAN_BOOST * _ramp(d.get("fem", 0.0), 0.6, 1.5)   # rico: a woman's face gets the click (see WOMAN_BOOST)
     return d["conf"] * size_pref * frontal * sharp * bright * woman
 
 
@@ -163,8 +169,8 @@ def top_picks(cands, n=4, gap=1.5):
         picks.append(c)
         if len(picks) >= n:
             break
-    # a woman's face is always among the options when the clip has one (rico 2026-10-29)
-    if n > 1 and picks and not any(p[2][0].get("fem", 0) > 0.8 for p in picks):
+    # a woman's face among the options when the clip has one (rico 2026-10-29); off while WOMAN_BOOST is 0 (see above)
+    if WOMAN_BOOST > 0 and n > 1 and picks and not any(p[2][0].get("fem", 0) > 0.8 for p in picks):
         women = [c for c in cands if c[2][0].get("fem", 0) > 0.8 and not any(abs(c[1] - p[1]) < gap for p in picks[:-1])]
         if women:
             picks[-1] = women[0]
