@@ -1,3 +1,4 @@
 # one campaign folder name per line: its Drive folders move to CLIPPING/_trash on the next run
 FOLD
 Modern Warfare 4 - Campaign Moments Clipping
+Topps x Clipfarm
