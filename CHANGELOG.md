@@ -3,6 +3,18 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-10-29 (15:25 UTC): the scan reads campaign pages, "close to ending" by pay-out pace
+- rico: "scan for a campaign, ensure proper rules and best choice and ensure the campaign isn't close to ending."
+- Finding: Content Rewards campaigns have no end date (pages rendered with a browser on the runner: description,
+  launched-ago, rates, budget spent/total, clipper count; rules and files "visible once you join"). A campaign ends
+  when its budget is spent.
+- Bot: `bot/campaign_pages.py` + `.github/workflows/pages.yml` (manual: ids or links) save each page's text and
+  data under data/campaign_pages/. `campaign_scan.auto_score` adds `days_est` = budget left / pay-out per day since
+  launch; under 10 days is a stop unless the title says weekly/monthly. Brand content banks ("content bank",
+  "trading cards", "collectibles", "merch") count as ads: the hourly scan had offered Topps x Clipfarm at 13:21.
+- Offered: TJR $23,100 Weekly (Reach; streamer, lane C) with a JOIN doc in 0_START; decision card to rico with
+  TJR / It's Personal / Topps / keep scanning. RULES.md 36 extended.
+
 ## 2026-10-29 (05:10 UTC): code audit round 2, 21 fixes
 - rico: "audit the code fully for improvements, bugs, updates and fixes." Round 1 (10 findings, pitch/judge shared
   scorers, brief lengths, look validation) landed at 04:45. Round 2 read every file under bot/.

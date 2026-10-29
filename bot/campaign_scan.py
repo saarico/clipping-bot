@@ -241,7 +241,7 @@ def auto_score(c):
         paid = c.get("budget_spent") if c.get("budget_spent") is not None else tot_b - (c.get("budget_left") or 0)
         if age >= 1 and paid > 0:
             c["days_est"] = round((c.get("budget_left") or 0) / (paid / age))
-            if c["days_est"] < 10:
+            if c["days_est"] < 10 and not re.search(r"\b(weekly|monthly|week \d+)\b", name, re.I):   # a weekly pot refills; a one-off does not
                 stops.append(f"budget runs out in about {c['days_est']} day(s) at its current pace")
     lane, topic, fun = content_fit(c)               # 0-10 lane fit, 0-15 entertainment
     c["lane"] = lane
