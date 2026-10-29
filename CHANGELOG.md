@@ -3,6 +3,40 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-10-29 (05:10 UTC): code audit round 2, 21 fixes
+- rico: "audit the code fully for improvements, bugs, updates and fixes." Round 1 (10 findings, pitch/judge shared
+  scorers, brief lengths, look validation) landed at 04:45. Round 2 read every file under bot/.
+- Fixed, would have bitten the next campaign:
+  - POST KIT: approving a second clip rewrote the doc with only the new clip; the kit is now written for every
+    approved clip whenever one is new or a thumbnail changed (`run.py` approved block).
+  - Thumbnails never reached 1_CHECK on the parallel pipeline: the render machine rewrote the clip's path but not
+    the thumbnail's, so collect uploaded clips without PNG or options sheet (`render_job` / `collect`).
+  - A single episode file that is not 1920x1080 (720p, 4K, letterboxed) stopped every render with SystemExit; it
+    is now converted like a joined episode and cached on Drive (`get_source`).
+  - A step that ran out of time (render 40 min, QA 30 min) raised through the whole machine; it now returns a
+    failed result and the next try runs (`pipeline.sh`).
+  - rclone errors (expired token, quota) read as "folder empty" and the run did nothing, silently; now they raise
+    (`drive.Rclone.ls`; a missing folder is still an empty list).
+  - A remade thumbnail could stack a second cover frame on the first; the old cover is always cut (`ensure_thumbnail`).
+  - A reviewer's genre list in plan.json crashed judge_clip (`mix.items()` on a list); normalised in plan and judge.
+  - The judge graded length against the profile alone; the brief's min/max now travel in the spec (`plan.brief_lengths`).
+  - render_clip.snap on a part with no words inside built an inverted search range; the part is left as is.
+  - Scan: a card with `views: null` crashed the score and vanished; crypto / web3 / "teasers" promos are ads.
+- Fixed, cost or hygiene:
+  - Nothing kept three runs in a row: the campaign waits for a note in 2_REDO or a plan.json instead of rendering
+    the same episode every 5 hours (`empty_runs`); moments rendered and dropped go to `tried_moments` so the
+    scorecard moves on; `used_moments` keeps one entry per moment.
+  - Old thumbnail PNGs / options sheets in 1_CHECK go to _trash with the old clips.
+  - The best failed try is ranked QA-pass first, then judge (a "near" clip beats a higher-scoring QA failure).
+  - The scan ran inside the main run and in its own hourly workflow; two commits raced on scan_seen.json. Hourly only.
+  - 720p face search decodes 6 frames instead of the whole stretch at 10 fps; the gender net is skipped while
+    `WOMAN_BOOST = 0`; the scorecard writes hooks only for windows that reach the pick loop (3.6 s for DIGGER);
+    `drive.root()` checks the stage folders once per process.
+  - Dead code removed: the scan's unused page-enrichment loop and `card_from_page`, qa_check's post-text/tags.json
+    check (no file ever existed; it could never pass), a duplicate lane set in the scan.
+- RULES.md 37 added. Checked locally: pitch on DIGGER (89/82/74 PASS unchanged), judge on clip_c01 (80/100
+  unchanged), the scan's cards re-scored offline (only It's Personal = JOIN), the new helpers in isolation.
+
 ## 2026-10-29 (04:30 UTC): accounts, the pitch gate, campaign looks, MW4 withdrawn
 - rico: "where would these clips go, what site and why; why Call of Duty, isn't it supposed to be more girly; it leans
   heavily on ad; categorize my accounts and judge campaigns better; tailor the editing to each campaign's style;

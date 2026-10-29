@@ -296,7 +296,10 @@ def small_faces(source, start, end):
 def faces_in(source, start, end, hi=False):
     """Faces in one stretch, for when a graphic slides in mid-shot and changes the picture.
     hi=True searches 1280x720 frames (movies: an actor across the room is 20 px wide at 640)."""
-    frames = _frames_at(source, start, end, FPS, 1280, 720) if hi else _frames(source, start, end)
+    if hi:   # 720p frames are never cached from shots(): decode only the ~6 frames that are looked at
+        frames = _frames_at(source, start, end, min(FPS, 6 / max(end - start, 0.6)), 1280, 720)
+    else:
+        frames = _frames(source, start, end)
     idx = np.linspace(0, len(frames) - 1, min(6, len(frames))).astype(int)
     return _cluster([frames[i] for i in idx])
 

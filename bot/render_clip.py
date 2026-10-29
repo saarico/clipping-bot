@@ -126,8 +126,11 @@ def snap(src, ranges, words):
     audio = load_audio(src, base, max(r[1] for r in ranges) + 1)
     out = []
     for s, e in ranges:
-        first = min((w["start"] for w in words if w["start"] >= s - 0.05), default=s)
-        last = max((w["end"] for w in words if w["end"] <= e + 0.05), default=e)
+        first = min((w["start"] for w in words if s - 0.05 <= w["start"] <= e), default=None)
+        last = max((w["end"] for w in words if s <= w["end"] <= e + 0.05), default=None)
+        if first is None or last is None or first > last:
+            out.append([s, e])      # no word inside this part (a reaction, footage): nothing to snap to; the range stays
+            continue
         prev_end = max((w["end"] for w in words if w["end"] < first - 0.01), default=first - 0.5)
         next_start = min((w["start"] for w in words if w["start"] > last + 0.01), default=last + 0.45)
         # transcript times run a little late at word starts, so stay well clear of the

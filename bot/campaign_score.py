@@ -53,7 +53,7 @@ def score(c):
     stops = []
     if c.get("rate") is None or c["rate"] < 0.75:
         stops.append("pays under $0.75/1k, or an auction/pool with no fixed rate")
-    if c.get("budget_left", 0) < 1000:
+    if (c.get("budget_left") or 0) < 1000:
         stops.append("budget left under $1,000")
     if c.get("days_left") is not None and c["days_left"] <= 3:
         stops.append("3 days or less left")

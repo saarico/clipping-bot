@@ -142,7 +142,7 @@ def candidates(source, parts, fps=5):
             t = a + i / fps
             here = db[min(int((t - a) / 0.2), len(db) - 1)] if db else med
             quiet = 1.0 - 0.65 * _ramp(here - med, 2.0, 8.0)      # a shout: down to 0.35; a pause or the other's line: 1.0
-            faces = [d for d in faces_lm(f, 0.7, gender=True) if d["size"] >= 0.05 and d["cy"] <= 0.8]
+            faces = [d for d in faces_lm(f, 0.7, gender=WOMAN_BOOST > 0) if d["size"] >= 0.05 and d["cy"] <= 0.8]
             if not faces:
                 continue
             main = faces[0]

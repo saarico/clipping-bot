@@ -61,12 +61,19 @@ def auto_specs(words_path, gfx_path, source, brief, campaign, out_dir, used=()):
             "focus": [], "overlays": [], "callouts": [], "sfx": False,
             "wide_split": [[0.25, 0.40, 0.06], [0.75, 0.40, 0.06]],   # generic two-shot seats; the reviewer's plan.json overrides
             "disclosure": brief.get("disclosure", ""), "style": brief.get("style", ""), "genres": mix, "look": brief.get("look") or {},
+            "brief": brief_lengths(brief),
             "out": str(Path(out_dir) / f"{slug(c['hook'])}.mp4"),
             "_why": f"score {c['score']}: " + ", ".join(f"{k} {v}" for k, v in c["reasons"].items() if v and k != "genres") + f" [{c['reasons'].get('genres', '')}]",
         })
         if len(specs) >= MAX_TRIES:
             break
     return specs
+
+
+def brief_lengths(brief):
+    """The campaign's own min/max seconds, carried in every spec so judge_clip grades length against the brief
+    (the spec never held the brief: the judge used the profile's window alone)."""
+    return {k: brief[k] for k in ("min_s", "max_s") if isinstance(brief.get(k), (int, float)) and brief[k]}
 
 
 def genre_mix(brief, words):
@@ -98,10 +105,13 @@ def fm_candidates(words_path, gfx_path, brief, prof_name="podcast", energy=None)
             total, reasons, text, g = fm.score_window(sents[i:j + 1], gfx, prof, energy, mix)
             cands.append({"start": round(sents[i]["start"], 2), "end": round(sents[j]["end"], 2), "dur": round(dur, 1),
                           "score": total, "reasons": reasons, "first_line": sents[i]["text"],
-                          "hook": fm.hook_from(sents[i:j + 1], prof), "graphics": g, "text": text})
+                          "ij": (i, j), "graphics": g, "text": text})
     cands.sort(key=lambda c: -c["score"])
     picked = []
     for c in cands:
+        if "hook" not in c:   # the hook is only written for windows that reach the pick loop (thousands never do)
+            i, j = c.pop("ij")
+            c["hook"] = fm.hook_from(sents[i:j + 1], prof)
         if any(p["first_line"] == c["first_line"] or p["hook"] == c["hook"] for p in picked):
             continue   # run 1 of DIGGER rendered the same opening line twice at two lengths
         if all(min(c["end"], p["end"]) - max(c["start"], p["start"]) < 0.4 * min(c["dur"], p["dur"]) for p in picked):
@@ -129,6 +139,9 @@ def load(campaign_dir, words_path, gfx_path, source, brief, campaign, out_dir, u
             mix = {"drama": 0.5, "business": 0.5}
         for s in specs:
             s.setdefault("genres", mix)
+            if isinstance(s["genres"], list):
+                s["genres"] = {g: round(1 / len(s["genres"]), 2) for g in s["genres"]}
+            s.setdefault("brief", brief_lengths(brief))
             s.setdefault("campaign", campaign); s.setdefault("source", str(source)); s.setdefault("words", str(words_path))
             s.setdefault("out", str(Path(out_dir) / f"{slug(s.get('hook', 'clip'))}.mp4"))
             s.setdefault("_why", p.get("why", "reviewer's plan"))

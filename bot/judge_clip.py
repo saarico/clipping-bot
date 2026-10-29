@@ -140,6 +140,8 @@ def main(folder):
     # entertainment + comedy: the genre scorecard read on the clip's own lines (never on the plan)
     sents = [{"text": t, "n": len(t.split())} for t in re.split(r"(?<=[.?!])\s+|\n", body) if t.strip()]
     mix = spec.get("genres") or genres.detect_mix(spec.get("hook", ""), low)
+    if isinstance(mix, list):   # a reviewer's plain list of genres (plan.json): equal weights
+        mix = {g: round(1 / len(mix), 2) for g in mix}
     ent, gs = genres.entertainment(sents, low, mix)
     rep["entertainment"] = min(10, round(ent * 10 / 25))
     rep["comedy"] = min(5, round(gs["comedy"] / 3))

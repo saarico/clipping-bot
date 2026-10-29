@@ -85,7 +85,11 @@ class Rclone:
     def ls(self, path):
         r = self.run("lsjson", self._r(path), check=False)
         if r.returncode != 0:
-            return []
+            # a folder that is not there is an empty list; anything else (token expired, quota, network) must be seen,
+            # or a run reads every stage as empty and quietly does nothing (2026-10-29 audit)
+            if r.returncode == 3 or "directory not found" in r.stderr or "not found" in r.stderr:
+                return []
+            raise RuntimeError(f"rclone lsjson {path} failed ({r.returncode}): {r.stderr.strip()[-300:]}")
         out = []
         for e in json.loads(r.stdout or "[]"):
             e["Path"] = f"{path}/{e['Name']}"
@@ -124,13 +128,19 @@ def be():
     return _be
 
 
+_root_checked = False
+
+
 def root():
-    """CLIPPING/ with the four numbered stage folders directly under it."""
-    be().mkdir(ROOT_NAME)
-    have = {e["Name"] for e in be().ls(ROOT_NAME) if e.get("IsDir")}
-    for s in STAGES:
-        if s not in have:
-            be().mkdir(f"{ROOT_NAME}/{s}")
+    """CLIPPING/ with the four numbered stage folders directly under it (checked once per process)."""
+    global _root_checked
+    if not _root_checked:
+        be().mkdir(ROOT_NAME)
+        have = {e["Name"] for e in be().ls(ROOT_NAME) if e.get("IsDir")}
+        for s in STAGES:
+            if s not in have:
+                be().mkdir(f"{ROOT_NAME}/{s}")
+        _root_checked = True
     return ROOT_NAME
 
 

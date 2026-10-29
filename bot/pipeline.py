@@ -29,7 +29,13 @@ PY = sys.executable
 
 
 def sh(args, log=None, timeout=3600):
-    r = subprocess.run(args, capture_output=True, text=True, timeout=timeout)
+    """A step as a subprocess. A step that runs out of time comes back as a failed result (returncode 124) instead of
+    an exception: one stuck render used to take the whole machine's other work down with it."""
+    try:
+        r = subprocess.run(args, capture_output=True, text=True, timeout=timeout)
+    except subprocess.TimeoutExpired as e:
+        r = subprocess.CompletedProcess(args, 124, (e.stdout or b"").decode(errors="ignore") if isinstance(e.stdout, bytes) else (e.stdout or ""),
+                                        f"timed out after {timeout} s: {Path(str(args[1])).name if len(args) > 1 else args[0]}")
     if log:
         Path(log).write_text(r.stdout + "\n" + r.stderr)
     return r
@@ -159,6 +165,9 @@ def try_until(specs, work, source, words, tag, budget=3, log=print):
     """Grade-and-retry on one machine: render the first spec; under the bar -> one re-edit; still under ->
     the next spec (a better moment). At most `budget` renders. Returns (best result, all results)."""
     results, best, n = [], None, 0
+    # the best failed try: one that passed every production gate (near) beats a higher judge score with a QA failure,
+    # because decide() may still hand a "near" clip to rico and never a QA-FAIL one
+    rank = lambda r: (int(bool(r.get("near"))), int(r.get("qa") == "PASS"), r.get("judge", 0))
     for spec in specs:
         if n >= budget:
             break
@@ -168,7 +177,7 @@ def try_until(specs, work, source, words, tag, budget=3, log=print):
         results.append(res)
         if res["ok"]:
             return res, results
-        best = res if best is None or res.get("judge", 0) > best.get("judge", 0) else best
+        best = res if best is None or rank(res) > rank(best) else best
         if res.get("error") or n >= budget:
             continue
         v = reedit(spec, res)
@@ -178,7 +187,7 @@ def try_until(specs, work, source, words, tag, budget=3, log=print):
         results.append(res2)
         if res2["ok"]:
             return res2, results
-        best = res2 if res2.get("judge", 0) > best.get("judge", 0) else best
+        best = res2 if rank(res2) > rank(best) else best
     return best, results
 
 
@@ -228,6 +237,7 @@ def run(work, source, brief, words=None, campaign="campaign", log=print, used=()
     with ThreadPoolExecutor(max_workers=max(1, min(PAR, slots))) as ex:
         outs = list(ex.map(lambda it: try_until(it[1], work, source, words, f"c{it[0] + 1:02d}", log=log), enumerate(lanes)))
     tried = sum(len(r) for _, r in outs)
+    rendered = [r for _, rs in outs for r in rs if not r.get("error")]   # every finished render, for the campaign's tried_moments
     results = sorted([b for b, _ in outs if b], key=lambda r: (-int(r.get("ok", False)), -r.get("judge", 0)))
     for _, rs in outs:
         for r in rs[:-1]:
@@ -237,11 +247,11 @@ def run(work, source, brief, words=None, campaign="campaign", log=print, used=()
     summary = "\n".join(notes)
     (work / "summary.txt").write_text(summary)
     log(summary)
-    return kept, summary
+    return kept, summary, rendered
 
 
 if __name__ == "__main__":
     a = sys.argv[1:]
     w = a[a.index("--words") + 1] if "--words" in a else None
     brief = json.loads(Path(a[2]).read_text()) if len(a) > 2 and Path(a[2]).exists() else {"min_s": 20, "max_s": 60, "tags": []}
-    run(a[0], a[1], brief, w, campaign=Path(a[0]).name)
+    run(a[0], a[1], brief, w, campaign=Path(a[0]).name)[:2]

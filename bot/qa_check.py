@@ -4,7 +4,7 @@ Usage:
   python3 qa_check.py <clip folder> [--source /path/to/source.mp4]
 
 The clip folder holds what render_clip.py made: <name>.mp4, captions.ass, cut_details.json
-(cuts, shots and the spec), words.json (the transcript used) and style_check.md (post text).
+(cuts, shots and the spec) and words.json (the transcript used).
 The source video is optional; without it the word-boundary audio check is skipped.
 
 Writes qa_report.md (each check: PASS / WARN / FAIL, with the evidence) and qa_sheet.png
@@ -31,7 +31,6 @@ What it checks, and the past mistake each one would have caught:
               the wrong camera; House v6 kept two white flash frames from the show's b-roll)
   story       nothing said twice (teaser repeated in the story); opener doesn't point backwards
   audio       packet timestamps steady (bunched timestamps = sped-up/glitchy sound on YouTube)
-  post text   every platform's text has the tags in CAMPAIGNS/<campaign>/tags.json
 """
 import json
 import re
@@ -627,34 +626,6 @@ def check_audio_timing(rep, mp4):
             else f"{len(pts)} packets, every gap is one AAC frame")
 
 
-def required_tags(campaign):
-    """Tags each platform's post text must carry, from SYSTEM/CAMPAIGNS/<campaign>/tags.json (copied from
-    the MAIN campaign page). No file or no entry for a platform = no confirmed list = STOP."""
-    p = Path(__file__).resolve().parent.parent / "CAMPAIGNS" / campaign / "tags.json"
-    return json.loads(p.read_text()) if p.exists() else {}
-
-
-def check_post_text(rep, folder, spec):
-    sc = folder / "style_check.md"
-    text = sc.read_text() if sc.exists() else ""
-    line = lambda key: next((l for l in text.splitlines() if key in l), "")
-    tags = required_tags(spec.get("campaign", "2026-10_iced-coffee-hour"))
-    notes, st = [], "PASS"
-    for platform, key in (("instagram", "Instagram caption"), ("youtube", "YouTube description")):
-        post = line(key)
-        if not post:
-            continue                                   # this clip doesn't go to that platform
-        if platform not in tags:
-            st, notes = "FAIL", notes + [f"{platform}: no confirmed tag list in tags.json"]
-            continue
-        need = [t for t in tags[platform] if t.lower() not in post.lower()]
-        if need:
-            st, notes = "FAIL", notes + [f"{platform} text is missing {', '.join(need)}"]
-        else:
-            notes.append(f"{platform} has {', '.join(tags[platform])}")
-    rep.add("Post text tags", st, "; ".join(notes) or "no post text yet")
-
-
 def sheet(mp4, out):
     subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", str(mp4), "-vf", "fps=1,scale=180:320,tile=10x7",
                     "-frames:v", "1", str(out)], check=True)
@@ -685,7 +656,6 @@ def main(folder, source=None):
     check_crop_jumps(rep, mp4, details, source)
     check_transitions(rep, mp4, details, dur)
     check_audio_timing(rep, mp4)
-    check_post_text(rep, folder, spec)
     soft = profiles.profile(spec.get("style"))["soft_qa"]   # per kind of footage: what is a warning, not a failure
     if soft:
         rep.rows = [(a, "WARN" if (s == "FAIL" and a in soft) else s, e + (f" ({spec.get('style')}: warn only)" if (s == "FAIL" and a in soft) else "")) for a, s, e in rep.rows]

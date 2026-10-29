@@ -113,25 +113,6 @@ def cards_from_html(html):
     return out
 
 
-def card_from_page(url):
-    html = fetch(url)
-    low = re.sub(r"<[^>]+>", " ", html)
-    c = {"name": re.sub(r"\s+", " ", (re.search(r"<title>([^<]*)", html) or [None, url])[1]).strip(), "host": "Content Rewards", "link": url}
-    m = re.search(r"\$\s?(\d+(?:\.\d+)?)\s*(?:/|per)\s*(?:1,?000|1k)", low, re.I)
-    if m: c["rate"] = float(m.group(1))
-    m = re.search(r"\$\s?([\d,]+(?:\.\d+)?)\s*(?:of\s*\$[\d,]+\s*)?(?:left|remaining)", low, re.I)
-    if m: c["budget_left"] = float(m.group(1).replace(",", ""))
-    m = re.search(r"(\d+)\s*days?\s*(?:left|remaining)", low, re.I)
-    if m: c["days_left"] = int(m.group(1))
-    m = re.search(r"(\d[\d,]*)\s*(?:clippers|participants|members)", low, re.I)
-    if m: c["clippers"] = int(m.group(1).replace(",", ""))
-    c["platforms"] = [p for p in ("youtube", "tiktok", "instagram", "facebook") if p in low.lower()]
-    c["pay_to_join"] = bool(re.search(r"pay to join|entry fee", low, re.I))
-    c["banned_content"] = bool(re.search(BANNED, low, re.I))
-    c["text"] = re.sub(r"\s+", " ", low)[:3000]
-    return c
-
-
 def lane_for(platforms):
     for p, lane in (("youtube", "A"), ("instagram", "B"), ("tiktok", "C")):
         if p in platforms:
@@ -159,7 +140,7 @@ FUN = r"\b(podcast|interview|episode|show|story|stories|stream|streamer|concert|
 # rico (2026-10-27 05:20 UTC): never again a brand ad. Clips must grow the channels, so a campaign has to
 # be about a SHOW or a PERSON (podcast, streamer, performer, game footage), not a product.
 SHOW = r"\b(podcasts?|interviews?|episodes?|show|shows|streamer|streamers|streams?|streaming|live|concert|performance|tour|comedy|comedian|reaction|reacts|highlights|moments|vlogs?|talks?|debate|panel|rant|kick|twitch|youtuber|creator|influencer|clip the show|clipping army|fight|fighter|match|game|games|gaming|roblox|minecraft|fortnite|warfare|warzone|esports|speedrun|music|rapper|singer|band|dj)\b"
-AD = r"\b(ugc|split[- ]screen|app|apps|software|saas|download|install|sign[- ]?up|referral|use my link|promo code|promo|discount|extension|wallet|product|products|brand awareness|launch|early access|pre-?orders?|crowdfund|invest in|token|nft|metaverse|airdrop|ai tool|ai video|generator|fintech|bitcoin rewards|debit card|credit card|subscription|supplement|skincare brand)\b"
+AD = r"\b(ugc|split[- ]screen|app|apps|software|saas|download|install|sign[- ]?up|referral|use my link|promo code|promo|discount|extension|wallet|product|products|brand awareness|launch|early access|pre-?orders?|crowdfund|invest in|token|nft|metaverse|airdrop|web3|crypto|blockchain|virtual world|decentraland|teasers?|ai tool|ai video|generator|fintech|bitcoin rewards|debit card|credit card|subscription|supplement|skincare brand)\b"
 AD_CATS = {"apps", "finance", "technology", "health & wellness", "crypto", "software", "ecommerce", "e-commerce", "product", "brand", "business", "saas"}
 
 
@@ -219,7 +200,7 @@ def content_fit(c):
     fun = 0
     fun += min(8, 4 * len(re.findall(FUN, blob + " " + desc)))
     fun += 4 if (c.get("category", "").lower() in ("entertainment", "comedy", "sports", "gaming", "music", "podcast", "reality")) else 0
-    fun += 3 if c.get("views", 0) >= 250e3 else 0
+    fun += 3 if (c.get("views") or 0) >= 250e3 else 0   # a card with views: null crashed the score and the card vanished
     fun -= min(15, 6 * len(re.findall(BORING, blob + " " + desc)))
     return lane or "?", topic, max(0, min(15, fun))
 
@@ -283,23 +264,8 @@ def main():
         notes.append(f"Discover page read: {len(cards)} campaigns found." if cards else "Discover page loaded but its format could not be read.")
     except Exception as e:
         notes.append(f"Discover page blocked from GitHub ({type(e).__name__}: {str(e)[:120]}).")
-    # Discover cards carry no platforms/days: open the campaign page for the best-looking ones
-    # (pre-filter on the two hard stops we can see: rate >= 0.75 and budget left >= 1000).
-    enrich = [c for c in cards if not c.get("platforms") and c.get("rate", 0) >= 0.75 and c.get("budget_left", 0) >= 1000
-              and folder_name(c.get("name", "")) not in seen and folder_name(c.get("name", "")) not in live]
-    enrich.sort(key=lambda c: (-c.get("rate", 0), -c.get("budget_left", 0)))
-    for c in enrich[:0]:   # campaign pages are client-rendered: nothing readable, so no fetches (saves ~4 min a run)
-        try:
-            page = card_from_page(c["link"])
-        except Exception:
-            continue
-        for k in ("platforms", "days_left", "clippers", "pay_to_join"):
-            if page.get(k):
-                c[k] = page[k]
-        c["banned_content"] = c.get("banned_content") or page.get("banned_content", False)
-        c["text"] = page.get("text", "")[:3000]
-        if not c.get("platforms"):
-            c["platforms"], c["platforms_guessed"] = ["youtube", "tiktok", "instagram"], True
+    # Discover cards carry no platforms: campaign pages are client-rendered (nothing readable from GitHub), so every
+    # card is scored as "all three platforms" and the lane comes from its words. The JOIN doc tells rico to check.
     for c in cards:
         if not c.get("platforms"):
             c["platforms"], c["platforms_guessed"] = ["youtube", "tiktok", "instagram"], True
@@ -322,10 +288,9 @@ def main():
     dump.sort(key=lambda d: -d.get("total", 0))
     (SEEN.parent / "scan_cards.json").write_text(json.dumps(dump, indent=1))
     # diversify: lanes with no live campaign first, then score; one new campaign per lane per run
-    live_lanes = {seen[n]["lane"] for n in live if n in seen and seen[n].get("lane")}
-    rows.sort(key=lambda r: (r[0].get("lane") in live_lanes, -r[1]))
-    made = []
     lanes_done = {seen[n]["lane"] for n in live if n in seen and seen[n].get("lane")}   # one open offer per lane at a time
+    rows.sort(key=lambda r: (r[0].get("lane") in lanes_done, -r[1]))
+    made = []
     for c, tot, verdict in rows:
         if len(made) >= MAX_NEW or c["lane"] in lanes_done:
             continue

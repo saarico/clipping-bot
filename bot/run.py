@@ -189,6 +189,12 @@ def plan_thumb(cdir, c):
     return {}
 
 
+def thumb_sig(cdir, c):
+    """What the approved clip's thumbnail was made from: look version + the reviewer's pins."""
+    pins = plan_thumb(cdir, c)
+    return f"{THUMB_VERSION}|{pins.get('thumb_text', '')}|{pins.get('thumb_t')}"
+
+
 def ensure_thumbnail(name, st, stage, cdir, f, c):
     """An approved clip's thumbnail: built from the episode's own frames, uploaded beside the clip (PNG + the
     options sheet), and the clip re-uploaded with the thumbnail as its last two frames. Remade when the reviewer's
@@ -198,7 +204,7 @@ def ensure_thumbnail(name, st, stage, cdir, f, c):
     stem = Path(f["Name"]).stem
     png_name, opts_name = f"{stem}_thumbnail.png", f"{stem}_thumbnail_options.jpg"
     pins = plan_thumb(cdir, c)
-    sig = f"{THUMB_VERSION}|{pins.get('thumb_text', '')}|{pins.get('thumb_t')}"
+    sig = thumb_sig(cdir, c)
     have = {x["Name"] for x in drive.files(stage["3_APPROVED"], {".png", ".jpg"})}
     if png_name in have and c.get("thumb_sig") == sig:
         return png_name
@@ -215,8 +221,9 @@ def ensure_thumbnail(name, st, stage, cdir, f, c):
                        emphasis=pins.get("emphasis", []), options=str(opts))
         local = work / f["Name"]
         drive.download(f["Path"], str(local))
-        # the clip on Drive already ends with an earlier cover frame (any thumbnail made since 2026-10-29 03:10 UTC): cut it off
-        thumbnail.append_cover(local, png, strip_old=bool(c.get("thumb_sig")) or f["Name"] in st.get("covered", []))
+        # every clip rendered since 2026-10-29 03:10 UTC already ends with a cover frame (pipeline.one_clip appends one
+        # before the clip reaches 1_CHECK): always cut it off, or a remade thumbnail stacked a second still on the first
+        thumbnail.append_cover(local, png, strip_old=True)
         drive.upload(str(png), stage["3_APPROVED"], name=png_name)
         if opts.exists():
             drive.upload(str(opts), stage["3_APPROVED"], name=opts_name)
@@ -236,13 +243,10 @@ def get_source(name, st, stage, cdir):
     if dest.exists():
         return dest
     vids = sorted(drive.files(stage["0_START"], VID_EXT), key=lambda f: f["Name"])
-    if len(vids) == 1:
-        note(st, f"downloading {vids[0]['Name']} from 0_START")
-        return drive.download(vids[0]["Path"], dest)
-    if vids:   # several files (scene clips, trailers, episode parts): one landscape episode in name order
+    if vids:
         import hashlib
         sig = hashlib.md5("|".join(f"{v['Name']}:{v.get('Size')}" for v in vids).encode()).hexdigest()[:12]
-        cache = f"{drive.root()}/_cache/{name}"   # the joined episode is kept on Drive, so a redo skips download + convert
+        cache = f"{drive.root()}/_cache/{name}"   # a converted episode is kept on Drive, so a redo skips download + convert
         cached = {f["Name"]: f for f in drive.files(cache)}
         if "episode.mp4" in cached and "source.json" in cached:
             try:
@@ -251,23 +255,37 @@ def get_source(name, st, stage, cdir):
                     return drive.download(cached["episode.mp4"]["Path"], dest)
             except Exception as e:
                 note(st, f"cache check failed ({type(e).__name__}); rebuilding the episode")
-        todo, sizes = [], set()
-        for v in vids:   # don't even download duplicates or finished vertical cuts
-            if v.get("Size") in sizes:
-                note(st, f"skipped duplicate {v['Name'][:60]}")
-            elif re.search(r"vertical|igtv|9x16|9_16|portrait|reels|tiktok|shorts", v["Name"], re.I):
-                note(st, f"skipped vertical cut {v['Name'][:60]}")
-            else:
-                todo.append(v)
-            sizes.add(v.get("Size"))
-        note(st, f"downloading {len(todo)} of {len(vids)} videos from 0_START and joining them")
-        parts = [drive.download(v["Path"], dest.parent / "parts" / f"{i:02d}_{v['Name']}") for i, v in enumerate(todo)]
+        if len(vids) == 1:
+            # one file: used as is when it already is 1920x1080 landscape, else converted like a joined episode
+            # (render_clip refuses any other size; a 1280x720 or 4K episode stopped every render with SystemExit)
+            note(st, f"downloading {vids[0]['Name']} from 0_START")
+            one = drive.download(vids[0]["Path"], dest.parent / "parts" / f"00_{vids[0]['Name']}")
+            w, h, _ = video_info(one)
+            if (w, h) == (1920, 1080):
+                shutil.move(str(one), str(dest))
+                return dest
+            note(st, f"{vids[0]['Name'][:60]} is {w}x{h}: converting to 1920x1080 30 fps")
+            parts = [one]
+        else:   # several files (scene clips, trailers, episode parts): one landscape episode in name order
+            todo, sizes = [], set()
+            for v in vids:   # don't even download duplicates or finished vertical cuts
+                if v.get("Size") in sizes:
+                    note(st, f"skipped duplicate {v['Name'][:60]}")
+                elif re.search(r"vertical|igtv|9x16|9_16|portrait|reels|tiktok|shorts", v["Name"], re.I):
+                    note(st, f"skipped vertical cut {v['Name'][:60]}")
+                else:
+                    todo.append(v)
+                sizes.add(v.get("Size"))
+            note(st, f"downloading {len(todo)} of {len(vids)} videos from 0_START and joining them")
+            parts = [drive.download(v["Path"], dest.parent / "parts" / f"{i:02d}_{v['Name']}") for i, v in enumerate(todo)]
         out = join_videos(parts, dest, log=lambda m: note(st, m))
+        if not out:
+            note(st, "the video in 0_START could not be converted (no usable landscape picture)")
         if out:
             try:
                 meta = dest.parent / "source.json"
                 meta.write_text(json.dumps({"sig": sig, "files": [v["Name"] for v in vids]}))
-                be_mkdir = drive.be().mkdir(cache)
+                drive.be().mkdir(cache)
                 drive.upload(out, cache, name="episode.mp4")
                 drive.upload(meta, cache, name="source.json")
                 note(st, "episode saved to the Drive cache")
@@ -355,16 +373,13 @@ def do_campaign(name, cpath, phase="all"):
     # 3_APPROVED: post kits
     approved = drive.files(stage["3_APPROVED"], VID_EXT)
     kits = st.get("kits", {})
-    new_kits = [f for f in approved if f["Path"] not in kits]
-    if not new_kits and approved:
-        # thumbnails of clips already in the kit: remade when the look or the reviewer's pins changed
-        clips = {c["mp4"]: c for c in st.get("clips", [])}
-        redo = [f for f in approved if f["Name"] in clips and clips[f["Name"]].get("thumb_sig") !=
-                f"{THUMB_VERSION}|{plan_thumb(cdir, clips[f['Name']]).get('thumb_text', '')}|{plan_thumb(cdir, clips[f['Name']]).get('thumb_t')}"]
-        if redo:
-            new_kits = approved          # rewrite the whole kit so it matches the new pictures
-    if new_kits:
-        clips = {c["mp4"]: c for c in st.get("clips", [])}
+    clips = {c["mp4"]: c for c in st.get("clips", [])}
+    # a clip approved since the last kit, or a thumbnail whose look / pins changed: the WHOLE kit is written again, for
+    # every approved clip (the kit is one doc; writing only the new clip's entry wiped the earlier clips' entries)
+    changed = [f for f in approved if f["Path"] not in kits
+               or (f["Name"] in clips and clips[f["Name"]].get("thumb_sig") != thumb_sig(cdir, clips[f["Name"]]))]
+    if changed:
+        new_kits = approved
         text = [f"POST KIT  ({now()})", "", "One platform per clip, by what the clip is about (YouTube = business/money, Instagram = celebrity/drama, TikTok = entertainment).", ""]
         if any(f["Name"] in clips and not clips[f["Name"]].get("lane") for f in new_kits):
             # clips kept before lanes existed: assign now from their words
@@ -381,10 +396,18 @@ def do_campaign(name, cpath, phase="all"):
             kits[f["Path"]] = f["Name"]
         drive.write_doc("POST KIT", "\n".join(text), stage["3_APPROVED"])
         st["kits"] = kits
-        note(st, f"post kit written for {len(new_kits)} approved clip(s)")
+        note(st, f"post kit written for {len(new_kits)} approved clip(s) ({len(changed)} new or changed)")
 
     # 1_CHECK: cut when there is nothing there yet, or after a critique
     if st.get("clips") and not st.get("needs_redo"):
+        save_state(name, st)
+        return
+    if not st.get("needs_redo") and st.get("empty_runs", 0) >= 3:
+        # three runs with nothing kept: the material (or the brief) is the problem, not the dice; rendering the same
+        # episode every 5 hours only burns minutes. A note in 2_REDO or a plan.json starts it again.
+        if not st.get("empty_told"):
+            note(st, "3 runs kept nothing: waiting for a note in 2_REDO or a plan.json before trying again")
+            st["empty_told"] = True
         save_state(name, st)
         return
     plan = json.loads((cdir / "plan.json").read_text()) if (cdir / "plan.json").exists() else {}
@@ -414,7 +437,8 @@ def do_campaign(name, cpath, phase="all"):
     words = cdir / "words.json"
     if not words.exists():
         note(st, "transcribing the whole episode")
-    used = [(c["start"], c["end"]) for c in st.get("used_moments", [])]
+    # moments rico already saw, plus moments rendered and dropped before: the scorecard moves on to new ones
+    used = [(c["start"], c["end"]) for c in st.get("used_moments", []) + st.get("tried_moments", [])]
     t0 = time.time()
     if phase == "prepare":
         specs, origin, wpath, notes = pipeline.prepare(WORK / name, src, st["brief"], words if words.exists() else None, campaign=name,
@@ -433,12 +457,26 @@ def do_campaign(name, cpath, phase="all"):
         note(st, f"{len(jobs)} candidate(s) picked ({origin}), {len(specs) - len(jobs)} fallback(s); rendering on {len(jobs)} machines with grade-and-retry")
         save_state(name, st)
         return jobs
-    kept, summary = pipeline.run(WORK / name, src, st["brief"], words if words.exists() else None, campaign=name, log=log,
-                                 used=used, plan_dir=cdir)   # cdir holds the reviewer's plan.json; used = moments rico already saw
-    st["used_moments"] = (st.get("used_moments", []) + [{"start": p[0], "end": p[1], "hook": c["hook"]} for c in kept for p in c.get("parts", [])])[-30:]
+    kept, summary, tried = pipeline.run(WORK / name, src, st["brief"], words if words.exists() else None, campaign=name, log=log,
+                                        used=used, plan_dir=cdir)   # cdir holds the reviewer's plan.json; used = moments rico already saw
+    remember_moments(st, kept, tried)
     if (WORK / name / "words.json").exists() and not words.exists():
         shutil.copy(WORK / name / "words.json", words)   # /tmp and the repo are different disks on the runner
     publish(name, st, stage, kept, summary, t0)
+
+
+def remember_moments(st, kept, tried=()):
+    """used_moments: what rico saw in 1_CHECK (last 30). tried_moments: what was rendered and dropped (last 60).
+    Both keep one entry per (start, end): the old list filled its cap with the same moment repeated after redos."""
+    def add(key, items, cap):
+        have = {(round(m["start"], 2), round(m["end"], 2)): m for m in st.get(key, [])}
+        for c in items:
+            for p in c.get("parts", []):
+                have[(round(p[0], 2), round(p[1], 2))] = {"start": p[0], "end": p[1], "hook": c.get("hook", "")}
+        st[key] = list(have.values())[-cap:]
+    add("used_moments", kept, 30)
+    seen = {(round(p[0], 2), round(p[1], 2)) for c in kept for p in c.get("parts", [])}
+    add("tried_moments", [r for r in tried if not any((round(p[0], 2), round(p[1], 2)) in seen for p in r.get("parts", []))], 60)
 
 
 def render_job(n):
@@ -473,6 +511,8 @@ def render_job(n):
         fname = Path(res["folder"]).name
         shutil.copytree(res["folder"], out / fname, dirs_exist_ok=True)
         res["folder"], res["mp4"] = fname, fname + "/" + Path(res["mp4"]).name
+        if res.get("thumb"):    # thumbnail.png sits inside the clip folder; without this the PNG never reached 1_CHECK
+            res["thumb"] = fname + "/" + Path(res["thumb"]).name
     (out / "result.json").write_text(json.dumps(res, default=str))
     log(f"done: qa {res.get('qa')} judge {res.get('judge')} {res.get('minutes', '?')} min" + (f"  {res['error']}" if res.get("error") else ""))
 
@@ -499,6 +539,8 @@ def collect():
                 res = json.loads((d / "result.json").read_text())
                 if res.get("folder"):
                     res["folder"] = str(d / res["folder"]); res["mp4"] = str(d / res["mp4"])
+                    if res.get("thumb"):
+                        res["thumb"] = str(d / res["thumb"])
                 for t in res.get("tries", [])[:-1]:
                     notes.append("TRY   " + t)
                 results.append(res)
@@ -509,7 +551,7 @@ def collect():
                          f"longest render {max(mins) if mins else 0:.1f} min")
             summary = "\n".join(notes)
             log(summary)
-            st["used_moments"] = (st.get("used_moments", []) + [{"start": p[0], "end": p[1], "hook": c["hook"]} for c in kept for p in c.get("parts", [])])[-30:]
+            remember_moments(st, kept, [r for r in results if not r.get("error")])
             publish(name, st, stage, kept, summary, items[0][1].get("t0") or time.time())
         except Exception as e:
             note(st, f"ERROR {type(e).__name__}: {str(e)[:200]}")
@@ -523,7 +565,7 @@ def publish(name, st, stage, kept, summary, t0):
     if kept:
         try:
             r = drive.root()
-            for f in drive.files(stage["1_CHECK"], VID_EXT):
+            for f in drive.files(stage["1_CHECK"], VID_EXT + (".png", ".jpg")):   # clips and their thumbnail PNGs / options sheets
                 drive.move(f["Path"], f"{r}/_trash/1_CHECK_{name}_{f['Name']}")
         except Exception as e:
             log(f"could not clear old clips from 1_CHECK: {e}")
@@ -544,6 +586,9 @@ def publish(name, st, stage, kept, summary, t0):
                     "caption": c.get("caption", ""), "lane": c.get("lane", ""), "text": " ".join(c.get("captions", "").split()),
                     "parts": c.get("parts", [])} for k, c in enumerate(kept, 1)]
     st["needs_redo"] = False
+    st["empty_runs"] = 0 if kept else st.get("empty_runs", 0) + 1
+    if kept:
+        st["empty_told"] = False
     note(st, f"{len(kept)} clip(s) uploaded to 1_CHECK")
     save_state(name, st)
 
@@ -577,11 +622,8 @@ def main(only=None, phase="all"):
         if os.environ.get("GITHUB_OUTPUT"):
             with open(os.environ["GITHUB_OUTPUT"], "a") as f:
                 f.write(f"count={len(jobs)}\njobs={json.dumps(list(range(len(jobs))))}\n")
-    try:
-        import campaign_scan
-        campaign_scan.main()
-    except Exception as e:
-        log(f"campaign scan skipped: {type(e).__name__}: {str(e)[:120]}")
+    # the campaign scan runs on its own hourly workflow (scan.yml); it used to run here too, and the two commits
+    # of data/scan_seen.json raced (2026-10-29 audit)
 
 
 if __name__ == "__main__":
