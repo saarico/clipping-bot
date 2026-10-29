@@ -89,9 +89,9 @@ Round-by-round reasons: rico's critiques in campaigns/<c>/critiques/.
 
 35. **Each campaign gets its own look (rico 2026-10-29: "ensure editing is altered to represent the style of the campaign").** The profile (podcast / cinematic / stream / performance, RULES 25) sets the base; the reviewer pins the campaign's look in plan.json `brief_overrides.look`: accent colour (ASS BGR, e.g. `&H2BC6FF&` warm gold for a movie, `&H00D7FF&` yellow for a podcast), caption size, words per caption, title size, outline and shadow. Fonts stay Montserrat (rule 31). The SUMMARY's run notes show `style:` and `look:` so the choice is visible on every run.
 
-37. **The bot stops instead of repeating itself (audit 2026-10-29).** A campaign that kept nothing three runs in a row waits for a note in 2_REDO or a plan.json; moments rendered and dropped are not picked again by the scorecard (`tried_moments`); the POST KIT always lists every approved clip; the campaign scan runs on its own hourly workflow only. A Drive error stops the run loudly (noted in state) rather than reading as empty folders.
-
 36. **Accounts and campaign fit (rico 2026-10-29: "distinctly categorize my different accounts and what I post there and have a better judgment on the campaigns selected").** config/accounts.json holds each account's identity (what it posts, what it never posts, see the Accounts section below). The scan rejects a campaign that fits none of the three identities (no clear topic) and any promo: brand, app, product, token, or game footage with no person in it (the MW4 "Campaign Moments" offer of 2026-10-29 was withdrawn for this). The JOIN doc names the account the campaign would feed.
+
+37. **The bot stops instead of repeating itself (audit 2026-10-29).** A campaign that kept nothing three runs in a row waits for a note in 2_REDO or a plan.json; moments rendered and dropped are not picked again by the scorecard (`tried_moments`); the POST KIT always lists every approved clip; the campaign scan runs on its own hourly workflow only. A Drive error stops the run loudly (noted in state) rather than reading as empty folders.
 
 # Accounts: what each one posts (config/accounts.json)
 
