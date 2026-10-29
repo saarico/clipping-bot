@@ -18,6 +18,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 import find_moments as fm  # noqa: E402
 import genres  # noqa: E402
+import plan as planner  # noqa: E402
 import profiles  # noqa: E402
 
 PITCH_BAR = 60
@@ -32,6 +33,7 @@ def words_in(words, parts):
 
 
 def proper_names(words):
+    """Names the transcript itself capitalises mid-sentence (captions are upper case, so this is the only tell)."""
     names = set()
     for prev, w in zip([None] + words[:-1], words):
         t = w["text"].strip('",.?!()\'')
@@ -40,46 +42,38 @@ def proper_names(words):
     return names
 
 
-def score(spec, words, brief=None):
-    """{"total": 0-100, "verdict": "PASS"|"REJECT", "areas": {...}, "why": [...]} for one candidate."""
-    brief = brief or {}
-    prof = profiles.profile(spec.get("style") or brief.get("style"))
-    parts = spec.get("parts") or []
-    ws = words_in(words, parts)
-    body = " ".join(w["text"] for w in ws)
-    low = body.lower()
-    dur = sum(b - a for a, b in parts)
-    title = spec.get("hook", "")
-    names = proper_names(ws)
-    areas, why = {}, []
-
-    # hook: the title and the first line
-    h = 20
-    first = " ".join(w["text"] for w in ws[:8])
-    if prof["clarity"] and re.match(fm.BACKREF, first.strip(), flags=re.I):
+def hook_points(title, first_line, names, prof, opening_text):
+    """(0-20, reasons): the title and the first line, as judge_clip and the pitch both grade them (one place)."""
+    h, why = 20, []
+    head = " ".join(first_line.split()[:8])
+    if prof["clarity"] and re.match(fm.BACKREF, head.strip(), flags=re.I):
         h -= 8; why.append("first line starts on a pointer word")
-    has_name = any(t.strip('",.?!()\'').lower() in names for t in first.split()[1:])
-    if prof["clarity"] and not (re.search(fm.NUMBER, first, re.I) or has_name or re.search(r"\b(I|we|my)\b", first, re.I)):
+    has_name = any(t.strip('",.?!()\'').lower() in names for t in head.split()[1:])
+    if prof["clarity"] and not (re.search(fm.NUMBER, head, re.I) or has_name or re.search(r"\b(I|we|my)\b", head, re.I)):
         h -= 5; why.append("first line names no one and nothing")
+    # every profile (2026-10-29, rico: "heavy increase in judgement"): a title carries a name, a number, a question or a quote
     if not (re.search(fm.NUMBER, title, re.I) or "?" in title or '"' in title or re.search(fm.FAMOUS, title, re.I)
-            or any(t.strip('",.?!()\'').lower() in names for t in title.split()) or re.search(r"\b(I|we|my|you)\b", title)):
+            or any(t.strip('",.?!()\'').lower() in names for t in title.split()) or re.search(r"\b(I|we|my|you)\b", title, re.I)):
         h -= 5; why.append("title has no name, number, question or quote")
     if len(title.split()) > 14:
         h -= 3; why.append("title over 14 words")
-    if prof["back_refs"] and re.search(fm.PODCAST_TALK, " ".join(body.split()[:25]).lower()):
+    if prof["back_refs"] and re.search(fm.PODCAST_TALK, " ".join(opening_text.split()[:25]).lower()):
         h -= 6; why.append("opens with podcast talk")
-    areas["hook"] = max(0, h)
+    return max(0, h), why
 
-    # story
-    st = 0
+
+def story_points(body, prof):
+    """(0-10, notes, reasons): stakes, a contrast or question, a finished ending, no podcast back-references."""
+    low = body.lower()
+    st, why = 0, []
     stakes = fm.count(fm.MONEY, low) + fm.count(fm.FAIL, low) + fm.count(fm.SURPRISE, low) + fm.count(fm.EMOTION, low) + 2 * fm.count(fm.FAMOUS, low)
     st += min(4, stakes)
     if fm.count(fm.CONTRAST, low) or "?" in body[:300]:
         st += 2
-    last = body.strip().rstrip('"\')')
-    if last.endswith((".", "!", "?")):
-        st += 2
-    else:
+    last = body.strip().splitlines()[-1].strip().rstrip('"\')') if body.strip() else ""
+    finished = last.endswith((".", "!", "?"))
+    st += 2 if finished else 0
+    if not finished:
         why.append("ends mid-sentence")
     back = fm.count(fm.PODCAST_TALK, low) if prof["back_refs"] else 0
     st += 2 if back == 0 else 0
@@ -89,7 +83,36 @@ def score(spec, words, brief=None):
         st += min(2, fm.count(profiles.HYPE, low))
     if stakes == 0:
         why.append("no stakes: no money, failure, surprise, emotion or famous name")
-    areas["story"] = min(10, st)
+    notes = [f"{stakes} stakes word(s)", f"{back} podcast back-reference(s)", "ends on a finished sentence" if finished else "ends mid-sentence"]
+    return min(10, st), notes, why
+
+
+def length_points(dur, prof, brief=None):
+    """10 inside the profile's sweet spot, 6 inside the wider window, which the brief's own min/max extend."""
+    (l0, l1), (o0, o1) = prof["length"], prof["ok_len"]
+    if brief:
+        o0, o1 = min(o0, brief.get("min_s", o0)), max(o1, brief.get("max_s", o1))
+        l0, l1 = min(l0, brief.get("min_s", l0)), max(l1, min(brief.get("max_s", l1), o1))
+    return (10 if l0 <= dur <= l1 else 6 if o0 <= dur <= o1 else 0), (o0, o1)
+
+
+def score(spec, words, brief=None):
+    """{"total": 0-100, "verdict": "PASS"|"REJECT", "areas": {...}, "why": [...]} for one candidate."""
+    brief = brief or {}
+    prof = profiles.profile(spec.get("style") or brief.get("style"))
+    parts = spec.get("parts") or []
+    part_words = [words_in(words, [pt]) for pt in parts]
+    ws = [w for pw in part_words for w in pw]
+    body = " ".join(w["text"] for w in ws)
+    low = body.lower()
+    dur = sum(b - a for a, b in parts)
+    title = spec.get("hook", "")
+    areas, why = {}, []
+
+    areas["hook"], w1 = hook_points(title, " ".join(w["text"] for w in ws[:8]), proper_names(ws), prof, body)
+    why += w1
+    areas["story"], _notes, w2 = story_points(body, prof)
+    why += w2
 
     # entertainment + comedy on the campaign's mix
     sents = [{"text": t, "n": len(t.split())} for t in re.split(r"(?<=[.?!])\s+", body) if t.strip()]
@@ -102,29 +125,30 @@ def score(spec, words, brief=None):
     if areas["entertainment"] <= 3:
         why.append("little for this campaign's genres (" + ", ".join(f"{g} {gs[g]}" for g in sorted(mix, key=mix.get, reverse=True)[:3] if g in gs) + ")")
 
-    # pace
+    # pace: pauses are measured inside each part (the jump between two parts is a cut, not a pause)
     n = len(ws)
     wps = n / max(dur, 1)
-    p = 10
+    pc = 10
     lo_wps, hi_wps = prof["wps"]
     if wps < lo_wps * 0.8:
-        p -= 5; why.append(f"slow: {wps:.1f} words/s")
+        pc -= 5; why.append(f"slow: {wps:.1f} words/s")
     elif wps < lo_wps:
-        p -= 3
+        pc -= 3
     elif wps > hi_wps:
-        p -= 2
-    gaps = [b["start"] - a["end"] for a, b in zip(ws, ws[1:])]
-    long_pauses = sum(1 for g in gaps if g > 1.2) if prof["pause_penalty"] else 0
-    p -= min(4, 2 * long_pauses)
+        pc -= 2
+    long_pauses = 0
+    if prof["pause_penalty"]:
+        for pw in part_words:
+            long_pauses += sum(1 for a, b in zip(pw, pw[1:]) if b["start"] - a["end"] > 1.2)
+    pc -= min(4, 2 * long_pauses)
     fill = fm.count(fm.FILLER, low) / max(n, 1) if prof["filler"] else 0
     if fill > 0.06:
-        p -= 3; why.append(f"filler {fill:.0%}")
+        pc -= 3; why.append(f"filler {fill:.0%}")
     elif fill > 0.035:
-        p -= 1
-    areas["pace"] = max(0, p)
+        pc -= 1
+    areas["pace"] = max(0, pc)
 
-    (l0, l1), (o0, o1) = prof["length"], prof["ok_len"]
-    areas["length"] = 10 if l0 <= dur <= l1 else 6 if o0 <= dur <= o1 else 0
+    areas["length"], (o0, o1) = length_points(dur, prof, brief)
     if areas["length"] == 0:
         why.append(f"{dur:.0f} s is outside {o0}-{o1} s")
 
@@ -144,7 +168,7 @@ def gate(specs, words, brief=None, log=print):
     for i, sp in enumerate(specs):
         r = score(sp, words, brief)
         sp["_pitch"] = r
-        tag = f"c{i + 1:02d}_" + re.sub(r"[^a-z0-9]+", "-", sp.get("hook", "").lower())[:28].strip("-")
+        tag = f"c{i + 1:02d}_" + planner.slug(sp.get("hook", ""))
         notes.append(line(tag, r))
         scored.append((r, sp))
     keep = [sp for r, sp in scored if r["verdict"] == "PASS"]
@@ -163,7 +187,15 @@ if __name__ == "__main__":
     words = json.loads(Path(sys.argv[1]).read_text())
     src = json.loads(Path(sys.argv[2]).read_text())
     brief = json.loads(Path(sys.argv[3]).read_text()) if len(sys.argv) > 3 else {}
-    specs = src.get("clips", [src]) if isinstance(src, dict) else src
+    if isinstance(src, dict):
+        brief = {**brief, **src.get("brief_overrides", {})}       # what plan.load applies: style, genres, look
+        specs = src.get("clips")
+        if not specs and "parts" not in src:
+            sys.exit("this plan.json has no clips (overrides only): the scorecard picks them at run time, nothing to pitch here")
+        specs = specs or [src]
+    else:
+        specs = src
     for i, sp in enumerate(specs):
-        sp.setdefault("style", (src.get("brief_overrides", {}) if isinstance(src, dict) else {}).get("style") or brief.get("style"))
-        print(line(f"c{i + 1:02d}", score(sp, words, brief)))
+        sp.setdefault("style", brief.get("style"))
+        sp.setdefault("genres", brief.get("genres"))
+        print(line(f"c{i + 1:02d}_{planner.slug(sp.get('hook', ''))}", score(sp, words, brief)))

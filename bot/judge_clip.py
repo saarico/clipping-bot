@@ -30,6 +30,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 import find_moments as fm  # noqa: E402
 import genres  # noqa: E402
+import pitch  # noqa: E402
 import profiles  # noqa: E402
 
 
@@ -54,34 +55,13 @@ def main(folder):
     rep, notes = {}, {}
     prof = profiles.profile(spec.get("style"))
 
-    # hook
+    # hook (shared with the pitch, bot/pitch.py: one rule, graded before and after the render)
     title = spec.get("hook", "")
     first = body.splitlines()[0] if body.splitlines() else ""
-    head = " ".join(first.split()[:8])
-    h = 20
-    if prof["clarity"] and re.match(fm.BACKREF, head.strip(), flags=re.I):
-        h -= 8; notes.setdefault("hook", []).append("first line starts on a pointer word")
-    # captions are upper case: a proper name is a word the transcript itself capitalises mid-sentence
     wj = json.loads((folder / "words.json").read_text()) if (folder / "words.json").exists() else []
-    proper = set()
-    for prev, w in zip([None] + wj[:-1], wj):
-        t = w["text"].strip('",.?!()\'')
-        if t[:1].isupper() and len(t) > 2 and prev and not prev["text"].rstrip('"\'').endswith((".", "?", "!")):
-            proper.add(t.lower())
-    has_name = any(t.strip('",.?!()\'').lower() in proper for t in head.split()[1:])
-    concrete = re.search(fm.NUMBER, head, re.I) or has_name or re.search(r"\b(I|we|my)\b", head, re.I)
-    if prof["clarity"] and not concrete:
-        h -= 5; notes.setdefault("hook", []).append("first line names no one and nothing")
-    # every profile (2026-10-29, rico: "heavy increase in judgement"): the title must carry a name, a number,
-    # a question or a quoted line, or it is wallpaper
-    if not (re.search(fm.NUMBER, title, re.I) or "?" in title or '"' in title or re.search(fm.FAMOUS, title, re.I)
-            or any(t.strip('",.?!()\'').lower() in proper for t in title.split()) or re.search(r"\b(I|we|my|you)\b", title)):
-        h -= 5; notes.setdefault("hook", []).append("title has no name, number, question or quote")
-    if len(title.split()) > 14:
-        h -= 3; notes.setdefault("hook", []).append("title over 14 words")
-    if prof["back_refs"] and re.search(fm.PODCAST_TALK, " ".join(words[:25]).lower()):
-        h -= 6; notes.setdefault("hook", []).append("opens with podcast talk")
-    rep["hook"] = max(0, h)
+    rep["hook"], hw = pitch.hook_points(title, first, pitch.proper_names(wj), prof, body)
+    if hw:
+        notes["hook"] = hw
 
     # pace
     wps = len(words) / max(dur, 1)
@@ -154,19 +134,8 @@ def main(folder):
         f -= 2; notes.setdefault("framing", []).append("segment under 0.5 s")
     rep["framing"] = max(0, f)
 
-    # story
-    st = 0
-    stakes = fm.count(fm.MONEY, low) + fm.count(fm.FAIL, low) + fm.count(fm.SURPRISE, low) + fm.count(fm.EMOTION, low) + 2 * fm.count(fm.FAMOUS, low)
-    st += min(4, stakes)
-    if fm.count(fm.CONTRAST, low) or "?" in body[:300]: st += 2
-    last = body.strip().splitlines()[-1].strip().rstrip('"\')') if body.strip() else ""
-    st += 2 if last.endswith((".", "!", "?")) else 0
-    back = fm.count(fm.PODCAST_TALK, low) if prof["back_refs"] else 0
-    st += 2 if back == 0 else 0
-    if prof["reactions"] > 1:
-        st += min(2, fm.count(profiles.HYPE, low))
-    notes["story"] = [f"{stakes} stakes word(s)", f"{back} podcast back-reference(s)", "ends on a finished sentence" if last.endswith((".", "!", "?")) else "ends mid-sentence"]
-    rep["story"] = min(10, st)
+    # story (shared with the pitch)
+    rep["story"], notes["story"], _ = pitch.story_points(body, prof)
 
     # entertainment + comedy: the genre scorecard read on the clip's own lines (never on the plan)
     sents = [{"text": t, "n": len(t.split())} for t in re.split(r"(?<=[.?!])\s+|\n", body) if t.strip()]
@@ -197,8 +166,7 @@ def main(folder):
     rep["captions"] = max(0, c)
     notes["captions"] = cn or ["read clean"]
 
-    (l0, l1), (o0, o1) = prof["length"], prof["ok_len"]
-    rep["length"] = 10 if l0 <= dur <= l1 else 6 if o0 <= dur <= o1 else 0
+    rep["length"], _ = pitch.length_points(dur, prof, spec.get("brief"))
     total = sum(rep.values())
     out = [f"# Judge report: {folder.name}", "", f"Profile: {spec.get('style') or 'podcast'}", "",
            "Part 1, measured by bot/judge_clip.py. Part 2 (below) is the judge agent's blind read (scorecards/judgment.md).", "",

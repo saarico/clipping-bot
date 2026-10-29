@@ -159,7 +159,7 @@ FUN = r"\b(podcast|interview|episode|show|story|stories|stream|streamer|concert|
 # rico (2026-10-27 05:20 UTC): never again a brand ad. Clips must grow the channels, so a campaign has to
 # be about a SHOW or a PERSON (podcast, streamer, performer, game footage), not a product.
 SHOW = r"\b(podcasts?|interviews?|episodes?|show|shows|streamer|streamers|streams?|streaming|live|concert|performance|tour|comedy|comedian|reaction|reacts|highlights|moments|vlogs?|talks?|debate|panel|rant|kick|twitch|youtuber|creator|influencer|clip the show|clipping army|fight|fighter|match|game|games|gaming|roblox|minecraft|fortnite|warfare|warzone|esports|speedrun|music|rapper|singer|band|dj)\b"
-AD = r"\b(ugc|split[- ]screen|app|apps|software|saas|download|install|sign[- ]?up|referral|use my link|promo code|promo|discount|extension|wallet|product|products|brand awareness|launch|early access|pre-?orders?|crowdfund|invest in|ai tool|ai video|generator|fintech|bitcoin rewards|debit card|credit card|subscription|supplement|skincare brand)\b"
+AD = r"\b(ugc|split[- ]screen|app|apps|software|saas|download|install|sign[- ]?up|referral|use my link|promo code|promo|discount|extension|wallet|product|products|brand awareness|launch|early access|pre-?orders?|crowdfund|invest in|token|nft|metaverse|airdrop|ai tool|ai video|generator|fintech|bitcoin rewards|debit card|credit card|subscription|supplement|skincare brand)\b"
 AD_CATS = {"apps", "finance", "technology", "health & wellness", "crypto", "software", "ecommerce", "e-commerce", "product", "brand", "business", "saas"}
 
 
@@ -168,6 +168,8 @@ def is_ad(c):
     blob = " ".join(str(c.get(k, "")) for k in ("name", "org", "category")).lower()
     desc = str(c.get("description", "")).lower()[:1500]
     show = len(re.findall(SHOW, blob)) * 2 + len(re.findall(SHOW, desc))
+    if not re.search(PERSON, blob + " " + desc):      # game words are "show" content only with a person in it (game_promo)
+        show -= len(re.findall(GAME, blob)) * 2 + len(re.findall(GAME, desc))
     ad = len(re.findall(AD, blob)) * 2 + len(re.findall(AD, desc))
     cat = str(c.get("category", "")).lower()
     if cat in AD_CATS and show < 2:
@@ -176,13 +178,14 @@ def is_ad(c):
 
 
 PERSON = r"\b(streamer|streamers|twitch|kick|youtuber|youtubers|creator|creators|podcast|podcasts|show|host|reacts?|reaction|vlog|vlogs|clipping army|his|her|their|he|she|comedian|caster|commentary|facecam|irl)\b"
-GAME = r"\b(gaming|game|games|roblox|minecraft|fortnite|call of duty|cod|warfare|warzone|gta|valorant|esports|multiplayer|dlc|gameplay|teasers?|campaign moments|launch)\b"
+GAME = r"\b(gaming|video ?game|roblox|minecraft|fortnite|call of duty|cod|modern warfare|warzone|gta|valorant|esports|multiplayer|dlc|gameplay|campaign moments)\b"
 
 
 def game_promo(c):
-    """Game or launch footage with nobody in it: a publisher's ad, not a person's content."""
+    """Video-game footage with nobody in it: a publisher's ad, not a person's content (rico 2026-10-29). The same
+    words count as "show" content in is_ad only when a person is named, so the two gates agree."""
     blob = " ".join(str(c.get(k, "")) for k in ("name", "org", "category", "description")).lower()
-    return bool(re.search(GAME, blob)) and not re.search(PERSON, blob)
+    return (bool(re.search(GAME, blob)) or str(c.get("category", "")).lower() in ("gaming", "roblox")) and not re.search(PERSON, blob)
 
 
 LANE_PLATFORM = {"A": "youtube", "B": "instagram", "C": "tiktok"}
@@ -313,7 +316,7 @@ def main():
             continue
         dump.append({k: c.get(k) for k in ("name", "org", "category", "lane", "rate", "budget_left", "budget_total", "views", "clippers", "days_left", "platforms", "submissions", "application_only", "pts", "link", "raw")}
                     | {"total": total, "verdict": verdict, "stops": stops})
-        if stops or c["lane"] == "?" or total < 55:
+        if stops or total < 55:
             continue
         rows.append((c, total, verdict if verdict == "JOIN" else "MAYBE, best in its lane"))
     dump.sort(key=lambda d: -d.get("total", 0))

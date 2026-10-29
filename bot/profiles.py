@@ -76,8 +76,17 @@ def look(name, overrides=None):
     Fonts stay Montserrat (rico's rule 31); only sizes, colours and grouping change per campaign."""
     base = dict(LOOK.get(name or "", LOOK["podcast"]))
     for k, v in (overrides or {}).items():
-        if k in LOOK_KEYS and v not in (None, ""):
-            base[k] = tuple(v) if k == "cap_group" else v
+        if k not in LOOK_KEYS or v in (None, ""):
+            continue
+        if k == "cap_group":
+            if isinstance(v, (list, tuple)) and len(v) == 2 and all(isinstance(x, int) and 1 <= x <= 8 for x in v) and v[0] <= v[1]:
+                base[k] = (int(v[0]), int(v[1]))
+        elif k == "accent":
+            if isinstance(v, str) and re.fullmatch(r"&H[0-9A-Fa-f]{6}&", v):
+                base[k] = v.upper().replace("&H", "&H")
+        elif isinstance(v, (int, float)) and not isinstance(v, bool) and 0 <= v <= 400:
+            base[k] = int(v)
+        # anything else (a string size, a CSS colour, a one-item group) keeps the profile's value: a bad look must never kill a render
     return base
 
 
