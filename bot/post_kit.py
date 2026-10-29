@@ -6,7 +6,7 @@ from pathlib import Path
 ACCOUNTS = json.loads((Path(__file__).parent.parent / "config" / "accounts.json").read_text())
 
 
-def kit(clip_name, hook, brief, lane_platforms, caption=""):
+def kit(clip_name, hook, brief, lane_platforms, caption="", thumb=""):
     tags = " ".join(brief.get("tags", []))
     title = f"{hook.rstrip('.')} {tags}".strip()
     desc = (caption or f"{hook}\n\nFrom the full episode: {brief['links'][0] if brief.get('links') else 'see campaign'}") + f"\n{tags}"
@@ -16,6 +16,8 @@ def kit(clip_name, hook, brief, lane_platforms, caption=""):
         desc += f"\n{brief['rider']}"
     desc = desc.strip()
     lines = [f"CLIP: {clip_name}", ""]
+    if thumb:
+        lines += [f"Thumbnail: {thumb} (same folder). YouTube Shorts and TikTok take no file: in the app, pick the LAST frame of the video as the cover, it is this picture. Instagram: upload the PNG as the cover.", ""]
     for p in lane_platforms:
         handle = ACCOUNTS.get(p, "?")
         lines += [f"== {p.upper()} ({handle}) ==", f"Title: {title[:100]}", "Description:", desc, "", ]

@@ -171,6 +171,36 @@ def join_videos(parts, dest, log=print):
     return dest if dest.exists() else None
 
 
+def ensure_thumbnail(name, st, stage, cdir, f, c):
+    """An approved clip without a thumbnail yet (kept before thumbnails existed): build one from the episode's own
+    frames, upload it beside the clip, and re-upload the clip with the thumbnail as its last two frames. Returns the
+    PNG's name in 3_APPROVED, or "" when the source is not available."""
+    import thumbnail
+    png_name = f"{Path(f['Name']).stem}_thumbnail.png"
+    if any(x["Name"] == png_name for x in drive.files(stage["3_APPROVED"], {".png"})):
+        return png_name
+    if not c.get("parts"):
+        return ""
+    try:
+        src = get_source(name, st, stage, cdir)
+        if not src:
+            return ""
+        work = WORK / name / "thumbs"
+        work.mkdir(parents=True, exist_ok=True)
+        png = work / png_name
+        thumbnail.make(str(src), c.get("hook", ""), c["parts"], str(png))
+        local = work / f["Name"]
+        drive.download(f["Path"], str(local))
+        thumbnail.append_cover(local, png)
+        drive.upload(str(png), stage["3_APPROVED"], name=png_name)
+        drive.upload(str(local), stage["3_APPROVED"], name=f["Name"])     # same name: the clip with the cover frame at the end
+        note(st, f"thumbnail made for {f['Name']} (PNG + last-frame cover)")
+        return png_name
+    except Exception as e:
+        log(f"thumbnail for {f['Name']} failed: {e}")
+        return ""
+
+
 def get_source(name, st, stage, cdir):
     """Episode file: from 0_START, else yt-dlp on the brief's first link (best effort)."""
     dest = WORK / name / "episode.mp4"
@@ -308,7 +338,8 @@ def do_campaign(name, cpath, phase="all"):
         for f in new_kits:
             c = clips.get(f["Name"], {})
             lane = c.get("lane") or (st["brief"].get("platforms") or ["youtube"])[0]
-            text.append(post_kit.kit(f["Name"], c.get("hook", Path(f["Name"]).stem.replace("-", " ")), st["brief"], [lane], caption=c.get("caption", "")))
+            thumb_name = ensure_thumbnail(name, st, stage, cdir, f, c)
+            text.append(post_kit.kit(f["Name"], c.get("hook", Path(f["Name"]).stem.replace("-", " ")), st["brief"], [lane], caption=c.get("caption", ""), thumb=thumb_name))
             text.append("")
             kits[f["Path"]] = f["Name"]
         drive.write_doc("POST KIT", "\n".join(text), stage["3_APPROVED"])
@@ -461,6 +492,8 @@ def publish(name, st, stage, kept, summary, t0):
             log(f"could not clear old clips from 1_CHECK: {e}")
     for k, c in enumerate(kept, 1):
         drive.upload(c["mp4"], stage["1_CHECK"], name=f"{k:02d}_{Path(c['mp4']).name.split('_', 1)[-1]}")
+        if c.get("thumb") and Path(c["thumb"]).exists():
+            drive.upload(c["thumb"], stage["1_CHECK"], name=f"{k:02d}_{Path(c['mp4']).stem.split('_', 1)[-1]}_thumbnail.png")
     body = [f"SUMMARY  ({now()}, {(time.time() - t0) / 60:.0f} min)", "", f"{len(kept)} clip(s) in 1_CHECK. Max 3 per campaign.", ""]
     for k, c in enumerate(kept, 1):
         body += [f"{k:02d}  {c['hook']}  ({c['dur']} s, judge {c['judge']})", f"    post on: {c.get('lane', '?').upper()} ({lanes.handle(c.get('lane', ''))})",
@@ -468,7 +501,8 @@ def publish(name, st, stage, kept, summary, t0):
     body += ["Run notes:", summary, "", "Approve: drag the mp4 to 3_APPROVED. Change: put a Word doc with your notes in 2_REDO."]
     drive.write_doc("SUMMARY", "\n".join(body), stage["1_CHECK"])
     st["clips"] = [{"mp4": f"{k:02d}_{Path(c['mp4']).name.split('_', 1)[-1]}", "hook": c["hook"], "judge": c["judge"], "dur": c["dur"],
-                    "caption": c.get("caption", ""), "lane": c.get("lane", ""), "text": " ".join(c.get("captions", "").split())} for k, c in enumerate(kept, 1)]
+                    "caption": c.get("caption", ""), "lane": c.get("lane", ""), "text": " ".join(c.get("captions", "").split()),
+                    "parts": c.get("parts", [])} for k, c in enumerate(kept, 1)]
     st["needs_redo"] = False
     note(st, f"{len(kept)} clip(s) uploaded to 1_CHECK")
     save_state(name, st)

@@ -23,7 +23,8 @@ Drive: CLIPPING/
 | Cut, inspect, judge, retry | bot | `bot/render_clip.py` (YuNet face tracking, one 9:16 look), `bot/qa_check.py` (hard gates, `scorecards/acceptance.md`), `bot/judge_clip.py` (bar 80, `scorecards/judgment.md`), `bot/pipeline.py` grade-and-retry (re-edit once, then the next moment; clips that pass every gate at 75-79 go up marked UNDER THE BAR when nothing reaches 80) |
 | Lane: one platform per clip | bot | `bot/lanes.py` (YouTube = business/money, Instagram = celebrity/drama, TikTok = entertainment), shown in the SUMMARY |
 | Review | rico | 1_CHECK → 2_REDO or 3_APPROVED |
-| Post kit (one platform, title, description, tags) | bot | `bot/post_kit.py`, `config/accounts.json` |
+| Thumbnail (best reacting frame + hook text, appended as the last frame for the Shorts/TikTok pickers) | bot | `bot/thumbnail.py` |
+| Post kit (one platform, title, description, tags, thumbnail) | bot | `bot/post_kit.py`, `config/accounts.json` |
 | Post, paste the link into Content Rewards | rico (one click from the POST KIT) | see SETUP.md |
 
 Rules the bot follows: `RULES.md`. Every rule change with its date: `CHANGELOG.md`. Acceptance gates: `scorecards/acceptance.md`. rico's critiques land in `campaigns/<c>/critiques/` and the reviewer

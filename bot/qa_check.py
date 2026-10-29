@@ -587,10 +587,13 @@ def check_transitions(rep, mp4, details, dur):
     joins = [c[1] - c[0] for c in details["cuts"]]
     joins = [sum(joins[:i + 1]) for i in range(len(joins) - 1)]          # output times of the jump cuts
     odd, bad = [], []
+    cover = (Path(mp4).parent / "thumbnail.png").exists()      # the thumbnail is appended as the last 2 frames (bot/thumbnail.py)
     for i in range(len(diff)):
         around = np.concatenate([diff[max(0, i - 2):i], diff[i + 1:i + 3]])
         if diff[i] > 25 and diff[i] > 2.5 * (around.max() if len(around) else 0):
             t = (i + 1) / 30
+            if cover and t > len(diff) / 30 - 0.12:
+                continue
             if not any(abs(t - e) < 0.12 for e in expected):
                 (bad if t < 1.5 or t > dur - 1.5 or any(abs(t - j) < 0.7 for j in joins) else odd).append(t)
     flashes = [i / 30 for i in range(1, len(luma) - 1)

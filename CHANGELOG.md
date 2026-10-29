@@ -3,6 +3,14 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-10-29 (03:00 UTC): thumbnails for Shorts, TikTok and Reels
+- rico: "what about thumbnail on YouTube Shorts. make sure it's really good."
+- Bot: `bot/thumbnail.py` builds a 1080x1920 thumbnail from the episode's own frames (best reacting face, the hook in
+  big white/yellow text) for every kept clip, uploads it beside the clip (1_CHECK and 3_APPROVED) and appends it as the
+  clip's last two frames so the YouTube and TikTok frame pickers can select it (no custom thumbnail files on Shorts);
+  Instagram takes the PNG. Clips approved before this got their thumbnail on the next run (DIGGER 01 and 02). The
+  POST KIT says where the picture is and how to pick it. RULES.md 20 updated.
+
 ## 2026-10-29 (late): one platform per clip, by category
 - rico: "I thought we were separating clips from campaigns on Insta, TikTok and YouTube based on the category of the clip."
 - Rule: a clip is posted to ONE platform. YouTube (@fedsaa) = business / money. Instagram (@fesavoo) = celebrity /
