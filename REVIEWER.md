@@ -12,7 +12,9 @@ Per campaign under `campaigns/<c>/`:
 3. Write `plan.json`: `{"why": "...", "clips": [render_clip spec, ...]}` (spec format in
    `bot/render_clip.py`'s docstring: parts, hook, hook_hi, emphasis, focus, callouts, overlays).
    Max 3 clips. Optional per clip: `"lane": "youtube" | "instagram" | "tiktok"` to pin the platform (otherwise
-   bot/lanes.py picks it from the clip's words), `"style"` via `brief_overrides.style`. After a critique: change only
+   bot/lanes.py picks it from the clip's words), `"style"` via `brief_overrides.style`, `"thumb_text"` (2-6 words
+   on the thumbnail; else a cut of the hook) and `"thumb_t"` (episode second of the thumbnail frame; else the
+   picker's choice; take it from the clip's `_thumbnail_options.jpg` when rico names an option). After a critique: change only
    what rico flagged. Every clip must pass scorecards/acceptance.md and the judge bar of 80, so pick moments with the
    actors on screen, no montage, a title with a number, question, quote or name.
 4. Commit and push `plan.json`; the next bot run renders it and refreshes 1_CHECK. To run the bot at

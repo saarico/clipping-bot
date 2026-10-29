@@ -6,7 +6,7 @@ from pathlib import Path
 ACCOUNTS = json.loads((Path(__file__).parent.parent / "config" / "accounts.json").read_text())
 
 
-def kit(clip_name, hook, brief, lane_platforms, caption="", thumb=""):
+def kit(clip_name, hook, brief, lane_platforms, caption="", thumb="", options=""):
     tags = " ".join(brief.get("tags", []))
     title = f"{hook.rstrip('.')} {tags}".strip()
     desc = (caption or f"{hook}\n\nFrom the full episode: {brief['links'][0] if brief.get('links') else 'see campaign'}") + f"\n{tags}"
@@ -17,7 +17,10 @@ def kit(clip_name, hook, brief, lane_platforms, caption="", thumb=""):
     desc = desc.strip()
     lines = [f"CLIP: {clip_name}", ""]
     if thumb:
-        lines += [f"Thumbnail: {thumb} (same folder). YouTube Shorts and TikTok take no file: in the app, pick the LAST frame of the video as the cover, it is this picture. Instagram: upload the PNG as the cover.", ""]
+        lines += [f"Thumbnail: {thumb} (same folder). YouTube Shorts and TikTok take no file: in the app, pick the LAST frame of the video as the cover, it is this picture. Instagram: upload the PNG as the cover."]
+        if options:
+            lines += [f"Other frames: {options} shows 4 numbered options. Want one of those (or other words on it)? Say so in the chat, e.g. \"clip 01, option 3\"; the next run swaps it."]
+        lines += [""]
     for p in lane_platforms:
         handle = ACCOUNTS.get(p, "?")
         lines += [f"== {p.upper()} ({handle}) ==", f"Title: {title[:100]}", "Description:", desc, "", ]

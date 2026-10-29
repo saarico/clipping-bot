@@ -61,7 +61,8 @@ def one_clip(spec, work, source, words, tag):
     r = sh([PY, str(HERE / "render_clip.py"), str(spec_path)], spec_path.with_suffix(".log"), timeout=2400)
     out = Path(spec["out"])
     res = {"hook": spec["hook"], "why": why, "parts": spec.get("parts", []), "ok": False, "qa": "FAIL", "judge": 0, "fails": [], "dur": 0,
-           "style": spec.get("style", ""), "lane_pin": spec.get("lane")}
+           "style": spec.get("style", ""), "lane_pin": spec.get("lane"),
+           "thumb_text": spec.get("thumb_text", ""), "thumb_t": spec.get("thumb_t"), "emphasis": spec.get("emphasis", [])}
     if r.returncode != 0 or not out.exists():
         res["error"] = f"render failed ({(r.stderr or r.stdout)[-200:].strip()})"
         return res
@@ -78,7 +79,8 @@ def one_clip(spec, work, source, words, tag):
         # and appended as the clip's last two frames for the YouTube / TikTok frame pickers (after QA: QA ignores it)
         import thumbnail
         thumb = folder / "thumbnail.png"
-        thumbnail.make(str(source), spec.get("hook", ""), spec.get("parts", []), str(thumb))
+        thumbnail.make(str(source), spec.get("hook", ""), spec.get("parts", []), str(thumb), text=spec.get("thumb_text"),
+                       at=spec.get("thumb_t"), emphasis=spec.get("emphasis", []), options=str(folder / "thumbnail_options.jpg"))
         thumbnail.append_cover(folder / f"{folder.name}.mp4", thumb)
     except Exception as e:
         print(f"thumbnail failed: {e}")

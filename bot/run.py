@@ -171,13 +171,36 @@ def join_videos(parts, dest, log=print):
     return dest if dest.exists() else None
 
 
+THUMB_VERSION = "v2"   # bump when thumbnail.py changes its look: approved clips get their thumbnail remade
+
+
+def plan_thumb(cdir, c):
+    """The reviewer's thumbnail pins (thumb_text, thumb_t, emphasis) for a kept clip: the plan.json clip whose
+    parts overlap the clip's parts."""
+    try:
+        plan = json.loads((cdir / "plan.json").read_text())
+    except Exception:
+        return {}
+    mine = c.get("parts") or []
+    for pc in plan.get("clips", []):
+        for a, b in pc.get("parts", []):
+            if any(min(b, q) - max(a, p) > 0.5 * min(b - a, q - p) for p, q in mine):
+                return {"thumb_text": pc.get("thumb_text", ""), "thumb_t": pc.get("thumb_t"), "emphasis": pc.get("emphasis", [])}
+    return {}
+
+
 def ensure_thumbnail(name, st, stage, cdir, f, c):
-    """An approved clip without a thumbnail yet (kept before thumbnails existed): build one from the episode's own
-    frames, upload it beside the clip, and re-upload the clip with the thumbnail as its last two frames. Returns the
-    PNG's name in 3_APPROVED, or "" when the source is not available."""
+    """An approved clip's thumbnail: built from the episode's own frames, uploaded beside the clip (PNG + the
+    options sheet), and the clip re-uploaded with the thumbnail as its last two frames. Remade when the reviewer's
+    pins (thumb_text / thumb_t in plan.json) or the thumbnail look (THUMB_VERSION) changed since the last one.
+    Returns the PNG's name in 3_APPROVED, or "" when the source is not available."""
     import thumbnail
-    png_name = f"{Path(f['Name']).stem}_thumbnail.png"
-    if any(x["Name"] == png_name for x in drive.files(stage["3_APPROVED"], {".png"})):
+    stem = Path(f["Name"]).stem
+    png_name, opts_name = f"{stem}_thumbnail.png", f"{stem}_thumbnail_options.jpg"
+    pins = plan_thumb(cdir, c)
+    sig = f"{THUMB_VERSION}|{pins.get('thumb_text', '')}|{pins.get('thumb_t')}"
+    have = {x["Name"] for x in drive.files(stage["3_APPROVED"], {".png", ".jpg"})}
+    if png_name in have and c.get("thumb_sig") == sig:
         return png_name
     if not c.get("parts"):
         return ""
@@ -187,14 +210,20 @@ def ensure_thumbnail(name, st, stage, cdir, f, c):
             return ""
         work = WORK / name / "thumbs"
         work.mkdir(parents=True, exist_ok=True)
-        png = work / png_name
-        thumbnail.make(str(src), c.get("hook", ""), c["parts"], str(png))
+        png, opts = work / png_name, work / opts_name
+        thumbnail.make(str(src), c.get("hook", ""), c["parts"], str(png), text=pins.get("thumb_text"), at=pins.get("thumb_t"),
+                       emphasis=pins.get("emphasis", []), options=str(opts))
         local = work / f["Name"]
         drive.download(f["Path"], str(local))
-        thumbnail.append_cover(local, png)
+        # the clip on Drive already ends with an earlier cover frame (any thumbnail made since 2026-10-29 03:10 UTC): cut it off
+        thumbnail.append_cover(local, png, strip_old=bool(c.get("thumb_sig")) or f["Name"] in st.get("covered", []))
         drive.upload(str(png), stage["3_APPROVED"], name=png_name)
+        if opts.exists():
+            drive.upload(str(opts), stage["3_APPROVED"], name=opts_name)
         drive.upload(str(local), stage["3_APPROVED"], name=f["Name"])     # same name: the clip with the cover frame at the end
-        note(st, f"thumbnail made for {f['Name']} (PNG + last-frame cover)")
+        c["thumb_sig"] = sig
+        note(st, f"thumbnail made for {f['Name']} (PNG + options sheet + last-frame cover"
+                 f"{', pinned at ' + str(pins['thumb_t']) + ' s' if pins.get('thumb_t') is not None else ''})")
         return png_name
     except Exception as e:
         log(f"thumbnail for {f['Name']} failed: {e}")
@@ -327,6 +356,13 @@ def do_campaign(name, cpath, phase="all"):
     approved = drive.files(stage["3_APPROVED"], VID_EXT)
     kits = st.get("kits", {})
     new_kits = [f for f in approved if f["Path"] not in kits]
+    if not new_kits and approved:
+        # thumbnails of clips already in the kit: remade when the look or the reviewer's pins changed
+        clips = {c["mp4"]: c for c in st.get("clips", [])}
+        redo = [f for f in approved if f["Name"] in clips and clips[f["Name"]].get("thumb_sig") !=
+                f"{THUMB_VERSION}|{plan_thumb(cdir, clips[f['Name']]).get('thumb_text', '')}|{plan_thumb(cdir, clips[f['Name']]).get('thumb_t')}"]
+        if redo:
+            new_kits = approved          # rewrite the whole kit so it matches the new pictures
     if new_kits:
         clips = {c["mp4"]: c for c in st.get("clips", [])}
         text = [f"POST KIT  ({now()})", "", "One platform per clip, by what the clip is about (YouTube = business/money, Instagram = celebrity/drama, TikTok = entertainment).", ""]
@@ -339,7 +375,8 @@ def do_campaign(name, cpath, phase="all"):
             c = clips.get(f["Name"], {})
             lane = c.get("lane") or (st["brief"].get("platforms") or ["youtube"])[0]
             thumb_name = ensure_thumbnail(name, st, stage, cdir, f, c)
-            text.append(post_kit.kit(f["Name"], c.get("hook", Path(f["Name"]).stem.replace("-", " ")), st["brief"], [lane], caption=c.get("caption", ""), thumb=thumb_name))
+            text.append(post_kit.kit(f["Name"], c.get("hook", Path(f["Name"]).stem.replace("-", " ")), st["brief"], [lane], caption=c.get("caption", ""), thumb=thumb_name,
+                                     options=f"{Path(f['Name']).stem}_thumbnail_options.jpg" if thumb_name else ""))
             text.append("")
             kits[f["Path"]] = f["Name"]
         drive.write_doc("POST KIT", "\n".join(text), stage["3_APPROVED"])
@@ -494,6 +531,9 @@ def publish(name, st, stage, kept, summary, t0):
         drive.upload(c["mp4"], stage["1_CHECK"], name=f"{k:02d}_{Path(c['mp4']).name.split('_', 1)[-1]}")
         if c.get("thumb") and Path(c["thumb"]).exists():
             drive.upload(c["thumb"], stage["1_CHECK"], name=f"{k:02d}_{Path(c['mp4']).stem.split('_', 1)[-1]}_thumbnail.png")
+            opts = Path(c["thumb"]).with_name("thumbnail_options.jpg")
+            if opts.exists():
+                drive.upload(str(opts), stage["1_CHECK"], name=f"{k:02d}_{Path(c['mp4']).stem.split('_', 1)[-1]}_thumbnail_options.jpg")
     body = [f"SUMMARY  ({now()}, {(time.time() - t0) / 60:.0f} min)", "", f"{len(kept)} clip(s) in 1_CHECK. Max 3 per campaign.", ""]
     for k, c in enumerate(kept, 1):
         body += [f"{k:02d}  {c['hook']}  ({c['dur']} s, judge {c['judge']})", f"    post on: {c.get('lane', '?').upper()} ({lanes.handle(c.get('lane', ''))})",

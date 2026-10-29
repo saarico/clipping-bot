@@ -3,6 +3,19 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-10-29 (03:20 UTC): thumbnails rebuilt after rico's verdict
+- rico: "are you able to pull images or make the clips better as in clickbaity... the one you made is very creepy and
+  no one would want to watch that, it's weird. also the text is bad."
+- Outside images stay banned (the campaign briefs allow only the footage itself), so the fix is the choice of frame
+  and the text. `bot/thumbnail.py` rewritten: the frame is the most clickable face, not the loudest one (frontal,
+  sharp, mid-size, zoom at most 1.5x, not at a sound peak: the first version weighted "the payoff at the end" and
+  picked Rockwell mid-scream at 1.8x zoom); text is 2-6 words in huge Montserrat Black with one yellow word, placed
+  away from the face; light pop grade instead of a heavy black gradient. The reviewer can pin `thumb_text` and
+  `thumb_t` per clip in plan.json. Every clip also gets a 4-frame OPTIONS sheet beside the thumbnail so rico can
+  pick another frame by number. Approved clips get their thumbnail remade when the look or the pins change (the old
+  cover frames are cut off first). RULES.md 20 rewritten. DIGGER pins: 01 "A $1 billion rig... over a crack?" at
+  51.9 s, 02 "Is that all the bad news?" at 212.5 s (Tom Cruise, mouth shut, staring).
+
 ## 2026-10-29 (03:00 UTC): thumbnails for Shorts, TikTok and Reels
 - rico: "what about thumbnail on YouTube Shorts. make sure it's really good."
 - Bot: `bot/thumbnail.py` builds a 1080x1920 thumbnail from the episode's own frames (best reacting face, the hook in
