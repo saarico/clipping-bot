@@ -20,12 +20,13 @@ Drive: CLIPPING/
 | Read requirements, pick the video, get the file | bot | `bot/brief.py`, `bot/run.py` (yt-dlp, else asks for the mp4) |
 | Transcribe the whole episode | bot | `bot/transcribe.py` (Whisper on CPU) |
 | Pick max 3 moments | bot / reviewer | `bot/plan.py`, `scorecards/entertainment.md`, `campaigns/<c>/plan.json` |
-| Cut, QA, judge | bot | `bot/render_clip.py`, `bot/qa_check.py`, `bot/judge_clip.py`, `scorecards/judgment.md` |
+| Cut, inspect, judge, retry | bot | `bot/render_clip.py` (YuNet face tracking, one 9:16 look), `bot/qa_check.py` (hard gates, `scorecards/acceptance.md`), `bot/judge_clip.py` (bar 80, `scorecards/judgment.md`), `bot/pipeline.py` grade-and-retry (re-edit once, then the next moment; clips that pass every gate at 75-79 go up marked UNDER THE BAR when nothing reaches 80) |
+| Lane: one platform per clip | bot | `bot/lanes.py` (YouTube = business/money, Instagram = celebrity/drama, TikTok = entertainment), shown in the SUMMARY |
 | Review | rico | 1_CHECK → 2_REDO or 3_APPROVED |
-| Post kit (title, description, tags) | bot | `bot/post_kit.py`, `config/accounts.json` |
+| Post kit (one platform, title, description, tags) | bot | `bot/post_kit.py`, `config/accounts.json` |
 | Post, paste the link into Content Rewards | rico (one click from the POST KIT) | see SETUP.md |
 
-Rules the bot follows: `RULES.md`. rico's critiques land in `campaigns/<c>/critiques/` and the reviewer
+Rules the bot follows: `RULES.md`. Every rule change with its date: `CHANGELOG.md`. Acceptance gates: `scorecards/acceptance.md`. rico's critiques land in `campaigns/<c>/critiques/` and the reviewer
 applies them in the next `plan.json`. State per campaign: `campaigns/<c>/state.json`. Videos never enter git.
 
 Run by hand: Actions → run → Run workflow (optionally one campaign folder name).

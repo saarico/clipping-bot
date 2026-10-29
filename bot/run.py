@@ -27,6 +27,7 @@ import brief as briefer  # noqa: E402
 import drive  # noqa: E402
 import pipeline  # noqa: E402
 import post_kit  # noqa: E402
+import lanes  # noqa: E402
 
 WORK = Path(os.environ.get("CLIP_WORK", "/tmp/clipwork"))
 PREP = WORK / "prep"    # what the render machines need (specs, transcript, graphics map): a GitHub artifact
@@ -297,11 +298,17 @@ def do_campaign(name, cpath, phase="all"):
     kits = st.get("kits", {})
     new_kits = [f for f in approved if f["Path"] not in kits]
     if new_kits:
-        hooks = {c["mp4"]: c["hook"] for c in st.get("clips", [])}
-        caps = {c["mp4"]: c.get("caption", "") for c in st.get("clips", [])}
-        text = [f"POST KIT  ({now()})", ""]
+        clips = {c["mp4"]: c for c in st.get("clips", [])}
+        text = [f"POST KIT  ({now()})", "", "One platform per clip, by what the clip is about (YouTube = business/money, Instagram = celebrity/drama, TikTok = entertainment).", ""]
+        if any(f["Name"] in clips and not clips[f["Name"]].get("lane") for f in new_kits):
+            # clips kept before lanes existed: assign now from their words
+            old = [clips[f["Name"]] for f in new_kits if f["Name"] in clips and not clips[f["Name"]].get("lane")]
+            for c, (lane, _) in zip(old, lanes.assign([{"hook": c["hook"], "text": c.get("text", c.get("caption", "")), "style": st["brief"].get("style", "")} for c in old])):
+                c["lane"] = lane
         for f in new_kits:
-            text.append(post_kit.kit(f["Name"], hooks.get(f["Name"], Path(f["Name"]).stem.replace("-", " ")), st["brief"], st["brief"].get("platforms") or ["youtube"], caption=caps.get(f["Name"], "")))
+            c = clips.get(f["Name"], {})
+            lane = c.get("lane") or (st["brief"].get("platforms") or ["youtube"])[0]
+            text.append(post_kit.kit(f["Name"], c.get("hook", Path(f["Name"]).stem.replace("-", " ")), st["brief"], [lane], caption=c.get("caption", "")))
             text.append("")
             kits[f["Path"]] = f["Name"]
         drive.write_doc("POST KIT", "\n".join(text), stage["3_APPROVED"])
@@ -456,11 +463,12 @@ def publish(name, st, stage, kept, summary, t0):
         drive.upload(c["mp4"], stage["1_CHECK"], name=f"{k:02d}_{Path(c['mp4']).name.split('_', 1)[-1]}")
     body = [f"SUMMARY  ({now()}, {(time.time() - t0) / 60:.0f} min)", "", f"{len(kept)} clip(s) in 1_CHECK. Max 3 per campaign.", ""]
     for k, c in enumerate(kept, 1):
-        body += [f"{k:02d}  {c['hook']}  ({c['dur']} s, judge {c['judge']})", f"    why: {c['why']}", "    captions:", *("    " + l for l in c["captions"].splitlines()[:40]), ""]
+        body += [f"{k:02d}  {c['hook']}  ({c['dur']} s, judge {c['judge']})", f"    post on: {c.get('lane', '?').upper()} ({lanes.handle(c.get('lane', ''))})",
+                 f"    why: {c['why']}", "    captions:", *("    " + l for l in c["captions"].splitlines()[:40]), ""]
     body += ["Run notes:", summary, "", "Approve: drag the mp4 to 3_APPROVED. Change: put a Word doc with your notes in 2_REDO."]
     drive.write_doc("SUMMARY", "\n".join(body), stage["1_CHECK"])
     st["clips"] = [{"mp4": f"{k:02d}_{Path(c['mp4']).name.split('_', 1)[-1]}", "hook": c["hook"], "judge": c["judge"], "dur": c["dur"],
-                    "caption": c.get("caption", "")} for k, c in enumerate(kept, 1)]
+                    "caption": c.get("caption", ""), "lane": c.get("lane", ""), "text": " ".join(c.get("captions", "").split())} for k, c in enumerate(kept, 1)]
     st["needs_redo"] = False
     note(st, f"{len(kept)} clip(s) uploaded to 1_CHECK")
     save_state(name, st)

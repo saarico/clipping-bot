@@ -11,7 +11,10 @@ Per campaign under `campaigns/<c>/`:
    RULES.md and the brief (face in first N seconds, no ad reads, finishes the point).
 3. Write `plan.json`: `{"why": "...", "clips": [render_clip spec, ...]}` (spec format in
    `bot/render_clip.py`'s docstring: parts, hook, hook_hi, emphasis, focus, callouts, overlays).
-   Max 3 clips. After a critique: change only what rico flagged.
+   Max 3 clips. Optional per clip: `"lane": "youtube" | "instagram" | "tiktok"` to pin the platform (otherwise
+   bot/lanes.py picks it from the clip's words), `"style"` via `brief_overrides.style`. After a critique: change only
+   what rico flagged. Every clip must pass scorecards/acceptance.md and the judge bar of 80, so pick moments with the
+   actors on screen, no montage, a title with a number, question, quote or name.
 4. Commit and push `plan.json`; the next bot run renders it and refreshes 1_CHECK. To run the bot at
    once, trigger the workflow (Actions → run).
 If the reviewer has not written a plan, the bot picks moments itself with the scorecard (weaker hooks,

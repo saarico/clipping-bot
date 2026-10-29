@@ -21,6 +21,7 @@ from pathlib import Path
 HERE = Path(__file__).parent
 sys.path.insert(0, str(HERE))
 import plan as planner  # noqa: E402
+import lanes  # noqa: E402
 
 JUDGE_BAR = 80    # 2026-10-28: rico wants "amazing high tier quality"; under the bar = re-edit once, then the next moment
 NEAR_BAR = 75     # a clip that passes every hard gate at 75-79 is handed over marked "under the bar" when nothing reaches 80
@@ -59,7 +60,8 @@ def one_clip(spec, work, source, words, tag):
     t0 = time.time()
     r = sh([PY, str(HERE / "render_clip.py"), str(spec_path)], spec_path.with_suffix(".log"), timeout=2400)
     out = Path(spec["out"])
-    res = {"hook": spec["hook"], "why": why, "parts": spec.get("parts", []), "ok": False, "qa": "FAIL", "judge": 0, "fails": [], "dur": 0}
+    res = {"hook": spec["hook"], "why": why, "parts": spec.get("parts", []), "ok": False, "qa": "FAIL", "judge": 0, "fails": [], "dur": 0,
+           "style": spec.get("style", ""), "lane_pin": spec.get("lane")}
     if r.returncode != 0 or not out.exists():
         res["error"] = f"render failed ({(r.stderr or r.stdout)[-200:].strip()})"
         return res
@@ -186,6 +188,13 @@ def decide(results, work, kept=None, notes=None):
             if Path(res["folder"]).exists() and not dropped.exists():
                 dropped.parent.mkdir(parents=True, exist_ok=True)
                 shutil.move(str(res["folder"]), str(dropped))
+    # one platform per clip, by what the clip is about (bot/lanes.py); shown in the SUMMARY and used by the POST KIT
+    by_hook = {r["hook"]: r for r in results if not r.get("error")}
+    picks = lanes.assign([{"hook": k["hook"], "text": " ".join(k.get("captions", "").split()),
+                           "style": by_hook.get(k["hook"], {}).get("style", ""), "lane": by_hook.get(k["hook"], {}).get("lane_pin")} for k in kept])
+    for k, (lane, why) in zip(kept, picks):
+        k["lane"], k["lane_why"] = lane, why
+        notes.append(f"LANE  {Path(k['folder']).name}: {lane} ({why})")
     return kept, notes
 
 

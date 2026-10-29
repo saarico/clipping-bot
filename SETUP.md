@@ -28,7 +28,8 @@ Actions → **run** → Run workflow. The bot creates `CAMPAIGNS TO JOIN` and `C
 CLIPPING folder. The bot creates `CLIPPING/0_START/<campaign>/` with a JOIN doc for each campaign it recommends; drop the requirements (and episode.mp4 if assigned) in that folder. For a campaign you found yourself, make the folder and drop the requirements.
 
 ## Posting (what is automatic, what is your click)
-- **YouTube Shorts / TikTok / Instagram**: the POST KIT doc in 3_APPROVED has the title, description
-  and tags; you upload with one click. Automatic posting needs each platform's app audit (weeks); it
+- **YouTube Shorts / TikTok / Instagram**: each approved clip goes to ONE platform, chosen by what the clip is about
+  (YouTube = business/money, Instagram = celebrity/drama, TikTok = entertainment; the SUMMARY shows it as "post on").
+  The POST KIT doc in 3_APPROVED has that platform's title, description and tags; you upload with one click. Automatic posting needs each platform's app audit (weeks); it
   is a later step, and never a password typed anywhere but the platform's own screen.
 - **Content Rewards**: no API. Paste the post link yourself.
