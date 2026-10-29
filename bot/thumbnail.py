@@ -263,15 +263,16 @@ def _fit_size(draw, lines, max_w, start=210, min_size=90):
     return min_size
 
 
-def layout(draw, text, max_w):
-    """Lines and font size: one line if it can be 150 px+, else two, else three (big beats many)."""
+def layout(draw, text, max_w, max_lines=3):
+    """Lines and font size: one line if it can be 150 px+, else two, else three (big beats many).
+    `max_lines=2` for the low block (under the face there is less room)."""
     one = [text.upper()]
     s1 = _fit_size(draw, one, max_w)
     if s1 >= 150:
         return one, s1
     two = [l.upper() for l in split_lines(text, 2) if l]
-    s2 = _fit_size(draw, two, max_w)
-    if s2 >= 120 or len(text.split()) <= 4:
+    s2 = _fit_size(draw, two, max_w, min_size=84)
+    if s2 >= 120 or len(text.split()) <= 4 or max_lines <= 2:
         return two, s2
     three = [l.upper() for l in split_lines(text, 3) if l]
     s3 = _fit_size(draw, three, max_w)
@@ -288,11 +289,11 @@ def compose(picture_bgr, text, out_png, emphasis=(), low=False):
     shade = Image.new("RGBA", (W, H), (0, 0, 0, 0)); shade.putalpha(grad.resize((W, H)))
     im = Image.alpha_composite(im, shade)
     draw = ImageDraw.Draw(im)
-    lines, size = layout(draw, text, W - 90)
+    lines, size = layout(draw, text, W - 90, max_lines=2 if low else 3)
     font = _font(size)
     keys = key_words(text, emphasis)
     block = int(size * 1.12) * len(lines)
-    y = (H - 300 - block) if low else 130        # low: above the bottom 300 px (where the apps draw their UI)
+    y = (H - 280 - block) if low else 130        # low: above the bottom 280 px (where the apps draw their UI)
     for l in lines:
         words = l.split()
         widths = [draw.textlength(w, font=font) for w in words]
