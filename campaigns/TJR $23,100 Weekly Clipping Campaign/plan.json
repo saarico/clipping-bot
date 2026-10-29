@@ -1,0 +1,19 @@
+{
+ "why": "Reviewer overrides from the Reach rules page https://reachclipping.com/TJR (read 2026-10-29 16:25 UTC). Clips are picked by the scorecard until a reviewer adds clips here.",
+ "brief_overrides": {
+  "style": "stream",
+  "platforms": ["tiktok", "instagram", "youtube"],
+  "tags": ["#TJR"],
+  "min_s": 10,
+  "max_s": 60,
+  "rules": [
+   "Every clip features TJR (funny moments, memorable quotes, reactions from his own streams and videos)",
+   "Caption must include #TJR",
+   "Never portray TJR negatively",
+   "No logos on the clip; no AI-generated content; thumbnails must match the clip and not repeat",
+   "English captions and on-screen text only; 50%+ of viewers from US, UK, CA, AU, NZ",
+   "Submit every clip link in Content Rewards within 30 minutes of posting; paid from 5,000 views ($0.75 per 1k, min $3.75, max $750 per video)",
+   "Posting account must be a relevant niche page (100+ followers) or a dedicated TJR account (TJRClips / TJRDaily style, TJR artwork as the profile picture)"
+  ]
+ }
+}
