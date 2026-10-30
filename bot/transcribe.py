@@ -75,6 +75,7 @@ def main(src, out, model=None, part=None):
                 continue   # the padding: another part owns these words
             words.append({"text": w.word.strip(), "start": st, "end": en, "speaker": "s0"})
     Path(out).write_text(json.dumps(speakers(words)))
+    wav.unlink(missing_ok=True)
     print(f"{len(words)} words -> {out}")
 
 

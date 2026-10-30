@@ -3,6 +3,18 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-10-30 (04:15 UTC): Higgsfield run 1 died of a full disk; fixed
+- Run 40994897851 (03:00-03:54) stopped with "No space left on device" during prepare. rico's episode file is the 4K
+  YouTube download; the 1080p conversion wrote at ~20 Mbit/s (ultrafast, crf 17): about 10 GB for an hour, on the
+  runner's ~20 GB root disk next to the 1.2 GB original.
+- Bot: the work folder is now /mnt/clipwork (the runner's second disk, ~60 GB free; env CLIP_WORK in run.yml, a "work
+  disk" step in every job); conversion writes veryfast crf 21 (~4 Mbit/s) and deletes the original and the parts as it
+  goes; the transcript wav is deleted after use.
+- Bot: a single file in 0_START named like a yt-dlp download ("Title [videoid].mp4") whose id is in the brief's YouTube
+  link is the same video: prepare takes the 1080p h264 copy from YouTube (3 min, YT_COOKIES) instead of converting 4K
+  (most of an hour), and caches it on Drive for the render machines. The transcribe machines take the raw file as it is
+  (audio only needs no conversion) and never write the cache.
+
 ## 2026-10-30 (03:30 UTC): the transcript on 4 machines, the episode download cached (rico: "15 min")
 - rico: "one hour is a long time, can we increase speed to 15 min, have several agents take on the work and come
   together." Rendering already ran on 4 machines; the slow serial part of a FIRST run on a new episode was the

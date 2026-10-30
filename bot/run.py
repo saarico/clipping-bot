@@ -178,16 +178,22 @@ def join_videos(parts, dest, log=print):
         vf = ((crop + ",") if crop else "") + "scale=-2:1080:flags=bicubic,crop='min(iw,1920)':1080,pad=1920:1080:(ow-iw)/2:(oh-ih)/2,fps=30,setsar=1"
         o = dest.parent / "parts" / f"n{i:02d}.mp4"
         o.parent.mkdir(parents=True, exist_ok=True)
-        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(pth), "-vf", vf, "-r", "30", "-c:v", "libx264", "-preset", "ultrafast",
-                        "-crf", "17", "-c:a", "aac", "-ar", "48000", "-ac", "2", "-af", "aresample=async=1", str(o)], check=False)
+        # veryfast crf 21: about 4 Mbit/s. ultrafast crf 17 wrote ~20 Mbit/s, 10 GB for a 1-hour 4K episode, and the
+        # GitHub machine ran out of disk (Higgsfield, 2026-10-30)
+        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(pth), "-vf", vf, "-r", "30", "-c:v", "libx264", "-preset", "veryfast",
+                        "-crf", "21", "-c:a", "aac", "-ar", "48000", "-ac", "2", "-af", "aresample=async=1", str(o)], check=False)
         if o.exists():
             norm.append(o)
             log(f"part {i:02d}: {pth.name[:60]} {w}x{h} {dur:.0f}s" + (f" ({crop})" if crop else ""))
+            pth.unlink(missing_ok=True)   # the original is not needed again on this machine
     if not norm:
         return None
     lst = dest.parent / "parts" / "list.txt"
     lst.write_text("".join(f"file '{p}'\n" for p in norm))
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", str(lst), "-c", "copy", str(dest)], check=False)
+    if dest.exists():
+        for p in norm:
+            p.unlink(missing_ok=True)
     return dest if dest.exists() else None
 
 
@@ -257,8 +263,13 @@ def ensure_thumbnail(name, st, stage, cdir, f, c):
         return ""
 
 
-def get_source(name, st, stage, cdir):
-    """Episode file: from 0_START, else yt-dlp on the brief's first link (best effort)."""
+YT_ID = re.compile(r"\[([A-Za-z0-9_-]{11})\]")   # yt-dlp names downloads "Title [videoid].mp4"
+
+
+def get_source(name, st, stage, cdir, for_audio=False):
+    """Episode file: from 0_START, else yt-dlp on the brief's first link (best effort).
+    for_audio (the transcribe machines): the single raw file as it is, no conversion, no cache writes; several
+    files = None (their joined timeline exists only after prepare converts them)."""
     dest = WORK / name / "episode.mp4"
     if dest.exists():
         return dest
@@ -275,17 +286,33 @@ def get_source(name, st, stage, cdir):
                     return drive.download(cached["episode.mp4"]["Path"], dest)
             except Exception as e:
                 note(st, f"cache check failed ({type(e).__name__}); rebuilding the episode")
+        got = None
         if len(vids) == 1:
             # one file: used as is when it already is 1920x1080 landscape, else converted like a joined episode
             # (render_clip refuses any other size; a 1280x720 or 4K episode stopped every render with SystemExit)
-            note(st, f"downloading {vids[0]['Name']} from 0_START")
-            one = drive.download(vids[0]["Path"], dest.parent / "parts" / f"00_{vids[0]['Name']}")
-            w, h, _ = video_info(one)
-            if (w, h) == (1920, 1080):
-                shutil.move(str(one), str(dest))
-                return dest
-            note(st, f"{vids[0]['Name'][:60]} is {w}x{h}: converting to 1920x1080 30 fps")
-            parts = [one]
+            m = YT_ID.search(vids[0]["Name"])   # rico's own yt-dlp download: "Title [videoid].mp4"
+            yt = next((u for u in st.get("brief", {}).get("links", []) if m and m.group(1) in u and re.search(r"youtu\.?be", u)), None)
+            if yt and os.environ.get("YT_COOKIES") and not for_audio:
+                # the same video is in the brief's YouTube link: its 1080p h264 copy downloads in minutes, while a 4K file
+                # from Drive took the better part of an hour to convert (Higgsfield, 2026-10-30)
+                note(st, f"{vids[0]['Name'][:60]} is the brief's YouTube video: taking the 1080p copy from YouTube")
+                try:
+                    got = fetch_link(yt, dest, st)
+                except Exception as e:
+                    note(st, f"YouTube copy failed ({type(e).__name__}: {str(e)[:80]}); using the file from 0_START")
+            if not got:
+                note(st, f"downloading {vids[0]['Name']} from 0_START")
+                one = drive.download(vids[0]["Path"], dest.parent / "parts" / f"00_{vids[0]['Name']}")
+                w, h, _ = video_info(one)
+                if (w, h) == (1920, 1080):
+                    shutil.move(str(one), str(dest))
+                    return dest
+                if for_audio:
+                    return one
+                note(st, f"{vids[0]['Name'][:60]} is {w}x{h}: converting to 1920x1080 30 fps")
+                parts = [one]
+        elif for_audio:
+            return None
         else:   # several files (scene clips, trailers, episode parts): one landscape episode in name order
             todo, sizes = [], set()
             for v in vids:   # don't even download duplicates or finished vertical cuts
@@ -298,7 +325,7 @@ def get_source(name, st, stage, cdir):
                 sizes.add(v.get("Size"))
             note(st, f"downloading {len(todo)} of {len(vids)} videos from 0_START and joining them")
             parts = [drive.download(v["Path"], dest.parent / "parts" / f"{i:02d}_{v['Name']}") for i, v in enumerate(todo)]
-        out = join_videos(parts, dest, log=lambda m: note(st, m))
+        out = got or join_videos(parts, dest, log=lambda m: note(st, m))
         if not out:
             note(st, "the video in 0_START could not be converted (no usable landscape picture)")
         if out:
@@ -314,6 +341,8 @@ def get_source(name, st, stage, cdir):
             return out
     links = st.get("brief", {}).get("links", [])
     if links and not st.get("download_failed"):
+        if for_audio and len(links) > 1:   # whichever link works, prepare caches it; a transcribe machine tries the first only
+            links = links[:1]
         import hashlib
         sig = "links:" + hashlib.md5("|".join(links[:6]).encode()).hexdigest()[:12]
         cache = f"{drive.root()}/_cache/{name}"   # a downloaded episode is kept on Drive: YouTube is asked once, not on every machine
@@ -333,6 +362,8 @@ def get_source(name, st, stage, cdir):
                 got = None
                 errors.append(f"{url[:60]}: {type(e).__name__} {str(e)[:80]}")
             if got:
+                if for_audio:
+                    return got
                 try:
                     meta = dest.parent / "source.json"
                     meta.write_text(json.dumps({"sig": sig, "url": url}))
@@ -374,7 +405,7 @@ def transcribe_job(i, n, only=None):
             if not drive.files(stage["0_START"], VID_EXT) and not st.get("brief", {}).get("links"):
                 log(f"{name}: no episode yet (prepare reads the brief first)")
                 continue
-            src = get_source(name, st, stage, ROOT / "campaigns" / name)
+            src = get_source(name, st, stage, ROOT / "campaigns" / name, for_audio=True)
             if not src or not has_speech(src):
                 log(f"{name}: no source" if not src else f"{name}: no speech")
                 continue

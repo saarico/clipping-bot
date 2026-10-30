@@ -13,6 +13,8 @@ concurrency:
   cancel-in-progress: false
 permissions:
   contents: write
+env:
+  CLIP_WORK: /mnt/clipwork   # the runner's big disk (~60 GB free); / has ~20 GB and a converted 4K episode filled it (2026-10-30)
 
 # Four stages so that every clip is cut on its own machine (rico, 2026-10-28: "speed it up 20x"; 2026-10-30: "15 min"):
 #   transcribe  4 machines beside prepare: a quarter of the episode each (only when the transcript is new) -> artifact "words-N"
@@ -39,6 +41,10 @@ jobs:
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
           curl -fsSL https://rclone.org/install.sh | sudo bash
+      - name: work disk
+        run: |
+          sudo mkdir -p /mnt/clipwork && sudo chown "$USER" /mnt/clipwork
+          df -h / /mnt | tee -a data/setup.log
       - name: deps
         run: pip install -q -r requirements.txt
       - name: whisper model cache
@@ -53,13 +59,13 @@ jobs:
           CAMPAIGN: ${{ inputs.campaign }}
         run: |
           set -o pipefail
-          mkdir -p /tmp/clipwork/words
-          python bot/run.py "$CAMPAIGN" --phase transcribe --part ${{ matrix.part }} --parts 4 2>&1 | tee /tmp/clipwork/words/log_${{ matrix.part }}.txt
+          mkdir -p /mnt/clipwork/words
+          python bot/run.py "$CAMPAIGN" --phase transcribe --part ${{ matrix.part }} --parts 4 2>&1 | tee /mnt/clipwork/words/log_${{ matrix.part }}.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: words-${{ matrix.part }}
-          path: /tmp/clipwork/words
+          path: /mnt/clipwork/words
           retention-days: 1
           if-no-files-found: warn
 
@@ -81,6 +87,10 @@ jobs:
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
           curl -fsSL https://rclone.org/install.sh | sudo bash
+      - name: work disk
+        run: |
+          sudo mkdir -p /mnt/clipwork && sudo chown "$USER" /mnt/clipwork
+          df -h / /mnt | tee -a data/setup.log
       - name: deps
         run: pip install -q -r requirements.txt
       - name: browser cache (for rules pages that need JavaScript, e.g. Notion)
@@ -111,7 +121,7 @@ jobs:
         if: steps.prep.outputs.count != '0'
         with:
           name: prep
-          path: /tmp/clipwork/prep
+          path: /mnt/clipwork/prep
           retention-days: 1
           include-hidden-files: true
       - name: save state
@@ -143,25 +153,29 @@ jobs:
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
           curl -fsSL https://rclone.org/install.sh | sudo bash
+      - name: work disk
+        run: |
+          sudo mkdir -p /mnt/clipwork && sudo chown "$USER" /mnt/clipwork
+          df -h / /mnt | tee -a data/setup.log
       - name: deps
         run: pip install -q -r requirements.txt
       - uses: actions/download-artifact@v4
         with:
           name: prep
-          path: /tmp/clipwork/prep
+          path: /mnt/clipwork/prep
       - name: render
         env:
           RCLONE_TOKEN: ${{ secrets.RCLONE_TOKEN }}
           YT_COOKIES: ${{ secrets.YT_COOKIES }}
         run: |
           set -o pipefail
-          mkdir -p /tmp/clipwork/out/${{ matrix.job }}
-          python bot/run.py --phase render --job ${{ matrix.job }} 2>&1 | tee /tmp/clipwork/out/${{ matrix.job }}/render.log
+          mkdir -p /mnt/clipwork/out/${{ matrix.job }}
+          python bot/run.py --phase render --job ${{ matrix.job }} 2>&1 | tee /mnt/clipwork/out/${{ matrix.job }}/render.log
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: clip-${{ matrix.job }}
-          path: /tmp/clipwork/out/${{ matrix.job }}
+          path: /mnt/clipwork/out/${{ matrix.job }}
           retention-days: 3
           include-hidden-files: true
 
@@ -180,16 +194,18 @@ jobs:
           cache: pip
       - name: rclone
         run: curl -fsSL https://rclone.org/install.sh | sudo bash
+      - name: work disk
+        run: sudo mkdir -p /mnt/clipwork && sudo chown "$USER" /mnt/clipwork
       - name: deps
         run: pip install -q -r requirements.txt
       - uses: actions/download-artifact@v4
         with:
           name: prep
-          path: /tmp/clipwork/prep
+          path: /mnt/clipwork/prep
       - uses: actions/download-artifact@v4
         with:
           pattern: clip-*
-          path: /tmp/clipwork/out
+          path: /mnt/clipwork/out
       - name: collect
         env:
           RCLONE_TOKEN: ${{ secrets.RCLONE_TOKEN }}
