@@ -1,5 +1,17 @@
-probe 2026-10-30T02:08Z https://www.youtube.com/watch?v=Vw9m8s2DQLg cookies=yes
+probe 2026-10-30T02:09Z https://www.youtube.com/watch?v=Vw9m8s2DQLg cookies=yes
 ERROR: [youtube] Vw9m8s2DQLg: Requested format is not available. Use --list-formats for a list of available formats
+[youtube] Vw9m8s2DQLg: Downloading webpage
+[youtube] Vw9m8s2DQLg: Downloading web embedded client config
+[youtube] Vw9m8s2DQLg: Downloading player 4efb8b2c-main
+[youtube] Vw9m8s2DQLg: Downloading web embedded player API JSON
+[youtube] Vw9m8s2DQLg: Downloading tv samsung player API JSON
+[info] Available formats for Vw9m8s2DQLg:
+ID  EXT   RESOLUTION FPS | PROTO | VCODEC MORE INFO
+----------------------------------------------------
+sb3 mhtml 48x27        0 | mhtml | images storyboard
+sb2 mhtml 80x45        0 | mhtml | images storyboard
+sb1 mhtml 160x90       0 | mhtml | images storyboard
+sb0 mhtml 320x180      0 | mhtml | images storyboard
 [youtube] Vw9m8s2DQLg: Downloading web embedded player API JSON
 [youtube] Vw9m8s2DQLg: Downloading tv samsung player API JSON
 ERROR: [youtube] Vw9m8s2DQLg: Requested format is not available. Use --list-formats for a list of available formats
