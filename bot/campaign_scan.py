@@ -175,6 +175,15 @@ CAT_LANE = {"finance": "A", "business": "A", "crypto": "A", "education": "A", "t
             "music": "C", "comedy": "C", "podcast": "C", "lifestyle": "B", "beauty": "B", "fashion": "B", "reality": "B", "health": "B", "fitness": "C"}
 
 
+# shows whose lane the title alone does not tell (rico's lanes): a money podcast is YouTube even when its name says "coffee"
+KNOWN_SHOWS = {"A": r"iced coffee hour|graham stephan|20vc|diary of a ceo|my first million|all-in podcast|bigger pockets|lex fridman",
+               "B": r"bilf|mara dorne|call her daddy|kardashian|love island|bachelor",
+               "C": r"kai cenat|ishowspeed|adin ross|xqc|theo von|joe rogan|flagrant|kill tony|impaulsive"}
+# Reach-style campaigns want the posting account's niche to match or a dedicated account (TJR, 2026-10-29): rico's channels
+# are general, so they are offered no more
+DEDICATED = r"\bdedicated (?:account|page|pages)\b|\bfan page\b(?! needed)|reach"
+
+
 def content_fit(c):
     """(lane, topic_pts 0-10, fun_pts 0-15). Lane by topic first (rico: YouTube = business and money,
     TikTok = entertainment and cool stuff, Instagram = girly stuff and drama), platform second."""
@@ -184,6 +193,9 @@ def content_fit(c):
     hits = {l: len(re.findall(rx, blob)) for l, rx in TOPIC.items()}
     if not any(hits.values()):
         hits = {l: len(re.findall(rx, desc)) for l, rx in TOPIC.items()}
+    for l, rx in KNOWN_SHOWS.items():
+        if re.search(rx, blob + " " + desc):
+            hits = {k: (3 if k == l else 0) for k in TOPIC}   # a known show settles the lane
     lane, topic = None, 0
     for l, _n in sorted(hits.items(), key=lambda kv: -kv[1]):
         if hits[l] and LANE_PLATFORM[l] in plats:
@@ -220,6 +232,8 @@ def auto_score(c):
         stops.append("brand ad, not a show (rico: clips must grow the channels)")
     if game_promo(c):
         stops.append("game footage with no person in it = a game-launch ad (rico 2026-10-29: the page would look like it just posts ads)")
+    if re.search(DEDICATED, f"{name} {c.get('org', '')} {c.get('description', '')}", re.I) and not re.search(r"no fan page needed", str(c.get("description", "")), re.I):
+        stops.append("wants a dedicated / niche-matching account (Reach style; rico dropped TJR for this 2026-10-30)")
     if re.search(r"[\u0600-\u06FF\u0400-\u04FF\u0E00-\u0E7F\u3040-\u30FF\u4E00-\u9FFF\uAC00-\uD7AF]", name) or \
        re.search(r"\b(en fran[cç]ais|espa[ñn]ol|hablando|portugu[eê]s|deutsch|italiano|international|arabic|hindi|\(fr\)|\(es\)|\(de\)|\(pt\)|con|para|sobre|pour|avec|und|vistas|clips en)\b|€", name, re.I):
         stops.append("not an English campaign (our accounts post in English)")
