@@ -314,6 +314,17 @@ def get_source(name, st, stage, cdir):
             return out
     links = st.get("brief", {}).get("links", [])
     if links and not st.get("download_failed"):
+        import hashlib
+        sig = "links:" + hashlib.md5("|".join(links[:6]).encode()).hexdigest()[:12]
+        cache = f"{drive.root()}/_cache/{name}"   # a downloaded episode is kept on Drive: YouTube is asked once, not on every machine
+        cached = {f["Name"]: f for f in drive.files(cache)}
+        if "episode.mp4" in cached and "source.json" in cached:
+            try:
+                if json.loads(drive.text_of(cached["source.json"]["Path"], "source.json")).get("sig") == sig:
+                    note(st, "episode taken from the Drive cache (downloaded from the link last time)")
+                    return drive.download(cached["episode.mp4"]["Path"], dest)
+            except Exception as e:
+                note(st, f"cache check failed ({type(e).__name__}); downloading again")
         errors = []
         for url in links[:6]:
             try:
@@ -322,6 +333,15 @@ def get_source(name, st, stage, cdir):
                 got = None
                 errors.append(f"{url[:60]}: {type(e).__name__} {str(e)[:80]}")
             if got:
+                try:
+                    meta = dest.parent / "source.json"
+                    meta.write_text(json.dumps({"sig": sig, "url": url}))
+                    drive.be().mkdir(cache)
+                    drive.upload(got, cache, name="episode.mp4")
+                    drive.upload(meta, cache, name="source.json")
+                    note(st, "episode saved to the Drive cache")
+                except Exception as e:
+                    note(st, f"cache save skipped ({type(e).__name__}: {str(e)[:80]})")
                 return got
         st["download_failed"] = True
         note(st, "no link could be downloaded; asked rico for the file")
@@ -334,6 +354,73 @@ def get_source(name, st, stage, cdir):
 
 
 IMG_EXT = (".png", ".jpg", ".jpeg", ".webp")
+TRANSCRIBE_PARTS = 4    # transcribe machines per run (run.yml matrix); a 1-hour podcast takes a quarter each
+WORDS = WORK / "words"  # what a transcribe machine sends back: <campaign>/part_<i>.json (artifact words-<i>)
+
+
+def transcribe_job(i, n, only=None):
+    """One of n machines: for every campaign that has an episode but no transcript yet, transcribe the i-th n-th.
+    Runs beside prepare, so it decides on its own what prepare will need: a video in 0_START, or a brief with links."""
+    WORDS.mkdir(parents=True, exist_ok=True)
+    (WORDS / "ready.txt").write_text(f"part {i} of {n}\n")   # the artifact exists even when there is nothing to do
+    dropped = [l.strip() for l in (ROOT / "config" / "dropped.txt").read_text().splitlines() if l.strip() and not l.startswith("#")] if (ROOT / "config" / "dropped.txt").exists() else []
+    for name, cpath in drive.campaigns():
+        if name in dropped or (only and name != only) or (ROOT / "campaigns" / name / "words.json").exists():
+            continue
+        st = load_state(name)
+        stage = drive.stages(cpath, create=False)
+        (WORK / name).mkdir(parents=True, exist_ok=True)
+        try:
+            if not drive.files(stage["0_START"], VID_EXT) and not st.get("brief", {}).get("links"):
+                log(f"{name}: no episode yet (prepare reads the brief first)")
+                continue
+            src = get_source(name, st, stage, ROOT / "campaigns" / name)
+            if not src or not has_speech(src):
+                log(f"{name}: no source" if not src else f"{name}: no speech")
+                continue
+            out = WORDS / name / f"part_{i}.json"
+            out.parent.mkdir(parents=True, exist_ok=True)
+            r = pipeline.sh([pipeline.PY, str(pipeline.HERE / "transcribe.py"), str(src), str(out), "--part", f"{i}/{n}"],
+                            WORK / name / f"transcribe_{i}.log", timeout=3 * 3600)
+            log(f"{name}: part {i + 1}/{n} " + ("done" if out.exists() else f"FAILED (exit {r.returncode})"))
+        except Exception as e:
+            log(f"{name}: ERROR {type(e).__name__}: {str(e)[:160]}")
+
+
+def wait_for_parts(name, n=TRANSCRIBE_PARTS, limit=50 * 60):
+    """Prepare: the transcript parts of this campaign from the transcribe machines of the same run (artifacts
+    words-0..n-1), polled with gh. None when a machine failed or timed out: prepare then transcribes itself."""
+    run_id, repo = os.environ.get("GITHUB_RUN_ID"), os.environ.get("GITHUB_REPOSITORY", "")
+    got, t0, waited, last_look = {}, time.time(), False, False
+    while time.time() - t0 < limit:
+        for i in range(n):
+            if i in got:
+                continue
+            d = WORK / "parts" / str(i)
+            r = subprocess.run(["gh", "run", "download", run_id, "-R", repo, "-n", f"words-{i}", "-D", str(d)], capture_output=True, text=True)
+            if r.returncode == 0:
+                got[i] = d / name / f"part_{i}.json"
+        if len(got) == n:
+            break
+        # a transcribe machine that finished without an artifact is not coming
+        r = subprocess.run(["gh", "run", "view", run_id, "-R", repo, "--json", "jobs", "--jq",
+                            '[.jobs[] | select(.name | startswith("transcribe")) | .status] | map(select(. == "completed")) | length'],
+                           capture_output=True, text=True)
+        if r.stdout.strip().isdigit() and int(r.stdout.strip()) >= n:
+            if last_look:
+                break
+            last_look = True   # one more look in 30 s: the last upload may still be landing
+            time.sleep(30)
+            continue
+        if not waited:
+            log(f"{name}: waiting for the transcript parts from {n} machines")
+            waited = True
+        time.sleep(20)
+    parts = [got[i] for i in range(n) if i in got and got[i].exists()]
+    if len(parts) == n:
+        return parts
+    log(f"{name}: {len(parts)} of {n} transcript parts arrived in {(time.time() - t0) / 60:.0f} min; transcribing here")
+    return None
 
 
 def get_watermark(name, st, stage):
@@ -499,6 +586,16 @@ def do_campaign(name, cpath, phase="all"):
         save_state(name, st)
         return
     words = cdir / "words.json"
+    if not words.exists() and phase == "prepare" and os.environ.get("GITHUB_RUN_ID"):
+        # the 4 transcribe machines run beside this one (run.yml): map the graphics meanwhile, then take their parts
+        gfx = WORK / name / "gfx.json"
+        if not gfx.exists():
+            pipeline.sh([pipeline.PY, str(pipeline.HERE / "graphics_map.py"), str(src), str(gfx)], WORK / name / "gfx.log")
+        parts = wait_for_parts(name)
+        if parts:
+            pipeline.sh([pipeline.PY, str(pipeline.HERE / "transcribe.py"), "--merge", str(words), *parts], WORK / name / "merge.log")
+            if words.exists():
+                note(st, f"transcript merged from {len(parts)} machines")
     if not words.exists():
         note(st, "transcribing the whole episode")
     # moments rico already saw, plus moments rendered and dropped before: the scorecard moves on to new ones
@@ -696,6 +793,9 @@ if __name__ == "__main__":
     ph = a[a.index("--phase") + 1] if "--phase" in a else "all"
     if ph == "render":
         render_job(int(a[a.index("--job") + 1]))
+    elif ph == "transcribe":
+        transcribe_job(int(a[a.index("--part") + 1]), int(a[a.index("--parts") + 1]) if "--parts" in a else TRANSCRIBE_PARTS,
+                       a[0] if a and not a[0].startswith("--") else None)
     elif ph == "collect":
         collect()
     else:

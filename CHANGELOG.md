@@ -3,6 +3,21 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-10-30 (03:30 UTC): the transcript on 4 machines, the episode download cached (rico: "15 min")
+- rico: "one hour is a long time, can we increase speed to 15 min, have several agents take on the work and come
+  together." Rendering already ran on 4 machines; the slow serial part of a FIRST run on a new episode was the
+  transcript (a 1-hour podcast: 10-15 min on one machine) and, for a YouTube source, one download per machine.
+- Bot: run.yml gets a `transcribe` matrix (4 machines, no dependency) that starts with prepare: each takes a quarter of
+  the episode (`transcribe.py --part i/4`, 4 s of context each side, times in episode seconds, the model chosen from the
+  whole length) -> artifact words-N. Prepare maps the graphics meanwhile, then `wait_for_parts()` pulls the 4 artifacts
+  with gh (GH_TOKEN) and merges them (`transcribe.py --merge`); a missing or failed part = prepare transcribes itself
+  as before. Campaigns with a transcript already in the repo skip all of this (the machines finish in a minute).
+- Bot: an episode downloaded from a link (YouTube via YT_COOKIES, Drive, Dropbox) is now saved to Drive `_cache/<campaign>`
+  like a converted one, so the transcribe, prepare and render machines of the same run download from Drive, and YouTube
+  is asked once.
+- Expected: first run on a new 1-hour episode ~20 min, later runs (redo, next clips) ~15 min. The floor is the machine
+  set-up (~2 min per stage) plus the episode download on every machine (~2-3 min for 1 GB).
+
 ## 2026-10-30 (03:20 UTC): Higgsfield 20VC starts; watermark campaigns supported
 - rico dropped the Higgsfield brief, the two watermark PNGs and the episode mp4 into 0_START (the YouTube file, so no
   download needed). The brief REQUIRES the Higgsfield watermark on the whole clip, big, readable, never covered; the
