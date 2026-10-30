@@ -33,9 +33,10 @@ For YouTube links the bot needs the cookies of a THROWAWAY Google account (never
 account's cookies anywhere). rico 2026-10-30: the home PC must play no part; everything runs in the cloud.
 1. Make a new Google account just for this (any name, a phone may be asked once). Watch two or three YouTube
    videos signed in, so the account looks used.
-2. In Chrome or Firefox, signed in to that account, open a private window, go to youtube.com, install the
-   extension "Get cookies.txt LOCALLY", click it on youtube.com and export (Netscape format). Close the private
-   window WITHOUT signing out (signing out invalidates the cookies).
+2. Signed in to that account (a normal window is fine; a separate browser profile is cleanest), go to youtube.com
+   and export the cookies: Firefox add-on "cookies.txt" (addons.mozilla.org/firefox/addon/cookies-txt, click it,
+   "Current Site") or Chrome extension "Get cookies.txt LOCALLY". Never sign out of that account afterwards
+   (signing out invalidates the cookies).
 3. GitHub -> repo -> Settings -> Secrets and variables -> Actions -> New repository secret: name `YT_COOKIES`,
    value = the whole text of the cookies.txt file. Paste it there only, never in chat.
 4. Test: Actions -> probe -> Run workflow with any YouTube link; data/probe.log must end with "DOWNLOAD OK".

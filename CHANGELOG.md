@@ -10,6 +10,10 @@ RULES.md; the acceptance gates are scorecards/acceptance.md.
   reaches prepare, render and probe; `run.yt_cookies()` passes it to yt-dlp (`-N 4`, retries); a refusal writes the
   note "YOUTUBE COOKIES NEEDED OR EXPIRED". probe.yml now downloads 20 s to prove format access ("DOWNLOAD OK").
   Drive, Dropbox and direct links keep working with nothing extra.
+- 02:12: VERIFIED. rico set the secret (Firefox "cookies.txt" add-on); probe run 40990280804 downloaded 1080p from a
+  GitHub machine ("DOWNLOAD OK"). Cookies alone were not enough: YouTube now serves only signed formats, so
+  requirements.txt installs `yt-dlp[default]` (the EJS challenge solver) and yt-dlp runs with `--js-runtimes node`;
+  h264 1080p first, remuxed to mp4. A YouTube watch link in the requirements doc is now a valid episode source.
 
 ## 2026-10-30 (00:45 UTC): TJR skipped, the board re-read, dedicated-account campaigns stopped
 - rico: "let's skip, it's likely we wouldn't be accepted. Scan for something else and delete this campaign on Drive."
