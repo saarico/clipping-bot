@@ -92,6 +92,19 @@ def has_speech(path):
     return bool(m) and float(m.group(1)) > -45
 
 
+def yt_cookies():
+    """yt-dlp flags for the YT_COOKIES secret (Netscape cookies.txt of a THROWAWAY Google account, never rico's own):
+    YouTube refuses every GitHub machine without a signed-in session ("Sign in to confirm you're not a bot")."""
+    raw = os.environ.get("YT_COOKIES", "").strip()
+    if not raw:
+        return []
+    p = Path("/tmp/yt_cookies.txt")
+    if not p.exists():
+        p.write_text(raw + "\n")
+        p.chmod(0o600)
+    return ["--cookies", str(p)]
+
+
 def fetch_link(url, dest, st):
     """One source link -> episode.mp4. Google Drive files and folders (shared with anyone) via gdown,
     Dropbox and direct video links via curl, everything else via yt-dlp (YouTube blocks GitHub runners)."""
@@ -108,9 +121,15 @@ def fetch_link(url, dest, st):
         u += ("&" if "?" in u else "?") + "dl=1" if "dropbox.com" in u else ""
         subprocess.run(["curl", "-sL", "--max-time", "7000", "-o", str(tmp / "episode_dl.mp4"), u], check=False, timeout=7200)
     else:
-        note(st, f"trying yt-dlp: {url[:80]}")
-        subprocess.run(["yt-dlp", "-f", "bv*[height<=1080][ext=mp4]+ba[ext=m4a]/b[ext=mp4]/b", "--no-playlist", "--socket-timeout", "30",
-                        "-o", str(tmp / "episode_dl.%(ext)s"), url], capture_output=True, text=True, timeout=3600)
+        ck = yt_cookies()
+        note(st, f"trying yt-dlp{' with cookies' if ck else ' (no YT_COOKIES secret: YouTube will refuse)'}: {url[:80]}")
+        r = subprocess.run(["yt-dlp", "-f", "bv*[height<=1080][ext=mp4]+ba[ext=m4a]/b[ext=mp4]/b", "--no-playlist", "--socket-timeout", "30",
+                            "-N", "4", "--retries", "5", *ck, "-o", str(tmp / "episode_dl.%(ext)s"), url], capture_output=True, text=True, timeout=3600)
+        err = (r.stderr or "")[-400:]
+        if "Sign in to confirm" in err or "not a bot" in err or "cookies" in err.lower() and "invalid" in err.lower():
+            note(st, "YOUTUBE COOKIES NEEDED OR EXPIRED: refresh the YT_COOKIES secret (SETUP.md, YouTube section)")
+        elif r.returncode != 0:
+            note(st, f"yt-dlp failed: {err.strip().splitlines()[-1][:160] if err.strip() else r.returncode}")
     vids = sorted((p for p in tmp.rglob("*") if p.suffix.lower() in VID_EXT and p.stat().st_size > 1e6), key=lambda p: -p.stat().st_size)
     if not vids:
         return None

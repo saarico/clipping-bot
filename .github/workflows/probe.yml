@@ -18,9 +18,17 @@ jobs:
         with: {python-version: "3.12"}
       - run: pip install -q yt-dlp
       - name: probe
+        env:
+          YT_COOKIES: ${{ secrets.YT_COOKIES }}
+          URL: ${{ inputs.url }}
         run: |
           mkdir -p data
-          { echo "probe $(date -u +%Y-%m-%dT%H:%MZ) ${{ inputs.url }}"; yt-dlp --no-warnings --print "%(title)s | %(duration)s s | %(uploader)s" --no-playlist "${{ inputs.url }}" 2>&1 | tail -n 5; } | tee data/probe.log
+          CK=""
+          if [ -n "$YT_COOKIES" ]; then printf '%s\n' "$YT_COOKIES" > /tmp/yt_cookies.txt; chmod 600 /tmp/yt_cookies.txt; CK="--cookies /tmp/yt_cookies.txt"; fi
+          { echo "probe $(date -u +%Y-%m-%dT%H:%MZ) $URL cookies=$([ -n "$CK" ] && echo yes || echo no)";
+            yt-dlp --no-warnings $CK --print "%(title)s | %(duration)s s | %(uploader)s" --no-playlist "$URL" 2>&1 | tail -n 3;
+            yt-dlp --no-warnings $CK -f "bv*[height<=1080][ext=mp4]+ba[ext=m4a]/b[ext=mp4]/b" --no-playlist --download-sections "*0-20" -o /tmp/probe.%(ext)s "$URL" 2>&1 | tail -n 3;
+            ls -la /tmp/probe.* 2>/dev/null && echo "DOWNLOAD OK" || echo "DOWNLOAD FAILED"; } | tee data/probe.log
       - name: save
         run: |
           git config user.name clipping-bot && git config user.email bot@users.noreply.github.com

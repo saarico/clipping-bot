@@ -27,6 +27,21 @@ the secret; the old token can be revoked at https://myaccount.google.com/permiss
 Actions → **run** → Run workflow. The bot creates `CAMPAIGNS TO JOIN` and `CAMPAIGN LINKS` in your
 CLIPPING folder. The bot creates `CLIPPING/0_START/<campaign>/` with a JOIN doc for each campaign it recommends; drop the requirements (and episode.mp4 if assigned) in that folder. For a campaign you found yourself, make the folder and drop the requirements.
 
+## YouTube episodes from the cloud (secret YT_COOKIES)
+YouTube refuses every GitHub machine ("Sign in to confirm you're not a bot"). Drive and Dropbox links need nothing.
+For YouTube links the bot needs the cookies of a THROWAWAY Google account (never your own: never put your own
+account's cookies anywhere). rico 2026-10-30: the home PC must play no part; everything runs in the cloud.
+1. Make a new Google account just for this (any name, a phone may be asked once). Watch two or three YouTube
+   videos signed in, so the account looks used.
+2. In Chrome or Firefox, signed in to that account, open a private window, go to youtube.com, install the
+   extension "Get cookies.txt LOCALLY", click it on youtube.com and export (Netscape format). Close the private
+   window WITHOUT signing out (signing out invalidates the cookies).
+3. GitHub -> repo -> Settings -> Secrets and variables -> Actions -> New repository secret: name `YT_COOKIES`,
+   value = the whole text of the cookies.txt file. Paste it there only, never in chat.
+4. Test: Actions -> probe -> Run workflow with any YouTube link; data/probe.log must end with "DOWNLOAD OK".
+When the bot notes "YOUTUBE COOKIES NEEDED OR EXPIRED" in a SUMMARY or state, repeat steps 2-3 (cookies last weeks
+to months). If Google locks the throwaway account, make another; nothing else is affected.
+
 ## Posting (what is automatic, what is your click)
 - **YouTube Shorts / TikTok / Instagram**: each approved clip goes to ONE platform, chosen by what the clip is about
   (YouTube = business/money, Instagram = celebrity/drama, TikTok = entertainment; the SUMMARY shows it as "post on").

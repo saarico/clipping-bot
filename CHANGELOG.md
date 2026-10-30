@@ -3,6 +3,14 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-10-30 (01:55 UTC): YouTube downloads from the cloud, no home PC
+- rico: the home PC must have no part in the pipeline ("fully automated, fully online"; he travels). YouTube refuses
+  GitHub machines without a signed-in session (probe 2026-10-27, again today).
+- Bot: secret `YT_COOKIES` (cookies.txt of a THROWAWAY Google account, SETUP.md "YouTube episodes from the cloud")
+  reaches prepare, render and probe; `run.yt_cookies()` passes it to yt-dlp (`-N 4`, retries); a refusal writes the
+  note "YOUTUBE COOKIES NEEDED OR EXPIRED". probe.yml now downloads 20 s to prove format access ("DOWNLOAD OK").
+  Drive, Dropbox and direct links keep working with nothing extra.
+
 ## 2026-10-30 (00:45 UTC): TJR skipped, the board re-read, dedicated-account campaigns stopped
 - rico: "let's skip, it's likely we wouldn't be accepted. Scan for something else and delete this campaign on Drive."
   TJR's folders went to _trash (config/dropped.txt). Lesson: Reach campaigns want the posting account's niche to
