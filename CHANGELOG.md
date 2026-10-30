@@ -3,6 +3,20 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-10-30 (23:55 UTC): first run with the audience read: 2 clips, both under the judge's bar
+- Run 41143673790 (23:19-23:43): 18 brief ideas read, 8 of 12 pitches passed, 2 kept under the bar (judge 76: the
+  still camera left "variety" at 4/15 because punch-ins and b-roll were counted), 2 dropped for a stray cut (the
+  show's own camera change inside the first 1.5 s; the re-edit re-rendered identically).
+- Editing (rico: "bump up editing"): every dollar figure or number a talking show says becomes a big number card
+  ("$10,000 A MONTH", "4 MILLION", "30% LOWER"; plan.auto_callouts, at most 3 per clip, 6 s apart). The judge takes
+  no points off for a still camera on talking shows (RULES 39). The re-edit moves a cut edge past a stray cut.
+- Grading: the Yuri clip opened on "This industry still gonna be very valuable..." (the tail of the previous answer)
+  and ended on Harry's next lead-in "You're at a billion in revenue now." and passed the read. Now: a pointer start
+  with no number, name or question is a gate; a host lead-in ending ("you're...", "tell me", "let's", "I want to") is
+  a gate; sentences split on whisper's own capital letter ("...be the same Did you know..."); family and hardship
+  words count as something to hold on to (the "My mom worked three jobs" idea passes). A brief hook that swallowed
+  the table's note column is cut at the seam ("30% churn in month one.").
+
 ## 2026-10-30 (23:30 UTC): rico on the kept Higgsfield clip: cuts out in a horrible position, hard to understand, boring
 - rico: "why is the clip cutting out in a horrible position, also he can't talk and it seems so uninteresting and
   boring and hard to understand; bump up editing, improve grading quality and entertainment, maybe add a second phase

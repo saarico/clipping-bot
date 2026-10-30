@@ -193,6 +193,13 @@ def reedit(spec, res):
             ends = sorted(x["end"] for x in sents if b - 0.25 < x["end"] <= a + max_s)
         if ends:
             b = round(ends[-1] + 0.1, 2) if ends[-1] <= b else round(ends[0] + 0.1, 2)
+    # a stray cut (the show's own camera change) inside the first or last 1.5 s: move that edge past it
+    for m in re.finditer(r"stray cut at ([\d.]+)s", fails):
+        t = float(m.group(1))
+        if t < 1.5 and b - (a + t + 0.3) >= 8:
+            a = round(a + t + 0.3, 2)
+        elif res.get("dur") and t > res["dur"] - 1.5:
+            b = round(b - (res["dur"] - t) - 0.3, 2)
     # the audience read says where the clip should start and end instead (host preamble, aside endings)
     fx = res.get("audience_fix") or {}
     if "Audience read" in fails:
@@ -246,14 +253,14 @@ def decide(results, work, kept=None, notes=None):
             continue
         line = f"{Path(res['folder']).name}: {res['dur']:.0f}s  qa {res['qa']}  judge {res['judge']} ({res.get('areas', '')})  {res.get('minutes', '?')} min  hook: {res['hook']}  [{res['why']}]"
         if res["ok"] and len(kept) < planner.MAX_CLIPS:
-            kept.append({"folder": str(res["folder"]), "mp4": str(res["mp4"]), "thumb": res.get("thumb", ""), "hook": res["hook"], "parts": res["parts"], "judge": res["judge"],
+            kept.append({"folder": str(res["folder"]), "mp4": str(res["mp4"]), "thumb": res.get("thumb", ""), "hook": res["hook"], "parts": res["parts"], "judge": res["judge"], "audience": res.get("audience"),
                          "dur": res["dur"], "why": res["why"], "captions": res["captions"], "caption": res.get("caption", "")})
             notes.append("KEPT  " + line)
         elif res.get("near") and not any(r.get("ok") for r in results) and len(kept) < planner.MAX_CLIPS:
             # every hard production gate passed but the entertainment judge stayed under the bar, and nothing
             # in this run reached it: hand rico the best of them, clearly marked, rather than an empty folder
             res["why"] = f"UNDER THE BAR (judge {res['judge']} < {JUDGE_BAR}, every production gate passed) | " + res["why"]
-            kept.append({"folder": str(res["folder"]), "mp4": str(res["mp4"]), "thumb": res.get("thumb", ""), "hook": res["hook"], "parts": res["parts"], "judge": res["judge"],
+            kept.append({"folder": str(res["folder"]), "mp4": str(res["mp4"]), "thumb": res.get("thumb", ""), "hook": res["hook"], "parts": res["parts"], "judge": res["judge"], "audience": res.get("audience"),
                          "dur": res["dur"], "why": res["why"], "captions": res["captions"], "caption": res.get("caption", "")})
             notes.append("KEPT (under the bar)  " + line)
         else:

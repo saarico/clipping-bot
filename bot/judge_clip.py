@@ -104,7 +104,7 @@ def main(folder):
     if prof["cards"]:   # podcasts need b-roll; trailers and streams carry their own visual change
         if share < 0.1: v -= 5
         elif share < 0.2: v -= 2
-        if zooms == 0: v -= 2
+        # no points off for a still camera: RULES 39 locks it on talking shows (rico 2026-10-30)
     notes["variety"] = [f"longest stretch without a visual change {longest:.1f} s", f"cards/b-roll/callouts {share:.0%} of the clip", f"{zooms} punch-in(s)", f"{len(call)} callout(s)"]
     rep["variety"] = max(0, v)
 

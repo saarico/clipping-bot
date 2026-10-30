@@ -65,6 +65,17 @@ def clip_ideas(text):
             if close and tail[:close.start()].count("\n") <= 1 and not RANGE.search(tail[:close.start()]):
                 hook = hook + " " + tail[:close.start()]
         hook = re.sub(r"\s+", " ", hook).strip(" \n\u2026")
+        seam = re.search(r"\b[A-Z][a-z]+ [A-Z][a-z]+\b", hook)   # "Business These": the note column leaked into the quote
+        if seam and seam.start() > 0 and not hook[:seam.start()].rstrip().endswith((",", ":")) and re.search(r"[.?!]", hook[:seam.start()]):
+            cut = max(hook.rfind(x, 0, seam.start()) for x in ".?!")
+            hook = hook[:cut + 1]
+        if len(hook.split()) > 14:   # the table's note column leaked into the quote: keep the first sentence(s) that fit
+            keep, parts = "", re.split(r"(?<=[.?!])\s+", hook)
+            for part in parts:
+                if len((keep + " " + part).split()) > 14:
+                    break
+                keep = (keep + " " + part).strip()
+            hook = keep or " ".join(hook.split()[:12])
         if not (8 <= len(hook) <= 180):
             continue
         out.append({"hook": hook, "start": a, "end": b, "note": note[:160]})

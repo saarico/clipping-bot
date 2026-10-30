@@ -43,12 +43,23 @@ PODCAST_TALK = r"(we('ve| have)? talked about|talk(ed)? about (this|that) (a lot
 FAMOUS = r"\b(elon|musk|bezos|jobs|steve jobs|gates|zuckerberg|trump|obama|kanye|taylor swift|agassi|jordan|kobe|lebron|tiger|federer|serena|oprah|rogan|google|apple|amazon|netflix|tesla|openai|chatgpt|facebook|instagram|tiktok|youtube|buddha|jesus|einstein|michael jackson|beyonce|drake|mrbeast|nfl|nba|olympics?)\b"
 
 
+STARTERS = {"so", "and", "but", "because", "yeah", "yes", "no", "like", "we", "you", "it", "this", "that", "the", "there",
+            "if", "when", "then", "now", "actually", "well", "okay", "look", "let's", "my", "our", "they", "he", "she", "here",
+            "did", "do", "does", "how", "what", "why", "where", "who", "is", "are", "was", "were", "can", "could", "would",
+            "have", "has", "tell", "walk"}
+
+
 def sentences(words):
-    """Group words into sentences: end punctuation, a speaker change, or a pause over 1 s."""
+    """Group words into sentences: end punctuation, a speaker change, a pause over 1 s, or whisper's own capital
+    letter on a sentence starter after an unpunctuated word ("...never gonna be the same Did you know..."; 2026-10-30,
+    the Yuri clip opened on the tail of the previous answer because the two ran as one sentence)."""
     out, cur = [], []
     for w, nxt in zip(words, words[1:] + [None]):
         cur.append(w)
         end = w["text"].rstrip('"\')').endswith((".", "?", "!"))
+        if (not end and nxt is not None and len(cur) >= 3 and nxt["text"][:1].isupper() and nxt["text"].lower().strip(",") in STARTERS
+                and not w["text"].endswith(",")):
+            end = True
         if nxt is None or end or nxt["speaker"] != w["speaker"] or nxt["start"] - w["end"] > 1.0:
             out.append({"start": cur[0]["start"], "end": cur[-1]["end"], "speaker": cur[0]["speaker"],
                         "text": " ".join(x["text"] for x in cur), "n": len(cur), "words": cur})

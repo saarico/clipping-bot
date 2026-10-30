@@ -39,8 +39,38 @@ OPEN_BAD = re.compile(r"^" + LEAD + r"(?:i (?:do |did )?(?:just |also )?want(?:e
                       r"that's (?:a )?(?:great|good|interesting)|which is|and that's|this is why|that's why)\b", re.I)
 ASIDE_END = re.compile(r"^" + LEAD + r"(?:by the way|anyway|anyways|also|and then|but yeah|yeah|right|okay|exactly|absolutely|"
                        r"totally|sure|of course|i think so|we'll see|you know|i don't know|we'll get to that|"
-                       r"we can talk about|let's talk about|we'll come back)\b", re.I)
-INTEREST = "|".join([fm.NUMBER, fm.MONEY, fm.FAIL, fm.SURPRISE, fm.EMOTION, fm.FAMOUS, fm.CONTRAST])
+                       r"we can talk about|let's talk about|we'll come back|you're|you are|you have|you've|you guys|let's|"
+                       r"tell me|walk me|talk to me|i want to|i'd love to|i'm curious|can you|could you|what about|"
+                       r"we'll talk|we will talk|coming up|next question|final question|last question)\b", re.I)
+POINTER = re.compile(r"^" + LEAD + r"(?:this|that|these|those|it|which|he|she|they)\b", re.I)
+
+
+def bad_open(t):
+    """Why a sentence cannot open a clip (None when it can): host preamble / pointer back, or a pointer start
+    ("This industry still gonna be very valuable") with no number, name or question in it."""
+    if OPEN_BAD.match(t):
+        return "opens on host preamble or a pointer back"
+    if POINTER.match(t) and not (re.search(fm.NUMBER, t, re.I) or "?" in t or re.search(r"\b[A-Z][a-z]{2,}\b", t[1:])):
+        return "opens on a pointer to something the viewer did not see"
+    return None
+
+
+def bad_end(t, n):
+    """Why a sentence cannot end a clip (None when it can): an aside or the host's next lead-in, a hanging question,
+    a one-word answer, an unfinished line."""
+    t = t.rstrip('"\')')
+    if ASIDE_END.match(t):
+        return "ends on an aside or the host's next lead-in"
+    if t.endswith("?"):
+        return "ends on a hanging question"
+    if n < 3:
+        return "ends on a one-word answer"
+    if not t.endswith((".", "!")):
+        return "ends mid-sentence"
+    return None
+LIFE = r"\b(mom|mother|dad|father|parents?|son|daughter|wife|husband|kids?|children|family|home|childhood|grew up|poor|hungry|" \
+       r"died|death|dying|sick|hospital|scared|alone|dream\w*|sacrific\w*|cost me|regret\w*|cried|tears|war|refugee\w*|immigra\w+)\b"
+INTEREST = "|".join([fm.NUMBER, fm.MONEY, fm.FAIL, fm.SURPRISE, fm.EMOTION, fm.FAMOUS, fm.CONTRAST, LIFE])
 LAUGH = r"\b(ha ?ha|haha|lol|laugh(s|ing|ed)?)\b"
 SMALL = {"the", "and", "a", "to", "of", "in", "it", "is", "that", "i", "you", "we", "so", "like", "but", "or", "on", "at"}
 
@@ -85,8 +115,9 @@ def read(words, parts, style=None):
     first = _sent_text(sents[0])
     open_words = [w for w in ws if w["t"] < 4.0]
     open_txt = " ".join(w["text"] for w in open_words)
-    if talk and OPEN_BAD.match(first):
-        o -= 15; fails.append(f"opens on host preamble or a pointer back: \"{first[:60]}\"")
+    bo = bad_open(first)
+    if talk and bo:
+        o -= 15; fails.append(f"{bo}: \"{first[:60]}\"")
     if talk and not (re.search(INTEREST, open_txt, re.I) or "?" in open_txt or re.search(r"\b(I|we|my)\b", open_txt)):
         o -= 8; notes.setdefault("open", []).append("nothing to grab in the first 4 s")
     if len(sents[0]["text"].split()) > 18 and first.endswith("?"):
@@ -123,14 +154,11 @@ def read(words, parts, style=None):
     p = 20
     last = sents[-1]
     last_txt = _sent_text(last).rstrip('"\')')
-    if ASIDE_END.match(last_txt):
-        p -= 12; fails.append(f"ends on an aside: \"{last_txt[:60]}\"")
-    elif last_txt.endswith("?"):
-        p -= 12; fails.append(f"ends on a hanging question: \"{last_txt[:60]}\"")
-    elif last["n"] < 3:
-        p -= 12; fails.append(f"ends on a one-word answer: \"{last_txt}\"")
-    elif not last_txt.endswith((".", "!")):
+    be = bad_end(last_txt, last["n"])
+    if be == "ends mid-sentence":
         p -= 6; notes.setdefault("payoff", []).append("ends mid-sentence")
+    elif be:
+        p -= 12; fails.append(f"{be}: \"{last_txt[:60]}\"")
     tail = " ".join(w["text"] for w in ws if w["t"] > dur - 8)
     if not re.search(INTEREST, tail, re.I):
         p -= 4; notes.setdefault("payoff", []).append("nothing lands in the last 8 s")
@@ -177,13 +205,12 @@ def read(words, parts, style=None):
     # the fix: where the clip should start and end instead (used by the re-edit and by plan.refine)
     for i, s in enumerate(sents[:4]):
         t = _sent_text(s)
-        if not OPEN_BAD.match(t) and (re.search(INTEREST, t, re.I) or t.endswith("?") or re.search(r"\b(I|we|my)\b", t)):
+        if not bad_open(t) and (re.search(INTEREST, t, re.I) or t.endswith("?") or re.search(r"\b(I|we|my)\b", t)):
             if i:
                 fix["start"] = s["start"]
             break
     for j in range(len(sents) - 1, max(len(sents) - 6, 0) - 1, -1):
-        t = _sent_text(sents[j]).rstrip('"\')')
-        if not ASIDE_END.match(t) and not t.endswith("?") and sents[j]["n"] >= 3 and t.endswith((".", "!")):
+        if not bad_end(_sent_text(sents[j]), sents[j]["n"]):
             if j != len(sents) - 1:
                 fix["end"] = sents[j]["end"]
             break

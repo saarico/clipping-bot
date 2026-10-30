@@ -49,7 +49,7 @@ def spec_for(c, why, source, words_path, brief, campaign, out_dir, mix):
     return {
         "campaign": campaign, "source": str(source), "words": str(words_path),
         "parts": [[c["start"], c["end"]]], "hook": hook_text(c), "emphasis": emph,
-        "focus": [], "overlays": [], "callouts": [], "sfx": False,
+        "focus": [], "overlays": [], "callouts": c.get("callouts", []), "sfx": False,
         "wide_split": [[0.25, 0.40, 0.06], [0.75, 0.40, 0.06]],   # generic two-shot seats; the reviewer's plan.json overrides
         "disclosure": brief.get("disclosure", ""), "style": brief.get("style", ""), "genres": mix, "look": brief.get("look") or {},
         "brief": brief_lengths(brief),
@@ -85,6 +85,38 @@ def refine(c, sents, lo, hi, style=None):
     out = dict(c, start=round(sents[a]["start"], 2), end=round(sents[b]["end"], 2),
                text=" ".join(s["text"] for s in sents[a:b + 1]), audience=r["total"], audience_fails=r["fails"])
     return out
+
+
+UNIT = re.compile(r"^(million|billion|thousand|percent|people|months?|years?|days?|weeks?|hours?|dollars?|bucks|x|k|m|b)\b[.,]?$", re.I)
+
+
+def auto_callouts(words, start, end, limit=3, gap=6.0):
+    """Big number cards for a talking show (rico 2026-10-30: "bump up editing"): every dollar figure or number the
+    speaker says inside the cut becomes a 2.5 s callout ("$4 MILLION", "30% LOWER"), at most `limit` per clip and
+    `gap` seconds apart. Words only, so it is allowed where outside footage is not."""
+    out, last_t = [], -1e9
+    ws = [w for w in words if start <= w["start"] < end]
+    i = 0
+    while i < len(ws) and len(out) < limit:
+        t = ws[i]["text"].strip(",.?!")
+        if re.match(r"^\$?\d[\d,.]*%?$", t) or t.lower() in ("million", "billion", "thousand"):
+            # join whisper's "$10 ,000" and the unit that follows ("4 million", "30% lower", "400 people")
+            phrase, j = [t], i + 1
+            while j < len(ws) and (re.match(r"^,\d{3}$", ws[j]["text"].strip(".?!")) or ws[j]["text"].strip(".?!,") == "%" or UNIT.match(ws[j]["text"])):
+                phrase.append(ws[j]["text"].strip(".?!")); j += 1
+            if j < len(ws) and ws[j]["text"].strip(".?!,").lower() in ("lower", "higher", "more", "less", "margin", "margins", "churn", "growth", "revenue", "valuation", "a", "per"):
+                phrase.append(ws[j]["text"].strip(".?!,"))
+                if phrase[-1] in ("a", "per") and j + 1 < len(ws):
+                    phrase.append(ws[j + 1]["text"].strip(".?!,"))
+            text = re.sub(r"\s+%", "%", re.sub(r"\s+,", ",", " ".join(phrase))).upper().strip(", ")
+            bare = re.fullmatch(r"\d{1,2}", text)   # "12" on its own says nothing on a card
+            if ws[i]["start"] - last_t >= gap and len(text) <= 22 and not bare and not re.match(r"^(ONE|TWO|FIRST|SECOND|HALF)$", text):
+                out.append({"from": round(ws[i]["start"] - 0.1, 2), "to": round(min(ws[i]["start"] + 2.5, end - 0.2), 2), "text": text})
+                last_t = ws[i]["start"]
+            i = j
+            continue
+        i += 1
+    return [c for c in out if c["to"] - c["from"] >= 0.8]
 
 
 def brief_specs(words_path, source, brief, campaign, out_dir, used=(), log=print):
@@ -139,6 +171,8 @@ def brief_specs(words_path, source, brief, campaign, out_dir, used=(), log=print
             continue
         c = {"start": round(start, 2), "end": round(end, 2), "hook": idea["hook"], "text": " ".join(s["text"] for s in sents[i0:i1 + 1])}
         c = refine(c, sents, lo, hi, brief.get("style"))
+        if profiles.profile(brief.get("style"))["cards"]:
+            c["callouts"] = auto_callouts(words, c["start"], c["end"])
         why = "the brief's own clip idea" + (f" ({idea['note']})" if idea.get("note") else "") + f" | audience {c.get('audience', '?')}"
         specs.append(spec_for(c, why, source, words_path, brief, campaign, out_dir, mix))
     return specs
@@ -162,6 +196,8 @@ def auto_specs(words_path, gfx_path, source, brief, campaign, out_dir, used=()):
         if any(min(c["end"], b) - max(c["start"], a) > 0 for a, b in used):
             continue
         c = refine(c, sents, lo, hi, prof_name)
+        if profiles.profile(prof_name)["cards"]:
+            c["callouts"] = auto_callouts(all_words, c["start"], c["end"])
         why = f"score {c['score']}: " + ", ".join(f"{k} {v}" for k, v in c["reasons"].items() if v and k != "genres") + f" [{c['reasons'].get('genres', '')}]"
         specs.append(spec_for(c, why, source, words_path, brief, campaign, out_dir, mix))
         if len(specs) >= MAX_TRIES:
