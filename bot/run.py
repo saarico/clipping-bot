@@ -123,7 +123,7 @@ def fetch_link(url, dest, st):
     else:
         ck = yt_cookies()
         note(st, f"trying yt-dlp{' with cookies' if ck else ' (no YT_COOKIES secret: YouTube will refuse)'}: {url[:80]}")
-        r = subprocess.run(["yt-dlp", "-f", "bv*[height<=1080]+ba/b[height<=1080]/b", "-S", "res:1080,ext:mp4:m4a", "--merge-output-format", "mp4",
+        r = subprocess.run(["yt-dlp", "-f", "bv*[height<=1080]+ba/b[height<=1080]/b", "-S", "res:1080,vcodec:h264,ext:mp4:m4a", "--merge-output-format", "mp4",   # h264 first: ffmpeg decodes it fastest
                             "--js-runtimes", "node", "--no-playlist", "--socket-timeout", "30", "-N", "4", "--retries", "5", *ck, "-o", str(tmp / "episode_dl.%(ext)s"), url],
                            capture_output=True, text=True, timeout=3600)
         err = (r.stderr or "")[-400:]

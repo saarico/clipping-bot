@@ -16,7 +16,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: {python-version: "3.12"}
-      - run: pip install -q -U "yt-dlp[default]"   # [default] brings the EJS challenge solver; node on the runner runs it
+      - run: |
+          pip install -q -U "yt-dlp[default]"   # [default] brings the EJS challenge solver; node on the runner runs it
+          sudo apt-get install -y -qq ffmpeg >/dev/null 2>&1 || true   # partial downloads need ffmpeg
       - name: probe
         env:
           YT_COOKIES: ${{ secrets.YT_COOKIES }}
@@ -28,7 +30,7 @@ jobs:
           { echo "probe $(date -u +%Y-%m-%dT%H:%MZ) $URL cookies=$([ -n "$CK" ] && echo yes || echo no)";
             yt-dlp --no-warnings $CK --print "%(title)s | %(duration)s s | %(uploader)s" --no-playlist "$URL" 2>&1 | tail -n 3;
             yt-dlp $CK --js-runtimes node -F --no-playlist "$URL" 2>&1 | grep -v "^\[download\]" | tail -n 25;
-            yt-dlp --no-warnings $CK --js-runtimes node -f "bv*[height<=1080]+ba/b[height<=1080]/b" -S "res:1080,ext:mp4:m4a" --merge-output-format mp4 --no-playlist --download-sections "*0-20" -o "/tmp/probe.%(ext)s" "$URL" 2>&1 | tail -n 3;
+            yt-dlp --no-warnings $CK --js-runtimes node -f "bv*[height<=1080]+ba/b[height<=1080]/b" -S "res:1080,vcodec:h264,ext:mp4:m4a" --merge-output-format mp4 --no-playlist --download-sections "*0-20" -o "/tmp/probe.%(ext)s" "$URL" 2>&1 | tail -n 3;
             ls -la /tmp/probe.* 2>/dev/null && echo "DOWNLOAD OK" || echo "DOWNLOAD FAILED"; } | tee data/probe.log
       - name: save
         run: |
