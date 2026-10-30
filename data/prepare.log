@@ -1,6 +1,22 @@
-[06:09:39] CLIPPING root CLIPPING
+[06:12:36] CLIPPING root CLIPPING
 Could not get FontBBox from font descriptor because None cannot be parsed as 4 floats
-[06:10:10] rules page https://drive.google.com/drive/folders/186sFKTq8ZNAHdpduLFoguY0YB88eEfES?usp=sharing: 500 chars
-[06:10:21] rules page https://whop.com/clip-farm-official/exp_4UqMmAp584lF59/app/: 1871 chars
-[06:10:22] rules page https://we.tl/t-pRMHaT4pEb3zn2QX: 313 chars
-[06:10:35] rules page https://drive.google.com/drive/folders/1FLZsy7bTqf6bkqgJA8ycLXAbtJNfSiCs?usp=sharing: 660 chars
+[06:13:08] rules page https://whop.com/clip-farm-official/exp_4UqMmAp584lF59/app/: 1871 chars
+[06:13:31] brief read: 30 rules, 3 links, tags ['@20VC', '@20vchq', '@HiggsfieldAI', '@higgsfield.ai']
+[06:13:37] episode taken from the Drive cache (same source files as last time)
+/home/runner/work/clipping-bot/clipping-bot/bot/run.py:497: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  c = sum(1 for v in a.getdata() if v > 40) / float(im.width * im.height)
+/home/runner/work/clipping-bot/clipping-bot/bot/run.py:497: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  c = sum(1 for v in a.getdata() if v > 40) / float(im.width * im.height)
+[06:18:54] Higgsfield 20VC Clipping: parts not there yet (no artifact matches any of the names or patterns provided)
+[06:18:54] Higgsfield 20VC Clipping: parts not there yet (no artifact matches any of the names or patterns provided)
+[06:18:56] Higgsfield 20VC Clipping: waiting for the transcript parts from 4 machines
+[06:20:00] transcript merged from 4 machines
+[06:20:06] PITCH c01_if-you-are-at-a-billion-toda: 94/100 PASS (hook 20 story 10 entertainment 10 comedy 3 pace 8 length 10)
+[06:20:06] PITCH c02_you-just-skipped-the-moment: 94/100 PASS (hook 20 story 10 entertainment 10 comedy 3 pace 8 length 10)
+[06:20:06] PITCH c03_whenever-we-sold-the-company: 86/100 PASS (hook 20 story 10 entertainment 6 comedy 1 pace 9 length 10)
+[06:20:06] PITCH c04_today-snap-market-cap-is-bel: 89/100 PASS (hook 20 story 9 entertainment 9 comedy 2 pace 8 length 10)
+[06:20:06] PITCH c05_no-look-back-then-rounds-of: 88/100 PASS (hook 15 story 10 entertainment 10 comedy 2 pace 10 length 10) | first line names no one and nothing
+[06:20:06] PITCH c06_if-you-were-a-silicon-valley: 94/100 PASS (hook 20 story 10 entertainment 10 comedy 1 pace 10 length 10)
+[06:20:06] 6 of 6 pitches go to render
+[06:20:06] 4 candidate(s) picked (entertainment scorecard (auto)), 2 fallback(s); rendering on 4 machines with grade-and-retry
+[06:20:06] 4 render job(s)
