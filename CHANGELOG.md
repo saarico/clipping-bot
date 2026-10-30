@@ -3,6 +3,19 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-10-30 (23:10 UTC): Higgsfield re-cut run kept 1 of 4; three bot defects fixed
+- Run 41137471939 (22:20-22:45): the brief reader found only 3 of the brief's clip ideas, because the PDF table
+  wraps the hook column (the quote opens on the line above the time and closes on the line below). brief.clip_ideas
+  now reads every layout the table comes out as: 23 ideas from the Higgsfield brief (was 3). Two-part ideas marked
+  "+" and ranges under 15 s are skipped.
+- The re-edit re-rendered a clip identically when the failure was a clipped word at a cut or an unfinished last
+  sentence (c02 "$4 million" failed twice the same way). pipeline.reedit now moves the start to the next sentence
+  start and the end back to the last finished sentence inside the brief's length window.
+- The centring gate measured talking shows against the movie line (12% off centre per frame) while the still camera
+  lets a face sit up to 10% off by design (c01 dropped at 18%). qa_check.check_centred uses 17% on talking shows,
+  12% on movies. RULES 39.
+- Higgsfield: the "$4 million" try is cleared from tried_moments so the brief's first idea gets its re-edit; redo set.
+
 ## 2026-10-30 (21:20 UTC): rico on the Higgsfield clips: camera moves too much, boring opener
 - rico: "the clips seem to be moving too much because of the clipping on the face, very distracting"; "can we ensure
   better content or is this the best it can do? I lost interest within the first 4 seconds."

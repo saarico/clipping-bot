@@ -144,20 +144,42 @@ def prepare(work, source, brief, words=None, campaign="campaign", log=print, use
 
 def reedit(spec, res):
     """The one re-edit a failed clip gets (rico, 2026-10-28: "grade the outcome and throw it back to re-edit"):
-    punch in harder on the actors, and when the opening failed start on the next spoken line."""
+    punch in harder on the actors; when the opening failed start on the next spoken line; when an edge clipped a
+    word or the clip ended mid-sentence (2026-10-30, Higgsfield c02 was re-rendered identically and failed twice),
+    move the start to the next sentence start and the end back to the last finished sentence that keeps the clip
+    inside the brief's length window."""
     v = json.loads(json.dumps(spec))
     v["zoom_boost"] = 1.15
     v["reedit"] = True
     fails = " ".join(res.get("fails", []))
-    if "first 2 seconds" in fails or "Opener" in fails or res.get("judge_notes", {}).get("hook"):
-        try:
-            words = json.loads(Path(spec["words"]).read_text())
-            a, b = v["parts"][0]
-            nxt = [w["start"] for w in words if a + 0.8 <= w["start"] <= a + 4.0 and w["text"][:1].isupper()]
-            if nxt and b - nxt[0] >= 10:
-                v["parts"][0] = [round(nxt[0] - 0.1, 2), b]
-        except Exception:
-            pass
+    words = None
+    try:
+        words = json.loads(Path(spec["words"]).read_text())
+    except Exception:
+        pass
+    a, b = v["parts"][0]
+    if words and ("first 2 seconds" in fails or "Opener" in fails or res.get("judge_notes", {}).get("hook")):
+        nxt = [w["start"] for w in words if a + 0.8 <= w["start"] <= a + 4.0 and w["text"][:1].isupper()]
+        if nxt and b - nxt[0] >= 10:
+            a = round(nxt[0] - 0.1, 2)
+    if words and ("Cut edges" in fails or "finished sentence" in fails or "cuts through" in fails):
+        import find_moments as fm
+        lens = spec.get("brief") or {}
+        min_s, max_s = lens.get("min_s", 20), lens.get("max_s", 60)
+        sents = [x for x in fm.sentences(words) if x["text"].rstrip('"\')').endswith((".", "?", "!"))]
+        if "start" in fails and "cuts through" in fails:
+            starts = [x["start"] for x in sents if a - 0.3 < x["start"] <= a + 6.0]
+            if starts and b - starts[0] >= min_s:
+                a = round(starts[0] - 0.12, 2)
+        # the end: the last finished sentence that ends before the old end and keeps the clip long enough;
+        # when nothing fits, the first one after it that still fits the maximum
+        ends = sorted(x["end"] for x in sents if a + min_s <= x["end"] <= b - 0.25)
+        if not ends:
+            ends = sorted(x["end"] for x in sents if b - 0.25 < x["end"] <= a + max_s)
+        if ends:
+            b = round(ends[-1] + 0.1, 2) if ends[-1] <= b else round(ends[0] + 0.1, 2)
+    if [a, b] != v["parts"][0] and b - a >= 8:
+        v["parts"][0] = [a, b]
     v["out"] = str(Path(spec["out"]).with_name(Path(spec["out"]).stem + "-v2.mp4"))
     v["_why"] = "re-edit: " + str(res.get("why", "")) + " | after: " + "; ".join(res.get("fails", [])[:3])
     return v

@@ -372,6 +372,11 @@ def check_centred(rep, mp4, details):
     picture. Measured on the finished video every 0.5 s with the frontal detector (biggest face)."""
     single = [(s["from"], s["to"]) for s in details["shots"] if s["layout"].split("+")[0] in ("face", "hide", "wide")]
     side = [(s["from"], s["to"]) for s in details["shots"] if s["layout"].split("+")[0] == "side"]
+    # talking shows hold a still camera (render_clip.pan_keys: 10% dead zone, re-frame only after a full second
+    # away; rico 2026-10-30 "moving too much"), so a face may sit up to ~10% off centre by design: 17% is the line
+    # there; movies keep the 12% line of their fast follow
+    still = profiles.profile(details.get("spec", {}).get("style"))["cards"]
+    limit = 0.17 if still else 0.12
     offs, bad, n = [], [], 0
     for i, f in enumerate(frames(mp4)):
         t = i / 2
@@ -387,7 +392,7 @@ def check_centred(rep, mp4, details):
         if lay == "single":
             off = abs(cx - 0.5)
             offs.append(off)
-            if off > 0.12:
+            if off > limit:
                 bad.append(t)
         else:
             # beside a card the face belongs in the free third (0.15-0.45 or 0.55-0.85)
@@ -398,7 +403,7 @@ def check_centred(rep, mp4, details):
         return
     share = len(bad) / n
     st = "FAIL" if share > 0.10 else "WARN" if share > 0.04 else "PASS"
-    rep.add("Speaker centred", st, f"{n} frames measured; off centre in {share:.0%}"
+    rep.add("Speaker centred", st, f"{n} frames measured; off centre (over {limit:.0%}) in {share:.0%}"
             + (f" (at {', '.join(f'{t:.1f}s' for t in bad[:6])})" if bad else "")
             + (f"; mean offset {np.mean(offs):.0%} of width" if offs else ""))
 

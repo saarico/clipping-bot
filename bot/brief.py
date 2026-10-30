@@ -23,19 +23,51 @@ def _secs(t):
     return p[0] * 3600 + p[1] * 60 + p[2] if len(p) == 3 else p[0] * 60 + p[1]
 
 
+RANGE = re.compile(TS + r"\s*[\u2013\u2014-]\s*" + TS)
+QUOTES = ("\"", "\u201c", "\u201d")
+
+
+def _last_quote(text, before):
+    return max(text.rfind(c, 0, before) for c in QUOTES)
+
+
 def clip_ideas(text):
-    """Lines like  "We spend $4M a month on AI for 400 people." 33:23-34:01 Big number first.  ->
-    [{"hook", "start", "end", "note"}]. The quoted line is the campaign's own hook for that moment; the note is what
-    they say to keep. Times are in the brief's reference video; plan.py checks the words really sit there."""
+    """The brief's own clip ideas: a quoted hook with a mm:ss-mm:ss range and a note, in any of the layouts a PDF
+    table comes out as (2026-10-30, Higgsfield): hook and time on one line; the hook opened on the line above the
+    time and closed on the line below it (the table wrapped the hook column); the hook closed right before the time.
+    -> [{"hook", "start", "end", "note"}] in the brief's order. Times are in the brief's reference video; plan.py
+    checks the words really sit there. Two-part ideas ("... 32:58-33:04 +") and ranges under 15 s are skipped."""
     out = []
-    for line in text.splitlines():
-        m = re.search(r"[\"\u201c]([^\"\u201d]{8,180})[\"\u201d]\s*(?:[^\n\d\"\u201c]{0,40}?)?" + TS + r"\s*[\u2013\u2014-]\s*" + TS + r"(.*)$", line)
-        if not m:
+    for m in RANGE.finditer(text):
+        a, b = _secs(m.group(1)), _secs(m.group(2))
+        if not (15 <= b - a <= 240):
             continue
-        a, b = _secs(m.group(2)), _secs(m.group(3))
-        if not (5 <= b - a <= 240):
+        line_end = text.find("\n", m.end())
+        line_end = len(text) if line_end < 0 else line_end
+        note = text[m.end():line_end].strip(" -\u2014\t")
+        if note.endswith("+"):
             continue
-        out.append({"hook": m.group(1).strip(), "start": a, "end": b, "note": m.group(4).strip(" -\u2014")[:160]})
+        q = _last_quote(text, m.start())
+        if q < 0:
+            continue
+        between = text[q + 1:m.start()].strip()
+        if not between:
+            # the quote right before the time closes the hook: it runs from the quote before that
+            p = _last_quote(text, q)
+            if p < 0:
+                continue
+            hook = text[p + 1:q]
+        else:
+            # the hook opened before the time and was not closed yet: the rest sits on the next line(s)
+            hook = between
+            tail = text[line_end + 1:line_end + 400]
+            close = re.search(r"[\"\u201d]", tail)
+            if close and tail[:close.start()].count("\n") <= 1 and not RANGE.search(tail[:close.start()]):
+                hook = hook + " " + tail[:close.start()]
+        hook = re.sub(r"\s+", " ", hook).strip(" \n\u2026")
+        if not (8 <= len(hook) <= 180):
+            continue
+        out.append({"hook": hook, "start": a, "end": b, "note": note[:160]})
     return out
 
 
