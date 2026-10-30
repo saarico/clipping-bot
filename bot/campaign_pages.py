@@ -82,7 +82,10 @@ def main(args):
     from playwright.sync_api import sync_playwright
     ids = ids_from(args) or default_ids()
     OUT.mkdir(parents=True, exist_ok=True)
-    summary = {}
+    try:
+        summary = json.loads((OUT / "summary.json").read_text())   # earlier reads stay; a page read again replaces its entry
+    except Exception:
+        summary = {}
     with sync_playwright() as pw:
         b = pw.chromium.launch()
         page = b.new_page(viewport={"width": 1280, "height": 2200},
