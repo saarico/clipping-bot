@@ -1,19 +1,42 @@
-[02:24:40] CLIPPING root CLIPPING
-[02:25:33] episode taken from the Drive cache (same source files as last time)
-[02:26:23] 4 candidate(s) picked (plan.json (reviewer)), 0 fallback(s); rendering on 4 machines with grade-and-retry
-[02:26:23] 4 render job(s)
-Discover page read: 71 campaigns found.
-scored 7 JOIN candidates; new folders in 0_START: none
-live: DIGGER x ClipFarm, Higgsfield 20VC Clipping, The Iced Coffee Hour Podcast x Greg Lav
-[02:33:28] moments from: plan.json (reviewer)
-transcript + graphics ready after 0.4 min
-TRY   c01_shut-down-a-billion-dollar-r: qa PASS judge 76 (76/100  hook 20  pace 8  variety 12  framing 6  story 8  entertainment 4  comedy 3  captions 9  length 6) 
-TRY   c02_wait-that-s-tom-cruise: qa FAIL judge 76 (76/100  hook 20  pace 10  variety 15  framing 0  story 7  entertainment 3  comedy 1  captions 10  length 10) | Speaker centred | FAIL | 27 frames measured; off centre in 11% (at 2.5s, 5.5s, 8.0s); mean offset 6% of width |; | Somebody in frame | FAIL | no face for 1.5-2.5s, 8.5-11.0s |
-TRY   c03_the-richest-man-on-earth-hea: qa PASS judge 75 (75/100  hook 15  pace 10  variety 9  framing 10  story 9  entertainment 2  comedy 1  captions 9  length 10) 
-TRY   c04_you-know-one-day-you-re-a-ca: qa FAIL judge 75 (75/100  hook 20  pace 10  variety 15  framing 3  story 4  entertainment 2  comedy 1  captions 10  length 10) | Somebody in frame | FAIL | no face for 0.0-3.0s, 5.0-7.5s, 8.0-9.0s |
-KEPT (under the bar)  c01_shut-down-a-billion-dollar-r: 32s  qa PASS  judge 76 (76/100  hook 20  pace 8  variety 12  framing 6  story 8  entertainment 4  comedy 3  captions 9  length 6)  2.4 min  hook: Shut down a billion-dollar rig over a five-foot crack?  [Reviewer picks (2026-10-28 03:50 UTC) on the WB hook angles: a no-context premise line, 'Wait, that's Tom Cruise?', the strangest line. Approved scene clips + trailer 2A only. tighten off: the footage's own pauses and music beats stay.]
-DROP  c02_wait-that-s-tom-cruise: 17s  qa FAIL  judge 76 (76/100  hook 20  pace 10  variety 15  framing 0  story 7  entertainment 3  comedy 1  captions 10  length 10)  1.5 min  hook: Wait... that's Tom Cruise?  [Reviewer picks (2026-10-28 03:50 UTC) on the WB hook angles: a no-context premise line, 'Wait, that's Tom Cruise?', the strangest line. Approved scene clips + trailer 2A only. tighten off: the footage's own pauses and music beats stay.]  | Speaker centred | FAIL | 27 frames measured; off centre in 11% (at 2.5s, 5.5s, 8.0s); mean offset 6% of width |; | Somebody in frame | FAIL | no face for 1.5-2.5s, 8.5-11.0s |; | Footage text cut off | FAIL | text runs off the frame edge at 9 s, 10 s |
-KEPT (under the bar)  c03_the-richest-man-on-earth-hea: 21s  qa PASS  judge 75 (75/100  hook 15  pace 10  variety 9  framing 10  story 9  entertainment 2  comedy 1  captions 9  length 10)  1.4 min  hook: The richest man on Earth hears the bad news.  [Reviewer picks (2026-10-28 03:50 UTC) on the WB hook angles: a no-context premise line, 'Wait, that's Tom Cruise?', the strangest line. Approved scene clips + trailer 2A only. tighten off: the footage's own pauses and music beats stay.]
-DROP  c04_you-know-one-day-you-re-a-ca: 12s  qa FAIL  judge 75 (75/100  hook 20  pace 10  variety 15  framing 3  story 4  entertainment 2  comedy 1  captions 10  length 10)  0.9 min  hook: You know, one day you're a cat.  [fallback: score 46: stakes 2, entertainment 4, comedy 2, names 2, shape 3, clarity 6, pace 10, energy 2, payoff 10, length 5 [comedy 4, drama 3]]  | Somebody in frame | FAIL | no face for 0.0-3.0s, 5.0-7.5s, 8.0-9.0s |
-2 clip(s) kept of 4 rendered on 4 machines, longest render 2.4 min
-[02:33:44] 2 clip(s) uploaded to 1_CHECK
+[06:12:36] CLIPPING root CLIPPING
+Could not get FontBBox from font descriptor because None cannot be parsed as 4 floats
+[06:13:08] rules page https://whop.com/clip-farm-official/exp_4UqMmAp584lF59/app/: 1871 chars
+[06:13:31] brief read: 30 rules, 3 links, tags ['@20VC', '@20vchq', '@HiggsfieldAI', '@higgsfield.ai']
+[06:13:37] episode taken from the Drive cache (same source files as last time)
+/home/runner/work/clipping-bot/clipping-bot/bot/run.py:497: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  c = sum(1 for v in a.getdata() if v > 40) / float(im.width * im.height)
+/home/runner/work/clipping-bot/clipping-bot/bot/run.py:497: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  c = sum(1 for v in a.getdata() if v > 40) / float(im.width * im.height)
+[06:18:54] Higgsfield 20VC Clipping: parts not there yet (no artifact matches any of the names or patterns provided)
+[06:18:54] Higgsfield 20VC Clipping: parts not there yet (no artifact matches any of the names or patterns provided)
+[06:18:56] Higgsfield 20VC Clipping: waiting for the transcript parts from 4 machines
+[06:20:00] transcript merged from 4 machines
+[06:20:06] PITCH c01_if-you-are-at-a-billion-toda: 94/100 PASS (hook 20 story 10 entertainment 10 comedy 3 pace 8 length 10)
+[06:20:06] PITCH c02_you-just-skipped-the-moment: 94/100 PASS (hook 20 story 10 entertainment 10 comedy 3 pace 8 length 10)
+[06:20:06] PITCH c03_whenever-we-sold-the-company: 86/100 PASS (hook 20 story 10 entertainment 6 comedy 1 pace 9 length 10)
+[06:20:06] PITCH c04_today-snap-market-cap-is-bel: 89/100 PASS (hook 20 story 9 entertainment 9 comedy 2 pace 8 length 10)
+[06:20:06] PITCH c05_no-look-back-then-rounds-of: 88/100 PASS (hook 15 story 10 entertainment 10 comedy 2 pace 10 length 10) | first line names no one and nothing
+[06:20:06] PITCH c06_if-you-were-a-silicon-valley: 94/100 PASS (hook 20 story 10 entertainment 10 comedy 1 pace 10 length 10)
+[06:20:06] 6 of 6 pitches go to render
+[06:20:06] 4 candidate(s) picked (entertainment scorecard (auto)), 2 fallback(s); rendering on 4 machines with grade-and-retry
+[06:20:06] 4 render job(s)
+[06:26:37] moments from: entertainment scorecard (auto)
+style: podcast
+transcript + graphics ready after 0.1 min
+PITCH c01_if-you-are-at-a-billion-toda: 94/100 PASS (hook 20 story 10 entertainment 10 comedy 3 pace 8 length 10)
+PITCH c02_you-just-skipped-the-moment: 94/100 PASS (hook 20 story 10 entertainment 10 comedy 3 pace 8 length 10)
+PITCH c03_whenever-we-sold-the-company: 86/100 PASS (hook 20 story 10 entertainment 6 comedy 1 pace 9 length 10)
+PITCH c04_today-snap-market-cap-is-bel: 89/100 PASS (hook 20 story 9 entertainment 9 comedy 2 pace 8 length 10)
+PITCH c05_no-look-back-then-rounds-of: 88/100 PASS (hook 15 story 10 entertainment 10 comedy 2 pace 10 length 10) | first line names no one and nothing
+PITCH c06_if-you-were-a-silicon-valley: 94/100 PASS (hook 20 story 10 entertainment 10 comedy 1 pace 10 length 10)
+6 of 6 pitches go to render
+TRY   c03_so-whenever-we-sold-the-comp: qa PASS judge 77 (77/100  hook 20  pace 7  variety 4  framing 10  story 10  entertainment 6  comedy 1  captions 9  length 10) 
+TRY   c04_like-today-snap-market-cap-i: qa FAIL judge 81 (81/100  hook 20  pace 10  variety 7  framing 10  story 9  entertainment 9  comedy 1  captions 5  length 10) | Cut edges (no clipped words) | FAIL | 10 edges checked against the audio; start 4147.98s cuts through "good." |
+KEPT  c02_and-you-just-skipped-the-mom: 46s  qa PASS  judge 84 (84/100  hook 20  pace 10  variety 4  framing 10  story 10  entertainment 10  comedy 3  captions 7  length 10)  3.3 min  hook: You just skipped the moment you sold for $166 million.  [score 102: stakes 15, entertainment 24, comedy 4, names 8, shape 9, clarity 10, pace 9, visuals 8, payoff 10, length 5 [business 20, comedy 8, drama 2]]
+KEPT  c01_if-you-are-at-a-billion-toda: 52s  qa PASS  judge 83 (83/100  hook 20  pace 10  variety 4  framing 10  story 10  entertainment 10  comedy 3  captions 6  length 10)  3.4 min  hook: If you are at a billion today, 10 billion in 12 months,.  [score 105: stakes 15, entertainment 24, comedy 4, names 8, shape 12, clarity 10, pace 9, visuals 8, payoff 10, length 5 [business 20, comedy 9, drama 7]]
+DROP  c04_like-today-snap-market-cap-i: 43s  qa FAIL  judge 81 (81/100  hook 20  pace 10  variety 7  framing 10  story 9  entertainment 9  comedy 1  captions 5  length 10)  2.0 min  hook: Today, Snap Market Cap is below 15 billion.  [score 100: stakes 15, entertainment 22, comedy 3, names 8, shape 10, clarity 10, pace 9, visuals 8, payoff 10, length 5 [business 19, comedy 6, drama 2]]  | Cut edges (no clipped words) | FAIL | 10 edges checked against the audio; start 4147.98s cuts through "good." |
+DROP  c03_so-whenever-we-sold-the-comp: 47s  qa PASS  judge 77 (77/100  hook 20  pace 7  variety 4  framing 10  story 10  entertainment 6  comedy 1  captions 9  length 10)  2.2 min  hook: Whenever we sold the company, I made over million dollars.  [score 100: stakes 15, entertainment 16, comedy 1, names 8, shape 19, clarity 10, pace 8, visuals 8, payoff 10, length 5 [business 14, drama 4, comedy 2]]
+LANE  c02_and-you-just-skipped-the-mom: youtube (youtube 44, tiktok 8, instagram 4; baseline youtube (podcast))
+LANE  c01_if-you-are-at-a-billion-toda: youtube (youtube 41, tiktok 11, instagram 8; baseline youtube (podcast))
+2 clip(s) kept of 4 rendered on 4 machines, longest render 3.4 min
+[06:27:38] 2 clip(s) uploaded to 1_CHECK

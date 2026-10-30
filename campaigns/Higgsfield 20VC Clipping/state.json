@@ -16,9 +16,10 @@
   "2026-10-30 06:13 UTC  brief read: 30 rules, 3 links, tags ['@20VC', '@20vchq', '@HiggsfieldAI', '@higgsfield.ai']",
   "2026-10-30 06:13 UTC  episode taken from the Drive cache (same source files as last time)",
   "2026-10-30 06:20 UTC  transcript merged from 4 machines",
-  "2026-10-30 06:20 UTC  4 candidate(s) picked (entertainment scorecard (auto)), 2 fallback(s); rendering on 4 machines with grade-and-retry"
+  "2026-10-30 06:20 UTC  4 candidate(s) picked (entertainment scorecard (auto)), 2 fallback(s); rendering on 4 machines with grade-and-retry",
+  "2026-10-30 06:27 UTC  2 clip(s) uploaded to 1_CHECK"
  ],
- "updated": "2026-10-30 06:20 UTC",
+ "updated": "2026-10-30 06:27 UTC",
  "critiques_seen": [],
  "watermark": "20vc podcast higgsfield black.png",
  "brief": {
@@ -93,5 +94,64 @@
   "disclosure": "",
   "style": "podcast",
   "rider": ""
- }
+ },
+ "used_moments": [
+  {
+   "start": 283.35,
+   "end": 328.85,
+   "hook": "You just skipped the moment you sold for $166 million."
+  },
+  {
+   "start": 4459.97,
+   "end": 4513.57,
+   "hook": "If you are at a billion today, 10 billion in 12 months,."
+  }
+ ],
+ "tried_moments": [
+  {
+   "start": 4148.01,
+   "end": 4192.55,
+   "hook": "Today, Snap Market Cap is below 15 billion."
+  },
+  {
+   "start": 3556.69,
+   "end": 3603.93,
+   "hook": "Whenever we sold the company, I made over million dollars."
+  }
+ ],
+ "clips": [
+  {
+   "mp4": "01_and-you-just-skipped-the-mom.mp4",
+   "hook": "You just skipped the moment you sold for $166 million.",
+   "judge": 84,
+   "dur": 45.7,
+   "caption": "",
+   "lane": "youtube",
+   "text": "TITLE: You just skipped the moment you sold for $166 million. CAPTIONS AS SHOWN (one line per cut): BECAUSE, I MEAN, WHO ELSE IS GOING TO PRODUCE VIDEOS FOR THE PHONES? MAYBE IT'S GOING TO HAPPEN WITH AI. OKAY. AND SO THAT WAS THE COMPANY THAT WE BUILT BEFORE THAT YOU SOLD TO SNAP? SO, YEAH. SO, THE COMPANY WAS CALLED AFACTORY, AFACTORY WAS FORTUNATE TO MEET MY HIT 2018. HE IS CO -FOUNDER OF HICKSFIELD. AND HE IS LIKE A VETERAN OF SILICON VALLEY, WENT THROUGH UPS AND DOWNS AND SOLD IT TO SNAP FOR $166 MILLION. AND THEN I WAS LEADING JENNY IYER THERE. PAUSE. NO OFFENSE, DUDE. YOU COME FROM A FAMILY OF INCREDIBLY AMBITIOUS PARENTS WHO PUSH YOU TO DO WELL. AND YOU JUST SKIPPED THE MOMENT YOU SOLD FOR $166 MILLION. IT'S A LOT OF MONEY.",
+   "parts": [
+    [
+     283.35,
+     328.85
+    ]
+   ]
+  },
+  {
+   "mp4": "02_if-you-are-at-a-billion-toda.mp4",
+   "hook": "If you are at a billion today, 10 billion in 12 months,.",
+   "judge": 83,
+   "dur": 52.1,
+   "caption": "",
+   "lane": "youtube",
+   "text": "TITLE: If you are at a billion today, 10 billion in 12 months,. CAPTIONS AS SHOWN (one line per cut): IF YOU ARE AT A BILLION TODAY, 10 BILLION IN 12 MONTHS, WHY DO YOU PEG THE NEXT PHONE RISE? IF YOU WERE AT A BILLION, SAY A CONSERVATIVE MULTIPLY IT'D BE LIKE 15. BUT IF YOU'RE HITTING 10, ACTUALLY YOU'RE LIKE PAYING END OF YEAR LIKE 80. LOOK, WE'RE NOT CHASING JUST THE VALUATION BECAUSE AGAIN THE GOAL IS JUST TO MAKE SURE THAT THE COMPANY CAN BE SUSTAINABLE OVER THE TIME IN PUBLIC MARKETS. SO THERE IS A LOT OF COMPANY BUILDING TO BE DONE BEYOND JUST CHASING THE REVENUE. BUT I JUST DO BELIEVE. DO YOU WANT TO BE PUBLIC? DO YOU WANT TO BE PUBLIC AT SOME POINT? YEAH, I DO BELIEVE THAT HICKSVILLE HAS GREAT POTENTIAL TO BE BIGGER THAN APPLE, AVENE AND SHOPIFY. BECAUSE FUNDAMENTALLY LIKE BUILDING IS ONE PART OF THAT. SHOPIFY, ONE LAYER OF INFRASTRUCTURE. THEN FOR CODING THERE IS OBVIOUSLY LIKE A CLOUD. THERE IS CODEX. BUT WHAT MATTERS IS DISTRIBUTION OVER THE TIME.",
+   "parts": [
+    [
+     4459.97,
+     4513.57
+    ]
+   ]
+  }
+ ],
+ "needs_redo": false,
+ "empty_runs": 0,
+ "empty_told": false
 }
