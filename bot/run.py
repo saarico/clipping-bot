@@ -444,6 +444,11 @@ def wait_for_parts(name, n=TRANSCRIBE_PARTS, limit=50 * 60):
             r = subprocess.run(["gh", "run", "download", run_id, "-R", repo, "-n", f"words-{i}", "-D", str(d)], capture_output=True, text=True)
             if r.returncode == 0:
                 got[i] = d / name / f"part_{i}.json"
+            elif re.search(r"403|Resource not accessible|not logged|authentication", r.stderr):
+                log(f"{name}: cannot read the run's artifacts ({r.stderr.strip()[-160:]}); transcribing here")
+                return None
+            elif not waited:
+                log(f"{name}: parts not there yet ({r.stderr.strip().splitlines()[-1][:120] if r.stderr.strip() else 'no output'})")
         if len(got) == n:
             break
         # a transcribe machine that finished without an artifact is not coming
@@ -527,9 +532,9 @@ def do_campaign(name, cpath, phase="all"):
         fetched = []
         for url in dict.fromkeys(u.rstrip(".,:;)") for u in re.findall(r"https?://[^\s<>\"')\]]+", text)):
             # videos, podcasts and recordings are sources, not rule pages
-            if re.search(r"youtube\.com|youtu\.be|tiktok\.com|instagram\.com|drive\.google\.com/file|contentrewards\.com|"
-                         r"spotify\.com|zoom\.us|rss\.com|podcast|apple\.com|x\.com|twitter\.com|\.media/|magazine\.com|tftc\.io", url):
-                continue
+            if re.search(r"youtube\.com|youtu\.be|tiktok\.com|instagram\.com|drive\.google\.com/|contentrewards\.com|we\.tl|wetransfer\.com|"
+                         r"dropbox\.com|discord\.gg|discord\.com|spotify\.com|zoom\.us|rss\.com|podcast|apple\.com|x\.com|twitter\.com|\.media/|magazine\.com|tftc\.io", url):
+                continue   # footage folders, transfers and chat invites are not rules pages
             try:
                 page = fetch_page.fetch_text(url.rstrip(".,"))
             except Exception as e:
@@ -541,6 +546,9 @@ def do_campaign(name, cpath, phase="all"):
             text += "\n\n" + "\n\n".join(fetched)
             drive.write_doc("RULES (fetched by the bot)", "\n\n".join(fetched)[:60000], stage["0_START"])
         st["brief"] = briefer.parse(text)
+        if fetched:   # handles and per-platform tags come from the requirements file itself, never from a fetched page's chatter
+            own = briefer.parse(text.split("\n\n=== ")[0])
+            st["brief"]["tags"], st["brief"]["tags_by_platform"] = own["tags"], own["tags_by_platform"]
         (cdir / "brief.json").write_text(json.dumps(st["brief"], indent=1))
         b = st["brief"]
         drive.write_doc("BRIEF", "What the bot read from the requirements:\n\n"

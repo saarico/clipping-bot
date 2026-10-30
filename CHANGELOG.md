@@ -3,6 +3,18 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-10-30 (06:20 UTC): run 3: the 4 transcript parts were made but prepare could not read them
+- Run 41001130950: the 4 transcribe machines finished their quarters in 6-10 min each (download of the 4K file
+  included), but prepare's `gh run download` got 403 for 50 min: the workflow token had `contents: write` only.
+  Prepare then converted the 4K file for 53 min (YouTube refused the cookies within 2 s, see the probe), cached it
+  (properly, with its size), and was cut off by the 120-min job timeout while transcribing itself.
+- Bot: `permissions: actions: read` in run.yml; a 403 or auth error on the first artifact read gives up at once (prepare
+  transcribes itself) instead of waiting 50 min, and the first failure's error is logged. Handles and per-platform tags
+  are read from the requirements file only, never from fetched pages (run 3 picked up 4 strangers' handles from a
+  Discord/Drive page); Drive folders, WeTransfer, Dropbox and Discord links are not fetched as rules pages.
+- Note: on the current ubuntu-latest image /mnt is the root disk (15 GB free), not a second disk; the lighter
+  conversion (~2 GB) fits.
+
 ## 2026-10-30 (04:25 UTC): run 2 found a broken cache and a brief with no links; fixed
 - Run 41000362327 (the first on the 4-machine path) finished in 5 min with nothing: the dying machine of run 1 had
   uploaded a 5 GB torso of the converted episode to the Drive cache, every machine took it ("no speech"), and the brief
