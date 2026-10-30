@@ -182,10 +182,16 @@ def join_videos(parts, dest, log=print):
         # GitHub machine ran out of disk (Higgsfield, 2026-10-30)
         subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(pth), "-vf", vf, "-r", "30", "-c:v", "libx264", "-preset", "veryfast",
                         "-crf", "21", "-c:a", "aac", "-ar", "48000", "-ac", "2", "-af", "aresample=async=1", str(o)], check=False)
-        if o.exists():
-            norm.append(o)
-            log(f"part {i:02d}: {pth.name[:60]} {w}x{h} {dur:.0f}s" + (f" ({crop})" if crop else ""))
-            pth.unlink(missing_ok=True)   # the original is not needed again on this machine
+        ow, oh, odur = video_info(o) if o.exists() else (0, 0, 0.0)
+        if (ow, oh) != (1920, 1080) or abs(odur - dur) > max(2.0, 0.02 * dur):
+            # a conversion that stopped short (disk full, killed) must never become the episode: run 1 of Higgsfield
+            # cached a 5 GB torso with no sound (2026-10-30)
+            log(f"part {i:02d}: conversion of {pth.name[:60]} came out {ow}x{oh} {odur:.0f}s of {dur:.0f}s: dropped")
+            o.unlink(missing_ok=True)
+            continue
+        norm.append(o)
+        log(f"part {i:02d}: {pth.name[:60]} {w}x{h} {dur:.0f}s" + (f" ({crop})" if crop else ""))
+        pth.unlink(missing_ok=True)   # the original is not needed again on this machine
     if not norm:
         return None
     lst = dest.parent / "parts" / "list.txt"
@@ -281,9 +287,12 @@ def get_source(name, st, stage, cdir, for_audio=False):
         cached = {f["Name"]: f for f in drive.files(cache)}
         if "episode.mp4" in cached and "source.json" in cached:
             try:
-                if json.loads(drive.text_of(cached["source.json"]["Path"], "source.json")).get("sig") == sig:
+                meta = json.loads(drive.text_of(cached["source.json"]["Path"], "source.json"))
+                if meta.get("sig") == sig and (not meta.get("size") or int(meta["size"]) == int(cached["episode.mp4"].get("Size") or -1)):
                     note(st, "episode taken from the Drive cache (same source files as last time)")
                     return drive.download(cached["episode.mp4"]["Path"], dest)
+                if meta.get("sig") == sig:
+                    note(st, "the Drive cache holds a cut-short episode (size mismatch): rebuilding it")
             except Exception as e:
                 note(st, f"cache check failed ({type(e).__name__}); rebuilding the episode")
         got = None
@@ -331,9 +340,12 @@ def get_source(name, st, stage, cdir, for_audio=False):
         if out:
             try:
                 meta = dest.parent / "source.json"
-                meta.write_text(json.dumps({"sig": sig, "files": [v["Name"] for v in vids]}))
+                meta.write_text(json.dumps({"sig": sig, "files": [v["Name"] for v in vids], "size": Path(out).stat().st_size}))
                 drive.be().mkdir(cache)
                 drive.upload(out, cache, name="episode.mp4")
+                up = {f["Name"]: f for f in drive.files(cache)}.get("episode.mp4", {})
+                if int(up.get("Size") or -1) != Path(out).stat().st_size:
+                    raise RuntimeError(f"upload came out {up.get('Size')} bytes of {Path(out).stat().st_size}")
                 drive.upload(meta, cache, name="source.json")
                 note(st, "episode saved to the Drive cache")
             except Exception as e:
@@ -349,7 +361,8 @@ def get_source(name, st, stage, cdir, for_audio=False):
         cached = {f["Name"]: f for f in drive.files(cache)}
         if "episode.mp4" in cached and "source.json" in cached:
             try:
-                if json.loads(drive.text_of(cached["source.json"]["Path"], "source.json")).get("sig") == sig:
+                meta = json.loads(drive.text_of(cached["source.json"]["Path"], "source.json"))
+                if meta.get("sig") == sig and (not meta.get("size") or int(meta["size"]) == int(cached["episode.mp4"].get("Size") or -1)):
                     note(st, "episode taken from the Drive cache (downloaded from the link last time)")
                     return drive.download(cached["episode.mp4"]["Path"], dest)
             except Exception as e:
@@ -366,7 +379,7 @@ def get_source(name, st, stage, cdir, for_audio=False):
                     return got
                 try:
                     meta = dest.parent / "source.json"
-                    meta.write_text(json.dumps({"sig": sig, "url": url}))
+                    meta.write_text(json.dumps({"sig": sig, "url": url, "size": Path(got).stat().st_size}))
                     drive.be().mkdir(cache)
                     drive.upload(got, cache, name="episode.mp4")
                     drive.upload(meta, cache, name="source.json")

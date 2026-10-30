@@ -3,6 +3,16 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-10-30 (04:25 UTC): run 2 found a broken cache and a brief with no links; fixed
+- Run 41000362327 (the first on the 4-machine path) finished in 5 min with nothing: the dying machine of run 1 had
+  uploaded a 5 GB torso of the converted episode to the Drive cache, every machine took it ("no speech"), and the brief
+  came out with 0 links because the PDF carries its URLs as link annotations, not as text.
+- Bot: the Drive cache remembers the episode's size and a hit must match it; source.json is written only after the
+  upload is checked against the local size; a conversion whose output is not 1920x1080 for the whole duration is
+  dropped, never cached. PDF briefs now include their hyperlinks ("Links in the file:" block, pdfplumber hyperlinks).
+- The broken cache files went to Drive's trash; the Higgsfield state forgets the brief (re-read with links) and the
+  "no speech" verdict.
+
 ## 2026-10-30 (04:15 UTC): Higgsfield run 1 died of a full disk; fixed
 - Run 40994897851 (03:00-03:54) stopped with "No space left on device" during prepare. rico's episode file is the 4K
   YouTube download; the 1080p conversion wrote at ~20 Mbit/s (ultrafast, crf 17): about 10 GB for an hour, on the

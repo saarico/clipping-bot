@@ -215,7 +215,17 @@ def text_of(path, name):
     if low.endswith(".pdf"):
         import pdfplumber
         with pdfplumber.open(str(local)) as pdf:
-            return "\n".join((pg.extract_text() or "") for pg in pdf.pages)
+            text = "\n".join((pg.extract_text() or "") for pg in pdf.pages)
+            # links sit behind words ("Full podcast", "YouTube video"): the brief's sources are those URLs, not text
+            # (Higgsfield 2026-10-30: the bot read 0 links from a brief with 7)
+            uris = []
+            for pg in pdf.pages:
+                try:
+                    uris += [h.get("uri") for h in (pg.hyperlinks or []) if h.get("uri")]
+                except Exception:
+                    pass
+            uris = [u for u in dict.fromkeys(uris) if u not in text]
+            return text + ("\n\nLinks in the file:\n" + "\n".join(uris) if uris else "")
     return local.read_text(errors="replace")
 
 
