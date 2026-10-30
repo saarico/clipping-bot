@@ -1,2 +1,5 @@
-[16:41:34] CLIPPING root CLIPPING
-[16:42:36] 0 render job(s)
+[22:17:46] CLIPPING root CLIPPING
+Could not get FontBBox from font descriptor because None cannot be parsed as 4 floats
+[22:18:53] rules page https://whop.com/clip-farm-official/exp_4UqMmAp584lF59/app/: 1869 chars
+[22:18:57] brief read: 30 rules, 3 links, tags ['@20VC', '@20vchq', '@HiggsfieldAI', '@higgsfield.ai']
+[22:19:32] 0 render job(s)
