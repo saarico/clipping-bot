@@ -653,6 +653,10 @@ def do_campaign(name, cpath, phase="all"):
                 note(st, f"transcript merged from {len(parts)} machines")
     if not words.exists():
         note(st, "transcribing the whole episode")
+    # the brief's own clip ideas are re-read from the cached brief text every run, so a better reader applies to a
+    # campaign already under way (2026-10-30: the Higgsfield state held 3 ideas after the reader learned to find 23)
+    if st["brief"].get("text"):
+        st["brief"]["moments"] = briefer.clip_ideas(st["brief"]["text"].split("\n\n=== ")[0])
     # moments rico already saw, plus moments rendered and dropped before: the scorecard moves on to new ones
     used = [(c["start"], c["end"]) for c in st.get("used_moments", []) + st.get("tried_moments", [])]
     t0 = time.time()

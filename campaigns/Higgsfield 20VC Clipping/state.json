@@ -198,10 +198,112 @@
   "disclosure": "",
   "moments": [
    {
+    "hook": "We spend $4M a month on AI for 400 people.",
+    "start": 2003,
+    "end": 2041,
+    "note": "Big number first. Keep Harry's reaction."
+   },
+   {
+    "hook": "One person spent $30,000 on AI in a week.",
+    "start": 2055,
+    "end": 2098,
+    "note": "Keep that it did not fully work."
+   },
+   {
+    "hook": "Top creatives could spend $100,000 a month on AI.",
+    "start": 2127,
+    "end": 2157,
+    "note": "This is his guess about the future."
+   },
+   {
+    "hook": "Investors shook hands. Then came back 30% lower.",
+    "start": 2798,
+    "end": 2821,
+    "note": "Keep that this was NOT Yuri Milner."
+   },
+   {
+    "hook": "Open models: 80%+ margins. Closed: 20–30%.",
+    "start": 1912,
+    "end": 1978,
+    "note": "These are not Higgsfield's own margins."
+   },
+   {
+    "hook": "30% churn in month one. Business These are two different customer groups. NRR over 300%.",
+    "start": 1280,
+    "end": 1357,
+    "note": ""
+   },
+   {
+    "hook": "90 minutes of film took 100+ hours of AI footage.",
+    "start": 1435,
+    "end": 1456,
+    "note": ""
+   },
+   {
+    "hook": "Our film prompts are 3,000 words long.",
+    "start": 1645,
+    "end": 1695,
+    "note": ""
+   },
+   {
+    "hook": "Google and OpenAI will kill the $20 AI plans.",
+    "start": 1171,
+    "end": 1222,
+    "note": "Open with the threat. Then say why."
+   },
+   {
     "hook": "We don't do any paid ads.",
     "start": 1394,
     "end": 1469,
     "note": ""
+   },
+   {
+    "hook": "Keep his Google/Nvidia China has four.",
+    "start": 1583,
+    "end": 1600,
+    "note": ""
+   },
+   {
+    "hook": "I thought AI would replace legal and support. I was wrong.",
+    "start": 2187,
+    "end": 2241,
+    "note": ""
+   },
+   {
+    "hook": "The faster we ship, the harder AI support gets.",
+    "start": 2255,
+    "end": 2295,
+    "note": ""
+   },
+   {
+    "hook": "Researchers game tests to get their bonuses.",
+    "start": 1515,
+    "end": 1550,
+    "note": "This is Alex's view. He names no lab."
+   },
+   {
+    "hook": "You don't need PhD-level AI to make a viral video.",
+    "start": 1868,
+    "end": 1913,
+    "note": ""
+   },
+   {
+    "hook": "Our team moved from Claude to Codex.",
+    "start": 2294,
+    "end": 2342,
+    "note": "This was true when they filmed."
+   },
+   {
+    "hook": "Europe can compete in every part of AI.",
+    "start": 3177,
+    "end": 3256,
+    "note": ""
+   },
+   {
+    "hook": "Silicon Valley job-hopping is a weakness.",
+    "start": 3276,
+    "end": 3318,
+    "note": "Keep it about building strong teams."
    },
    {
     "hook": "My mom worked three jobs.",
@@ -210,9 +312,27 @@
     "note": "Hard times first. The cost last."
    },
    {
+    "hook": "I made $1M and bought homes for my family. I own none.",
+    "start": 3556,
+    "end": 3609,
+    "note": ""
+   },
+   {
+    "hook": "One full day with my son in three months.",
+    "start": 3614,
+    "end": 3655,
+    "note": "He means a full day with no work calls."
+   },
+   {
     "hook": "Yuri Milner saw the media shift early.",
     "start": 2723,
     "end": 2762,
+    "note": ""
+   },
+   {
+    "hook": "What I learn from Jensen, Elon and Nik They did not tell him this. He learns from looks like micromanagement.",
+    "start": 3335,
+    "end": 3374,
     "note": ""
    }
   ],
