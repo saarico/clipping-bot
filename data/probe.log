@@ -1,18 +1,22 @@
-probe 2026-10-30T02:09Z https://www.youtube.com/watch?v=Vw9m8s2DQLg cookies=yes
-ERROR: [youtube] Vw9m8s2DQLg: Requested format is not available. Use --list-formats for a list of available formats
-[youtube] Vw9m8s2DQLg: Downloading webpage
-[youtube] Vw9m8s2DQLg: Downloading web embedded client config
-[youtube] Vw9m8s2DQLg: Downloading player 4efb8b2c-main
-[youtube] Vw9m8s2DQLg: Downloading web embedded player API JSON
-[youtube] Vw9m8s2DQLg: Downloading tv samsung player API JSON
-[info] Available formats for Vw9m8s2DQLg:
+probe 2026-10-30T02:10Z https://www.youtube.com/watch?v=dQw4w9WgXcQ cookies=yes
+ERROR: [youtube] dQw4w9WgXcQ: Requested format is not available. Use --list-formats for a list of available formats
+[youtube] Extracting URL: https://www.youtube.com/watch?v=dQw4w9WgXcQ
+[youtube] dQw4w9WgXcQ: Downloading webpage
+[youtube] dQw4w9WgXcQ: Downloading web embedded client config
+[youtube] dQw4w9WgXcQ: Downloading player 4efb8b2c-main
+[youtube] dQw4w9WgXcQ: Downloading web embedded player API JSON
+[youtube] dQw4w9WgXcQ: Downloading tv samsung player API JSON
+WARNING: [youtube] dQw4w9WgXcQ: Signature solving failed: Some formats may be missing. Ensure you have a supported JavaScript runtime and challenge solver script distribution installed. Review any warnings presented before this message. For more details, refer to  https://github.com/yt-dlp/yt-dlp/wiki/EJS
+WARNING: [youtube] dQw4w9WgXcQ: n challenge solving failed: Some formats may be missing. Ensure you have a supported JavaScript runtime and challenge solver script distribution installed. Review any warnings presented before this message. For more details, refer to  https://github.com/yt-dlp/yt-dlp/wiki/EJS
+WARNING: Only images are available for download. use --list-formats to see them
+[info] Available formats for dQw4w9WgXcQ:
 ID  EXT   RESOLUTION FPS | PROTO | VCODEC MORE INFO
 ----------------------------------------------------
 sb3 mhtml 48x27        0 | mhtml | images storyboard
-sb2 mhtml 80x45        0 | mhtml | images storyboard
-sb1 mhtml 160x90       0 | mhtml | images storyboard
-sb0 mhtml 320x180      0 | mhtml | images storyboard
-[youtube] Vw9m8s2DQLg: Downloading web embedded player API JSON
-[youtube] Vw9m8s2DQLg: Downloading tv samsung player API JSON
-ERROR: [youtube] Vw9m8s2DQLg: Requested format is not available. Use --list-formats for a list of available formats
+sb2 mhtml 80x45        1 | mhtml | images storyboard
+sb1 mhtml 160x90       1 | mhtml | images storyboard
+sb0 mhtml 320x180      1 | mhtml | images storyboard
+[youtube] dQw4w9WgXcQ: Downloading web embedded player API JSON
+[youtube] dQw4w9WgXcQ: Downloading tv samsung player API JSON
+ERROR: [youtube] dQw4w9WgXcQ: Requested format is not available. Use --list-formats for a list of available formats
 DOWNLOAD FAILED
