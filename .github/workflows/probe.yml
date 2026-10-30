@@ -27,7 +27,7 @@ jobs:
           if [ -n "$YT_COOKIES" ]; then printf '%s\n' "$YT_COOKIES" > /tmp/yt_cookies.txt; chmod 600 /tmp/yt_cookies.txt; CK="--cookies /tmp/yt_cookies.txt"; fi
           { echo "probe $(date -u +%Y-%m-%dT%H:%MZ) $URL cookies=$([ -n "$CK" ] && echo yes || echo no)";
             yt-dlp --no-warnings $CK --print "%(title)s | %(duration)s s | %(uploader)s" --no-playlist "$URL" 2>&1 | tail -n 3;
-            yt-dlp --no-warnings $CK -F --no-playlist "$URL" 2>&1 | tail -n 12;
+            yt-dlp $CK -F --no-playlist "$URL" 2>&1 | grep -v "^\[download\]" | tail -n 25;
             yt-dlp --no-warnings $CK -f "bv*[height<=1080]+ba/b[height<=1080]/b" -S "res:1080,ext:mp4:m4a" --merge-output-format mp4 --no-playlist --download-sections "*0-20" -o "/tmp/probe.%(ext)s" "$URL" 2>&1 | tail -n 3;
             ls -la /tmp/probe.* 2>/dev/null && echo "DOWNLOAD OK" || echo "DOWNLOAD FAILED"; } | tee data/probe.log
       - name: save
