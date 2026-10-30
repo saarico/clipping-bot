@@ -1,4 +1,11 @@
-[00:46:24] CLIPPING root CLIPPING
-[00:46:48] dropped The Iced Coffee Hour Podcast x Greg Lav: moved 0_START to _trash
-[00:46:53] waiting for the requirements file in 0_START
-[00:46:56] 0 render job(s)
+[04:00:50] CLIPPING root CLIPPING
+Could not get FontBBox from font descriptor because None cannot be parsed as 4 floats
+[04:01:48] brief read: 30 rules, 0 links, tags ['@20VC', '@20vchq', '@HiggsfieldAI', '@higgsfield.ai']
+[04:02:28] episode taken from the Drive cache (same source files as last time)
+/home/runner/work/clipping-bot/clipping-bot/bot/run.py:479: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  c = sum(1 for v in a.getdata() if v > 40) / float(im.width * im.height)
+/home/runner/work/clipping-bot/clipping-bot/bot/run.py:479: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  c = sum(1 for v in a.getdata() if v > 40) / float(im.width * im.height)
+[04:04:54] watermark: 20vc podcast higgsfield black.png (1993x615), kept on screen the whole clip, top of the picture
+[04:04:55] footage has no speech: brand mode needs scripts (brand_clips in campaigns/<c>/plan.json)
+[04:04:55] 0 render job(s)
