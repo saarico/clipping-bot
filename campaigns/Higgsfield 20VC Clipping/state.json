@@ -27,9 +27,10 @@
   "2026-10-30 23:03 UTC  4 candidate(s) picked (the brief's clip ideas (2) + scorecard), 3 fallback(s); rendering on 4 machines with grade-and-retry",
   "2026-10-30 23:16 UTC  2 clip(s) uploaded to 1_CHECK",
   "2026-10-30 23:21 UTC  episode taken from the Drive cache (same source files as last time)",
-  "2026-10-30 23:29 UTC  4 candidate(s) picked (the brief's clip ideas (18) + scorecard), 4 fallback(s); rendering on 4 machines with grade-and-retry"
+  "2026-10-30 23:29 UTC  4 candidate(s) picked (the brief's clip ideas (18) + scorecard), 4 fallback(s); rendering on 4 machines with grade-and-retry",
+  "2026-10-30 23:43 UTC  2 clip(s) uploaded to 1_CHECK"
  ],
- "updated": "2026-10-30 23:29 UTC",
+ "updated": "2026-10-30 23:43 UTC",
  "critiques_seen": [],
  "watermark": "20vc podcast higgsfield black.png",
  "used_moments": [
@@ -57,6 +58,16 @@
    "start": 2124.42,
    "end": 2169.8,
    "hook": "I think it really stabilizes around like $500 ,000 a month very."
+  },
+  {
+   "start": 2004.98,
+   "end": 2040.78,
+   "hook": "We spend $4M a month on AI for 400 people."
+  },
+  {
+   "start": 2791.68,
+   "end": 2829.72,
+   "hook": "Investors shook hands. Then came back 30% lower."
   }
  ],
  "tried_moments": [
@@ -89,43 +100,53 @@
    "start": 4261.71,
    "end": 4304.87,
    "hook": "Look, but this happens with Instagram, with WhatsApp."
+  },
+  {
+   "start": 1912.78,
+   "end": 1953.06,
+   "hook": "Open models: 80%+ margins. Closed: 20\u201330%."
+  },
+  {
+   "start": 1408.7,
+   "end": 1450.34,
+   "hook": "We don't do any paid ads."
   }
  ],
  "clips": [
   {
-   "mp4": "01_okay-so-the-internal-spend-4-v2.mp4",
-   "hook": "The internal spend, $4 million, about $10 ,000 per head.",
-   "judge": 82,
+   "mp4": "01_we-spend-4m-a-month-on-ai-fo.mp4",
+   "hook": "We spend $4M a month on AI for 400 people.",
+   "judge": 76,
    "audience": null,
-   "dur": 39.4,
+   "dur": 34.7,
    "caption": "",
    "lane": "youtube",
-   "text": "TITLE: The internal spend, $4 million, about $10 ,000 per head. CAPTIONS AS SHOWN (one line per cut): I WOULDN'T SAY IT WAS PRODUCTION READY, BUT WE LEARNED A LOT. $30,000 IN A WEEK? YEAH, YEAH. MANY PEOPLE SPEND OVER $10,000 IN A WEEK. DO YOU MIND? YEAH, MY FINANCE TEAM WILL PROBABLY SAY, I DON'T KNOW IF YOU ASKED ANY OF THEM, BUT THEY WILL PROBABLY SAY THAT I'M LIKE BEING TOO STUBBORN. TOO RELENTLESS TO CONTROL THE SPEND. BECAUSE SOMETIMES I FEEL IT REALLY GOES OUT OF CONTROL. LIKE $30,000 IN A WEEK IS QUITE A LOT. BUT WE LEARNED THIS, SO THIS WAS ACTUALLY AN AT -PASSIVE EXPERIENCE. OKAY, SO THE INTERNAL SPEND, $4 MILLION, ABOUT $10,000 PER HEAD. WHAT WILL THAT BE IN 12 MONTHS TIME, DO YOU RECKON? SO THAT'S VERY INTERESTING.",
+   "text": "TITLE: We spend $4M a month on AI for 400 people. CAPTIONS AS SHOWN (one line per cut): LIKE ON AVERAGE AT HICKS FIELD, PERSON ON THE TEAM SPENDS OVER $10,000 A MONTH ON VARIOUS MODELS. AND REMEMBER LIKE WE'RE SPLIT ACROSS UNITED STATES AND ASIA. SO HOW MUCH DO YOU SPEND ON MODELS PER MONTH? SO INTERNAL USAGE OF MODELS A MONTH IS OVER 4 MILLION. WOW. HOW MANY PEOPLE DO YOU HAVE? WE HAVE CLOSE TO 400 PEOPLE AND JUST WANT TO MAKE SURE THAT THE MATH ADDS UP. YES, IT'S DEFINITELY OVER $10,000 PER PERSON.",
    "parts": [
     [
-     2089.64,
-     2129.02
+     2004.98,
+     2040.78
     ]
    ]
   },
   {
-   "mp4": "02_i-think-it-really-stabilizes.mp4",
-   "hook": "I think it really stabilizes around like $500 ,000 a month very.",
-   "judge": 81,
+   "mp4": "02_investors-shook-hands-then-c.mp4",
+   "hook": "Investors shook hands. Then came back 30% lower.",
+   "judge": 76,
    "audience": null,
-   "dur": 45.8,
+   "dur": 37.3,
    "caption": "",
    "lane": "youtube",
-   "text": "TITLE: I think it really stabilizes around like $500 ,000 a month very. CAPTIONS AS SHOWN (one line per cut): WHAT WILL THAT BE IN 12 MONTHS TIME, DO YOU RECKON? SO THAT'S VERY INTERESTING. SO ACROSS THE TOP ENGINEERS AND ACROSS TOP CREATIVES, I THINK IT'S GOING TO KEEP GROWING. AND I DO BELIEVE WE ARE GOING TO GET TO SPEND CLOSE TO $50,000 AND $100,000 A MONTH FOR THOSE WHO CAN CALL 10X ENGINEERS, 10X CREATIVES. UNFORTUNATELY, I ALSO EXPECT THAT THESE PEOPLE WILL ASK FOR COMPARABLE SALARY RAISE AS WELL. SO I THINK THAT'S JUST GOING TO CORRELATE AT SOME POINT. BUT ALSO FOR A LOT OF OTHER JOBS, LET'S SAY WE TAKE LEGAL, FINANCE AND SO ON. I THINK IT REALLY STABILIZES AROUND LIKE $500,000 A MONTH VERY, VERY QUICKLY.",
+   "text": "TITLE: Investors shook hands. Then came back 30% lower. CAPTIONS AS SHOWN (one line per cut): THIS INDUSTRY STILL GONNA BE VERY VALUABLE, BUT IT'S NEVER GONNA BE THE SAME DID YOU KNOW WHEN YOU LEFT THE MEETING WITH YURI THAT HE WAS GONNA WRITE THE CHECK? YOU KNOW SOPHISTICATED INVESTORS. THEY CAN PLAY GAMES. I HAD LIKE SO MANY SCARS LIKE PEOPLE REALLY SHOOK HANDS AND WE DO AT THIS PRICE AND NEXT DAY WHAT I LEARNED IS THAT THEY CALLED OTHER INVESTORS AND THEY PULLED THE SYNDICATE AND TO INVEST IN 30% LOWER VALUATION COMPARED TO WHAT WE DISCUSSED. SO LIKE LOOK THESE THINGS JUST HAPPEN. SO YOU NEVER CAN BE SURE WHEN THEY DIDN'T HAPPEN WITH YURI I THINK THERE'S A DISCOUNT PLACED ON HIGGS FIELD BECAUSE YOU'RE NOT SILICON VALLEY INSIDER LIKE LET'S BE CLEAR. YOU'RE AT A BILLION IN REVENUE NOW.",
    "parts": [
     [
-     2124.42,
-     2169.8
+     2791.68,
+     2829.72
     ]
    ]
   }
  ],
- "needs_redo": true,
+ "needs_redo": false,
  "empty_runs": 0,
  "empty_told": false,
  "brief": {
