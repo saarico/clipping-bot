@@ -38,6 +38,81 @@ def hook_text(c):
     return h if h[-1:] in "!?." else h + "."   # "bang bang bang!." happened (2026-10-28)
 
 
+FILLER_START = re.compile(r"^(because|and|so|but|like|yeah|yes|no|um|uh|okay|ok|right|well|i mean|you know)\b[,.]?", re.I)
+
+
+def spec_for(c, why, source, words_path, brief, campaign, out_dir, mix):
+    text = c["text"]
+    emph = sorted({w.strip(".,?!\"'").lower() for w in re.findall(r"[A-Za-z$][\w$,.']*", text)
+                   if re.search(STAKES, w.lower())}, key=len, reverse=True)[:14]
+    return {
+        "campaign": campaign, "source": str(source), "words": str(words_path),
+        "parts": [[c["start"], c["end"]]], "hook": hook_text(c), "emphasis": emph,
+        "focus": [], "overlays": [], "callouts": [], "sfx": False,
+        "wide_split": [[0.25, 0.40, 0.06], [0.75, 0.40, 0.06]],   # generic two-shot seats; the reviewer's plan.json overrides
+        "disclosure": brief.get("disclosure", ""), "style": brief.get("style", ""), "genres": mix, "look": brief.get("look") or {},
+        "brief": brief_lengths(brief),
+        "out": str(Path(out_dir) / f"{slug(c['hook'])}.mp4"),
+        "_why": why,
+    }
+
+
+def brief_specs(words_path, source, brief, campaign, out_dir, used=(), log=print):
+    """The brief's own clip ideas (brief.moments) as specs, in the brief's order. Each idea's words must really sit
+    at its time in OUR file (the brief's times are for its reference video): at least half of the hook's content
+    words within the range, else the idea is looked up in the whole transcript and moved, else skipped. The cut
+    snaps to sentence edges and is stretched or trimmed into the brief's length window."""
+    ideas = brief.get("moments") or []
+    if not ideas:
+        return []
+    words = json.load(open(words_path))
+    sents = fm.sentences(words)
+    mix = genre_mix(brief, words)
+    lo, hi = brief.get("min_s", 20), brief.get("max_s", 60)
+    norm = lambda s: re.sub(r"[^a-z0-9$% ]", "", s.lower())
+    specs = []
+    for idea in ideas:
+        key = [w for w in norm(idea["hook"]).split() if len(w) > 3 or w.startswith("$") or w.isdigit()]
+        if not key:
+            continue
+        def hits(a, b):
+            seg = norm(" ".join(w["text"] for w in words if a - 1 <= w["start"] <= b + 1))
+            return sum(1 for k in key if k in seg) / len(key)
+        a, b = idea["start"], idea["end"]
+        if hits(a - 20, b + 20) < 0.5:
+            # not where the brief says: find the sentence run that holds the line, anywhere in the episode
+            best, where = 0.0, None
+            for i in range(len(sents)):
+                h = hits(sents[i]["start"], sents[i]["start"] + (b - a))
+                if h > best:
+                    best, where = h, sents[i]["start"]
+            if best < 0.6:
+                log(f"brief idea skipped, its words are not in this file: {idea['hook'][:60]}")
+                continue
+            log(f"brief idea moved {a:.0f}s -> {where:.0f}s (times in the brief are for another cut): {idea['hook'][:50]}")
+            a, b = where, where + (b - a)
+        inside = [s for s in sents if s["end"] > a + 0.3 and s["start"] < b - 0.3]
+        if not inside:
+            continue
+        i0, i1 = sents.index(inside[0]), sents.index(inside[-1])
+        while i0 < i1 and FILLER_START.match(sents[i0]["text"]) and sents[i1]["end"] - sents[i0 + 1]["start"] >= lo:
+            i0 += 1   # never open on "Because, I mean..."
+        while sents[i1]["end"] - sents[i0]["start"] < lo and i1 + 1 < len(sents):
+            i1 += 1
+        while sents[i1]["end"] - sents[i0]["start"] > hi and i1 > i0:
+            i1 -= 1
+        start, end = sents[i0]["start"], sents[i1]["end"]
+        if not (lo - 1 <= end - start <= hi + 1):
+            log(f"brief idea skipped, cannot fit {lo}-{hi} s: {idea['hook'][:60]}")
+            continue
+        if any(min(end, ub) - max(start, ua) > 0 for ua, ub in used):
+            continue
+        c = {"start": round(start, 2), "end": round(end, 2), "hook": idea["hook"], "text": " ".join(s["text"] for s in sents[i0:i1 + 1])}
+        why = "the brief's own clip idea" + (f" ({idea['note']})" if idea.get("note") else "")
+        specs.append(spec_for(c, why, source, words_path, brief, campaign, out_dir, mix))
+    return specs
+
+
 def auto_specs(words_path, gfx_path, source, brief, campaign, out_dir, used=()):
     prof_name = brief.get("style") or "podcast"
     energy = None
@@ -52,19 +127,8 @@ def auto_specs(words_path, gfx_path, source, brief, campaign, out_dir, used=()):
     for c in cands:
         if any(min(c["end"], b) - max(c["start"], a) > 0 for a, b in used):
             continue
-        text = c["text"]
-        emph = sorted({w.strip(".,?!\"'").lower() for w in re.findall(r"[A-Za-z$][\w$,.']*", text)
-                       if re.search(STAKES, w.lower())}, key=len, reverse=True)[:14]
-        specs.append({
-            "campaign": campaign, "source": str(source), "words": str(words_path),
-            "parts": [[c["start"], c["end"]]], "hook": hook_text(c), "emphasis": emph,
-            "focus": [], "overlays": [], "callouts": [], "sfx": False,
-            "wide_split": [[0.25, 0.40, 0.06], [0.75, 0.40, 0.06]],   # generic two-shot seats; the reviewer's plan.json overrides
-            "disclosure": brief.get("disclosure", ""), "style": brief.get("style", ""), "genres": mix, "look": brief.get("look") or {},
-            "brief": brief_lengths(brief),
-            "out": str(Path(out_dir) / f"{slug(c['hook'])}.mp4"),
-            "_why": f"score {c['score']}: " + ", ".join(f"{k} {v}" for k, v in c["reasons"].items() if v and k != "genres") + f" [{c['reasons'].get('genres', '')}]",
-        })
+        why = f"score {c['score']}: " + ", ".join(f"{k} {v}" for k, v in c["reasons"].items() if v and k != "genres") + f" [{c['reasons'].get('genres', '')}]"
+        specs.append(spec_for(c, why, source, words_path, brief, campaign, out_dir, mix))
         if len(specs) >= MAX_TRIES:
             break
     return specs
@@ -102,6 +166,8 @@ def fm_candidates(words_path, gfx_path, brief, prof_name="podcast", energy=None)
                 continue
             if dur > hi + 2:
                 break
+            if FILLER_START.match(sents[i]["text"]):
+                continue   # a clip never opens on "Because, I mean..." (rico lost interest in 4 s, Higgsfield c01, 2026-10-30)
             total, reasons, text, g = fm.score_window(sents[i:j + 1], gfx, prof, energy, mix)
             cands.append({"start": round(sents[i]["start"], 2), "end": round(sents[j]["end"], 2), "dur": round(dur, 1),
                           "score": total, "reasons": reasons, "first_line": sents[i]["text"],
@@ -158,4 +224,9 @@ def load(campaign_dir, words_path, gfx_path, source, brief, campaign, out_dir, u
         for x in extra:
             x["_why"] = "fallback: " + x["_why"]
         return specs + extra[:MAX_TRIES - len(specs)], "plan.json (reviewer)"
+    own = brief_specs(words_path, source, brief, campaign, out_dir, used=used)
+    if own:   # the campaign wrote down what sells: those moments first, the scorecard's picks behind them
+        taken = tuple(used) + tuple((p[0], p[1]) for sp in own for p in sp.get("parts", []))
+        extra = auto_specs(words_path, gfx_path, source, brief, campaign, out_dir, used=taken)
+        return (own + extra)[:MAX_TRIES * 2], f"the brief's clip ideas ({len(own)}) + scorecard"
     return auto_specs(words_path, gfx_path, source, brief, campaign, out_dir, used=used), "entertainment scorecard (auto)"

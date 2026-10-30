@@ -3,6 +3,18 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-10-30 (21:20 UTC): rico on the Higgsfield clips: camera moves too much, boring opener
+- rico: "the clips seem to be moving too much because of the clipping on the face, very distracting"; "can we ensure
+  better content or is this the best it can do? I lost interest within the first 4 seconds."
+- Camera (render_clip.pan_keys): talking shows lock the crop on the shot's median face position; it re-frames only
+  after the face has stayed >10% of the width away for a full second, then glides 1.2 s (was: 4% dead zone, 0.5 s
+  glide, re-centring on every lean). Movies/streams keep their fast follow (DIGGER, approved).
+- Content: brief.clip_ideas() reads the brief's own "hook + time range" lines (Higgsfield lists 20); plan.brief_specs
+  cuts them first with the brief's line as the title, after checking the words really sit at that time in our file
+  (10 of 11 matched; "$1M and bought homes" is paraphrased in the audio and skipped). Scorecard picks follow. No clip
+  opens on a filler sentence (plan.FILLER_START). RULES 39. Both Higgsfield clips in 1_CHECK are replaced by the
+  next run (their moments stay in used_moments).
+
 ## 2026-10-30 (06:35 UTC): Higgsfield run 4: 2 clips in 17 min on the 4-machine path
 - Run 41012562356 (06:10-06:27): transcript quarters on 4 machines (8-9 min each incl. the 4K download), prepare took
   them (merged 06:20), 4 renders of 3.3 min, collect. 2 kept (judge 84 and 83), 1 dropped for a clipped word at the

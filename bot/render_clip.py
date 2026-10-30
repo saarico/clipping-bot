@@ -298,10 +298,14 @@ def crop_x(cx, cw, place, left_limit, right_limit):
     return int(min(max(cx * SRC_W - cw * place, left_limit), right_limit - cw))
 
 
-def pan_expr(keys, cw, place, left_limit, right_limit, ease=0.5):
+PAN_EASE = [0.5]      # seconds a re-frame glides; main() sets 1.2 for talking shows (podcast), movies keep 0.5
+
+
+def pan_expr(keys, cw, place, left_limit, right_limit, ease=None):
     """ffmpeg x-expression that follows the face: `keys` = [(t_rel, cx)] change points from pan_keys.
     Between change points the crop glides over `ease` seconds, so the camera drifts with the speaker
     instead of jumping. One key = a fixed number."""
+    ease = PAN_EASE[0] if ease is None else ease
     xs = [(t, crop_x(cx, cw, place, left_limit, right_limit)) for t, cx in keys]
     if len(xs) == 1:
         return str(xs[0][1])
@@ -338,10 +342,14 @@ def panel_crop(f, right_limit=SRC_W, left_limit=0, cw=630, keys=None):
     return f"crop={cw}:{ch}:'{x}':{y},scale={W}:{HC // 2}"
 
 
-def pan_keys(src, a, b, box=None, start_cx=None, min_size=0.10, dead=0.04, anchor=None, smooth=2, hi=False):
+def pan_keys(src, a, b, box=None, start_cx=None, min_size=0.10, dead=0.04, anchor=None, smooth=2, hi=False, hold=0):
     """Face-tracking change points [(t_rel, cx)] for one segment, or None when nobody is found.
     Median-smoothed over 1.25 s, with a dead zone: the window only moves once the face has drifted
-    more than 4% of the frame width, so breathing and nodding never make the picture wobble."""
+    more than `dead` of the frame width. `hold` = samples (4 per second) the face must stay out of the dead
+    zone before the camera follows: talking shows use hold=4 and a 10% zone, so the frame is locked on the
+    speaker's usual spot and only re-frames when they really move (rico 2026-10-30: "the clips move too
+    much because of the clipping on the face, very distracting"). The locked spot is the segment's median
+    position, not the first frame's."""
     tr = analyze_shots.track(src, a, b, box=box, min_size=min_size, anchor=anchor, hi=hi)
     seen = [p[0] for _, p in tr if p]
     if not seen:
@@ -351,12 +359,19 @@ def pan_keys(src, a, b, box=None, start_cx=None, min_size=0.10, dead=0.04, ancho
         last = p[0] if p else last
         seq.append(last)
     sm = [float(np.median(seq[max(0, i - smooth):i + smooth + 1])) for i in range(len(seq))]
-    cur = start_cx if start_cx is not None and abs(start_cx - sm[0]) < 0.08 else sm[0]
-    keys = [(0.0, cur)]
+    base = float(np.median(sm)) if hold else sm[0]
+    cur = start_cx if start_cx is not None and abs(start_cx - base) < 0.08 else base
+    keys, out = [(0.0, cur)], 0
     for i, x in enumerate(sm):
         if abs(x - cur) > dead:
-            cur = x
-            keys.append((i / 4.0, cur))
+            out += 1
+            if out > hold:
+                # follow to where the face settles (the median of the next second), not to this one sample
+                cur = float(np.median(sm[i:i + 5]))
+                keys.append((max(0.0, (i - hold) / 4.0), cur))
+                out = 0
+        else:
+            out = 0
     size = float(np.median([p[2] for _, p in tr if p]))
     return keys[:40], size
 
@@ -823,6 +838,7 @@ def main(spec_path):
         ranges = trim_cards(src, ranges, words, spec)
     overlays = spec.get("overlays", [])
     focus = spec.get("focus", [])
+    PAN_EASE[0] = 0.5 if not profiles.profile(spec.get("style"))["cards"] else 1.2   # movies/streams follow fast; talking shows glide slowly
     marks = [m for o in overlays for m in (o["from"], o["to"])] + [m for f in focus for m in f]
 
     pieces, off = [], 0
@@ -933,10 +949,10 @@ def main(spec_path):
                         keys, _ = pan_keys(src, vs, vs + b - a, box=ov["box"] if ov else None,
                                            start_cx=last_cx if same_shot else None,
                                            min_size=CINE_MIN_FACE if whole_when_lost else 0.10,
-                                           dead=0.06 * win_w if whole_when_lost else 0.04,
+                                           dead=0.06 * win_w if whole_when_lost else 0.10,
                                            anchor=ppl[0][0] if whole_when_lost else None,
                                            smooth=1 if whole_when_lost else 2,   # movies: 0.75 s window, less lag behind a walking actor
-                                           hi=whole_when_lost)
+                                           hi=whole_when_lost, hold=0 if whole_when_lost else 4)
                         if keys:
                             ppl = [(keys[0][1], ppl[0][1], ppl[0][2])] + ppl[1:]
                             last_cx = keys[-1][1]

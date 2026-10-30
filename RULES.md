@@ -95,6 +95,8 @@ Round-by-round reasons: rico's critiques in campaigns/<c>/critiques/.
 
 38. **Required watermarks and per-platform handles (Higgsfield 20VC, 2026-10-30).** When the brief says "watermark" (or a PNG named watermark/logo sits in 0_START), the bot keeps that PNG on screen the whole clip: 500 px wide at the top left of the picture, under the title band, above captions and callouts, never covered (callouts on split layouts move under it). Several kit variants: the most opaque one is used, it reads on any picture. A brief that names handles per platform ("YouTube: @A + @B / Instagram: @c @d") gets a POST KIT with only that platform's handles on each post. The BRIEF doc shows both.
 
+39. **A still camera and the brief's own moments (rico 2026-10-30: "the clips move too much because of the clipping on the face, very distracting"; "I lost interest within the first 4 seconds").** Talking shows: the crop is locked on the speaker's median position for the shot and re-frames only when the face stays more than 10% of the width away for a full second, then glides over 1.2 s (render_clip.pan_keys hold=4; movies keep the fast 6% follow rico approved on DIGGER). Moment choice: when the brief lists its own clip ideas with times (brief.moments, e.g. Clipfarm's "HOOK / TIME / KEEP IN MIND" table), those are cut FIRST, in the brief's order, with the brief's line as the title; the scorecard's picks come behind them. A clip never opens on a filler sentence ("Because, I mean...", "And so..."): plan.FILLER_START skips those windows.
+
 # Accounts: what each one posts (config/accounts.json)
 
 | Account | Posts | Never |

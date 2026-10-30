@@ -15,6 +15,30 @@ import profiles  # noqa: E402
 YT = r"(https?://(?:www\.)?(?:youtube\.com/(?:watch\?v=|playlist\?list=|shorts/|live/)|youtu\.be/)[\w\-&=?%]+)"
 
 
+TS = r"(\d{1,2}:\d{2}(?::\d{2})?)"
+
+
+def _secs(t):
+    p = [int(x) for x in t.split(":")]
+    return p[0] * 3600 + p[1] * 60 + p[2] if len(p) == 3 else p[0] * 60 + p[1]
+
+
+def clip_ideas(text):
+    """Lines like  "We spend $4M a month on AI for 400 people." 33:23-34:01 Big number first.  ->
+    [{"hook", "start", "end", "note"}]. The quoted line is the campaign's own hook for that moment; the note is what
+    they say to keep. Times are in the brief's reference video; plan.py checks the words really sit there."""
+    out = []
+    for line in text.splitlines():
+        m = re.search(r"[\"\u201c]([^\"\u201d]{8,180})[\"\u201d]\s*(?:[^\n\d\"\u201c]{0,40}?)?" + TS + r"\s*[\u2013\u2014-]\s*" + TS + r"(.*)$", line)
+        if not m:
+            continue
+        a, b = _secs(m.group(2)), _secs(m.group(3))
+        if not (5 <= b - a <= 240):
+            continue
+        out.append({"hook": m.group(1).strip(), "start": a, "end": b, "note": m.group(4).strip(" -\u2014")[:160]})
+    return out
+
+
 def parse(text):
     low = text.lower()
     b = {"text": text, "platforms": [], "tags": [], "links": [], "min_s": 20, "max_s": 60,
@@ -60,6 +84,7 @@ def parse(text):
     b["tags_by_platform"] = {k: list(dict.fromkeys(v)) for k, v in byp.items()}
     m = re.search(r"disclosure[^\"\u201c\n]{0,60}[\"\u201c]([^\"\u201d\n]{8,160})[\"\u201d]", text, re.I)
     b["disclosure"] = m.group(1).strip() if m else ""
+    b["moments"] = clip_ideas(text)   # the brief's own "CLIP IDEAS" with times: the bot cuts those first (Higgsfield, 2026-10-30)
     b["style"] = profiles.detect_from_text(text)   # podcast / cinematic / stream / performance ('' = decide from the footage)
     m = re.search(r"(Rewards are unsecured[^\n]{10,220}?lose value\.)", text)   # the rewards rider some brands require near any rewards claim
     b["rider"] = m.group(1).strip() if m else ""
