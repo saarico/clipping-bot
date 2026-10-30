@@ -1,18 +1,18 @@
-[22:22:31] CLIPPING root CLIPPING
-[22:23:32] episode taken from the Drive cache (same source files as last time)
+[22:53:46] CLIPPING root CLIPPING
+[22:54:31] episode taken from the Drive cache (same source files as last time)
 /home/runner/work/clipping-bot/clipping-bot/bot/run.py:497: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
   c = sum(1 for v in a.getdata() if v > 40) / float(im.width * im.height)
 /home/runner/work/clipping-bot/clipping-bot/bot/run.py:497: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
   c = sum(1 for v in a.getdata() if v > 40) / float(im.width * im.height)
 brief idea skipped, its words are not in this file: Yuri Milner saw the media shift early.
-[22:30:27] PITCH c01_we-don-t-do-any-paid-ads: 65/100 PASS (hook 20 story 6 entertainment 0 comedy 1 pace 5 length 10) | no stakes: no money, failure, surprise, emotion or famous name; little for this campaign's genres (business 0, sports 5, comedy 3)
-[22:30:27] PITCH c02_my-mom-worked-three-jobs: 46/100 REJECT (hook 7 story 7 entertainment 0 comedy 0 pace 6 length 10) | first line starts on a pointer word; first line names no one and nothing; ends mid-sentence; little for this campaign's genres (business 0, sports 2, comedy 0)
-[22:30:27] PITCH c03_the-internal-spend-4-million: 94/100 PASS (hook 20 story 10 entertainment 9 comedy 2 pace 10 length 10)
-[22:30:27] PITCH c04_actually-it-took-us-18-month: 89/100 PASS (hook 20 story 10 entertainment 10 comedy 2 pace 6 length 10)
-[22:30:27] PITCH c05_you-re-at-a-billion-in-reven: 94/100 PASS (hook 20 story 10 entertainment 10 comedy 1 pace 10 length 10)
-[22:30:27] PITCH c06_the-company-has-just-hit-a-b: 82/100 PASS (hook 15 story 8 entertainment 10 comedy 2 pace 8 length 10) | title has no name, number, question or quote
-[22:30:27] PITCH c07_we-have-on-the-team-people-w: 80/100 PASS (hook 15 story 10 entertainment 10 comedy 0 pace 7 length 10) | first line names no one and nothing; filler 11%
-[22:30:27] PITCH c08_can-t-believe-that-6-million: 80/100 PASS (hook 15 story 10 entertainment 9 comedy 0 pace 8 length 10) | first line names no one and nothing
-[22:30:27] 7 of 8 pitches go to render
-[22:30:27] 4 candidate(s) picked (the brief's clip ideas (2) + scorecard), 3 fallback(s); rendering on 4 machines with grade-and-retry
-[22:30:27] 4 render job(s)
+[23:03:53] PITCH c01_we-don-t-do-any-paid-ads: 65/100 PASS (hook 20 story 6 entertainment 0 comedy 1 pace 5 length 10) | no stakes: no money, failure, surprise, emotion or famous name; little for this campaign's genres (business 0, sports 5, comedy 3)
+[23:03:53] PITCH c02_my-mom-worked-three-jobs: 46/100 REJECT (hook 7 story 7 entertainment 0 comedy 0 pace 6 length 10) | first line starts on a pointer word; first line names no one and nothing; ends mid-sentence; little for this campaign's genres (business 0, sports 2, comedy 0)
+[23:03:53] PITCH c03_the-internal-spend-4-million: 94/100 PASS (hook 20 story 10 entertainment 9 comedy 2 pace 10 length 10)
+[23:03:53] PITCH c04_we-have-on-the-team-people-w: 80/100 PASS (hook 15 story 10 entertainment 10 comedy 0 pace 7 length 10) | first line names no one and nothing; filler 11%
+[23:03:53] PITCH c05_can-t-believe-that-6-million: 80/100 PASS (hook 15 story 10 entertainment 9 comedy 0 pace 8 length 10) | first line names no one and nothing
+[23:03:53] PITCH c06_look-but-this-happens-with-i: 77/100 PASS (hook 20 story 8 entertainment 5 comedy 0 pace 7 length 10)
+[23:03:53] PITCH c07_actually-for-us-as-companies: 68/100 PASS (hook 10 story 9 entertainment 5 comedy 0 pace 10 length 10) | first line names no one and nothing; title has no name, number, question or quote
+[23:03:53] PITCH c08_i-think-it-really-stabilizes: 89/100 PASS (hook 20 story 10 entertainment 8 comedy 0 pace 10 length 10)
+[23:03:53] 7 of 8 pitches go to render
+[23:03:53] 4 candidate(s) picked (the brief's clip ideas (2) + scorecard), 3 fallback(s); rendering on 4 machines with grade-and-retry
+[23:03:53] 4 render job(s)
