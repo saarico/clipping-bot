@@ -3,6 +3,14 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-10-30 (06:35 UTC): Higgsfield run 4: 2 clips in 17 min on the 4-machine path
+- Run 41012562356 (06:10-06:27): transcript quarters on 4 machines (8-9 min each incl. the 4K download), prepare took
+  them (merged 06:20), 4 renders of 3.3 min, collect. 2 kept (judge 84 and 83), 1 dropped for a clipped word at the
+  cut, 1 under the bar. First run of a new episode = ~17 min; a redo = ~15 min.
+- Bot: a title never ends in ",." (hook_text strips trailing commas/dashes before the final stop).
+- YouTube: the probe at 06:11 got "Sign in to confirm you're not a bot" with the cookies that worked at 02:12: the
+  session rotated (the throwaway account stayed signed in in Firefox). Export from a private window next time
+  (SETUP.md), then close that window.
 ## 2026-10-30 (06:20 UTC): run 3: the 4 transcript parts were made but prepare could not read them
 - Run 41001130950: the 4 transcribe machines finished their quarters in 6-10 min each (download of the 4K file
   included), but prepare's `gh run download` got 403 for 50 min: the workflow token had `contents: write` only.

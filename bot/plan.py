@@ -34,7 +34,7 @@ def hook_text(c):
     h = re.sub(r"^((and|so|but|like|yeah|um|uh|okay|ok|right|well|i mean)[, ]+)+", "", h, flags=re.I).strip()
     if h.endswith("..."):
         h = h[:-3]
-    h = (h[:1].upper() + h[1:]).strip()
+    h = (h[:1].upper() + h[1:]).strip().rstrip(" ,;:-\u2013\u2014")   # "10 billion in 12 months,." happened (Higgsfield, 2026-10-30)
     return h if h[-1:] in "!?." else h + "."   # "bang bang bang!." happened (2026-10-28)
 
 
