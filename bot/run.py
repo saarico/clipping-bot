@@ -731,7 +731,7 @@ def render_job(n):
         if res.get("thumb"):    # thumbnail.png sits inside the clip folder; without this the PNG never reached 1_CHECK
             res["thumb"] = fname + "/" + Path(res["thumb"]).name
     (out / "result.json").write_text(json.dumps(res, default=str))
-    log(f"done: qa {res.get('qa')} judge {res.get('judge')} {res.get('minutes', '?')} min" + (f"  {res['error']}" if res.get("error") else ""))
+    log(f"done: qa {res.get('qa')} judge {res.get('judge')} audience {res.get('audience', '?')} {res.get('minutes', '?')} min" + (f"  {res['error']}" if res.get("error") else ""))
 
 
 def collect():
@@ -795,11 +795,11 @@ def publish(name, st, stage, kept, summary, t0):
                 drive.upload(str(opts), stage["1_CHECK"], name=f"{k:02d}_{Path(c['mp4']).stem.split('_', 1)[-1]}_thumbnail_options.jpg")
     body = [f"SUMMARY  ({now()}, {(time.time() - t0) / 60:.0f} min)", "", f"{len(kept)} clip(s) in 1_CHECK. Max 3 per campaign.", ""]
     for k, c in enumerate(kept, 1):
-        body += [f"{k:02d}  {c['hook']}  ({c['dur']} s, judge {c['judge']})", f"    post on: {c.get('lane', '?').upper()} ({lanes.handle(c.get('lane', ''))})",
+        body += [f"{k:02d}  {c['hook']}  ({c['dur']} s, judge {c['judge']}, audience {c.get('audience', '?')})", f"    post on: {c.get('lane', '?').upper()} ({lanes.handle(c.get('lane', ''))})",
                  f"    why: {c['why']}", "    captions:", *("    " + l for l in c["captions"].splitlines()[:40]), ""]
     body += ["Run notes:", summary, "", "Approve: drag the mp4 to 3_APPROVED. Change: put a Word doc with your notes in 2_REDO."]
     drive.write_doc("SUMMARY", "\n".join(body), stage["1_CHECK"])
-    st["clips"] = [{"mp4": f"{k:02d}_{Path(c['mp4']).name.split('_', 1)[-1]}", "hook": c["hook"], "judge": c["judge"], "dur": c["dur"],
+    st["clips"] = [{"mp4": f"{k:02d}_{Path(c['mp4']).name.split('_', 1)[-1]}", "hook": c["hook"], "judge": c["judge"], "audience": c.get("audience"), "dur": c["dur"],
                     "caption": c.get("caption", ""), "lane": c.get("lane", ""), "text": " ".join(c.get("captions", "").split()),
                     "parts": c.get("parts", [])} for k, c in enumerate(kept, 1)]
     st["needs_redo"] = False

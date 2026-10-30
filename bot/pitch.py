@@ -16,6 +16,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
+import engage  # noqa: E402
 import find_moments as fm  # noqa: E402
 import genres  # noqa: E402
 import plan as planner  # noqa: E402
@@ -153,7 +154,14 @@ def score(spec, words, brief=None):
         why.append(f"{dur:.0f} s is outside {o0}-{o1} s")
 
     total = round(sum(areas.values()) * 100 / sum(MAXES.values()))
-    return {"total": total, "verdict": "PASS" if total >= PITCH_BAR else "REJECT", "areas": areas, "why": why, "dur": round(dur, 1)}
+    # the audience read (engage.py, 2026-10-30): the second pass; its gates reject a moment whatever the pitch says
+    aud = engage.read(words, parts, spec.get("style") or brief.get("style"))
+    areas["audience"] = aud["total"]
+    why += ["audience: " + f for f in aud["fails"]]
+    if aud["total"] < engage.BAR and not aud["fails"]:
+        why.append(f"audience read {aud['total']} under {engage.BAR}")
+    ok = total >= PITCH_BAR and not aud["fails"] and aud["total"] >= engage.BAR
+    return {"total": total, "verdict": "PASS" if ok else "REJECT", "areas": areas, "why": why, "dur": round(dur, 1), "audience": aud}
 
 
 def line(tag, r):

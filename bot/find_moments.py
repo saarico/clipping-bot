@@ -51,7 +51,7 @@ def sentences(words):
         end = w["text"].rstrip('"\')').endswith((".", "?", "!"))
         if nxt is None or end or nxt["speaker"] != w["speaker"] or nxt["start"] - w["end"] > 1.0:
             out.append({"start": cur[0]["start"], "end": cur[-1]["end"], "speaker": cur[0]["speaker"],
-                        "text": " ".join(x["text"] for x in cur), "n": len(cur)})
+                        "text": " ".join(x["text"] for x in cur), "n": len(cur), "words": cur})
             cur = []
     return out
 

@@ -3,6 +3,19 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-10-30 (23:30 UTC): rico on the kept Higgsfield clip: cuts out in a horrible position, hard to understand, boring
+- rico: "why is the clip cutting out in a horrible position, also he can't talk and it seems so uninteresting and
+  boring and hard to understand; bump up editing, improve grading quality and entertainment, maybe add a second phase
+  of engagement scoring." The clip opened on Harry's "I do just want to go back to part of the story" and ended on
+  "By the way your co-host Jason also asked this question in May" with the question "How do you calculate revenue?"
+  unanswered; judge 83, every gate green.
+- New second grading pass, the audience read (bot/engage.py, RULES 40, scorecards/acceptance.md): cold open, clarity,
+  payoff, retention, focus; four hard gates. On the Higgsfield brief's 20 usable ideas it passes 10 and rejects 10
+  (hanging questions, flat stretches, 12 fillers in 117 words); the clip rico saw scores 62 and fails two gates.
+- The read now chooses the cut's edges (plan.refine: the sentence window with the best read, within the brief's
+  length), rejects moments before rendering (pitch.score) and grades the finished clip (engage_report.md; the re-edit
+  moves the cut to the read's start and end). SUMMARY and state carry the audience score next to the judge's.
+
 ## 2026-10-30 (23:10 UTC): Higgsfield re-cut run kept 1 of 4; three bot defects fixed
 - Run 41137471939 (22:20-22:45): the brief reader found only 3 of the brief's clip ideas, because the PDF table
   wraps the hook column (the quote opens on the line above the time and closes on the line below). brief.clip_ideas

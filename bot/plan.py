@@ -15,6 +15,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 import audio_energy  # noqa: E402
+import engage  # noqa: E402
 import find_moments as fm  # noqa: E402
 import genres  # noqa: E402
 import profiles  # noqa: E402
@@ -55,6 +56,35 @@ def spec_for(c, why, source, words_path, brief, campaign, out_dir, mix):
         "out": str(Path(out_dir) / f"{slug(c['hook'])}.mp4"),
         "_why": why,
     }
+
+
+def refine(c, sents, lo, hi, style=None):
+    """The edges of a cut chosen by the audience read (engage.read): among sentence windows that start up to 3
+    sentences later and end up to 4 sentences earlier or 2 later, inside lo-hi seconds, take the one with the best
+    read (a gate failure costs 40). rico 2026-10-30: clips opened on host preamble and ended on an aside."""
+    inside = [i for i, s in enumerate(sents) if s["end"] > c["start"] + 0.3 and s["start"] < c["end"] - 0.3]
+    if not inside:
+        return c
+    i0, i1 = inside[0], inside[-1]
+    words = [w for s in sents[max(i0 - 1, 0):min(i1 + 3, len(sents))] for w in s.get("words", [])]
+    if not words:
+        return c
+    best = None
+    for a in range(i0, min(i0 + 4, i1 + 1)):
+        for b in range(max(a, i1 - 4), min(i1 + 3, len(sents))):
+            d = sents[b]["end"] - sents[a]["start"]
+            if not (lo - 0.5 <= d <= hi + 0.5):
+                continue
+            r = engage.read(words, [[sents[a]["start"], sents[b]["end"]]], style)
+            score = r["total"] - 40 * len(r["fails"]) - 2 * abs(a - i0) - abs(b - i1)
+            if best is None or score > best[0]:
+                best = (score, a, b, r)
+    if not best:
+        return c
+    _, a, b, r = best
+    out = dict(c, start=round(sents[a]["start"], 2), end=round(sents[b]["end"], 2),
+               text=" ".join(s["text"] for s in sents[a:b + 1]), audience=r["total"], audience_fails=r["fails"])
+    return out
 
 
 def brief_specs(words_path, source, brief, campaign, out_dir, used=(), log=print):
@@ -108,7 +138,8 @@ def brief_specs(words_path, source, brief, campaign, out_dir, used=(), log=print
         if any(min(end, ub) - max(start, ua) > 0 for ua, ub in used):
             continue
         c = {"start": round(start, 2), "end": round(end, 2), "hook": idea["hook"], "text": " ".join(s["text"] for s in sents[i0:i1 + 1])}
-        why = "the brief's own clip idea" + (f" ({idea['note']})" if idea.get("note") else "")
+        c = refine(c, sents, lo, hi, brief.get("style"))
+        why = "the brief's own clip idea" + (f" ({idea['note']})" if idea.get("note") else "") + f" | audience {c.get('audience', '?')}"
         specs.append(spec_for(c, why, source, words_path, brief, campaign, out_dir, mix))
     return specs
 
@@ -122,11 +153,15 @@ def auto_specs(words_path, gfx_path, source, brief, campaign, out_dir, used=()):
             json.dump(audio_energy.energy(source), open(ep, "w"))
         energy = json.load(open(ep))
     cands = fm_candidates(words_path, gfx_path, brief, prof_name, energy)
-    mix = genre_mix(brief, json.load(open(words_path)))
+    all_words = json.load(open(words_path))
+    mix = genre_mix(brief, all_words)
+    sents = fm.sentences(all_words)
+    lo, hi = brief.get("min_s", 20), brief.get("max_s", 60)
     specs = []
     for c in cands:
         if any(min(c["end"], b) - max(c["start"], a) > 0 for a, b in used):
             continue
+        c = refine(c, sents, lo, hi, prof_name)
         why = f"score {c['score']}: " + ", ".join(f"{k} {v}" for k, v in c["reasons"].items() if v and k != "genres") + f" [{c['reasons'].get('genres', '')}]"
         specs.append(spec_for(c, why, source, words_path, brief, campaign, out_dir, mix))
         if len(specs) >= MAX_TRIES:

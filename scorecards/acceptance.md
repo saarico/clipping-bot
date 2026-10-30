@@ -22,8 +22,21 @@ rico, 2026-10-29: "a full quality inspection is ideal and necessary", "have bett
 | Format | ffprobe | 1080x1920, 30 fps, 10-90 s, AAC audio |
 | Picture | blackdetect / freezedetect | no black, frozen or flickering stretch |
 | Cut edges | word times vs cut points | no clipped word at either end |
+| Audience read: cold open | first sentence and first 4 s of speech (bot/engage.py) | no host preamble or pointer back ("I do just want to go back to part of the story"); something to grab (a number, a stake, a name, a claim, a question) inside 4 s |
+| Audience read: clarity | restarts + fillers over the clip's words | under 8% of the words |
+| Audience read: payoff | the last sentence | not an aside ("By the way, Jason asked this in May"), not a hanging question, not a one-word "Yes."; no question in the last 10 s left unanswered |
+| Audience read: retention | 5-second windows of the spoken words | never two windows in a row with nothing to hold on to (number, stake, name, question, contrast, laugh); under 40% dead windows |
 
 Movies, streams and concerts turn a few podcast rules into warnings (`profiles.py soft_qa`): fast cuts, a quiet opener, an unfinished sentence under music. Centring, somebody in frame, actor size, crop jumps, text cut off and audio are **never** soft.
+
+## The audience read (0-100, bar 70) - the second grading pass (2026-10-30)
+
+bot/engage.py reads the spoken words the way a stranger scrolling past hears them: cold open 25, clarity 20, payoff 20,
+retention 20, focus 15 (one idea: at most two host questions, the guest holds the floor). It runs three times: on a
+candidate before rendering (pitch.score: a gate failure or a read under 70 rejects the moment), on the edges when the
+cut is chosen (plan.refine picks the sentence window with the best read), and on the finished clip (engage_report.md;
+a gate failure counts like a QA FAIL and the re-edit moves the cut to where the read says the clip should start and
+end). Under 70 with no gate failure: the clip is under the bar.
 
 ## The judge (0-100, bar 80)
 hook 20 · pace 10 · variety 15 (a montage of sub-second shots loses 6) · framing 10 (the gates above feed it) · story 10 · entertainment 10 (genre mix) · comedy 5 · captions 10 · length 10. The title must carry a name, a number, a question or a quote, on every kind of footage.

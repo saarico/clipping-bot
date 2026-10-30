@@ -20,6 +20,7 @@ from pathlib import Path
 
 HERE = Path(__file__).parent
 sys.path.insert(0, str(HERE))
+import engage  # noqa: E402
 import plan as planner  # noqa: E402
 import lanes  # noqa: E402
 
@@ -81,6 +82,7 @@ def one_clip(spec, work, source, words, tag):
     shutil.copy(words, folder / "words.json")
     sh([PY, str(HERE / "qa_check.py"), str(folder), "--source", str(source)], folder / "qa.log", timeout=1800)
     sh([PY, str(HERE / "judge_clip.py"), str(folder)], folder / "judge.log")
+    sh([PY, str(HERE / "engage.py"), str(folder)], folder / "engage.log")
     thumb = None
     try:
         # thumbnail (rico 2026-10-29): the actor's best reacting frame + the hook in big text, saved beside the clip
@@ -95,6 +97,17 @@ def one_clip(spec, work, source, words, tag):
         thumb = None
     qa, fails = qa_verdict(folder)
     js = judge_score(folder)
+    # the audience read (engage.py): a second pass with its own gates; a gate failure counts like a QA failure
+    aud = {"total": 0, "fails": ["audience read missing"], "fix": {}}
+    try:
+        aud = engage.read_folder(folder)
+    except Exception as e:
+        aud["fails"] = [f"audience read failed: {e}"]
+    if aud["fails"]:
+        fails = fails + [f"| Audience read | FAIL | {f} |" for f in aud["fails"]]
+        qa = "FAIL"
+    elif aud["total"] < engage.BAR:
+        fails = fails + [f"| Audience read | UNDER | {aud['total']} under {engage.BAR} |"]
     jn = {}
     try:
         for line in (folder / "judge_report.md").read_text().splitlines():
@@ -112,7 +125,9 @@ def one_clip(spec, work, source, words, tag):
         pass
     res.update({"folder": folder, "mp4": folder / f"{folder.name}.mp4", "thumb": str(thumb) if thumb and thumb.exists() else "",
                 "qa": qa, "fails": fails, "judge": js, "dur": round(dur, 1), "caption": spec.get("caption", ""),
-                "ok": qa == "PASS" and js >= JUDGE_BAR, "near": qa == "PASS" and js >= NEAR_BAR, "judge_notes": jn, "areas": areas,
+                "ok": qa == "PASS" and js >= JUDGE_BAR and aud["total"] >= engage.BAR,
+                "near": qa == "PASS" and js >= NEAR_BAR and aud["total"] >= engage.BAR - 5,
+                "audience": aud["total"], "audience_fix": aud.get("fix", {}), "judge_notes": jn, "areas": areas,
                 "captions": (folder / "captions.txt").read_text() if (folder / "captions.txt").exists() else "",
                 "minutes": round((time.time() - t0) / 60, 1)})
     return res
@@ -178,6 +193,13 @@ def reedit(spec, res):
             ends = sorted(x["end"] for x in sents if b - 0.25 < x["end"] <= a + max_s)
         if ends:
             b = round(ends[-1] + 0.1, 2) if ends[-1] <= b else round(ends[0] + 0.1, 2)
+    # the audience read says where the clip should start and end instead (host preamble, aside endings)
+    fx = res.get("audience_fix") or {}
+    if "Audience read" in fails:
+        if fx.get("start") and fx["start"] > a and b - fx["start"] >= 8:
+            a = round(fx["start"] - 0.12, 2)
+        if fx.get("end") and a < fx["end"] < b:
+            b = round(fx["end"] + 0.1, 2)
     if [a, b] != v["parts"][0] and b - a >= 8:
         v["parts"][0] = [a, b]
     v["out"] = str(Path(spec["out"]).with_name(Path(spec["out"]).stem + "-v2.mp4"))
