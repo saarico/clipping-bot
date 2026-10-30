@@ -123,8 +123,9 @@ def fetch_link(url, dest, st):
     else:
         ck = yt_cookies()
         note(st, f"trying yt-dlp{' with cookies' if ck else ' (no YT_COOKIES secret: YouTube will refuse)'}: {url[:80]}")
-        r = subprocess.run(["yt-dlp", "-f", "bv*[height<=1080][ext=mp4]+ba[ext=m4a]/b[ext=mp4]/b", "--no-playlist", "--socket-timeout", "30",
-                            "-N", "4", "--retries", "5", *ck, "-o", str(tmp / "episode_dl.%(ext)s"), url], capture_output=True, text=True, timeout=3600)
+        r = subprocess.run(["yt-dlp", "-f", "bv*[height<=1080]+ba/b[height<=1080]/b", "-S", "res:1080,ext:mp4:m4a", "--merge-output-format", "mp4",
+                            "--no-playlist", "--socket-timeout", "30", "-N", "4", "--retries", "5", *ck, "-o", str(tmp / "episode_dl.%(ext)s"), url],
+                           capture_output=True, text=True, timeout=3600)
         err = (r.stderr or "")[-400:]
         if "Sign in to confirm" in err or "not a bot" in err or "cookies" in err.lower() and "invalid" in err.lower():
             note(st, "YOUTUBE COOKIES NEEDED OR EXPIRED: refresh the YT_COOKIES secret (SETUP.md, YouTube section)")
