@@ -17,6 +17,8 @@ spec.json:
     "label": "",                             # optional, normally left out (rico dislikes it): shown 1.5 s after the teaser
     "emphasis": ["Kylie", "Jenner"],         # words to highlight (case-insensitive, punctuation ignored)
     "focus": [[262.68, 265.94]],             # optional: source ranges to punch in on (key lines)
+    "watermark": "/work/c/watermark.png",    # optional: the campaign's required watermark PNG, 500 px wide at the top left of the
+                                             # picture (under the title band) for the whole clip; captions never sit there
     "overlays": [                            # optional: graphics the show put on screen
       {"from": 234.1, "to": 246.5, "box": [1337, 51, 541, 977], "style": "side"},   # tall phone story -> card on the right
       {"from": 110.2, "to": 116.4, "box": [1005, 246, 825, 585], "style": "bottom"}, # wide card -> bottom half
@@ -80,6 +82,7 @@ HC = H - TOP
 SRC_W, SRC_H = 1920, 1080
 SR = 16000
 SLIDE = 0.35          # seconds for an overlay to slide in or out
+WM_W, WM_X, WM_Y = 500, 36, TOP + 28   # a required watermark: 500 px wide, top left of the picture, under the title band
 MIN_SPLIT = 1.5       # two-person shots shorter than this get a single crop instead of a split
 
 
@@ -741,6 +744,8 @@ def build_ass(spec, pieces, layouts):
             oa, ob = off + a - s, off + b - s
             lay = layout_at(oa)
             y = TOP + 70 if lay in ("split", "bottom") else CAP_Y.get(lay, CAP_DEFAULT) - 230
+            if lay in ("split", "bottom") and spec.get("_wm_h"):   # the watermark sits there: the callout goes under it
+                y += spec["_wm_h"] + 20
             ev.append(f"Dialogue: 3,{ts(oa)},{ts(ob)},Callout,,0,0,0,,{{\\an5\\pos(540,{y})\\fad(150,200)}}{text}")
 
     header = f"""[Script Info]
@@ -990,6 +995,13 @@ def main(spec_path):
              "-c:a", "aac", "-b:a", "160k", str(tmp / "audio.m4a")])
 
         layouts_simple = [(a, b, l.split("+")[0]) for a, b, l in layouts]
+        wm = spec.get("watermark")
+        if wm and Path(wm).exists():
+            from PIL import Image
+            iw, ih = Image.open(wm).size
+            spec["_wm_h"] = int(WM_W * ih / iw) // 2 * 2
+        else:
+            wm = None
         ass, total = build_ass(spec, pieces, layouts_simple)
         (tmp / "caps.ass").write_text(ass)
         Path(spec["out"]).with_suffix(".ass").write_text(ass)   # kept for qa_check.py
@@ -1000,8 +1012,14 @@ def main(spec_path):
             h = spec["hold_end_from"]
             pre = (f"trim=end={h:.3f},setpts=PTS-STARTPTS,tpad=stop_duration={total - h + 0.1:.3f}:stop_mode=clone,"
                    f"fade=out:st={h - 0.1:.3f}:d={total - h + 0.1:.3f},")
-        run(["ffmpeg", "-loglevel", "error", "-y", "-i", str(tmp / "video.mp4"), "-i", str(tmp / "audio.m4a"),
-             "-vf", f"{pre}pad={W}:{H}:0:{TOP}:color=0x0E0E0E,ass={tmp / 'caps.ass'}:fontsdir={FONTS_DIR}", "-map", "0:v", "-map", "1:a", "-c:v", "libx264", "-preset", "veryfast",
+        vf = f"{pre}pad={W}:{H}:0:{TOP}:color=0x0E0E0E,ass={tmp / 'caps.ass'}:fontsdir={FONTS_DIR}"
+        ins = ["-i", str(tmp / "video.mp4"), "-i", str(tmp / "audio.m4a")]
+        if wm:   # the required watermark on top of everything, the whole clip (the brief: big, readable, never covered)
+            ins += ["-i", wm]
+            vargs = ["-filter_complex", f"[0:v]{vf}[base];[2:v]format=rgba,scale={WM_W}:-2[wm];[base][wm]overlay={WM_X}:{WM_Y}[v]", "-map", "[v]"]
+        else:
+            vargs = ["-vf", vf, "-map", "0:v"]
+        run(["ffmpeg", "-loglevel", "error", "-y", *ins, *vargs, "-map", "1:a", "-c:v", "libx264", "-preset", "veryfast",
              "-crf", "21", "-pix_fmt", "yuv420p", "-c:a", "copy", "-shortest", "-movflags", "+faststart",
              spec["out"]])
         Path(spec["out"]).with_suffix(".layout.json").write_text(json.dumps(

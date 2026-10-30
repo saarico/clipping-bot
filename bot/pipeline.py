@@ -61,6 +61,8 @@ PAR = int(os.environ.get("CLIP_PARALLEL", "3"))   # renders at the same time (Gi
 def one_clip(spec, work, source, words, tag):
     """Render one candidate, build its folder, run QA + judge. Returns a result dict (never raises)."""
     why = spec.pop("_why", "")
+    if (Path(work) / "watermark.png").exists():   # the campaign's required watermark (run.get_watermark), on screen the whole clip
+        spec.setdefault("watermark", str(Path(work) / "watermark.png"))
     spec_path = work / "renders" / f"{tag}_{Path(spec['out']).stem}_spec.json"   # unique per try: two renders of one slug raced on this file (run 2)
     spec_path.write_text(json.dumps(spec, indent=1))
     t0 = time.time()

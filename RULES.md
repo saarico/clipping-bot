@@ -93,6 +93,8 @@ Round-by-round reasons: rico's critiques in campaigns/<c>/critiques/.
 
 37. **The bot stops instead of repeating itself (audit 2026-10-29).** A campaign that kept nothing three runs in a row waits for a note in 2_REDO or a plan.json; moments rendered and dropped are not picked again by the scorecard (`tried_moments`); the POST KIT always lists every approved clip; the campaign scan runs on its own hourly workflow only. A Drive error stops the run loudly (noted in state) rather than reading as empty folders.
 
+38. **Required watermarks and per-platform handles (Higgsfield 20VC, 2026-10-30).** When the brief says "watermark" (or a PNG named watermark/logo sits in 0_START), the bot keeps that PNG on screen the whole clip: 500 px wide at the top left of the picture, under the title band, above captions and callouts, never covered (callouts on split layouts move under it). Several kit variants: the most opaque one is used, it reads on any picture. A brief that names handles per platform ("YouTube: @A + @B / Instagram: @c @d") gets a POST KIT with only that platform's handles on each post. The BRIEF doc shows both.
+
 # Accounts: what each one posts (config/accounts.json)
 
 | Account | Posts | Never |

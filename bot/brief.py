@@ -48,6 +48,16 @@ def parse(text):
     if m:
         b["face_first_s"] = int(m.group(1))
     b["captions_required"] = bool(re.search(r"\b(subtitles?|captions?)\b", low))
+    # a brand/show watermark the clip must carry (Higgsfield 20VC, 2026-10-30): the PNG comes with the brief in 0_START
+    b["watermark"] = bool(re.search(r"\bwatermark", low))
+    # "YouTube: @HiggsfieldAI + @20VC / Instagram: @higgsfield.ai @20vchq": each platform gets its own handles in the post kit
+    byp = {}
+    for line in text.splitlines():
+        m = re.match(r"\s*(?:tagging|tags?|handles?)?\s*(youtube|instagram|tiktok|facebook)(?:\s*(?:shorts|reels))?\s*[:\-]?\s*((?:@[A-Za-z0-9_.]{2,30}[\s,+&]*(?:and\s+)?){1,4})\s*$", line.strip(), re.I)
+        if m:
+            byp.setdefault(m.group(1).lower(), [])
+            byp[m.group(1).lower()] += [t.rstrip(".") for t in re.findall(r"@[A-Za-z0-9_.]{2,30}", m.group(2))]
+    b["tags_by_platform"] = {k: list(dict.fromkeys(v)) for k, v in byp.items()}
     m = re.search(r"disclosure[^\"\u201c\n]{0,60}[\"\u201c]([^\"\u201d\n]{8,160})[\"\u201d]", text, re.I)
     b["disclosure"] = m.group(1).strip() if m else ""
     b["style"] = profiles.detect_from_text(text)   # podcast / cinematic / stream / performance ('' = decide from the footage)

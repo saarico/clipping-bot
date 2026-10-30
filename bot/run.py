@@ -325,11 +325,53 @@ def get_source(name, st, stage, cdir):
                 return got
         st["download_failed"] = True
         note(st, "no link could be downloaded; asked rico for the file")
-        drive.write_doc("NEEDS THE VIDEO", "GitHub could not download the episode from the links in the requirements"
-                        " (YouTube blocks downloads from GitHub; Google Drive and Dropbox links work when they are shared with anyone).\n\n"
-                        "What to do: download the episode on your PC and drop it in this folder as episode.mp4. "
+        drive.write_doc("NEEDS THE VIDEO", "The bot could not download the episode from the links in the requirements.\n\n"
+                        "YouTube link: the YouTube cookies in the GitHub secret YT_COOKIES are missing or expired (SETUP.md, 'YouTube episodes from the cloud').\n"
+                        "Drive / Dropbox link: it must be shared with anyone who has the link.\n"
+                        "Or put the episode file in this folder (any name, mp4/mov/mkv). "
                         "The bot picks it up on its next run (every 5 hours).\n\nTried:\n- " + "\n- ".join(errors or links[:6]), stage["0_START"])
     return None
+
+
+IMG_EXT = (".png", ".jpg", ".jpeg", ".webp")
+
+
+def get_watermark(name, st, stage):
+    """The brand/show watermark a campaign requires (brief says "watermark", or a PNG named watermark/logo sits in
+    0_START) -> WORK/<name>/watermark.png on this machine; render_clip keeps it on screen the whole clip. Several
+    variants (black / white kits): the one with the most opaque pixels, it reads on any picture. None = no watermark."""
+    dest = WORK / name / "watermark.png"
+    if dest.exists():
+        return dest
+    imgs = [f for f in drive.files(stage["0_START"], IMG_EXT) if not f["Name"].lower().endswith("_thumbnail.png")]
+    named = [f for f in imgs if re.search(r"watermark|logo|brand|badge", f["Name"], re.I)]
+    cands = named or (imgs if st.get("brief", {}).get("watermark") else [])
+    if not cands:
+        if st.get("brief", {}).get("watermark") and not st.get("watermark_missing"):
+            note(st, "the brief requires a watermark but no PNG is in 0_START: clips render without it, drop the watermark file in")
+            st["watermark_missing"] = True
+        return None
+    from PIL import Image
+    best, cover = None, -1.0
+    for f in cands[:6]:
+        try:
+            local = drive.download(f["Path"], WORK / name / "wm_candidates" / f["Name"])
+            im = Image.open(local).convert("RGBA")
+            a = im.getchannel("A")
+            c = sum(1 for v in a.getdata() if v > 40) / float(im.width * im.height)
+        except Exception as e:
+            note(st, f"watermark {f['Name'][:50]} unreadable ({type(e).__name__})")
+            continue
+        if c > cover:
+            best, cover = (local, im), c
+    if not best:
+        return None
+    local, im = best
+    im.save(dest)
+    if st.get("watermark") != local.name:
+        note(st, f"watermark: {local.name} ({im.width}x{im.height}), kept on screen the whole clip, top of the picture")
+        st["watermark"] = local.name
+    return dest
 
 
 def do_campaign(name, cpath, phase="all"):
@@ -373,7 +415,8 @@ def do_campaign(name, cpath, phase="all"):
         drive.write_doc("BRIEF", "What the bot read from the requirements:\n\n"
                         f"platforms: {', '.join(b['platforms']) or '?'}\nlength: {b['min_s']}-{b['max_s']} s\ntags: {' '.join(b['tags']) or 'none found'}\n"
                         f"rate: {b['rate_per_1k']} per 1k, min {b['min_payout']}, max {b['max_per_clip']}\nface in first: {b['face_first_s']} s\n"
-                        f"video assigned: {'yes' if b['assigned_video'] else 'free choice'}\nlinks: {chr(10).join(b['links']) or 'none'}\n\nrules kept:\n- " + "\n- ".join(b["rules"][:30]), stage["0_START"])
+                        f"video assigned: {'yes' if b['assigned_video'] else 'free choice'}\nwatermark: {'required (PNG from 0_START, on screen the whole clip)' if b.get('watermark') else 'no'}\n"
+                        f"tags per platform: {b.get('tags_by_platform') or 'same everywhere'}\nlinks: {chr(10).join(b['links']) or 'none'}\n\nrules kept:\n- " + "\n- ".join(b["rules"][:30]), stage["0_START"])
         note(st, f"brief read: {len(b['rules'])} rules, {len(b['links'])} links, tags {b['tags']}")
 
     # 2_REDO: new critiques -> saved for the reviewer, clips re-picked
@@ -448,6 +491,7 @@ def do_campaign(name, cpath, phase="all"):
     if not src:
         save_state(name, st)
         return
+    get_watermark(name, st, stage)   # WORK/<name>/watermark.png: pipeline.one_clip hands it to render_clip
     if not has_speech(src):
         if not st.get("needs_scripts"):
             note(st, "footage has no speech: brand mode needs scripts (brand_clips in campaigns/<c>/plan.json)")
@@ -518,6 +562,7 @@ def render_job(n):
     if not src:
         raise RuntimeError("source not available on the render machine")
     spec["source"] = str(src)
+    get_watermark(name, st, stage)
     (work / "renders").mkdir(exist_ok=True)
     lane = [spec] + j.get("fallbacks", [])
     for sp in lane:

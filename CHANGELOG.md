@@ -3,6 +3,22 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-10-30 (03:20 UTC): Higgsfield 20VC starts; watermark campaigns supported
+- rico dropped the Higgsfield brief, the two watermark PNGs and the episode mp4 into 0_START (the YouTube file, so no
+  download needed). The brief REQUIRES the Higgsfield watermark on the whole clip, big, readable, never covered; the
+  bot had no watermark at all.
+- Bot: `brief.watermark` (the word in the brief); `run.get_watermark()` takes the PNG from 0_START (named
+  watermark/logo, else any PNG when the brief asks; the most opaque variant wins) to WORK/<campaign>/watermark.png on
+  every machine; `pipeline.one_clip` hands it to render_clip as spec["watermark"]; render_clip overlays it 500 px wide
+  at the top left of the picture (under the title band, above captions) for the whole clip and moves split-layout
+  callouts under it. RULES 38.
+- Bot: `brief.tags_by_platform` reads "YouTube: @HiggsfieldAI + @20VC / Instagram: @higgsfield.ai @20vchq"; the POST
+  KIT puts only the platform's own handles on each post (before: all four on every post).
+- The NEEDS THE VIDEO note and the JOIN doc no longer say "download it on your PC": a YouTube / Drive / Dropbox link
+  in the requirements is enough, the bot downloads it (YT_COOKIES).
+- Answered rico: downloads stay on the GitHub machine; only clips, SUMMARY, POST KIT and a converted-episode cache
+  (_cache/<campaign>) reach Drive.
+
 ## 2026-10-30 (01:55 UTC): YouTube downloads from the cloud, no home PC
 - rico: the home PC must have no part in the pipeline ("fully automated, fully online"; he travels). YouTube refuses
   GitHub machines without a signed-in session (probe 2026-10-27, again today).
