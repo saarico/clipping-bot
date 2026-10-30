@@ -1,42 +1,44 @@
-[22:22:31] CLIPPING root CLIPPING
-[22:23:32] episode taken from the Drive cache (same source files as last time)
+[22:53:46] CLIPPING root CLIPPING
+[22:54:31] episode taken from the Drive cache (same source files as last time)
 /home/runner/work/clipping-bot/clipping-bot/bot/run.py:497: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
   c = sum(1 for v in a.getdata() if v > 40) / float(im.width * im.height)
 /home/runner/work/clipping-bot/clipping-bot/bot/run.py:497: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
   c = sum(1 for v in a.getdata() if v > 40) / float(im.width * im.height)
 brief idea skipped, its words are not in this file: Yuri Milner saw the media shift early.
-[22:30:27] PITCH c01_we-don-t-do-any-paid-ads: 65/100 PASS (hook 20 story 6 entertainment 0 comedy 1 pace 5 length 10) | no stakes: no money, failure, surprise, emotion or famous name; little for this campaign's genres (business 0, sports 5, comedy 3)
-[22:30:27] PITCH c02_my-mom-worked-three-jobs: 46/100 REJECT (hook 7 story 7 entertainment 0 comedy 0 pace 6 length 10) | first line starts on a pointer word; first line names no one and nothing; ends mid-sentence; little for this campaign's genres (business 0, sports 2, comedy 0)
-[22:30:27] PITCH c03_the-internal-spend-4-million: 94/100 PASS (hook 20 story 10 entertainment 9 comedy 2 pace 10 length 10)
-[22:30:27] PITCH c04_actually-it-took-us-18-month: 89/100 PASS (hook 20 story 10 entertainment 10 comedy 2 pace 6 length 10)
-[22:30:27] PITCH c05_you-re-at-a-billion-in-reven: 94/100 PASS (hook 20 story 10 entertainment 10 comedy 1 pace 10 length 10)
-[22:30:27] PITCH c06_the-company-has-just-hit-a-b: 82/100 PASS (hook 15 story 8 entertainment 10 comedy 2 pace 8 length 10) | title has no name, number, question or quote
-[22:30:27] PITCH c07_we-have-on-the-team-people-w: 80/100 PASS (hook 15 story 10 entertainment 10 comedy 0 pace 7 length 10) | first line names no one and nothing; filler 11%
-[22:30:27] PITCH c08_can-t-believe-that-6-million: 80/100 PASS (hook 15 story 10 entertainment 9 comedy 0 pace 8 length 10) | first line names no one and nothing
-[22:30:27] 7 of 8 pitches go to render
-[22:30:27] 4 candidate(s) picked (the brief's clip ideas (2) + scorecard), 3 fallback(s); rendering on 4 machines with grade-and-retry
-[22:30:27] 4 render job(s)
-[22:43:35] moments from: the brief's clip ideas (2) + scorecard
+[23:03:53] PITCH c01_we-don-t-do-any-paid-ads: 65/100 PASS (hook 20 story 6 entertainment 0 comedy 1 pace 5 length 10) | no stakes: no money, failure, surprise, emotion or famous name; little for this campaign's genres (business 0, sports 5, comedy 3)
+[23:03:53] PITCH c02_my-mom-worked-three-jobs: 46/100 REJECT (hook 7 story 7 entertainment 0 comedy 0 pace 6 length 10) | first line starts on a pointer word; first line names no one and nothing; ends mid-sentence; little for this campaign's genres (business 0, sports 2, comedy 0)
+[23:03:53] PITCH c03_the-internal-spend-4-million: 94/100 PASS (hook 20 story 10 entertainment 9 comedy 2 pace 10 length 10)
+[23:03:53] PITCH c04_we-have-on-the-team-people-w: 80/100 PASS (hook 15 story 10 entertainment 10 comedy 0 pace 7 length 10) | first line names no one and nothing; filler 11%
+[23:03:53] PITCH c05_can-t-believe-that-6-million: 80/100 PASS (hook 15 story 10 entertainment 9 comedy 0 pace 8 length 10) | first line names no one and nothing
+[23:03:53] PITCH c06_look-but-this-happens-with-i: 77/100 PASS (hook 20 story 8 entertainment 5 comedy 0 pace 7 length 10)
+[23:03:53] PITCH c07_actually-for-us-as-companies: 68/100 PASS (hook 10 story 9 entertainment 5 comedy 0 pace 10 length 10) | first line names no one and nothing; title has no name, number, question or quote
+[23:03:53] PITCH c08_i-think-it-really-stabilizes: 89/100 PASS (hook 20 story 10 entertainment 8 comedy 0 pace 10 length 10)
+[23:03:53] 7 of 8 pitches go to render
+[23:03:53] 4 candidate(s) picked (the brief's clip ideas (2) + scorecard), 3 fallback(s); rendering on 4 machines with grade-and-retry
+[23:03:53] 4 render job(s)
+[23:16:32] moments from: the brief's clip ideas (2) + scorecard
 style: podcast
-transcript + graphics ready after 6.0 min
+transcript + graphics ready after 7.3 min
 PITCH c01_we-don-t-do-any-paid-ads: 65/100 PASS (hook 20 story 6 entertainment 0 comedy 1 pace 5 length 10) | no stakes: no money, failure, surprise, emotion or famous name; little for this campaign's genres (business 0, sports 5, comedy 3)
 PITCH c02_my-mom-worked-three-jobs: 46/100 REJECT (hook 7 story 7 entertainment 0 comedy 0 pace 6 length 10) | first line starts on a pointer word; first line names no one and nothing; ends mid-sentence; little for this campaign's genres (business 0, sports 2, comedy 0)
 PITCH c03_the-internal-spend-4-million: 94/100 PASS (hook 20 story 10 entertainment 9 comedy 2 pace 10 length 10)
-PITCH c04_actually-it-took-us-18-month: 89/100 PASS (hook 20 story 10 entertainment 10 comedy 2 pace 6 length 10)
-PITCH c05_you-re-at-a-billion-in-reven: 94/100 PASS (hook 20 story 10 entertainment 10 comedy 1 pace 10 length 10)
-PITCH c06_the-company-has-just-hit-a-b: 82/100 PASS (hook 15 story 8 entertainment 10 comedy 2 pace 8 length 10) | title has no name, number, question or quote
-PITCH c07_we-have-on-the-team-people-w: 80/100 PASS (hook 15 story 10 entertainment 10 comedy 0 pace 7 length 10) | first line names no one and nothing; filler 11%
-PITCH c08_can-t-believe-that-6-million: 80/100 PASS (hook 15 story 10 entertainment 9 comedy 0 pace 8 length 10) | first line names no one and nothing
+PITCH c04_we-have-on-the-team-people-w: 80/100 PASS (hook 15 story 10 entertainment 10 comedy 0 pace 7 length 10) | first line names no one and nothing; filler 11%
+PITCH c05_can-t-believe-that-6-million: 80/100 PASS (hook 15 story 10 entertainment 9 comedy 0 pace 8 length 10) | first line names no one and nothing
+PITCH c06_look-but-this-happens-with-i: 77/100 PASS (hook 20 story 8 entertainment 5 comedy 0 pace 7 length 10)
+PITCH c07_actually-for-us-as-companies: 68/100 PASS (hook 10 story 9 entertainment 5 comedy 0 pace 10 length 10) | first line names no one and nothing; title has no name, number, question or quote
+PITCH c08_i-think-it-really-stabilizes: 89/100 PASS (hook 20 story 10 entertainment 8 comedy 0 pace 10 length 10)
 7 of 8 pitches go to render
-TRY   c01_we-don-t-do-any-paid-ads: qa FAIL judge 55 (55/100  hook 20  pace 3  variety 4  framing 4  story 6  entertainment 0  comedy 1  captions 7  length 10) | Cut edges (no clipped words) | FAIL | 8 edges checked against the audio; start 1394.39s cuts through "that?" |; | Speaker centred | FAIL | 71 frames measured; off centre in 20% (at 41.0s, 41.5s, 42.0s, 42.5s, 45.5s, 46.0s); mean offset 6% of width |
-TRY   c01r1_we-don-t-do-any-paid-ads-v2: qa FAIL judge 55 (55/100  hook 20  pace 3  variety 4  framing 4  story 6  entertainment 0  comedy 1  captions 7  length 10) | Cut edges (no clipped words) | FAIL | 8 edges checked against the audio; start 1394.39s cuts through "that?" |; | Speaker centred | FAIL | 71 frames measured; off centre in 20% (at 41.0s, 41.5s, 42.0s, 42.5s, 45.5s, 46.0s); mean offset 6% of width |
+TRY   c01_we-don-t-do-any-paid-ads: qa FAIL judge 58 (58/100  hook 20  pace 3  variety 4  framing 7  story 6  entertainment 0  comedy 1  captions 7  length 10) | Cut edges (no clipped words) | FAIL | 8 edges checked against the audio; start 1394.39s cuts through "that?" |; | Smooth transitions | FAIL | stray cut at 0.50s, 30.10s |
+TRY   c01r1_we-don-t-do-any-paid-ads-v2: qa FAIL judge 62 (62/100  hook 20  pace 6  variety 4  framing 10  story 4  entertainment 0  comedy 1  captions 7  length 10) | Cut edges (no clipped words) | FAIL | 8 edges checked against the audio; start 1394.38s cuts through "that?"; end 1438.62s cuts through "And" |; | Ends on a finished sentence | FAIL | last caption: "IT. AND" |
 TRY   c02_okay-so-the-internal-spend-4: qa FAIL judge 81 (81/100  hook 20  pace 10  variety 2  framing 10  story 8  entertainment 9  comedy 2  captions 10  length 10) | Cut edges (no clipped words) | FAIL | 6 edges checked against the audio; end 2137.07s cuts through "And" |; | Ends on a finished sentence | FAIL | last caption: "TO KEEP GROWING. AND" |
-TRY   c02r1_okay-so-the-internal-spend-4-v2: qa FAIL judge 81 (81/100  hook 20  pace 10  variety 2  framing 10  story 8  entertainment 9  comedy 2  captions 10  length 10) | Cut edges (no clipped words) | FAIL | 6 edges checked against the audio; end 2137.07s cuts through "And" |; | Ends on a finished sentence | FAIL | last caption: "TO KEEP GROWING. AND" |
-TRY   c04_you-re-at-a-billion-in-reven: qa FAIL judge 79 (79/100  hook 20  pace 10  variety 4  framing 5  story 10  entertainment 10  comedy 1  captions 9  length 10) | Clean first 2 seconds | FAIL | stray short shot at 47.91s |
-KEPT  c03_actually-it-took-us-18-month: 53s  qa PASS  judge 83 (83/100  hook 20  pace 10  variety 7  framing 5  story 10  entertainment 10  comedy 2  captions 9  length 10)  3.7 min  hook: Actually it took us 18 months from one million to one billion.  [score 95: stakes 15, entertainment 24, comedy 3, names 6, shape 10, clarity 10, pace 6, visuals 8, payoff 10, length 3 [business 20, comedy 6, sports 2]]
-DROP  c02_okay-so-the-internal-spend-4: 47s  qa FAIL  judge 81 (81/100  hook 20  pace 10  variety 2  framing 10  story 8  entertainment 9  comedy 2  captions 10  length 10)  3.2 min  hook: The internal spend, $4 million, about $10 ,000 per head.  [score 96: stakes 15, entertainment 23, comedy 3, shape 12, clarity 10, pace 10, visuals 8, payoff 10, length 5 [business 19, comedy 6, drama 3]]  | Cut edges (no clipped words) | FAIL | 6 edges checked against the audio; end 2137.07s cuts through "And" |; | Ends on a finished sentence | FAIL | last caption: "TO KEEP GROWING. AND" |
-DROP  c04_you-re-at-a-billion-in-reven: 48s  qa FAIL  judge 79 (79/100  hook 20  pace 10  variety 4  framing 5  story 10  entertainment 10  comedy 1  captions 9  length 10)  3.3 min  hook: You're at a billion in revenue now.  [score 95: stakes 15, entertainment 24, comedy 2, names 8, shape 6, clarity 7, pace 10, visuals 8, payoff 10, length 5 [business 20, comedy 4, drama 2]]  | Clean first 2 seconds | FAIL | stray short shot at 47.91s |
-DROP  c01r2_the-company-has-just-hit-a-b: 44s  qa FAIL  judge 73 (73/100  hook 20  pace 10  variety 5  framing 0  story 8  entertainment 10  comedy 2  captions 8  length 10)  3.9 min  hook: The company has just hit a billion dollars in revenue.  [score 94: stakes 15, entertainment 24, comedy 3, names 8, clarity 10, pace 9, visuals 10, payoff 10, length 5 [business 20, comedy 6, drama 3]]  | Speaker centred | FAIL | 62 frames measured; off centre in 18% (at 0.0s, 0.5s, 1.5s, 2.0s, 23.0s, 23.5s); mean offset 7% of width |; | Somebody in frame | FAIL | no face for 23.0-25.0s |; | Crop jumps | FAIL | 12 join(s), 2.7 per 10 s; crop jumps inside a shot at 26.8s, 27.7s |; | Smooth transitions | FAIL | flash frame at 35.80s; unplanned cut mid-clip at 1.67s, 6.83s (b-roll's own cuts are fine) |
-LANE  c03_actually-it-took-us-18-month: youtube (youtube 35, tiktok 10, instagram 1; baseline youtube (podcast))
-1 clip(s) kept of 4 rendered on 4 machines, longest render 3.9 min
-[22:45:40] 1 clip(s) uploaded to 1_CHECK
+TRY   c03_and-like-we-have-on-the-team: qa FAIL judge 77 (77/100  hook 20  pace 5  variety 4  framing 10  story 10  entertainment 10  comedy 0  captions 8  length 10) | Smooth transitions | FAIL | stray cut at 7.93s |
+TRY   c03r1_and-like-we-have-on-the-team-v2: qa FAIL judge 77 (77/100  hook 20  pace 5  variety 4  framing 10  story 10  entertainment 10  comedy 0  captions 8  length 10) | Smooth transitions | FAIL | stray cut at 7.93s |
+TRY   c04_can-t-believe-that-6-million: qa FAIL judge 82 (82/100  hook 20  pace 10  variety 4  framing 10  story 10  entertainment 9  comedy 1  captions 8  length 10) | Smooth transitions | FAIL | stray cut at 24.30s |
+KEPT  c02r1_okay-so-the-internal-spend-4-v2: 39s  qa PASS  judge 82 (82/100  hook 20  pace 10  variety 2  framing 10  story 10  entertainment 8  comedy 2  captions 10  length 10)  2.6 min  hook: The internal spend, $4 million, about $10 ,000 per head.  [re-edit: score 96: stakes 15, entertainment 23, comedy 3, shape 12, clarity 10, pace 10, visuals 8, payoff 10, length 5 [business 19, comedy 6, drama 3] | after: | Cut edges (no clipped words) | FAIL | 6 edges checked against the audio; end 2137.07s cuts through "And" |; | Ends on a finished sentence | FAIL | last caption: "TO KEEP GROWING. AND" |]
+KEPT  c03r2_i-think-it-really-stabilizes: 46s  qa PASS  judge 81 (81/100  hook 20  pace 10  variety 4  framing 10  story 10  entertainment 8  comedy 1  captions 8  length 10)  2.9 min  hook: I think it really stabilizes around like $500 ,000 a month very.  [score 86: stakes 15, entertainment 20, shape 8, clarity 10, pace 10, visuals 8, payoff 10, length 5 [business 17, truecrime 2, comedy 1]]
+DROP  c04_can-t-believe-that-6-million: 42s  qa FAIL  judge 82 (82/100  hook 20  pace 10  variety 4  framing 10  story 10  entertainment 9  comedy 1  captions 8  length 10)  2.2 min  hook: Can't believe that $6 million a year from $99 bucks.  [score 90: stakes 15, entertainment 22, names 4, shape 8, clarity 10, pace 8, visuals 8, payoff 10, length 5 [business 19, comedy 1]]  | Smooth transitions | FAIL | stray cut at 24.30s |
+DROP  c01r2_yeah-look-but-this-happens-w: 40s  qa PASS  judge 76 (76/100  hook 20  pace 9  variety 7  framing 10  story 8  entertainment 5  comedy 0  captions 7  length 10)  2.2 min  hook: Look, but this happens with Instagram, with WhatsApp.  [score 88: stakes 14, entertainment 13, names 8, shape 13, clarity 10, pace 7, visuals 8, payoff 10, length 5 [business 11, drama 4]]
+LANE  c02r1_okay-so-the-internal-spend-4-v2: youtube (youtube 47, tiktok 8, instagram 3; baseline youtube (podcast))
+LANE  c03r2_i-think-it-really-stabilizes: youtube (youtube 46, tiktok 4, instagram 0; baseline youtube (podcast))
+2 clip(s) kept of 4 rendered on 4 machines, longest render 2.9 min
+[23:16:56] 2 clip(s) uploaded to 1_CHECK

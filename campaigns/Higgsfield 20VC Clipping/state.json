@@ -24,9 +24,10 @@
   "2026-10-30 22:30 UTC  4 candidate(s) picked (the brief's clip ideas (2) + scorecard), 3 fallback(s); rendering on 4 machines with grade-and-retry",
   "2026-10-30 22:45 UTC  1 clip(s) uploaded to 1_CHECK",
   "2026-10-30 22:54 UTC  episode taken from the Drive cache (same source files as last time)",
-  "2026-10-30 23:03 UTC  4 candidate(s) picked (the brief's clip ideas (2) + scorecard), 3 fallback(s); rendering on 4 machines with grade-and-retry"
+  "2026-10-30 23:03 UTC  4 candidate(s) picked (the brief's clip ideas (2) + scorecard), 3 fallback(s); rendering on 4 machines with grade-and-retry",
+  "2026-10-30 23:16 UTC  2 clip(s) uploaded to 1_CHECK"
  ],
- "updated": "2026-10-30 23:03 UTC",
+ "updated": "2026-10-30 23:16 UTC",
  "critiques_seen": [],
  "watermark": "20vc podcast higgsfield black.png",
  "used_moments": [
@@ -44,6 +45,16 @@
    "start": 855.77,
    "end": 912.25,
    "hook": "Actually it took us 18 months from one million to one billion."
+  },
+  {
+   "start": 2089.64,
+   "end": 2129.02,
+   "hook": "The internal spend, $4 million, about $10 ,000 per head."
+  },
+  {
+   "start": 2124.42,
+   "end": 2169.8,
+   "hook": "I think it really stabilizes around like $500 ,000 a month very."
   }
  ],
  "tried_moments": [
@@ -66,26 +77,53 @@
    "start": 10.12,
    "end": 65.07,
    "hook": "The company has just hit a billion dollars in revenue."
+  },
+  {
+   "start": 1224.84,
+   "end": 1268.36,
+   "hook": "Can't believe that $6 million a year from $99 bucks."
+  },
+  {
+   "start": 4261.71,
+   "end": 4304.87,
+   "hook": "Look, but this happens with Instagram, with WhatsApp."
   }
  ],
  "clips": [
   {
-   "mp4": "01_actually-it-took-us-18-month.mp4",
-   "hook": "Actually it took us 18 months from one million to one billion.",
-   "judge": 83,
-   "dur": 53.0,
+   "mp4": "01_okay-so-the-internal-spend-4-v2.mp4",
+   "hook": "The internal spend, $4 million, about $10 ,000 per head.",
+   "judge": 82,
+   "audience": null,
+   "dur": 39.4,
    "caption": "",
    "lane": "youtube",
-   "text": "TITLE: Actually it took us 18 months from one million to one billion. CAPTIONS AS SHOWN (one line per cut): I DO JUST WANT TO GO BACK TO PART OF THE STORY. WHERE ARE YOU AT REVENUE WISE TODAY? SO TODAY IS ACTUALLY EXCITING DAY. LIKE WHEN WE RECORD JUST BLOOMBERG ARTICLE WENT OUT SO THAT WE CROSS ONE BILLION IN ANNUALIZED REVENUE. IF I HAD A GONG HERE, I'D BE LIKE HITTING THE GONG. A BILLION IN REVENUE. YES. ACTUALLY IT TOOK US 18 MONTHS FROM ONE MILLION TO ONE BILLION FOR COURSE OR IT TOOK 24 MONTHS. SO WE ARE PROBABLY LIKE THE THIRDS AFTER OPEN THE END. 18 MONTHS FROM A MILLION TO A BILLION. YES. HOW DO YOU CALCULATE REVENUE? IT'S A CONTROVERSIAL TOPIC. HOW DO YOU CALCULATE REVENUE? ABSOLUTELY. BY THE WAY YOUR CO -HOST JASON ALSO ASKED THIS QUESTION IN MAY.",
+   "text": "TITLE: The internal spend, $4 million, about $10 ,000 per head. CAPTIONS AS SHOWN (one line per cut): I WOULDN'T SAY IT WAS PRODUCTION READY, BUT WE LEARNED A LOT. $30,000 IN A WEEK? YEAH, YEAH. MANY PEOPLE SPEND OVER $10,000 IN A WEEK. DO YOU MIND? YEAH, MY FINANCE TEAM WILL PROBABLY SAY, I DON'T KNOW IF YOU ASKED ANY OF THEM, BUT THEY WILL PROBABLY SAY THAT I'M LIKE BEING TOO STUBBORN. TOO RELENTLESS TO CONTROL THE SPEND. BECAUSE SOMETIMES I FEEL IT REALLY GOES OUT OF CONTROL. LIKE $30,000 IN A WEEK IS QUITE A LOT. BUT WE LEARNED THIS, SO THIS WAS ACTUALLY AN AT -PASSIVE EXPERIENCE. OKAY, SO THE INTERNAL SPEND, $4 MILLION, ABOUT $10,000 PER HEAD. WHAT WILL THAT BE IN 12 MONTHS TIME, DO YOU RECKON? SO THAT'S VERY INTERESTING.",
    "parts": [
     [
-     855.77,
-     912.25
+     2089.64,
+     2129.02
+    ]
+   ]
+  },
+  {
+   "mp4": "02_i-think-it-really-stabilizes.mp4",
+   "hook": "I think it really stabilizes around like $500 ,000 a month very.",
+   "judge": 81,
+   "audience": null,
+   "dur": 45.8,
+   "caption": "",
+   "lane": "youtube",
+   "text": "TITLE: I think it really stabilizes around like $500 ,000 a month very. CAPTIONS AS SHOWN (one line per cut): WHAT WILL THAT BE IN 12 MONTHS TIME, DO YOU RECKON? SO THAT'S VERY INTERESTING. SO ACROSS THE TOP ENGINEERS AND ACROSS TOP CREATIVES, I THINK IT'S GOING TO KEEP GROWING. AND I DO BELIEVE WE ARE GOING TO GET TO SPEND CLOSE TO $50,000 AND $100,000 A MONTH FOR THOSE WHO CAN CALL 10X ENGINEERS, 10X CREATIVES. UNFORTUNATELY, I ALSO EXPECT THAT THESE PEOPLE WILL ASK FOR COMPARABLE SALARY RAISE AS WELL. SO I THINK THAT'S JUST GOING TO CORRELATE AT SOME POINT. BUT ALSO FOR A LOT OF OTHER JOBS, LET'S SAY WE TAKE LEGAL, FINANCE AND SO ON. I THINK IT REALLY STABILIZES AROUND LIKE $500,000 A MONTH VERY, VERY QUICKLY.",
+   "parts": [
+    [
+     2124.42,
+     2169.8
     ]
    ]
   }
  ],
- "needs_redo": true,
+ "needs_redo": false,
  "empty_runs": 0,
  "empty_told": false,
  "brief": {
