@@ -1,22 +1,31 @@
-probe 2026-10-30T02:10Z https://www.youtube.com/watch?v=dQw4w9WgXcQ cookies=yes
+probe 2026-10-30T02:11Z https://www.youtube.com/watch?v=dQw4w9WgXcQ cookies=yes
 ERROR: [youtube] dQw4w9WgXcQ: Requested format is not available. Use --list-formats for a list of available formats
-[youtube] Extracting URL: https://www.youtube.com/watch?v=dQw4w9WgXcQ
-[youtube] dQw4w9WgXcQ: Downloading webpage
-[youtube] dQw4w9WgXcQ: Downloading web embedded client config
-[youtube] dQw4w9WgXcQ: Downloading player 4efb8b2c-main
-[youtube] dQw4w9WgXcQ: Downloading web embedded player API JSON
-[youtube] dQw4w9WgXcQ: Downloading tv samsung player API JSON
-WARNING: [youtube] dQw4w9WgXcQ: Signature solving failed: Some formats may be missing. Ensure you have a supported JavaScript runtime and challenge solver script distribution installed. Review any warnings presented before this message. For more details, refer to  https://github.com/yt-dlp/yt-dlp/wiki/EJS
-WARNING: [youtube] dQw4w9WgXcQ: n challenge solving failed: Some formats may be missing. Ensure you have a supported JavaScript runtime and challenge solver script distribution installed. Review any warnings presented before this message. For more details, refer to  https://github.com/yt-dlp/yt-dlp/wiki/EJS
-WARNING: Only images are available for download. use --list-formats to see them
-[info] Available formats for dQw4w9WgXcQ:
-ID  EXT   RESOLUTION FPS | PROTO | VCODEC MORE INFO
-----------------------------------------------------
-sb3 mhtml 48x27        0 | mhtml | images storyboard
-sb2 mhtml 80x45        1 | mhtml | images storyboard
-sb1 mhtml 160x90       1 | mhtml | images storyboard
-sb0 mhtml 320x180      1 | mhtml | images storyboard
-[youtube] dQw4w9WgXcQ: Downloading web embedded player API JSON
-[youtube] dQw4w9WgXcQ: Downloading tv samsung player API JSON
-ERROR: [youtube] dQw4w9WgXcQ: Requested format is not available. Use --list-formats for a list of available formats
+92  mp4   426x240     25    | ~  7.64MiB   301k m3u8  | avc1.4D4015          mp4a.40.5           [en]
+133 mp4   426x240     25    |    4.11MiB   162k https | avc1.4D4015     162k video only          240p, mp4_dash
+242 webm  426x240     25    |    2.58MiB   102k https | vp9             102k video only          240p, webm_dash
+395 mp4   426x240     25    |    2.95MiB   116k https | av01.0.00M.08   116k video only          240p, mp4_dash
+93  mp4   640x360     25    | ~ 15.50MiB   611k m3u8  | avc1.4D401E          mp4a.40.2           [en]
+134 mp4   640x360     25    |    8.00MiB   315k https | avc1.4D401E     315k video only          360p, mp4_dash
+18  mp4   640x360     25  2 | ≈ 11.28MiB   444k https | avc1.42001E          mp4a.40.2       44k [en] 360p
+243 webm  640x360     25    |    5.74MiB   226k https | vp9             226k video only          360p, webm_dash
+396 mp4   640x360     25    |    5.42MiB   214k https | av01.0.01M.08   214k video only          360p, mp4_dash
+94  mp4   854x480     25    | ~ 21.90MiB   863k m3u8  | avc1.4D401E          mp4a.40.2           [en]
+135 mp4   854x480     25    |   13.45MiB   530k https | avc1.4D401E     530k video only          480p, mp4_dash
+244 webm  854x480     25    |    8.95MiB   352k https | vp9             352k video only          480p, webm_dash
+397 mp4   854x480     25    |    9.42MiB   371k https | av01.0.04M.08   371k video only          480p, mp4_dash
+95  mp4   1280x720    25    | ~ 31.70MiB  1248k m3u8  | avc1.4D401F          mp4a.40.2           [en]
+136 mp4   1280x720    25    |   25.23MiB   993k https | avc1.4D401F     993k video only          720p, mp4_dash
+247 webm  1280x720    25    |   16.87MiB   664k https | vp9             664k video only          720p, webm_dash
+398 mp4   1280x720    25    |   16.78MiB   661k https | av01.0.05M.08   661k video only          720p, mp4_dash
+96  mp4   1920x1080   25    | ~119.04MiB  4688k m3u8  | avc1.640028          mp4a.40.2           [en]
+137 mp4   1920x1080   25    |   77.16MiB  3038k https | avc1.640028    3038k video only          1080p, mp4_dash
+248 webm  1920x1080   25    |   29.42MiB  1158k https | vp9            1158k video only          1080p, webm_dash
+399 mp4   1920x1080   25    |   29.01MiB  1142k https | av01.0.08M.08  1142k video only          1080p, mp4_dash
+271 webm  2560x1440   25    |  144.10MiB  5674k https | vp9            5674k video only          1440p, webm_dash
+400 mp4   2560x1440   25    |  116.51MiB  4588k https | av01.0.12M.08  4588k video only          1440p, mp4_dash
+313 webm  3840x2160   25    |  342.00MiB 13466k https | vp9           13466k video only          2160p, webm_dash
+401 mp4   3840x2160   25    |  229.20MiB  9025k https | av01.0.12M.08  9025k video only          2160p, mp4_dash
+[info] dQw4w9WgXcQ: Downloading 1 format(s): 399+140
+[info] dQw4w9WgXcQ: Downloading 1 time ranges: 0.0-20.0
+ERROR: You have requested downloading the video partially, but ffmpeg is not installed. Aborting
 DOWNLOAD FAILED
