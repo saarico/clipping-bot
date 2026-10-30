@@ -602,6 +602,9 @@ def do_campaign(name, cpath, phase="all"):
 
     # 1_CHECK: cut when there is nothing there yet, or after a critique
     if st.get("clips") and not st.get("needs_redo"):
+        if not st.get("review_told"):   # say once why nothing happens: the log used to go silent here (2026-10-30 22:19)
+            note(st, f"{len(st['clips'])} clip(s) wait for rico's review in 1_CHECK (approve -> 3_APPROVED, notes -> 2_REDO)")
+            st["review_told"] = True
         save_state(name, st)
         return
     if not st.get("needs_redo") and st.get("empty_runs", 0) >= 3:
