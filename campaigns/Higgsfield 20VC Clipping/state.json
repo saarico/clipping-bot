@@ -19,9 +19,11 @@
   "2026-10-30 06:20 UTC  4 candidate(s) picked (entertainment scorecard (auto)), 2 fallback(s); rendering on 4 machines with grade-and-retry",
   "2026-10-30 06:27 UTC  2 clip(s) uploaded to 1_CHECK",
   "2026-10-30 22:18 UTC  rules page https://whop.com/clip-farm-official/exp_4UqMmAp584lF59/app/: 1869 chars",
-  "2026-10-30 22:18 UTC  brief read: 30 rules, 3 links, tags ['@20VC', '@20vchq', '@HiggsfieldAI', '@higgsfield.ai']"
+  "2026-10-30 22:18 UTC  brief read: 30 rules, 3 links, tags ['@20VC', '@20vchq', '@HiggsfieldAI', '@higgsfield.ai']",
+  "2026-10-30 22:23 UTC  episode taken from the Drive cache (same source files as last time)",
+  "2026-10-30 22:30 UTC  4 candidate(s) picked (the brief's clip ideas (2) + scorecard), 3 fallback(s); rendering on 4 machines with grade-and-retry"
  ],
- "updated": "2026-10-30 22:19 UTC",
+ "updated": "2026-10-30 22:30 UTC",
  "critiques_seen": [],
  "watermark": "20vc podcast higgsfield black.png",
  "used_moments": [
