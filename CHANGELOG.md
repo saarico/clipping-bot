@@ -13,6 +13,10 @@ RULES.md; the acceptance gates are scorecards/acceptance.md.
 - Board 00:20 UTC (73 cards, descriptions read, 6 unknown person campaigns' pages read): only three real podcast
   campaigns remain: Iced Coffee Hour x Greg Lav (recommended, folder made), BILF Podcast (8 days of budget),
   Higgsfield 20VC. Decision card to rico.
+- 00:44: rico: "I already did [Iced Coffee Hour]. Consider something else, including the ones we scanned and rejected,
+  and choose by your scorecard." Rule from now on: the bot picks the campaign (top card that passes every stop) and
+  tells rico; no decision cards for picks. Picked Higgsfield 20VC (71, YouTube business lane); runner-up BILF (89)
+  blocked by ~8 days of budget. ICH x Greg Lav withdrawn.
 
 ## 2026-10-29 (15:25 UTC): the scan reads campaign pages, "close to ending" by pay-out pace
 - rico: "scan for a campaign, ensure proper rules and best choice and ensure the campaign isn't close to ending."
