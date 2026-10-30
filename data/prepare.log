@@ -1,23 +1,6 @@
-[04:08:44] CLIPPING root CLIPPING
+[06:09:39] CLIPPING root CLIPPING
 Could not get FontBBox from font descriptor because None cannot be parsed as 4 floats
-[04:09:51] rules page https://drive.google.com/drive/folders/186sFKTq8ZNAHdpduLFoguY0YB88eEfES?usp=sharing: 500 chars
-[04:10:05] rules page https://whop.com/clip-farm-official/exp_4UqMmAp584lF59/app/: 1869 chars
-[04:10:06] rules page https://we.tl/t-pRMHaT4pEb3zn2QX: 313 chars
-[04:10:19] rules page https://drive.google.com/drive/folders/1FLZsy7bTqf6bkqgJA8ycLXAbtJNfSiCs?usp=sharing: 660 chars
-[04:10:55] rules page https://discord.gg/clipfarm: 359 chars
-[04:11:35] brief read: 30 rules, 3 links, tags ['@20VC', '@20vchq', '@HiggsfieldAI', '@higgsfield.ai', '@iriszsc', '@markseguin', '@nmdcf', '@perkyracketb8']
-[04:11:37] The Untold Story of Higgsfield - Alex Mashrabov - 4K [jszn8r is the brief's YouTube video: taking the 1080p copy from YouTube
-[04:11:37] trying yt-dlp with cookies: https://www.youtube.com/watch?v=jszn8rFtxm4
-[04:11:39] YOUTUBE COOKIES NEEDED OR EXPIRED: refresh the YT_COOKIES secret (SETUP.md, YouTube section)
-[04:11:39] downloading The Untold Story of Higgsfield - Alex Mashrabov - 4K [jszn8rFtxm4].mp4 from 0_START
-[04:11:49] The Untold Story of Higgsfield - Alex Mashrabov - 4K [jszn8r is 3840x2160: converting to 1920x1080 30 fps
-[05:04:42] part 00: 00_The Untold Story of Higgsfield - Alex Mashrabov - 4K [jsz 3840x2160 4542s (crop=3840:2160:0:0)
-[05:05:50] episode saved to the Drive cache
-/home/runner/work/clipping-bot/clipping-bot/bot/run.py:492: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
-  c = sum(1 for v in a.getdata() if v > 40) / float(im.width * im.height)
-/home/runner/work/clipping-bot/clipping-bot/bot/run.py:492: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
-  c = sum(1 for v in a.getdata() if v > 40) / float(im.width * im.height)
-[05:10:55] Higgsfield 20VC Clipping: waiting for the transcript parts from 4 machines
-[06:01:14] Higgsfield 20VC Clipping: 0 of 4 transcript parts arrived in 50 min; transcribing here
-[06:01:14] transcribing the whole episode
-[06:01:14] transcribing (whisper on CPU: medium under 25 min, else small)
+[06:10:10] rules page https://drive.google.com/drive/folders/186sFKTq8ZNAHdpduLFoguY0YB88eEfES?usp=sharing: 500 chars
+[06:10:21] rules page https://whop.com/clip-farm-official/exp_4UqMmAp584lF59/app/: 1871 chars
+[06:10:22] rules page https://we.tl/t-pRMHaT4pEb3zn2QX: 313 chars
+[06:10:35] rules page https://drive.google.com/drive/folders/1FLZsy7bTqf6bkqgJA8ycLXAbtJNfSiCs?usp=sharing: 660 chars
