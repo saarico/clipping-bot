@@ -3,6 +3,17 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-10-30 (00:45 UTC): TJR skipped, the board re-read, dedicated-account campaigns stopped
+- rico: "let's skip, it's likely we wouldn't be accepted. Scan for something else and delete this campaign on Drive."
+  TJR's folders went to _trash (config/dropped.txt). Lesson: Reach campaigns want the posting account's niche to
+  match or a dedicated account; rico's channels are general.
+- Bot: `campaign_scan` stops "dedicated account / fan page / Reach" campaigns (unless the card says "no fan page
+  needed"); KNOWN_SHOWS settles the lane for shows whose title hides it (Iced Coffee Hour = YouTube money, BILF =
+  Instagram, Kai Cenat = TikTok). pages.yml survives a concurrent commit; summary.json accumulates.
+- Board 00:20 UTC (73 cards, descriptions read, 6 unknown person campaigns' pages read): only three real podcast
+  campaigns remain: Iced Coffee Hour x Greg Lav (recommended, folder made), BILF Podcast (8 days of budget),
+  Higgsfield 20VC. Decision card to rico.
+
 ## 2026-10-29 (15:25 UTC): the scan reads campaign pages, "close to ending" by pay-out pace
 - rico: "scan for a campaign, ensure proper rules and best choice and ensure the campaign isn't close to ending."
 - Finding: Content Rewards campaigns have no end date (pages rendered with a browser on the runner: description,
