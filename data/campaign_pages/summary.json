@@ -1,13 +1,68 @@
 {
- "f354afb5-bc73-4090-b723-35f65dbba276": {
-  "id": "f354afb5-bc73-4090-b723-35f65dbba276",
-  "link": "https://contentrewards.com/c/campaigns/f354afb5-bc73-4090-b723-35f65dbba276",
+ "86842687-ba2b-4638-a024-995dcf3d25a3": {
+  "id": "86842687-ba2b-4638-a024-995dcf3d25a3",
+  "link": "https://contentrewards.com/c/campaigns/86842687-ba2b-4638-a024-995dcf3d25a3",
   "title": "Skip to content",
-  "chars": 1314,
+  "chars": 1451,
   "time_left": [
    "Hidden until you join"
   ],
   "rate": null,
+  "budget_left": null,
+  "platforms": [
+   "youtube",
+   "tiktok",
+   "instagram",
+   "facebook",
+   "x"
+  ],
+  "application": false,
+  "no_result": false
+ },
+ "414e37c7-4e33-49d1-a883-43ad6bb9b552": {
+  "id": "414e37c7-4e33-49d1-a883-43ad6bb9b552",
+  "link": "https://contentrewards.com/c/campaigns/414e37c7-4e33-49d1-a883-43ad6bb9b552",
+  "title": "Skip to content",
+  "chars": 928,
+  "time_left": [
+   "Hidden until you join"
+  ],
+  "rate": null,
+  "budget_left": null,
+  "platforms": [
+   "youtube",
+   "instagram"
+  ],
+  "application": false,
+  "no_result": false
+ },
+ "e509f6d0-13bf-42bc-8450-09e12c216c33": {
+  "id": "e509f6d0-13bf-42bc-8450-09e12c216c33",
+  "link": "https://contentrewards.com/c/campaigns/e509f6d0-13bf-42bc-8450-09e12c216c33",
+  "title": "Skip to content",
+  "chars": 1402,
+  "time_left": [
+   "Hidden until you join"
+  ],
+  "rate": null,
+  "budget_left": null,
+  "platforms": [
+   "youtube",
+   "tiktok",
+   "instagram"
+  ],
+  "application": false,
+  "no_result": false
+ },
+ "5991571d-8c83-41e8-941c-34d96476c06b": {
+  "id": "5991571d-8c83-41e8-941c-34d96476c06b",
+  "link": "https://contentrewards.com/c/campaigns/5991571d-8c83-41e8-941c-34d96476c06b",
+  "title": "Skip to content",
+  "chars": 1176,
+  "time_left": [
+   "Hidden until you join"
+  ],
+  "rate": 1.5,
   "budget_left": null,
   "platforms": [
    "youtube",
@@ -18,14 +73,12 @@
   "application": false,
   "no_result": false
  },
- "1248a69e-1e13-4ef7-90e3-f54e951b1fe1": {
-  "id": "1248a69e-1e13-4ef7-90e3-f54e951b1fe1",
-  "link": "https://contentrewards.com/c/campaigns/1248a69e-1e13-4ef7-90e3-f54e951b1fe1",
+ "7e5c4c7a-1d93-49bb-8214-ca3a4ba60c62": {
+  "id": "7e5c4c7a-1d93-49bb-8214-ca3a4ba60c62",
+  "link": "https://contentrewards.com/c/campaigns/7e5c4c7a-1d93-49bb-8214-ca3a4ba60c62",
   "title": "Skip to content",
-  "chars": 1318,
-  "time_left": [
-   "Hidden until you join"
-  ],
+  "chars": 3051,
+  "time_left": [],
   "rate": null,
   "budget_left": null,
   "platforms": [
@@ -36,35 +89,20 @@
   "application": false,
   "no_result": false
  },
- "6fe4c1aa-c8ca-4836-836b-01ab2540b337": {
-  "id": "6fe4c1aa-c8ca-4836-836b-01ab2540b337",
-  "link": "https://contentrewards.com/c/campaigns/6fe4c1aa-c8ca-4836-836b-01ab2540b337",
+ "35056178-a7a3-441d-a070-2a1b5bb7378b": {
+  "id": "35056178-a7a3-441d-a070-2a1b5bb7378b",
+  "link": "https://contentrewards.com/c/campaigns/35056178-a7a3-441d-a070-2a1b5bb7378b",
   "title": "Skip to content",
-  "chars": 1171,
+  "chars": 1113,
   "time_left": [
    "Hidden until you join"
   ],
   "rate": null,
   "budget_left": null,
   "platforms": [
-   "youtube",
    "tiktok",
    "instagram"
   ],
-  "application": false,
-  "no_result": false
- },
- "44a3ffcb-d4a1-492b-94a4-704919950246": {
-  "id": "44a3ffcb-d4a1-492b-94a4-704919950246",
-  "link": "https://contentrewards.com/c/campaigns/44a3ffcb-d4a1-492b-94a4-704919950246",
-  "title": "Skip to content",
-  "chars": 789,
-  "time_left": [
-   "When the pool ends"
-  ],
-  "rate": null,
-  "budget_left": null,
-  "platforms": [],
   "application": false,
   "no_result": false
  }
