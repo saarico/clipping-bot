@@ -1,32 +1,12 @@
-probe 2026-10-30T02:12Z https://www.youtube.com/watch?v=dQw4w9WgXcQ cookies=yes
-ERROR: [youtube] dQw4w9WgXcQ: Requested format is not available. Use --list-formats for a list of available formats
-92  mp4   426x240     25    | ~  7.64MiB   301k m3u8  | avc1.4D4015          mp4a.40.5           [en]
-133 mp4   426x240     25    |    4.11MiB   162k https | avc1.4D4015     162k video only          240p, mp4_dash
-242 webm  426x240     25    |    2.58MiB   102k https | vp9             102k video only          240p, webm_dash
-395 mp4   426x240     25    |    2.95MiB   116k https | av01.0.00M.08   116k video only          240p, mp4_dash
-93  mp4   640x360     25    | ~ 15.50MiB   611k m3u8  | avc1.4D401E          mp4a.40.2           [en]
-134 mp4   640x360     25    |    8.00MiB   315k https | avc1.4D401E     315k video only          360p, mp4_dash
-18  mp4   640x360     25  2 | ≈ 11.28MiB   444k https | avc1.42001E          mp4a.40.2       44k [en] 360p
-243 webm  640x360     25    |    5.74MiB   226k https | vp9             226k video only          360p, webm_dash
-396 mp4   640x360     25    |    5.42MiB   214k https | av01.0.01M.08   214k video only          360p, mp4_dash
-94  mp4   854x480     25    | ~ 21.90MiB   863k m3u8  | avc1.4D401E          mp4a.40.2           [en]
-135 mp4   854x480     25    |   13.45MiB   530k https | avc1.4D401E     530k video only          480p, mp4_dash
-244 webm  854x480     25    |    8.95MiB   352k https | vp9             352k video only          480p, webm_dash
-397 mp4   854x480     25    |    9.42MiB   371k https | av01.0.04M.08   371k video only          480p, mp4_dash
-95  mp4   1280x720    25    | ~ 31.70MiB  1248k m3u8  | avc1.4D401F          mp4a.40.2           [en]
-136 mp4   1280x720    25    |   25.23MiB   993k https | avc1.4D401F     993k video only          720p, mp4_dash
-247 webm  1280x720    25    |   16.87MiB   664k https | vp9             664k video only          720p, webm_dash
-398 mp4   1280x720    25    |   16.78MiB   661k https | av01.0.05M.08   661k video only          720p, mp4_dash
-96  mp4   1920x1080   25    | ~119.04MiB  4688k m3u8  | avc1.640028          mp4a.40.2           [en]
-137 mp4   1920x1080   25    |   77.16MiB  3038k https | avc1.640028    3038k video only          1080p, mp4_dash
-248 webm  1920x1080   25    |   29.42MiB  1158k https | vp9            1158k video only          1080p, webm_dash
-399 mp4   1920x1080   25    |   29.01MiB  1142k https | av01.0.08M.08  1142k video only          1080p, mp4_dash
-271 webm  2560x1440   25    |  144.10MiB  5674k https | vp9            5674k video only          1440p, webm_dash
-400 mp4   2560x1440   25    |  116.51MiB  4588k https | av01.0.12M.08  4588k video only          1440p, mp4_dash
-313 webm  3840x2160   25    |  342.00MiB 13466k https | vp9           13466k video only          2160p, webm_dash
-401 mp4   3840x2160   25    |  229.20MiB  9025k https | av01.0.12M.08  9025k video only          2160p, mp4_dash
-frame=   70 fps=0.0 q=-1.0 size=     512KiB time=00:00:02.76 bitrate=1519.8kbits/s speed=5.52x elapsed=0:00:00.50    frame=  109 fps=109 q=-1.0 size=    1024KiB time=00:00:04.32 bitrate=1941.9kbits/s speed=4.32x elapsed=0:00:01.00    frame=  144 fps= 96 q=-1.0 size=    1536KiB time=00:00:05.72 bitrate=2199.9kbits/s speed=3.81x elapsed=0:00:01.50    frame=  186 fps= 93 q=-1.0 size=    1792KiB time=00:00:07.40 bitrate=1983.8kbits/s speed= 3.7x elapsed=0:00:02.00    frame=  211 fps= 84 q=-1.0 size=    2304KiB time=00:00:08.40 bitrate=2247.0kbits/s speed=3.36x elapsed=0:00:02.50    frame=  230 fps= 77 q=-1.0 size=    2560KiB time=00:00:09.16 bitrate=2289.5kbits/s speed=3.05x elapsed=0:00:03.00    frame=  261 fps= 75 q=-1.0 size=    3072KiB time=00:00:10.40 bitrate=2419.8kbits/s speed=2.97x elapsed=0:00:03.50    frame=  291 fps= 73 q=-1.0 size=    3328KiB time=00:00:11.60 bitrate=2350.3kbits/s speed= 2.9x elapsed=0:00:04.00    frame=  308 fps= 68 q=-1.0 size=    3840KiB time=00:00:12.28 bitrate=2561.7kbits/s speed=2.73x elapsed=0:00:04.50    frame=  328 fps= 66 q=-1.0 size=    4096KiB time=00:00:13.08 bitrate=2565.4kbits/s speed=2.62x elapsed=0:00:05.00    frame=  345 fps= 63 q=-1.0 size=    4608KiB time=00:00:13.76 bitrate=2743.4kbits/s speed= 2.5x elapsed=0:00:05.50    frame=  363 fps= 60 q=-1.0 size=    4864KiB time=00:00:14.48 bitrate=2751.8kbits/s speed=2.41x elapsed=0:00:06.00    frame=  376 fps= 58 q=-1.0 size=    5120KiB time=00:00:15.00 bitrate=2796.2kbits/s speed=2.31x elapsed=0:00:06.50    frame=  392 fps= 56 q=-1.0 size=    5632KiB time=00:00:15.64 bitrate=2950.0kbits/s speed=2.23x elapsed=0:00:07.00    frame=  414 fps= 55 q=-1.0 size=    6144KiB time=00:00:16.52 bitrate=3046.7kbits/s speed= 2.2x elapsed=0:00:07.50    frame=  435 fps= 54 q=-1.0 size=    6400KiB time=00:00:17.36 bitrate=3020.1kbits/s speed=2.17x elapsed=0:00:08.00    frame=  448 fps= 53 q=-1.0 size=    6912KiB time=00:00:17.88 bitrate=3166.9kbits/s speed= 2.1x elapsed=0:00:08.50    frame=  468 fps= 52 q=-1.0 size=    7168KiB time=00:00:18.68 bitrate=3143.5kbits/s speed=2.08x elapsed=0:00:09.00    frame=  487 fps= 51 q=-1.0 size=    7680KiB time=00:00:19.44 bitrate=3236.4kbits/s speed=2.05x elapsed=0:00:09.50    [out#0/mp4 @ 0x5b4423df5a80] video:7602KiB audio:313KiB subtitle:0KiB other streams:0KiB global headers:0KiB muxing overhead: 0.219111%
-frame=  501 fps= 51 q=-1.0 Lsize=    7933KiB time=00:00:20.00 bitrate=3249.3kbits/s speed=2.03x elapsed=0:00:09.83    
-[download] 100% of    7.75MiB in 00:00:10 at 747.39KiB/s
--rw-r--r-- 1 runner runner 8123238 Oct 30 02:12 /tmp/probe.mp4
-DOWNLOAD OK
+probe 2026-10-30T06:11Z https://www.youtube.com/watch?v=jszn8rFtxm4 cookies=yes
+ERROR: [youtube] jszn8rFtxm4: Sign in to confirm you’re not a bot. This helps protect our community. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] Extracting URL: https://www.youtube.com/watch?v=jszn8rFtxm4
+[youtube] jszn8rFtxm4: Downloading webpage
+[youtube] jszn8rFtxm4: Downloading tv samsung player API JSON
+[youtube] jszn8rFtxm4: Downloading visionos player API JSON
+WARNING: [youtube] No title found in player responses; falling back to title from initial data. Other metadata may also be missing
+ERROR: [youtube] jszn8rFtxm4: Sign in to confirm you’re not a bot. This helps protect our community. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+[youtube] jszn8rFtxm4: Downloading tv samsung player API JSON
+[youtube] jszn8rFtxm4: Downloading visionos player API JSON
+ERROR: [youtube] jszn8rFtxm4: Sign in to confirm you’re not a bot. This helps protect our community. Use --cookies-from-browser or --cookies for the authentication. See  https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp  for how to manually pass cookies. Also see  https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies  for tips on effectively exporting YouTube cookies
+DOWNLOAD FAILED
