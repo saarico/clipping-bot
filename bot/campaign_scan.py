@@ -168,7 +168,7 @@ GAME = r"\b(gaming|video ?game|roblox|minecraft|fortnite|call of duty|cod|modern
 
 
 TRAILER = r"\b(character reveals?|new character|cinematics?|game trailers?|character trailers?|launch trailers?|reveal trailers?|official content folder|playable character|dlc character)\b"
-PERSON_STRICT = r"\b(streamer|streamers|twitch|kick|youtuber|youtubers|podcast|podcasts|host|reacts?|reaction|vlogs?|comedian|facecam|irl|interview|interviews)\b"
+PERSON_STRICT = r"\b(stream|streams|streaming|streamer|streamers|twitch|kick|youtuber|youtubers|podcast|podcasts|host|reacts?|reaction|vlogs?|comedian|facecam|irl|interview|interviews)\b"
 
 
 def game_promo(c):
