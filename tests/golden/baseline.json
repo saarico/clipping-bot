@@ -15,14 +15,14 @@
   }
  },
  "ICH-002_what-went-wrong-with-prime": {
-  "total": 79,
+  "total": 78,
   "areas": {
    "hook": 20,
    "pace": 10,
    "variety": 15,
    "framing": 4,
    "story": 10,
-   "entertainment": 8,
+   "entertainment": 7,
    "comedy": 1,
    "captions": 8,
    "length": 0,
@@ -30,14 +30,14 @@
   }
  },
  "ICH-004_kylie-jenner-post-zero-sales": {
-  "total": 73,
+  "total": 75,
   "areas": {
    "hook": 10,
    "pace": 10,
    "variety": 12,
    "framing": 4,
    "story": 8,
-   "entertainment": 4,
+   "entertainment": 6,
    "comedy": 2,
    "captions": 10,
    "length": 10,
@@ -45,14 +45,14 @@
   }
  },
  "ICH-005_15k-meme-page-ads": {
-  "total": 68,
+  "total": 72,
   "areas": {
    "hook": 10,
    "pace": 7,
    "variety": 7,
    "framing": 4,
    "story": 8,
-   "entertainment": 4,
+   "entertainment": 8,
    "comedy": 2,
    "captions": 10,
    "length": 10,

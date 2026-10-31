@@ -62,4 +62,6 @@ by the clip's content profile (`bot/profiles.WEIGHTS`, total 100):
 
 Minimum per area: an area worth 10+ points that scores under half holds the clip under the bar (79), whatever the total.
 The Text & layout inspector (`bot/studio.layout_check`) does the same on a layout failure. Starting weights are the
-board's judgement; the Analyst retunes them once 50+ posts have retention data in data/posts.csv.
+board's judgement; the Analyst (bot/analyst.py, release 4) nudges them once 20+ posts of a content type have 7-day
+views in data/posts.csv: +2 on the two areas that track views best, -2 on the two that track worst, never more than 6
+from this table, written to data/weights_tuned.json.

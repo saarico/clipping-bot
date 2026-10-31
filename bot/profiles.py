@@ -31,6 +31,7 @@ The profile comes from the reviewer (plan.json brief_overrides "style"), else fr
 else from the footage itself (average shot length, words per second).
 """
 import re
+from pathlib import Path
 
 PROFILES = {
     "podcast": dict(wps=(2.2, 3.6), pause_penalty=True, filler=True, clarity=True, back_refs=True,
@@ -81,7 +82,21 @@ AREA_MIN = (10, 0.5)   # an area weighted 10+ points must score at least half of
 
 
 def weights(name):
-    return WEIGHTS.get(name or "", WEIGHTS["podcast"])
+    """The judge's weights for a content type: the board's table, or the Analyst's nudged copy (data/weights_tuned.json,
+    bot/analyst.py) once enough posted clips of that type have 7-day views. STUDIO_BOARD_WEIGHTS=1 forces the table
+    (the golden-set tests use it)."""
+    import json
+    import os
+    key = name if name in WEIGHTS else "podcast"
+    if not os.environ.get("STUDIO_BOARD_WEIGHTS"):
+        try:
+            tuned = json.loads((Path(__file__).resolve().parent.parent / "data" / "weights_tuned.json").read_text())
+            w = tuned.get(key, {}).get("weights")
+            if w and set(w) == set(WEIGHTS[key]) and sum(w.values()) == 100:
+                return w
+        except (OSError, ValueError):
+            pass
+    return WEIGHTS[key]
 
 TEXT_HINTS = {
     "cinematic": r"\b(trailer|trailers|tv spots?|movie|film|in theaters|in cinemas|scene clips?|official clips?|warner|universal|paramount|disney|a24|netflix original|premiere|box office)\b",
