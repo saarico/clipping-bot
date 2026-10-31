@@ -99,6 +99,8 @@ Round-by-round reasons: rico's critiques in campaigns/<c>/critiques/.
 
 40. **A second grading pass: the audience read (rico 2026-10-30: "the clip cuts out in a horrible position, the speaker can't talk, boring and hard to understand; improve grading quality and entertainment, add a second phase of engagement scoring").** bot/engage.py scores every clip 0-100 from its spoken words as a stranger hears them (cold open 25, clarity 20, payoff 20, retention 20, focus 15; bar 70) with four hard gates: no host preamble or pointer back in the first sentence, restarts and fillers under 8% of the words, the last line is the answer (no aside, no hanging question, no one-word "Yes."), no two flat 5-second windows in a row. The read runs before rendering (the pitch rejects the moment), when the cut's edges are chosen (plan.refine takes the sentence window with the best read), and on the finished clip (a gate failure counts like a QA FAIL; the re-edit moves the cut to the read's start and end). Gates and areas: scorecards/acceptance.md. Also gates: a pointer start ("This industry still gonna be...") with no number, name or question; an ending on the host's next lead-in ("You're at a billion in revenue now."). Editing on talking shows: every dollar figure or number the speaker says gets a big number card (plan.auto_callouts, max 3 per clip), and the judge takes no points off for the still camera.
 
+41. **The story format is a gate (rico 2026-10-31: "the point is to not rely on the title and for them to say it... both clips yap for the first few seconds... the storyline, 5 Ws, the progression and the hook are weak").** Every talking-show clip must say its headline in the first 6 s (a money figure or big number, the title's name, or the host's short question naming the subject), name its subject or say 30% of the title's words in the first 10 s, carry new stakes after the hook, and end on a line that lands a stake or the title's claim. bot/engage.py (areas: open 25, story 20, payoff 20, retention 20, clarity 15; bar 70) fails a clip on any of these at the pitch, when the edges are chosen (plan.refine) and on the finished clip. Full structure: the Story structure section below.
+
 # Accounts: what each one posts (config/accounts.json)
 
 | Account | Posts | Never |
@@ -111,32 +113,36 @@ A campaign must fit exactly one account or it is rejected at the scan; a clip is
 
 # Story structure: how every short must flow
 
-rico approved this structure on 2026-10-25 with the Kylie Jenner clip (ICH-004 v8): "I love the context behind the post and the way the viewer can easily follow along." Every new clip follows it. Read it before picking the cut, and check the finished clip against it before sending it to rico.
+rico approved this structure on 2026-10-25 with the Kylie Jenner clip (ICH-004 v8) and rewrote the bar on 2026-10-31 after
+the Higgsfield clips ("the point is to not rely on the title and for them to say it; both clips yap for the first few
+seconds; the storyline, the 5 Ws, the progression and the hook are weak"). Every clip follows it. The bot checks it
+three times (bot/engage.py, the audience read): when it chooses the cut's edges, before rendering, and on the finished clip.
 
 ## The rule in one line
-A stranger who has never seen the show must understand **who, what and why it matters** from the first second, and the story then plays **in order** to its payoff.
+A stranger who has never seen the show must understand **who, what and why it matters from the first spoken line, with
+the title muted**, and the story then plays **in order** to a payoff the speaker says out loud.
 
-## The 5 beats
-| # | Beat | What it does | Kylie example |
+## The 5 beats (and what the bot measures)
+| # | Beat | What it does | Gate (talking shows) |
 |---|---|---|---|
-| 1 | **Title band (the spoiler)** | It sits on screen from frame 1 and promises the payoff, so people keep watching. | "Kylie Jenner posted Bloom for free. Sales didn't move." |
-| 2 | **Setup line (first 1–3 s)** | The speaker's own sentence names who and what. It's a line a stranger understands with zero context. | "Kylie Jenner posted us in her story the other day…" |
-| 3 | **Build** | The details that raise the stakes, in the order they were said. Show the thing being talked about (the show's own b-roll). | She tried three Shirley Temples, called Bloom the winner, and it was totally organic. |
-| 4 | **Turn / payoff** | The surprise the title promised. A reaction from someone else at the table makes it land. | "We didn't get one Amazon search… not one tick-up in sales." Host: "How?" |
-| 5 | **Wrap-up** | The speaker's own explanation or lesson, ending on a finished sentence. | "Four years ago we'd be sold out in 24 hours… people are done buying what celebrities tell them to." |
+| 1 | **Hook line (0-6 s)** | The first sentence IS the headline: a dollar figure, a big number, the name from the title or the claim, in the speaker's own words; or the host's short question that names the subject ("So how much do you spend on models per month?"). No setup, no "and remember...", no "but fundamentally, I think...". | a money figure / number of two digits or more / million-billion-percent, or the title's name, or 40% of the title's words, is said inside 6 s; or the first line is a question of 12 words or fewer naming the subject |
+| 2 | **Who / what (0-10 s)** | Within ten seconds the viewer can say who is talking about what without reading the title: a company or person is named, or the title's own words are said. | a name (Higgsfield, Google, Yuri) or 30% of the title's words inside 10 s |
+| 3 | **Why / how (the build)** | The reason or the contrast behind the hook, in the order it was said: "because...", "the problem is...", "but...". New numbers, names and stakes keep arriving; nothing is said twice. | points: a reason or contrast after the hook; 3 distinct stakes with one after the hook; at most 2 questions. Gate: fewer than 2 stakes in the whole clip |
+| 4 | **Payoff (last line)** | The last sentence lands the answer: a number, a stake or the title's claim, by the speaker. Never a host lead-in ("You're at a billion now"), a compliment on the question ("that's the best question of the show"), an aside ("by the way"), a hanging question or a one-word "Yes." | the last line passes engage.bad_end and carries a stake or the title's words |
+| 5 | **Title band** | Still on screen from frame 1, but it repeats what is said; it is never the only place the story is told. | the title has a name, a number, a question or a quote (judge) |
 
 ## Do
-- **Start where a stranger understands it.** The first spoken line names the person, brand or number. Skip lines that point backwards ("as I was mentioning earlier", "what's also interesting is…", "that's why…").
-- **Play the story in order.** Cut out dead parts, but never reorder events.
-- **Let the title carry the spoiler.** The campaign asks for a spoiler hook at the start, and the title band does that job.
-- **Have the visual on screen when the setup line starts.** For example, her story video was already playing on "Kylie Jenner posted us…". No slide-in from an empty screen, no paused frames, and the speaker centered after the b-roll.
-- **Keep reactions from the table** ("How?", "Wow", "No way"). They tell the viewer this is the surprising part.
-- **Aim for 40–60 s**, as long as the story needs and no longer.
+- **Start on the line that says it.** When the headline is said late in a sentence, start on the host's short question before it, or on the next sentence that says it. plan.refine searches up to 3 sentences earlier and 6 later for the window with the best read inside the brief's length.
+- **Cut only at pauses.** Whisper's sentence breaks with no gap ("...the same Did you know") leave clipped words; a window whose edges have no pause is avoided.
+- **Play the story in order.** Cut dead air, never reorder events. A teaser (the payoff line first) only when rico asks for it on that clip.
+- **Keep the table's reactions** ("Wow", "How?") when they are short; never end on them.
+- **Numbers on screen.** Every dollar figure or number a talking show says gets a big card (plan.auto_callouts).
+- **30-60 s** or the brief's window, as long as the story needs and no longer.
 
 ## Don't
-- **No jump-back teaser** that drops the viewer mid-story. It was tried 3 times on Kylie and rico found it confusing every time. Use one only when the line makes complete sense with zero context, and even then the setup-first version usually wins.
-- No line that needs the episode to make sense ("this", "that", "he" with no name before it).
-- Never say anything twice.
+- No line that needs the episode to make sense ("this", "that", "he" with no name before it; "as I was saying").
+- No clip whose first 5 s a scroller can skip: filler, setup, host preamble, a pointer back.
+- No ending on the host turning the page, a compliment, an aside, a question or a fragment.
 - No pop-up labels and no white flashes (rule 2 above).
 
 ## Transitions (rico, 2026-10-26: "weird cuts and transitions")

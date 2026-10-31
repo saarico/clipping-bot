@@ -155,7 +155,7 @@ def score(spec, words, brief=None):
 
     total = round(sum(areas.values()) * 100 / sum(MAXES.values()))
     # the audience read (engage.py, 2026-10-30): the second pass; its gates reject a moment whatever the pitch says
-    aud = engage.read(words, parts, spec.get("style") or brief.get("style"))
+    aud = engage.read(words, parts, spec.get("style") or brief.get("style"), title)
     areas["audience"] = aud["total"]
     why += ["audience: " + f for f in aud["fails"]]
     if aud["total"] < engage.BAR and not aud["fails"]:

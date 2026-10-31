@@ -8,6 +8,14 @@ rico, 2026-10-26: "Are we grading these clips and having a bot grade on likeness
 ## Part 1: the machine (`bot/judge_clip.py`)
 Measures what a scroller feels, out of 100 (rebalanced 2026-10-28): hook 20 (first 2.5 s names who/what, no pointer words), pace 10 (words per second inside the media profile's band, silences, filler), variety 15 (longest stretch without a visual change, cards/b-roll, punch-ins), framing 10 (face centred, no letterbox, no micro-segments, no footage text cut off at the edge), story 10 (stakes words, contrast or question, finished ending, no podcast back-references), **entertainment 10** (bot/genres.py: the campaign's genre mix scored on what is actually said), **comedy 5** (always graded: setup + punch, retorts, absurd numbers, insults, laughter), **captions 10** (read like a person: 2-6 words per caption, nothing flashing, numbers whole, no unknown words, no cut-off fragments, swearing masked), length 10. The report prints the media profile and the genre scores so the reviewer sees why.
 
+## Part 1b: the audience read (`bot/engage.py`, 0-100, bar 70, hard gates)
+The story format as a stranger hears it (RULES 41 and the Story structure section): hook line said in the first 6 s,
+who/what said in the first 10 s, why/how and progression after the hook, a last line that lands, no flat stretches,
+clear speech. It runs on the candidate's words before rendering (the pitch rejects), when the cut's edges are chosen
+(plan.refine picks the window with the best read) and on the finished clip (engage_report.md). A gate failure counts
+like a QA FAIL. 2026-10-31: rico's verdict on the Higgsfield clips ("rely on the title... yap for the first few
+seconds... hook, 5 Ws and progression weak") made the hook line, who/what and payoff hard gates.
+
 ## Part 2: the judge agent (blind read)
 A separate Claude agent that did not make the cut. It gets only: `captions.txt`, `qa_sheet.png`, the machine report, and this rubric. It never sees the spec or the editor's reasoning. It scores:
 

@@ -25,14 +25,18 @@ rico, 2026-10-29: "a full quality inspection is ideal and necessary", "have bett
 | Audience read: cold open | first sentence and first 4 s of speech (bot/engage.py) | no host preamble or pointer back ("I do just want to go back to part of the story"); something to grab (a number, a stake, a name, a claim, a question) inside 4 s |
 | Audience read: clarity | restarts + fillers over the clip's words | under 8% of the words |
 | Audience read: payoff | the last sentence | not an aside ("By the way, Jason asked this in May"), not a hanging question, not a one-word "Yes."; no question in the last 10 s left unanswered |
-| Audience read: retention | 5-second windows of the spoken words | never two windows in a row with nothing to hold on to (number, stake, name, question, contrast, laugh); under 40% dead windows |
+| Audience read: hook line | the first 6 s of speech vs the title (bot/engage.py) | a money figure, a number of 2+ digits, million/billion/percent, the title's name or 40% of its words is said; or the first line is a question of 12 words or fewer naming the subject |
+| Audience read: who / what | the first 10 s of speech | a name (company, person) is said, or 30% of the title's words |
+| Audience read: payoff lands | the last sentence | carries a number, a stake or the title's words; never a compliment on the question, a host lead-in, an aside or a question |
+| Audience read: progression | distinct stakes (numbers, names, money, failure, surprise) over the clip | at least 2 |
+| Audience read: retention | 5-second windows of the spoken words | never three windows in a row with nothing to hold on to (number, stake, name, question, contrast, laugh, family/hardship); under 40% dead windows |
 
 Movies, streams and concerts turn a few podcast rules into warnings (`profiles.py soft_qa`): fast cuts, a quiet opener, an unfinished sentence under music. Centring, somebody in frame, actor size, crop jumps, text cut off and audio are **never** soft.
 
-## The audience read (0-100, bar 70) - the second grading pass (2026-10-30)
+## The audience read (0-100, bar 70) - the second grading pass (2026-10-30, story format 2026-10-31)
 
-bot/engage.py reads the spoken words the way a stranger scrolling past hears them: cold open 25, clarity 20, payoff 20,
-retention 20, focus 15 (one idea: at most two host questions, the guest holds the floor). It runs three times: on a
+bot/engage.py reads the spoken words the way a stranger scrolling past hears them: cold open 25 (the hook line said in 6 s), story 20 (who/what said in 10 s, why/how, progression, one
+idea), payoff 20 (the last line lands), retention 20, clarity 15. It runs three times: on a
 candidate before rendering (pitch.score: a gate failure or a read under 70 rejects the moment), on the edges when the
 cut is chosen (plan.refine picks the sentence window with the best read), and on the finished clip (engage_report.md;
 a gate failure counts like a QA FAIL and the re-edit moves the cut to where the read says the clip should start and

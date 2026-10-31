@@ -3,6 +3,19 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-10-31 (01:40 UTC): rico on run 10: "poor ending on the 1st clip, confusing; both clips yap for the first few seconds; the storyline, 5 Ws, progression and hook are weak; revamp the md files"
+- The $4M clip opened on "And remember like we're split across United States and Asia" and ended on "That's the best
+  question of the whole show, by the way"; the $20 clip opened on "But fundamentally, I think they are going to..."
+  with the $20 said 6 s in. Both passed the read because the hook line and the payoff were points, not gates.
+- Story format rewritten (RULES: Story structure section, rule 41; scorecards/acceptance.md, judgment.md) and made
+  hard gates in bot/engage.py: the headline is SAID in the first 6 s (a money figure or big number, the title's name,
+  or the host's short question naming the subject); a subject named or 30% of the title's words in the first 10 s (the
+  viewer never depends on the title band); new stakes after the hook (progression); the last line lands a stake or the
+  title's claim. Areas now: open 25, story 20, payoff 20, retention 20, clarity 15. The read takes the title; the
+  pitch, the edge search (plan.refine, now 3 sentences earlier to 6 later) and the finished-clip pass all use it. The
+  flat-stretch gate needs three dead windows in a row (two cost points).
+- Higgsfield: tried/used moments cleared so the brief's ideas are cut again under the story format; redo set.
+
 ## 2026-10-31 (00:45 UTC): run 10: 2 clips above every bar in 1_CHECK
 - Run 41149166104 (00:25-00:39, 14 min): "We spend $4M a month on AI for 400 people" (31 s, judge 88, audience 92,
   three number cards) and "Google and OpenAI will kill the $20 AI plans" (41 s, judge 83, audience 96). Both

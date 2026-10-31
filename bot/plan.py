@@ -66,7 +66,7 @@ def refine(c, sents, lo, hi, style=None):
     if not inside:
         return c
     i0, i1 = inside[0], inside[-1]
-    words = [w for s in sents[max(i0 - 2, 0):min(i1 + 4, len(sents))] for w in s.get("words", [])]
+    words = [w for s in sents[max(i0 - 5, 0):min(i1 + 6, len(sents))] for w in s.get("words", [])]
     if not words:
         return c
 
@@ -81,12 +81,12 @@ def refine(c, sents, lo, hi, style=None):
         return min(nxt) - w1["end"] if nxt else 1.0
 
     best = None
-    for a in range(i0, min(i0 + 4, i1 + 1)):
-        for b in range(max(a, i1 - 4), min(i1 + 3, len(sents))):
+    for a in range(max(i0 - 3, 0), min(i0 + 7, i1 + 1)):
+        for b in range(max(a, i1 - 5), min(i1 + 4, len(sents))):
             d = sents[b]["end"] - sents[a]["start"]
             if not (lo - 0.5 <= d <= hi + 0.5):
                 continue
-            r = engage.read(words, [[sents[a]["start"], sents[b]["end"]]], style)
+            r = engage.read(words, [[sents[a]["start"], sents[b]["end"]]], style, c.get("hook", ""))
             score = r["total"] - 40 * len(r["fails"]) - 2 * abs(a - i0) - abs(b - i1)
             # an edge needs a pause to cut in: whisper's sentence breaks with no gap ("...the same Did you know")
             # left clipped words at both ends of run 9's Yuri clip
