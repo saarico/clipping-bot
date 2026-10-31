@@ -5,7 +5,7 @@
   "category": "Entertainment",
   "lane": "C",
   "rate": 1.75,
-  "budget_left": 27386.21,
+  "budget_left": 27294.44,
   "budget_total": 30000,
   "views": null,
   "clippers": 68,
@@ -40,12 +40,12 @@
   "category": "Entertainment",
   "lane": "C",
   "rate": 1.0,
-  "budget_left": 20702.989999999998,
+  "budget_left": 20694.7,
   "budget_total": 26300,
   "views": null,
   "clippers": 39,
   "days_left": null,
-  "days_est": 144,
+  "days_est": 143,
   "funded_ago": "1mo",
   "platforms": [
    "instagram",
@@ -76,7 +76,7 @@
   "category": "Finance",
   "lane": "A",
   "rate": 2.0,
-  "budget_left": 15351.08,
+  "budget_left": 15348.13,
   "budget_total": 16000,
   "views": null,
   "clippers": 59,
@@ -112,7 +112,7 @@
   "category": "Entertainment",
   "lane": "C",
   "rate": 1.75,
-  "budget_left": 17886.54,
+  "budget_left": 17848.97,
   "budget_total": 23057.55,
   "views": null,
   "clippers": 148,
@@ -148,7 +148,7 @@
   "category": "",
   "lane": "C",
   "rate": 3.0,
-  "budget_left": 3994.2999999999993,
+  "budget_left": 3994.290000000001,
   "budget_total": 18000,
   "views": null,
   "clippers": 71,
@@ -186,7 +186,7 @@
   "category": "Roblox",
   "lane": "C",
   "rate": 1.0,
-  "budget_left": 19439.510000000002,
+  "budget_left": 19421.129999999997,
   "budget_total": 32000,
   "views": null,
   "clippers": 922,
@@ -259,7 +259,7 @@
   "category": "Technology",
   "lane": "C",
   "rate": 1.5,
-  "budget_left": 47756.159999999974,
+  "budget_left": 47671.72999999998,
   "budget_total": 359306,
   "views": null,
   "clippers": 3799,
@@ -296,7 +296,7 @@
   "category": "Business",
   "lane": "A",
   "rate": 0.5,
-  "budget_left": 63124.229999999996,
+  "budget_left": 63122.65,
   "budget_total": 85000,
   "views": null,
   "clippers": 872,
@@ -309,7 +309,7 @@
    "x",
    "youtube"
   ],
-  "submissions": 3857,
+  "submissions": 3858,
   "application_only": false,
   "pts": {
    "pay+budget": 14,
@@ -334,10 +334,10 @@
   "category": "Personal Brand",
   "lane": "C",
   "rate": 3.0,
-  "budget_left": 8831.68,
+  "budget_left": 8802.26,
   "budget_total": 10000,
   "views": null,
-  "clippers": 100,
+  "clippers": 105,
   "days_left": null,
   "days_est": 15,
   "funded_ago": "2d",
@@ -346,7 +346,7 @@
    "tiktok",
    "youtube"
   ],
-  "submissions": 151,
+  "submissions": 164,
   "application_only": false,
   "pts": {
    "pay+budget": 20,
@@ -370,7 +370,7 @@
   "category": "Podcasts",
   "lane": "B",
   "rate": 1.25,
-  "budget_left": 10356.03,
+  "budget_left": 10345.1,
   "budget_total": 20000,
   "views": null,
   "clippers": 523,
@@ -381,7 +381,7 @@
    "instagram",
    "youtube"
   ],
-  "submissions": 2015,
+  "submissions": 2016,
   "application_only": false,
   "pts": {
    "pay+budget": 15,
@@ -406,7 +406,7 @@
   "category": "Content Creator",
   "lane": "C",
   "rate": 1.0,
-  "budget_left": 2923.8,
+  "budget_left": 2908.6400000000003,
   "budget_total": 10000,
   "views": null,
   "clippers": 48,
@@ -486,7 +486,7 @@
   "views": null,
   "clippers": 2,
   "days_left": null,
-  "days_est": 569,
+  "days_est": 570,
   "funded_ago": "3w",
   "platforms": [
    "instagram",
@@ -518,7 +518,7 @@
   "category": "Roblox",
   "lane": "C",
   "rate": 0.8,
-  "budget_left": 3076.19,
+  "budget_left": 3074.0699999999997,
   "budget_total": 4200,
   "views": null,
   "clippers": 248,
@@ -554,7 +554,7 @@
   "category": "Entertainment",
   "lane": "C",
   "rate": 1.0,
-  "budget_left": 2145.42,
+  "budget_left": 2143.46,
   "budget_total": 6476.4,
   "views": null,
   "clippers": 421,
@@ -582,43 +582,6 @@
   "verdict": "STOP",
   "stops": [
    "brand ad, not a show (rico: clips must grow the channels)"
-  ]
- },
- {
-  "name": "Scrub or Die [Horror Game]",
-  "org": "BloxClips",
-  "category": "Roblox",
-  "lane": "C",
-  "rate": 0.8,
-  "budget_left": 1010.5600000000004,
-  "budget_total": 7000,
-  "views": null,
-  "clippers": 1028,
-  "days_left": null,
-  "days_est": 2,
-  "funded_ago": "1w",
-  "platforms": [
-   "instagram",
-   "tiktok",
-   "youtube"
-  ],
-  "submissions": 3546,
-  "application_only": false,
-  "pts": {
-   "pay+budget": 5,
-   "paid out": 20,
-   "competition": 3,
-   "lane fit": 10,
-   "entertainment": 0,
-   "platform guessed": 0
-  },
-  "link": "https://contentrewards.com/c/campaigns/38bf82b8-47f0-4956-a0f8-9a4c73ba0a1f",
-  "raw": "json",
-  "total": 53,
-  "verdict": "STOP",
-  "stops": [
-   "game footage with no person in it = a game-launch ad (rico 2026-10-29: the page would look like it just posts ads)",
-   "budget runs out in about 2 day(s) at its current pace"
   ]
  },
  {
@@ -736,12 +699,12 @@
   "category": "Health & Wellness",
   "lane": "C",
   "rate": 1.5,
-  "budget_left": 4417.46,
+  "budget_left": 4416.38,
   "budget_total": 4813.76,
   "views": null,
   "clippers": 46,
   "days_left": null,
-  "days_est": 285,
+  "days_est": 284,
   "funded_ago": "3w",
   "platforms": [
    "tiktok"
@@ -763,6 +726,42 @@
   "stops": [
    "brand ad, not a show (rico: clips must grow the channels)",
    "fits none of the three accounts (no clear topic for YouTube money, Instagram drama or TikTok entertainment)"
+  ]
+ },
+ {
+  "name": "Build a Ring Farm 2! [ROBLOX]",
+  "org": "BloxClips",
+  "category": "Roblox",
+  "lane": "C",
+  "rate": 0.8,
+  "budget_left": 3552.31,
+  "budget_total": 4500,
+  "views": null,
+  "clippers": 432,
+  "days_left": null,
+  "days_est": 20,
+  "funded_ago": "5d",
+  "platforms": [
+   "instagram",
+   "tiktok",
+   "youtube"
+  ],
+  "submissions": 725,
+  "application_only": false,
+  "pts": {
+   "pay+budget": 7,
+   "paid out": 17,
+   "competition": 3,
+   "lane fit": 10,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/3522cb74-2e4d-4b3a-8e1d-ce4ea07f0ad9",
+  "raw": "json",
+  "total": 51,
+  "verdict": "STOP",
+  "stops": [
+   "game footage with no person in it = a game-launch ad (rico 2026-10-29: the page would look like it just posts ads)"
   ]
  },
  {
@@ -871,42 +870,6 @@
   "verdict": "STOP",
   "stops": [
    "fits none of the three accounts (no clear topic for YouTube money, Instagram drama or TikTok entertainment)"
-  ]
- },
- {
-  "name": "Build a Ring Farm 2! [ROBLOX]",
-  "org": "BloxClips",
-  "category": "Roblox",
-  "lane": "C",
-  "rate": 0.8,
-  "budget_left": 3603.17,
-  "budget_total": 4500,
-  "views": null,
-  "clippers": 415,
-  "days_left": null,
-  "days_est": 22,
-  "funded_ago": "5d",
-  "platforms": [
-   "instagram",
-   "tiktok",
-   "youtube"
-  ],
-  "submissions": 693,
-  "application_only": false,
-  "pts": {
-   "pay+budget": 7,
-   "paid out": 13,
-   "competition": 3,
-   "lane fit": 10,
-   "entertainment": 0,
-   "platform guessed": 0
-  },
-  "link": "https://contentrewards.com/c/campaigns/3522cb74-2e4d-4b3a-8e1d-ce4ea07f0ad9",
-  "raw": "json",
-  "total": 46,
-  "verdict": "STOP",
-  "stops": [
-   "game footage with no person in it = a game-launch ad (rico 2026-10-29: the page would look like it just posts ads)"
   ]
  },
  {
@@ -1063,7 +1026,7 @@
   "budget_left": 30000,
   "budget_total": 30000,
   "views": null,
-  "clippers": 2311,
+  "clippers": 2312,
   "days_left": null,
   "days_est": null,
   "funded_ago": "1w",
@@ -1073,7 +1036,7 @@
    "x",
    "youtube"
   ],
-  "submissions": 18743,
+  "submissions": 18762,
   "application_only": false,
   "pts": {
    "pay+budget": 12,
@@ -1312,7 +1275,7 @@
   "category": null,
   "lane": "?",
   "rate": 1.0,
-  "budget_left": 3808.0,
+  "budget_left": 3804.0,
   "budget_total": 4800.0,
   "views": null,
   "clippers": 47,
@@ -1335,7 +1298,7 @@
    "platform guessed": -3
   },
   "link": "https://contentrewards.com/c/campaigns/29c92590-738b-4421-a675-75e5ddfe4c32",
-  "raw": " Ruben Atienza Clipping \u00b7 1mo Ruben Atienza Clipping $992 / $4.8K 47 $1 /1K ",
+  "raw": " Ruben Atienza Clipping \u00b7 1mo Ruben Atienza Clipping $996 / $4.8K 47 $1 /1K ",
   "total": 39,
   "verdict": "STOP",
   "stops": [
@@ -1565,7 +1528,7 @@
   "category": null,
   "lane": "?",
   "rate": 2.0,
-  "budget_left": 2343.0,
+  "budget_left": 2337.0,
   "budget_total": 3000.0,
   "views": null,
   "clippers": 112,
@@ -1588,7 +1551,7 @@
    "platform guessed": -3
   },
   "link": "https://contentrewards.com/c/campaigns/a016fbcc-f357-441d-b2d1-919bba8777fa",
-  "raw": " creatorXchange \u00b7 2w Rolling Stone &amp; Malcolm Todd Interviews Clipping $657 / $3K 112 $2 /1K ",
+  "raw": " creatorXchange \u00b7 2w Rolling Stone &amp; Malcolm Todd Interviews Clipping $663 / $3K 112 $2 /1K ",
   "total": 38,
   "verdict": "STOP",
   "stops": [
@@ -1776,42 +1739,6 @@
   ]
  },
  {
-  "name": "Ryan Zofay - Clipping Campaign 01",
-  "org": "RYAN ZOFAY",
-  "category": null,
-  "lane": "?",
-  "rate": 0.75,
-  "budget_left": 2374.0,
-  "budget_total": 3000.0,
-  "views": null,
-  "clippers": 38,
-  "days_left": null,
-  "days_est": null,
-  "funded_ago": null,
-  "platforms": [
-   "youtube",
-   "tiktok",
-   "instagram"
-  ],
-  "submissions": null,
-  "application_only": null,
-  "pts": {
-   "pay+budget": 9,
-   "paid out": 9,
-   "competition": 10,
-   "lane fit": 0,
-   "entertainment": 0,
-   "platform guessed": -3
-  },
-  "link": "https://contentrewards.com/c/campaigns/926e1b7f-1030-4333-a557-f99d9f891437",
-  "raw": " RYAN ZOFAY \u00b7 2mo Ryan Zofay - Clipping Campaign 01 $626 / $3K 38 $0.75 /1K ",
-  "total": 35,
-  "verdict": "STOP",
-  "stops": [
-   "fits none of the three accounts (no clear topic for YouTube money, Instagram drama or TikTok entertainment)"
-  ]
- },
- {
   "name": "RobTheBank Clips 2.0",
   "org": "/1K",
   "category": null,
@@ -1891,7 +1818,7 @@
   "category": null,
   "lane": "C",
   "rate": 0.1,
-  "budget_left": 580.0,
+  "budget_left": 576.0,
   "budget_total": 1000.0,
   "views": null,
   "clippers": 346,
@@ -1914,7 +1841,7 @@
    "platform guessed": -3
   },
   "link": "https://contentrewards.com/c/campaigns/b865e0da-2b57-463f-886a-c800abd14f60",
-  "raw": " Spitty \u00b7 1w Post Sports Edits using &quot;FTW&quot; by Spitty $420 / $1K 346 $0.10 /1K ",
+  "raw": " Spitty \u00b7 1w Post Sports Edits using &quot;FTW&quot; by Spitty $424 / $1K 346 $0.10 /1K ",
   "total": 33,
   "verdict": "STOP",
   "stops": [
@@ -2111,7 +2038,7 @@
   "category": null,
   "lane": "?",
   "rate": 1.25,
-  "budget_left": 1068.0,
+  "budget_left": 1063.0,
   "budget_total": 2000.0,
   "views": null,
   "clippers": 124,
@@ -2134,7 +2061,7 @@
    "platform guessed": -3
   },
   "link": "https://contentrewards.com/c/campaigns/4c64eea7-0338-4003-aee2-ce53a9ae2765",
-  "raw": " ClipLaunch \u00b7 2d IPX Exchange x Ja Rule Clipping $932 / $2K 124 $1.25 /1K ",
+  "raw": " ClipLaunch \u00b7 2d IPX Exchange x Ja Rule Clipping $937 / $2K 124 $1.25 /1K ",
   "total": 28,
   "verdict": "STOP",
   "stops": [
@@ -2292,7 +2219,7 @@
   "category": null,
   "lane": "?",
   "rate": 0.5,
-  "budget_left": 1311.0,
+  "budget_left": 1309.0,
   "budget_total": 2000.0,
   "views": null,
   "clippers": 125,
@@ -2315,7 +2242,7 @@
    "platform guessed": -3
   },
   "link": "https://contentrewards.com/c/campaigns/737afda7-f1b5-4986-932a-fb681a603cea",
-  "raw": " Preme Clipping Campaign \u00b7 1w PREME TAKES OVER AREA 29 CLUB LIVESTREAM $689 / $2K 125 $0.50 /1K ",
+  "raw": " Preme Clipping Campaign \u00b7 1w PREME TAKES OVER AREA 29 CLUB LIVESTREAM $691 / $2K 125 $0.50 /1K ",
   "total": 24,
   "verdict": "STOP",
   "stops": [
