@@ -115,7 +115,7 @@ def fetch_link(url, dest, st):
     if re.search(r"drive\.google\.com|docs\.google\.com/.*(file|folder)", url):
         note(st, f"downloading from Google Drive: {url[:80]}")
         folder = "/folders/" in url
-        subprocess.run(["gdown", "--fuzzy", "--quiet", "-O", str(tmp) + "/"] + (["--folder"] if folder else []) + [url], check=False, timeout=7200)
+        subprocess.run(["gdown", "--quiet", "-O", str(tmp) + "/"] + (["--folder"] if folder else []) + [url], check=False, timeout=7200)
     elif re.search(r"dropbox\.com|\.(mp4|mov|mkv|webm|m4v)(\?|$)", url):
         note(st, f"downloading file: {url[:80]}")
         u = re.sub(r"[?&]dl=0", "", url)

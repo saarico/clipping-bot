@@ -3,6 +3,12 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-10-31 16:55 UTC - Drive folder downloads broke on gdown 6
+
+gdown 6.x removed the `--fuzzy` flag (URLs are parsed by default), so every Drive link in a brief failed with
+"unrecognized arguments" and the bot asked rico for the file (DJ Drama run 41221080177, 16:47). run.fetch_link now
+calls `gdown --quiet -O <dir>/ [--folder] <url>`. No rule change.
+
 ## 2026-10-31 (15:50 UTC): QA and layout after Malcolm Todd run 41213092925 (1 kept of 4 rendered)
 - c04 failed "Faces clear of the title" (face under the hook text): render_clip records where the top of the face
   lands in the finished picture during the hook seconds (spec._face_top); when it would sit under the hook + who-line,
