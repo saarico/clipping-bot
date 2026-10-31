@@ -3,6 +3,13 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-10-31 17:45 UTC - Studio v2 release 3: inspection v2 (version 2.3.0)
+
+First-piece preview (first 20 s of the top 3 moments rendered small in prepare; failures go to the back of the
+queue), contract checks on every agent hand-off, last-piece inspection (flash ending, silent tail). Broken hand-offs
+and a bad ending fail QA; everything else is a note. inspection.md per clip, an inspection line per clip in the
+SUMMARY. Golden set unchanged (the judge is untouched). RULES 48.
+
 ## 2026-10-31 17:35 UTC - Studio v2 release 2: the render is six agents (version 2.2.0)
 
 rico approved all 4 releases of the Studio v2 plan (17:19). render_clip.main's 240 lines are now bot/agents/

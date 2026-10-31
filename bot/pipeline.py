@@ -97,6 +97,10 @@ def one_clip(spec, work, source, words, tag):
         thumb = None
     qa, fails = qa_verdict(folder)
     js = judge_score(folder)
+    insp = inspect(folder, spec.get("style"))
+    if insp["fails"]:
+        fails = fails + [f"| {k} | FAIL | {f} |" for k, f in insp["fails"]]
+        qa = "FAIL"
     # the audience read (engage.py): a second pass with its own gates; a gate failure counts like a QA failure
     aud = {"total": 0, "fails": ["audience read missing"], "fix": {}}
     try:
@@ -132,6 +136,7 @@ def one_clip(spec, work, source, words, tag):
                 "ok": qa == "PASS" and js >= JUDGE_BAR and aud["total"] >= engage.BAR,
                 "near": qa == "PASS" and js >= NEAR_BAR and aud["total"] >= engage.BAR - 5 and not layout_fail,
                 "audience": aud["total"], "audience_fix": aud.get("fix", {}), "judge_notes": jn, "areas": areas,
+                "inspection": insp["line"],
                 "captions": (folder / "captions.txt").read_text() if (folder / "captions.txt").exists() else "",
                 "minutes": round((time.time() - t0) / 60, 1)})
     return res
@@ -182,7 +187,65 @@ def prepare(work, source, brief, words=None, campaign="campaign", log=print, use
             if len(kept) >= 8:
                 break
         specs = kept
+    # first-piece inspection (Studio v2 release 3): the first 20 s of the top moments rendered small and inspected
+    # before the render machines spend a full render on them; a moment that fails goes behind the ones that pass
+    if source.exists() and specs:
+        specs, fnotes = first_piece(specs, work, brief.get("style"), log=log)
+        pnotes += fnotes
     return specs[:8], origin, words, notes + pnotes
+
+
+def first_piece(specs, work, style=None, top=3, budget_s=420, log=print):
+    """Renders the first 20 s of up to `top` specs at 540x960 and runs studio.first_piece_check on each.
+    Returns (specs reordered: passes first, then fails, then the untried; notes). A broken preview never drops a
+    moment. Stops starting previews after `budget_s` seconds."""
+    import studio
+    t0, passed, failed, notes = time.time(), [], [], []
+    tried = 0
+    for sp in specs[:top]:
+        if time.time() - t0 > budget_s:
+            break
+        tried += 1
+        name = planner.slug(sp.get("hook", "clip"))
+        out = Path(work) / "renders" / f"preview_{name}.mp4"
+        pv = studio.preview_spec(sp, out)
+        pv_path = out.with_suffix(".spec.json")
+        pv_path.write_text(json.dumps(pv, indent=1))
+        r = sh([PY, str(HERE / "render_clip.py"), str(pv_path)], out.with_suffix(".log"), timeout=600)
+        if r.returncode != 0 or not out.with_suffix(".agents.json").exists():
+            notes.append(f"FIRST PIECE {name}: preview did not render, kept in place")
+            passed.append(sp)
+            continue
+        chk = studio.first_piece_check(json.loads(out.with_suffix(".agents.json").read_text()), out.with_suffix(".ass"), style)
+        if chk["fails"]:
+            failed.append(sp)
+            line = f"FIRST PIECE {name}: FAIL {'; '.join(chk['fails'][:3])}: rendered after the moments that passed"
+        else:
+            passed.append(sp)
+            line = f"FIRST PIECE {name}: PASS" + (f" ({'; '.join(chk['notes'][:2])})" if chk["notes"] else "")
+        log(line)
+        notes.append(line)
+    notes.append(f"first-piece inspection: {len(passed)} passed, {len(failed)} sent back, {time.time() - t0:.0f} s")
+    return passed + specs[tried:] + failed, notes
+
+
+def inspect(folder, style=None):
+    """In-process (contract) and last-piece inspection of a finished clip folder (Studio v2 release 3).
+    Writes inspection.md; returns {"fails": [(step, why)], "line": "contracts PASS, last piece PASS"}."""
+    import studio
+    folder = Path(folder)
+    rows, fails = [], []
+    try:
+        agents = json.loads((folder / "agents.json").read_text())
+    except Exception:
+        return {"fails": [], "line": "no agents.json (rendered before release 2)"}
+    for step, chk in (("Contracts", studio.contract_check(agents, style)),
+                      ("Last piece", studio.last_piece_check(agents, folder / "captions.ass"))):
+        rows.append(f"| {step} | {'FAIL' if chk['fails'] else 'PASS'} | {'; '.join(chk['fails'] + chk['notes']) or '-'} |")
+        fails += [(step, f) for f in chk["fails"]]
+    (folder / "inspection.md").write_text("# Inspection\n\n| Step | Result | Detail |\n|---|---|---|\n" + "\n".join(rows) + "\n")
+    line = ", ".join(f"{r.split('|')[1].strip().lower()} {r.split('|')[2].strip()}" for r in rows)
+    return {"fails": fails, "line": line}
 
 
 def faces_ok(source, spec, samples=5):
