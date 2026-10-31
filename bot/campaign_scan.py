@@ -164,13 +164,19 @@ RISKY = r"\b(casino|casinos|gambling|gamble|betting|bets?|sportsbook|slot machin
 
 
 PERSON = r"\b(streamer|streamers|twitch|kick|youtuber|youtubers|creator|creators|podcast|podcasts|show|host|reacts?|reaction|vlog|vlogs|clipping army|his|her|their|he|she|comedian|caster|commentary|facecam|irl)\b"
-GAME = r"\b(gaming|video ?game|roblox|minecraft|fortnite|call of duty|cod|modern warfare|warzone|gta|valorant|esports|multiplayer|dlc|gameplay|campaign moments)\b"
+GAME = r"\b(gaming|video ?game|roblox|minecraft|fortnite|call of duty|cod|modern warfare|warzone|gta|valorant|esports|multiplayer|dlc|gameplay|campaign moments|character reveals?|new character|cinematics?|game trailers?|character trailers?|launch trailers?|reveal trailers?|fighting game|virtua fighter|tekken|street fighter|mortal kombat|sega|capcom|bandai|ubisoft|activision|playable|dlc character)\b"   # SEGA Virtua Fighter 2026-10-31: a character-reveal trailer is a game ad
+
+
+TRAILER = r"\b(character reveals?|new character|cinematics?|game trailers?|character trailers?|launch trailers?|reveal trailers?|official content folder|playable character|dlc character)\b"
+PERSON_STRICT = r"\b(streamer|streamers|twitch|kick|youtuber|youtubers|podcast|podcasts|host|reacts?|reaction|vlogs?|comedian|facecam|irl|interview|interviews)\b"
 
 
 def game_promo(c):
     """Video-game footage with nobody in it: a publisher's ad, not a person's content (rico 2026-10-29). The same
     words count as "show" content in is_ad only when a person is named, so the two gates agree."""
     blob = " ".join(str(c.get(k, "")) for k in ("name", "org", "category", "description")).lower()
+    if re.search(TRAILER, blob) and not re.search(PERSON_STRICT, blob):
+        return True   # a game's own reveal trailer / cinematics: "show" in the brief is a verb, not a person (SEGA Virtua Fighter 2026-10-31)
     return (bool(re.search(GAME, blob)) or str(c.get("category", "")).lower() in ("gaming", "roblox")) and not re.search(PERSON, blob)
 
 
