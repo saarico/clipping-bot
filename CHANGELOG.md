@@ -3,6 +3,17 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-10-31 (15:50 UTC): QA and layout after Malcolm Todd run 41213092925 (1 kept of 4 rendered)
+- c04 failed "Faces clear of the title" (face under the hook text): render_clip records where the top of the face
+  lands in the finished picture during the hook seconds (spec._face_top); when it would sit under the hook + who-line,
+  the block goes to the bottom just above the captions (\an2, bottom edge at CAP_DEFAULT - 90) for its 5 seconds and
+  number cards wait until it fades. qa_check reads the zone from \an8 or \an2 and flags a face inside it.
+- c03 failed "Picture (frozen at 14.3s, 17.9s)" on a locked-off interview shot: freezedetect noise is 0.003 for
+  talking profiles (cards=True) and stays 0.001 for movies/streams, in both the whole-clip and first-2-seconds checks.
+- The Spotlight interview is filmed from across the room (faces 4-7% of the picture): the wide two-shot punch-in cap
+  goes 1.35x -> 1.6x on talking shows (beyond that the 1080p picture goes soft); pipeline.faces_ok keeps its 7.5% floor.
+- Branch claude/qa-layout-fixes, PR #2, after the studio PR #1 (480165d).
+
 ## 2026-10-31 (15:40 UTC): the clip studio, board decisions 1-3
 - rico 15:31 UTC: "approve 1 - 3" on the board deck (Clip_Studio_Board_Review_2026-10-31.pptx): the studio design,
   the campaign filter, a higher cap on proven campaigns. Decision 4 (a $0-60/month tool budget) was not approved.
