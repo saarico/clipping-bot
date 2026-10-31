@@ -1,0 +1,115 @@
+{
+ "cuts": [
+  [
+   234.26325,
+   281.4575625
+  ]
+ ],
+ "shots": [
+  {
+   "from": 0.0,
+   "to": 12.93,
+   "layout": "fit"
+  },
+  {
+   "from": 12.94,
+   "to": 19.94,
+   "layout": "face"
+  },
+  {
+   "from": 19.93,
+   "to": 21.5,
+   "layout": "split"
+  },
+  {
+   "from": 21.5,
+   "to": 31.2,
+   "layout": "face"
+  },
+  {
+   "from": 31.2,
+   "to": 32.37,
+   "layout": "face"
+  },
+  {
+   "from": 32.37,
+   "to": 33.9,
+   "layout": "face"
+  },
+  {
+   "from": 33.92,
+   "to": 37.35,
+   "layout": "face+zoom"
+  },
+  {
+   "from": 37.36,
+   "to": 38.52,
+   "layout": "face"
+  },
+  {
+   "from": 38.54,
+   "to": 44.3,
+   "layout": "face+zoom"
+  },
+  {
+   "from": 44.3,
+   "to": 47.2,
+   "layout": "face"
+  }
+ ],
+ "spec": {
+  "source": "/mnt/user-data/uploads/Documents/CLIPPING_SYSTEM/CAMPAIGNS/2026-10_iced-coffee-hour/0_REQUIREMENTS/source_videos/ich_2196.mp4",
+  "words": "words_D.json",
+  "parts": [
+   [
+    234.2,
+    281.38
+   ]
+  ],
+  "hook": "Kylie Jenner posted Bloom for free. Sales didn't move.",
+  "emphasis": [
+   "Kylie",
+   "Jenner",
+   "winner,",
+   "organic.",
+   "one",
+   "24",
+   "12",
+   "celebrities",
+   "30th"
+  ],
+  "out": "/tmp/claude-0/-home-claude/44bb3412-a216-5200-b127-9cf671ad8e0e/scratchpad/ich/out8/ICH-004.mp4",
+  "focus": [
+   [
+    268.18,
+    271.62
+   ],
+   [
+    272.8,
+    278.56
+   ]
+  ],
+  "overlays": [
+   {
+    "from": 233.5,
+    "to": 247.2,
+    "box": [
+     1337,
+     51,
+     541,
+     977
+    ],
+    "style": "fit",
+    "card_window": [
+     237.5,
+     247.2
+    ],
+    "card_speed": 0.708
+   }
+  ],
+  "hook_hi": [
+   "didn't",
+   "move."
+  ]
+ }
+}

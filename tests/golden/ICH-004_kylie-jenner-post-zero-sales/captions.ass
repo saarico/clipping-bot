@@ -1,0 +1,71 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 0
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Cap,Montserrat Black,76,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,0,0,0,0,100,100,1,0,1,7,3,5,70,70,0,1
+Style: Hook,Montserrat ExtraBold,62,&H00FFFFFF,&H00FFFFFF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,0,0,5,50,50,0,1
+Style: Label,Montserrat ExtraBold,44,&H00000000,&H00000000,&H0000D7FF,&H0000D7FF,0,0,0,0,100,100,2,0,3,12,0,8,80,80,0,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 2,0:00:00.00,0:00:47.20,Hook,,0,0,0,,{\an5\pos(540,124)\fs66}Kylie Jenner posted Bloom\Nfor free. Sales {\c&H00D7FF&}didn't{\c&HFFFFFF&} {\c&H00D7FF&}move.{\c&HFFFFFF&}
+Dialogue: 1,0:00:00.12,0:00:00.74,Cap,,0,0,0,,{\an5\pos(540,1500)}{\c&H00D7FF&}KYLIE{\c&HFFFFFF&} {\c&H00D7FF&}JENNER{\c&HFFFFFF&}
+Dialogue: 1,0:00:01.72,0:00:02.50,Cap,,0,0,0,,{\an5\pos(540,1500)}POSTED US IN HER
+Dialogue: 1,0:00:02.50,0:00:03.24,Cap,,0,0,0,,{\an5\pos(540,1500)}STORY THE OTHER DAY,
+Dialogue: 1,0:00:03.82,0:00:04.72,Cap,,0,0,0,,{\an5\pos(540,1500)}AND IT WAS, LIKE,
+Dialogue: 1,0:00:04.72,0:00:05.00,Cap,,0,0,0,,{\an5\pos(540,1500)}THE
+Dialogue: 1,0:00:05.00,0:00:06.38,Cap,,0,0,0,,{\an5\pos(540,1500)}BEST STORY POST THAT
+Dialogue: 1,0:00:06.38,0:00:07.28,Cap,,0,0,0,,{\an5\pos(540,1500)}I COULD EVER HOPE
+Dialogue: 1,0:00:07.28,0:00:07.82,Cap,,0,0,0,,{\an5\pos(540,1500)}FOR.
+Dialogue: 1,0:00:07.82,0:00:08.64,Cap,,0,0,0,,{\an5\pos(540,1500)}SHE LITERALLY
+Dialogue: 1,0:00:08.64,0:00:09.04,Cap,,0,0,0,,{\an5\pos(540,1500)}TOOK
+Dialogue: 1,0:00:09.04,0:00:10.80,Cap,,0,0,0,,{\an5\pos(540,1500)}OUR COMPETITOR'S SHIRLEY TEMPLES
+Dialogue: 1,0:00:10.80,0:00:12.20,Cap,,0,0,0,,{\an5\pos(540,1500)}AND OUR SHIRLEY TEMPLE,
+Dialogue: 1,0:00:12.20,0:00:13.20,Cap,,0,0,0,,{\an5\pos(540,1500)}TRIED ALL THREE,
+Dialogue: 1,0:00:13.92,0:00:14.88,Cap,,0,0,0,,{\an5\pos(540,1480)}SAID THAT OURS IS
+Dialogue: 1,0:00:14.88,0:00:15.82,Cap,,0,0,0,,{\an5\pos(540,1480)}BY FAR THE {\c&H00D7FF&}WINNER,{\c&HFFFFFF&}
+Dialogue: 1,0:00:15.82,0:00:16.54,Cap,,0,0,0,,{\an5\pos(540,1480)}AND THAT SHE SAID,
+Dialogue: 1,0:00:16.54,0:00:17.44,Cap,,0,0,0,,{\an5\pos(540,1480)}YOU KNOW, {\c&H00D7FF&}"WINNER,{\c&HFFFFFF&} {\c&H00D7FF&}WINNER,{\c&HFFFFFF&}
+Dialogue: 1,0:00:17.44,0:00:18.40,Cap,,0,0,0,,{\an5\pos(540,1480)}BLOOM SHIRLEY TEMPLE IS
+Dialogue: 1,0:00:18.40,0:00:19.48,Cap,,0,0,0,,{\an5\pos(540,1480)}THE BEST, THE BEST
+Dialogue: 1,0:00:19.48,0:00:20.08,Cap,,0,0,0,,{\an5\pos(540,1480)}SHIRLEY TEMPLE ON THE
+Dialogue: 1,0:00:20.08,0:00:20.44,Cap,,0,0,0,,{\an5\pos(540,1080)}MARKET."
+Dialogue: 1,0:00:20.44,0:00:20.94,Cap,,0,0,0,,{\an5\pos(540,1080)}THIS WAS JUST
+Dialogue: 1,0:00:20.94,0:00:21.68,Cap,,0,0,0,,{\an5\pos(540,1080)}IMPROMPTU?
+Dialogue: 1,0:00:21.68,0:00:22.20,Cap,,0,0,0,,{\an5\pos(540,1480)}TOTALLY,
+Dialogue: 1,0:00:22.20,0:00:23.10,Cap,,0,0,0,,{\an5\pos(540,1480)}TOTALLY {\c&H00D7FF&}ORGANIC.{\c&HFFFFFF&}
+Dialogue: 1,0:00:23.10,0:00:23.25,Cap,,0,0,0,,{\an5\pos(540,1480)}YOU HAD NO IDEA.
+Dialogue: 1,0:00:23.24,0:00:23.39,Cap,,0,0,0,,{\an5\pos(540,1480)}WOW.
+Dialogue: 1,0:00:23.26,0:00:24.10,Cap,,0,0,0,,{\an5\pos(540,1480)}WE HAD NEVER SPOKEN
+Dialogue: 1,0:00:24.10,0:00:24.62,Cap,,0,0,0,,{\an5\pos(540,1480)}TO HER TEAM OR
+Dialogue: 1,0:00:24.62,0:00:25.38,Cap,,0,0,0,,{\an5\pos(540,1480)}ANYTHING LIKE THAT BEFORE.
+Dialogue: 1,0:00:25.98,0:00:26.76,Cap,,0,0,0,,{\an5\pos(540,1480)}WE DIDN'T GET {\c&H00D7FF&}ONE{\c&HFFFFFF&}
+Dialogue: 1,0:00:26.76,0:00:27.48,Cap,,0,0,0,,{\an5\pos(540,1480)}AMAZON SEARCH.
+Dialogue: 1,0:00:28.42,0:00:29.18,Cap,,0,0,0,,{\an5\pos(540,1480)}WE DID NOT SEE
+Dialogue: 1,0:00:29.18,0:00:30.60,Cap,,0,0,0,,{\an5\pos(540,1480)}{\c&H00D7FF&}ONE{\c&HFFFFFF&} TICK-UP IN SALES
+Dialogue: 1,0:00:30.60,0:00:31.46,Cap,,0,0,0,,{\an5\pos(540,1480)}FROM THIS {\c&H00D7FF&}KYLIE{\c&HFFFFFF&} {\c&H00D7FF&}JENNER{\c&HFFFFFF&}
+Dialogue: 1,0:00:31.46,0:00:31.70,Cap,,0,0,0,,{\an5\pos(540,1480)}POST.
+Dialogue: 1,0:00:31.70,0:00:32.16,Cap,,0,0,0,,{\an5\pos(540,1480)}HOW?
+Dialogue: 1,0:00:32.16,0:00:33.02,Cap,,0,0,0,,{\an5\pos(540,1480)}IF THIS WAS FOUR
+Dialogue: 1,0:00:33.02,0:00:33.52,Cap,,0,0,0,,{\an5\pos(540,1480)}YEARS AGO,
+Dialogue: 1,0:00:33.92,0:00:34.58,Cap,,0,0,0,,{\an5\pos(540,1480)}WE WOULD BE SOLD
+Dialogue: 1,0:00:34.58,0:00:35.78,Cap,,0,0,0,,{\an5\pos(540,1480)}OUT IN {\c&H00D7FF&}24{\c&HFFFFFF&} HOURS.
+Dialogue: 1,0:00:35.78,0:00:36.22,Cap,,0,0,0,,{\an5\pos(540,1480)}WE'D BE SOLD OUT
+Dialogue: 1,0:00:36.22,0:00:37.12,Cap,,0,0,0,,{\an5\pos(540,1480)}IN {\c&H00D7FF&}12{\c&HFFFFFF&}
+Dialogue: 1,0:00:37.12,0:00:37.68,Cap,,0,0,0,,{\an5\pos(540,1480)}HOURS,
+Dialogue: 1,0:00:37.68,0:00:37.94,Cap,,0,0,0,,{\an5\pos(540,1480)}RIGHT?
+Dialogue: 1,0:00:37.94,0:00:38.09,Cap,,0,0,0,,{\an5\pos(540,1480)}LIKE,
+Dialogue: 1,0:00:38.54,0:00:39.82,Cap,,0,0,0,,{\an5\pos(540,1480)}THERE'S SOMETHING GOING ON
+Dialogue: 1,0:00:39.82,0:00:40.68,Cap,,0,0,0,,{\an5\pos(540,1480)}WHERE PEOPLE ARE
+Dialogue: 1,0:00:40.68,0:00:40.98,Cap,,0,0,0,,{\an5\pos(540,1480)}DONE
+Dialogue: 1,0:00:41.80,0:00:42.78,Cap,,0,0,0,,{\an5\pos(540,1480)}BUYING THINGS THAT THESE
+Dialogue: 1,0:00:42.78,0:00:43.86,Cap,,0,0,0,,{\an5\pos(540,1480)}{\c&H00D7FF&}CELEBRITIES{\c&HFFFFFF&} HAVE TOLD US
+Dialogue: 1,0:00:43.86,0:00:44.30,Cap,,0,0,0,,{\an5\pos(540,1480)}TO BUY,
+Dialogue: 1,0:00:44.86,0:00:45.40,Cap,,0,0,0,,{\an5\pos(540,1480)}YOU KNOW,
+Dialogue: 1,0:00:45.40,0:00:46.08,Cap,,0,0,0,,{\an5\pos(540,1480)}ONCE THEY'VE TOLD US
+Dialogue: 1,0:00:46.08,0:00:46.58,Cap,,0,0,0,,{\an5\pos(540,1480)}TO BUY THE
+Dialogue: 1,0:00:46.58,0:00:47.12,Cap,,0,0,0,,{\an5\pos(540,1480)}{\c&H00D7FF&}30TH{\c&HFFFFFF&} THING.

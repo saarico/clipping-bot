@@ -1,0 +1,156 @@
+{
+ "cuts": [
+  [
+   2.8785625,
+   58.435
+  ]
+ ],
+ "shots": [
+  {
+   "from": 0.0,
+   "to": 2.57,
+   "layout": "face"
+  },
+  {
+   "from": 2.57,
+   "to": 9.73,
+   "layout": "face"
+  },
+  {
+   "from": 9.74,
+   "to": 13.57,
+   "layout": "face+zoom"
+  },
+  {
+   "from": 13.57,
+   "to": 15.0,
+   "layout": "center"
+  },
+  {
+   "from": 15.0,
+   "to": 16.03,
+   "layout": "center"
+  },
+  {
+   "from": 16.03,
+   "to": 18.93,
+   "layout": "center"
+  },
+  {
+   "from": 18.93,
+   "to": 20.57,
+   "layout": "face"
+  },
+  {
+   "from": 20.57,
+   "to": 21.37,
+   "layout": "center"
+  },
+  {
+   "from": 21.37,
+   "to": 22.03,
+   "layout": "center"
+  },
+  {
+   "from": 22.03,
+   "to": 24.93,
+   "layout": "center"
+  },
+  {
+   "from": 24.93,
+   "to": 26.43,
+   "layout": "face"
+  },
+  {
+   "from": 26.43,
+   "to": 29.13,
+   "layout": "split"
+  },
+  {
+   "from": 29.13,
+   "to": 30.83,
+   "layout": "face+zoom"
+  },
+  {
+   "from": 30.83,
+   "to": 31.77,
+   "layout": "face"
+  },
+  {
+   "from": 31.77,
+   "to": 35.1,
+   "layout": "face"
+  },
+  {
+   "from": 35.1,
+   "to": 36.43,
+   "layout": "face"
+  },
+  {
+   "from": 36.43,
+   "to": 42.23,
+   "layout": "face"
+  },
+  {
+   "from": 42.23,
+   "to": 44.73,
+   "layout": "center"
+  },
+  {
+   "from": 44.73,
+   "to": 51.23,
+   "layout": "center"
+  },
+  {
+   "from": 51.23,
+   "to": 52.5,
+   "layout": "face"
+  },
+  {
+   "from": 52.5,
+   "to": 55.57,
+   "layout": "face+zoom"
+  }
+ ],
+ "spec": {
+  "source": "/mnt/user-data/uploads/Documents/CLIPPING_SYSTEM/CAMPAIGNS/2026-10_iced-coffee-hour/0_REQUIREMENTS/source_videos/ich_915.mp4",
+  "words": "words_A.json",
+  "parts": [
+   [
+    3.12,
+    58.42
+   ]
+  ],
+  "hook": "He bought a $20M house. He already wants an upgrade.",
+  "emphasis": [
+   "$100",
+   "$20",
+   "million",
+   "million.",
+   "Aspen,",
+   "upgrades",
+   "Ferrari,",
+   "asset",
+   "investment"
+  ],
+  "out": "/tmp/claude-0/-home-claude/44bb3412-a216-5200-b127-9cf671ad8e0e/scratchpad/ich/out9/ICH-001.mp4",
+  "focus": [
+   [
+    12.62,
+    16.18
+   ],
+   [
+    32.14,
+    33.9
+   ],
+   [
+    55.38,
+    58.42
+   ]
+  ],
+  "hook_hi": [
+   "upgrade."
+  ],
+  "hold_end_from": 54.77
+ }
+}

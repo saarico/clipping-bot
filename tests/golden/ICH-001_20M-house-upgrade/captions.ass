@@ -1,0 +1,97 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 0
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Cap,Montserrat Black,76,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,0,0,0,0,100,100,1,0,1,7,3,5,70,70,0,1
+Style: Hook,Montserrat ExtraBold,62,&H00FFFFFF,&H00FFFFFF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,0,0,5,50,50,0,1
+Style: Label,Montserrat ExtraBold,44,&H00000000,&H00000000,&H0000D7FF,&H0000D7FF,0,0,0,0,100,100,2,0,3,12,0,8,80,80,0,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 2,0:00:00.00,0:00:55.57,Hook,,0,0,0,,{\an5\pos(540,124)\fs60}He bought a $20M house.\NHe already wants an {\c&H00D7FF&}upgrade.{\c&HFFFFFF&}
+Dialogue: 1,0:00:00.24,0:00:00.88,Cap,,0,0,0,,{\an5\pos(540,1480)}SO WHAT DID YOU
+Dialogue: 1,0:00:00.88,0:00:02.02,Cap,,0,0,0,,{\an5\pos(540,1480)}DO WITH {\c&H00D7FF&}$100{\c&HFFFFFF&} {\c&H00D7FF&}MILLION{\c&HFFFFFF&}
+Dialogue: 1,0:00:02.02,0:00:02.34,Cap,,0,0,0,,{\an5\pos(540,1480)}PLUS?
+Dialogue: 1,0:00:02.84,0:00:03.84,Cap,,0,0,0,,{\an5\pos(540,1480)}THE FIRST BIG
+Dialogue: 1,0:00:03.84,0:00:04.76,Cap,,0,0,0,,{\an5\pos(540,1480)}PURCHASE THAT I MADE
+Dialogue: 1,0:00:04.76,0:00:05.96,Cap,,0,0,0,,{\an5\pos(540,1480)}WAS DEFINITELY, OUR FAMILY
+Dialogue: 1,0:00:05.96,0:00:06.88,Cap,,0,0,0,,{\an5\pos(540,1480)}ALWAYS WANTED LIKE
+Dialogue: 1,0:00:06.88,0:00:07.46,Cap,,0,0,0,,{\an5\pos(540,1480)}A LARGE
+Dialogue: 1,0:00:08.04,0:00:09.02,Cap,,0,0,0,,{\an5\pos(540,1480)}SECOND HOME IN {\c&H00D7FF&}ASPEN,{\c&HFFFFFF&}
+Dialogue: 1,0:00:09.02,0:00:09.74,Cap,,0,0,0,,{\an5\pos(540,1480)}COLORADO.
+Dialogue: 1,0:00:09.74,0:00:10.38,Cap,,0,0,0,,{\an5\pos(540,1480)}SO WE BOUGHT A
+Dialogue: 1,0:00:10.38,0:00:11.06,Cap,,0,0,0,,{\an5\pos(540,1480)}HOUSE IN {\c&H00D7FF&}ASPEN,{\c&HFFFFFF&}
+Dialogue: 1,0:00:11.06,0:00:11.96,Cap,,0,0,0,,{\an5\pos(540,1480)}COLORADO THAT WAS
+Dialogue: 1,0:00:12.60,0:00:13.30,Cap,,0,0,0,,{\an5\pos(540,1480)}OVER {\c&H00D7FF&}$20{\c&HFFFFFF&} {\c&H00D7FF&}MILLION.{\c&HFFFFFF&}
+Dialogue: 1,0:00:14.12,0:00:14.27,Cap,,0,0,0,,{\an5\pos(540,1500)}WOW.
+Dialogue: 1,0:00:14.14,0:00:14.86,Cap,,0,0,0,,{\an5\pos(540,1500)}AND SO THAT HOUSE
+Dialogue: 1,0:00:14.86,0:00:15.00,Cap,,0,0,0,,{\an5\pos(540,1500)}IS, WHICH IS IN
+Dialogue: 1,0:00:15.00,0:00:15.36,Cap,,0,0,0,,{\an5\pos(540,1500)}IS, WHICH IS IN
+Dialogue: 1,0:00:15.36,0:00:16.03,Cap,,0,0,0,,{\an5\pos(540,1500)}THE BACKGROUND OF A
+Dialogue: 1,0:00:16.03,0:00:16.12,Cap,,0,0,0,,{\an5\pos(540,1500)}THE BACKGROUND OF A
+Dialogue: 1,0:00:16.12,0:00:17.08,Cap,,0,0,0,,{\an5\pos(540,1500)}LOT OF OUR
+Dialogue: 1,0:00:17.08,0:00:17.54,Cap,,0,0,0,,{\an5\pos(540,1500)}A LOT OF OUR
+Dialogue: 1,0:00:17.54,0:00:18.62,Cap,,0,0,0,,{\an5\pos(540,1500)}YOUTUBE VIDEOS NOW, BUT
+Dialogue: 1,0:00:18.62,0:00:18.93,Cap,,0,0,0,,{\an5\pos(540,1500)}THAT'S LIKE A HOUSE
+Dialogue: 1,0:00:18.93,0:00:19.24,Cap,,0,0,0,,{\an5\pos(540,1480)}THAT'S LIKE A HOUSE
+Dialogue: 1,0:00:19.24,0:00:20.02,Cap,,0,0,0,,{\an5\pos(540,1480)}IN THE MOUNTAINS.
+Dialogue: 1,0:00:20.02,0:00:20.57,Cap,,0,0,0,,{\an5\pos(540,1480)}WE CAN SKI.
+Dialogue: 1,0:00:20.57,0:00:20.96,Cap,,0,0,0,,{\an5\pos(540,1480)}WE CAN SKI.
+Dialogue: 1,0:00:20.96,0:00:21.44,Cap,,0,0,0,,{\an5\pos(540,1500)}THE,
+Dialogue: 1,0:00:21.44,0:00:22.04,Cap,,0,0,0,,{\an5\pos(540,1500)}WE HAVE A SON
+Dialogue: 1,0:00:22.04,0:00:22.72,Cap,,0,0,0,,{\an5\pos(540,1500)}NOW, AND SO WE
+Dialogue: 1,0:00:22.72,0:00:23.20,Cap,,0,0,0,,{\an5\pos(540,1500)}WANT HIM IN THE
+Dialogue: 1,0:00:23.20,0:00:24.24,Cap,,0,0,0,,{\an5\pos(540,1500)}OUTDOORS A LOT GROWING
+Dialogue: 1,0:00:24.24,0:00:24.78,Cap,,0,0,0,,{\an5\pos(540,1500)}UP, AND
+Dialogue: 1,0:00:24.78,0:00:24.93,Cap,,0,0,0,,{\an5\pos(540,1500)}THAT'S BECOME LIKE OUR
+Dialogue: 1,0:00:24.93,0:00:25.52,Cap,,0,0,0,,{\an5\pos(540,1480)}THAT'S BECOME LIKE OUR
+Dialogue: 1,0:00:25.52,0:00:26.60,Cap,,0,0,0,,{\an5\pos(540,1480)}HAPPY PLACE FOR SURE.
+Dialogue: 1,0:00:26.60,0:00:27.08,Cap,,0,0,0,,{\an5\pos(540,1080)}HOW DID YOU KNOW
+Dialogue: 1,0:00:27.08,0:00:27.82,Cap,,0,0,0,,{\an5\pos(540,1080)}{\c&H00D7FF&}$20{\c&HFFFFFF&} {\c&H00D7FF&}MILLION{\c&HFFFFFF&}
+Dialogue: 1,0:00:27.82,0:00:28.36,Cap,,0,0,0,,{\an5\pos(540,1080)}WAS THE RIGHT AMOUNT
+Dialogue: 1,0:00:28.36,0:00:29.26,Cap,,0,0,0,,{\an5\pos(540,1080)}OF MONEY TO SPEND?
+Dialogue: 1,0:00:29.26,0:00:29.90,Cap,,0,0,0,,{\an5\pos(540,1480)}OH, I'M LOOKING AT
+Dialogue: 1,0:00:29.90,0:00:30.66,Cap,,0,0,0,,{\an5\pos(540,1480)}{\c&H00D7FF&}UPGRADES{\c&HFFFFFF&} ALREADY.
+Dialogue: 1,0:00:30.66,0:00:30.83,Cap,,0,0,0,,{\an5\pos(540,1480)}LIKE IT'S NOT THE
+Dialogue: 1,0:00:30.83,0:00:30.94,Cap,,0,0,0,,{\an5\pos(540,1480)}LIKE IT'S NOT THE
+Dialogue: 1,0:00:30.94,0:00:31.09,Cap,,0,0,0,,{\an5\pos(540,1480)}RIGHT AMOUNT.
+Dialogue: 1,0:00:31.02,0:00:31.68,Cap,,0,0,0,,{\an5\pos(540,1480)}ARE YOU SERIOUS?
+Dialogue: 1,0:00:31.68,0:00:31.77,Cap,,0,0,0,,{\an5\pos(540,1480)}YEAH.
+Dialogue: 1,0:00:31.77,0:00:32.12,Cap,,0,0,0,,{\an5\pos(540,1480)}YEAH.
+Dialogue: 1,0:00:32.12,0:00:32.92,Cap,,0,0,0,,{\an5\pos(540,1480)}LIKE FOR SURE.
+Dialogue: 1,0:00:32.92,0:00:33.54,Cap,,0,0,0,,{\an5\pos(540,1480)}FOR SURE.
+Dialogue: 1,0:00:33.54,0:00:33.88,Cap,,0,0,0,,{\an5\pos(540,1480)}BUT IT'S BEEN A
+Dialogue: 1,0:00:33.88,0:00:35.02,Cap,,0,0,0,,{\an5\pos(540,1480)}GREAT {\c&H00D7FF&}INVESTMENT{\c&HFFFFFF&} AS WELL,
+Dialogue: 1,0:00:35.02,0:00:35.10,Cap,,0,0,0,,{\an5\pos(540,1480)}RIGHT?
+Dialogue: 1,0:00:35.10,0:00:35.17,Cap,,0,0,0,,{\an5\pos(540,1480)}RIGHT?
+Dialogue: 1,0:00:35.60,0:00:36.18,Cap,,0,0,0,,{\an5\pos(540,1480)}YOU KNOW, THERE'S SOMETHING
+Dialogue: 1,0:00:36.18,0:00:36.43,Cap,,0,0,0,,{\an5\pos(540,1480)}FUNNY ABOUT LIKE
+Dialogue: 1,0:00:36.43,0:00:37.10,Cap,,0,0,0,,{\an5\pos(540,1480)}FUNNY ABOUT LIKE
+Dialogue: 1,0:00:37.10,0:00:38.00,Cap,,0,0,0,,{\an5\pos(540,1480)}I'M NOT LIKE BURNING
+Dialogue: 1,0:00:38.00,0:00:39.16,Cap,,0,0,0,,{\an5\pos(540,1480)}MONEY WITH THESE PURCHASES.
+Dialogue: 1,0:00:39.16,0:00:40.04,Cap,,0,0,0,,{\an5\pos(540,1480)}LIKE EVEN THE CARS,
+Dialogue: 1,0:00:40.04,0:00:40.62,Cap,,0,0,0,,{\an5\pos(540,1480)}LIKE PEOPLE SEE THE
+Dialogue: 1,0:00:40.62,0:00:41.82,Cap,,0,0,0,,{\an5\pos(540,1480)}CARS ONLINE.
+Dialogue: 1,0:00:41.82,0:00:42.23,Cap,,0,0,0,,{\an5\pos(540,1480)}IT'S NOT LIKE I'M
+Dialogue: 1,0:00:42.23,0:00:42.36,Cap,,0,0,0,,{\an5\pos(540,1500)}IT'S NOT LIKE I'M
+Dialogue: 1,0:00:42.36,0:00:43.16,Cap,,0,0,0,,{\an5\pos(540,1500)}BUYING, YOU KNOW,
+Dialogue: 1,0:00:43.16,0:00:44.34,Cap,,0,0,0,,{\an5\pos(540,1500)}MY FORD RAPTOR I'M
+Dialogue: 1,0:00:44.34,0:00:44.73,Cap,,0,0,0,,{\an5\pos(540,1500)}LOSING MONEY ON OBVIOUSLY.
+Dialogue: 1,0:00:44.73,0:00:45.42,Cap,,0,0,0,,{\an5\pos(540,1500)}LOSING MONEY ON OBVIOUSLY.
+Dialogue: 1,0:00:45.42,0:00:45.88,Cap,,0,0,0,,{\an5\pos(540,1500)}BUT LIKE,
+Dialogue: 1,0:00:45.88,0:00:46.98,Cap,,0,0,0,,{\an5\pos(540,1500)}DUDE, MY {\c&H00D7FF&}FERRARI,{\c&HFFFFFF&} MY
+Dialogue: 1,0:00:46.98,0:00:47.92,Cap,,0,0,0,,{\an5\pos(540,1500)}SLS, LIKE A COUPLE
+Dialogue: 1,0:00:47.92,0:00:48.66,Cap,,0,0,0,,{\an5\pos(540,1500)}OF MY CARS
+Dialogue: 1,0:00:48.66,0:00:50.16,Cap,,0,0,0,,{\an5\pos(540,1500)}I'VE MADE SIGNIFICANT
+Dialogue: 1,0:00:50.16,0:00:50.80,Cap,,0,0,0,,{\an5\pos(540,1500)}VALUE ON.
+Dialogue: 1,0:00:50.80,0:00:51.23,Cap,,0,0,0,,{\an5\pos(540,1500)}I HAVEN'T CASHED OUT
+Dialogue: 1,0:00:51.23,0:00:51.80,Cap,,0,0,0,,{\an5\pos(540,1480)}I HAVEN'T CASHED OUT
+Dialogue: 1,0:00:51.80,0:00:52.50,Cap,,0,0,0,,{\an5\pos(540,1480)}YET, BUT
+Dialogue: 1,0:00:52.50,0:00:53.10,Cap,,0,0,0,,{\an5\pos(540,1480)}IF YOU BUY THE
+Dialogue: 1,0:00:53.10,0:00:54.10,Cap,,0,0,0,,{\an5\pos(540,1480)}RIGHT THINGS,
+Dialogue: 1,0:00:54.10,0:00:54.70,Cap,,0,0,0,,{\an5\pos(540,1480)}IT'S REALLY JUST AN
+Dialogue: 1,0:00:54.70,0:00:55.54,Cap,,0,0,0,,{\an5\pos(540,1480)}{\c&H00D7FF&}ASSET{\c&HFFFFFF&} IN YOUR PORTFOLIO.

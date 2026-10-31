@@ -1,0 +1,81 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 0
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Cap,Montserrat Black,76,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,0,0,0,0,100,100,1,0,1,7,3,5,70,70,0,1
+Style: Hook,Montserrat ExtraBold,62,&H00FFFFFF,&H00FFFFFF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,0,0,5,50,50,0,1
+Style: Label,Montserrat ExtraBold,44,&H00000000,&H00000000,&H0000D7FF,&H0000D7FF,0,0,0,0,100,100,2,0,3,12,0,8,80,80,0,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 2,0:00:00.00,0:00:50.00,Hook,,0,0,0,,{\an5\pos(540,124)\fs80}He bet $15K on ads.\NIt {\c&H00D7FF&}backfired.{\c&HFFFFFF&}
+Dialogue: 1,0:00:00.20,0:00:00.62,Cap,,0,0,0,,{\an5\pos(540,1480)}YOU SAID THAT YOU
+Dialogue: 1,0:00:00.62,0:00:01.40,Cap,,0,0,0,,{\an5\pos(540,1480)}TOOK A BUNCH
+Dialogue: 1,0:00:01.40,0:00:02.94,Cap,,0,0,0,,{\an5\pos(540,1480)}OF MASSIVE {\c&H00D7FF&}RISKS,{\c&HFFFFFF&} LIKE
+Dialogue: 1,0:00:02.94,0:00:03.86,Cap,,0,0,0,,{\an5\pos(540,1480)}{\c&H00D7FF&}ALL-IN{\c&HFFFFFF&}
+Dialogue: 1,0:00:03.86,0:00:04.44,Cap,,0,0,0,,{\an5\pos(540,1480)}{\c&H00D7FF&}RISKS{\c&HFFFFFF&}
+Dialogue: 1,0:00:04.44,0:00:04.98,Cap,,0,0,0,,{\an5\pos(540,1480)}OVER AND OVER AND
+Dialogue: 1,0:00:04.98,0:00:05.46,Cap,,0,0,0,,{\an5\pos(540,1480)}OVER AGAIN.
+Dialogue: 1,0:00:05.46,0:00:05.94,Cap,,0,0,0,,{\an5\pos(540,1080)}I'M CURIOUS,
+Dialogue: 1,0:00:05.94,0:00:06.48,Cap,,0,0,0,,{\an5\pos(540,1080)}WHEN DID YOU TAKE
+Dialogue: 1,0:00:06.48,0:00:07.10,Cap,,0,0,0,,{\an5\pos(540,1080)}A RISK LIKE THAT
+Dialogue: 1,0:00:07.10,0:00:07.70,Cap,,0,0,0,,{\an5\pos(540,1080)}AND IT DIDN'T WORK
+Dialogue: 1,0:00:07.70,0:00:07.90,Cap,,0,0,0,,{\an5\pos(540,1080)}OUT?
+Dialogue: 1,0:00:07.90,0:00:08.48,Cap,,0,0,0,,{\an5\pos(540,1480)}EARLY ON IN MY
+Dialogue: 1,0:00:08.48,0:00:09.14,Cap,,0,0,0,,{\an5\pos(540,1480)}CAREER, WE RAN A
+Dialogue: 1,0:00:09.14,0:00:10.40,Cap,,0,0,0,,{\an5\pos(540,1480)}TON OF MARKETING,
+Dialogue: 1,0:00:10.40,0:00:11.10,Cap,,0,0,0,,{\an5\pos(540,1480)}I WAS RUNNING, BUYING
+Dialogue: 1,0:00:11.10,0:00:11.48,Cap,,0,0,0,,{\an5\pos(540,1480)}A LOT OF ADS
+Dialogue: 1,0:00:11.48,0:00:11.60,Cap,,0,0,0,,{\an5\pos(540,1480)}ON {\c&H00D7FF&}MEME{\c&HFFFFFF&} PAGES.
+Dialogue: 1,0:00:11.60,0:00:12.30,Cap,,0,0,0,,{\an5\pos(540,1500)}ON {\c&H00D7FF&}MEME{\c&HFFFFFF&} PAGES.
+Dialogue: 1,0:00:12.30,0:00:12.86,Cap,,0,0,0,,{\an5\pos(540,1500)}DO YOU REMEMBER {\c&H00D7FF&}MEME{\c&HFFFFFF&}
+Dialogue: 1,0:00:12.86,0:00:13.39,Cap,,0,0,0,,{\an5\pos(540,1500)}PAGES?
+Dialogue: 1,0:00:13.39,0:00:13.87,Cap,,0,0,0,,{\an5\pos(540,1500)}ONE DAY, LET'S SAY
+Dialogue: 1,0:00:13.87,0:00:14.43,Cap,,0,0,0,,{\an5\pos(540,1500)}WE HAD
+Dialogue: 1,0:00:14.43,0:00:15.67,Cap,,0,0,0,,{\an5\pos(540,1480)}{\c&H00D7FF&}$15,000{\c&HFFFFFF&} IN THE BANK
+Dialogue: 1,0:00:15.67,0:00:16.03,Cap,,0,0,0,,{\an5\pos(540,1480)}ACCOUNT.
+Dialogue: 1,0:00:16.03,0:00:16.43,Cap,,0,0,0,,{\an5\pos(540,1480)}I SAID, "I'M GONNA
+Dialogue: 1,0:00:16.43,0:00:17.45,Cap,,0,0,0,,{\an5\pos(540,1480)}GO ALL IN ON
+Dialogue: 1,0:00:17.45,0:00:17.75,Cap,,0,0,0,,{\an5\pos(540,1480)}A
+Dialogue: 1,0:00:17.75,0:00:19.47,Cap,,0,0,0,,{\an5\pos(540,1480)}MASSIVE {\c&H00D7FF&}MEME{\c&HFFFFFF&} PAGE CAMPAIGN."
+Dialogue: 1,0:00:19.95,0:00:20.41,Cap,,0,0,0,,{\an5\pos(540,1480)}AND I
+Dialogue: 1,0:00:20.41,0:00:21.15,Cap,,0,0,0,,{\an5\pos(540,1480)}THINK I JUST FOUND,
+Dialogue: 1,0:00:21.15,0:00:22.39,Cap,,0,0,0,,{\an5\pos(540,1480)}LIKE, THE PERFECT PORTFOLIO
+Dialogue: 1,0:00:22.39,0:00:23.35,Cap,,0,0,0,,{\an5\pos(540,1480)}OF PAGES TO
+Dialogue: 1,0:00:23.35,0:00:24.55,Cap,,0,0,0,,{\an5\pos(540,1480)}INVEST IN THIS 24
+Dialogue: 1,0:00:24.55,0:00:25.05,Cap,,0,0,0,,{\an5\pos(540,1480)}HOURS IN.
+Dialogue: 1,0:00:25.05,0:00:25.73,Cap,,0,0,0,,{\an5\pos(540,1480)}SO I WENT ALL
+Dialogue: 1,0:00:25.73,0:00:27.53,Cap,,0,0,0,,{\an5\pos(540,1480)}IN, {\c&H00D7FF&}$15,000,{\c&HFFFFFF&} BOUGHT ADS
+Dialogue: 1,0:00:27.53,0:00:28.17,Cap,,0,0,0,,{\an5\pos(540,1480)}ON ALL OF THESE
+Dialogue: 1,0:00:28.17,0:00:29.15,Cap,,0,0,0,,{\an5\pos(540,1480)}{\c&H00D7FF&}MEME{\c&HFFFFFF&} PAGES,
+Dialogue: 1,0:00:29.15,0:00:29.45,Cap,,0,0,0,,{\an5\pos(540,1480)}AND
+Dialogue: 1,0:00:29.45,0:00:30.37,Cap,,0,0,0,,{\an5\pos(540,1480)}ALL OF THE FOLLOWERS
+Dialogue: 1,0:00:30.37,0:00:31.07,Cap,,0,0,0,,{\an5\pos(540,1480)}STARTED TO COME IN,
+Dialogue: 1,0:00:31.51,0:00:31.91,Cap,,0,0,0,,{\an5\pos(540,1480)}AND THEY WERE ALL,
+Dialogue: 1,0:00:31.91,0:00:32.23,Cap,,0,0,0,,{\an5\pos(540,1480)}LIKE,
+Dialogue: 1,0:00:32.23,0:00:32.81,Cap,,0,0,0,,{\an5\pos(540,1080)}INDIAN NAMES.
+Dialogue: 1,0:00:33.55,0:00:33.67,Cap,,0,0,0,,{\an5\pos(540,1080)}AND THEN ALL OF
+Dialogue: 1,0:00:33.67,0:00:34.01,Cap,,0,0,0,,{\an5\pos(540,1080)}AND THEN ALL OF
+Dialogue: 1,0:00:34.01,0:00:35.17,Cap,,0,0,0,,{\an5\pos(540,1480)}THE COMMENTS WERE, LIKE,
+Dialogue: 1,0:00:35.17,0:00:36.39,Cap,,0,0,0,,{\an5\pos(540,1480)}IN DIFFERENT LANGUAGES, AND
+Dialogue: 1,0:00:36.39,0:00:37.13,Cap,,0,0,0,,{\an5\pos(540,1480)}THEN THERE WAS NO
+Dialogue: 1,0:00:37.13,0:00:38.37,Cap,,0,0,0,,{\an5\pos(540,1480)}{\c&H00D7FF&}SHOPIFY{\c&HFFFFFF&} {\c&H00D7FF&}TRAFFIC.{\c&HFFFFFF&}
+Dialogue: 1,0:00:38.37,0:00:38.85,Cap,,0,0,0,,{\an5\pos(540,1480)}AND SO, LIKE,
+Dialogue: 1,0:00:38.85,0:00:40.07,Cap,,0,0,0,,{\an5\pos(540,1480)}THERE'S EARLY
+Dialogue: 1,0:00:40.07,0:00:41.19,Cap,,0,0,0,,{\an5\pos(540,1480)}ON EXAMPLES OF GOING
+Dialogue: 1,0:00:41.19,0:00:42.27,Cap,,0,0,0,,{\an5\pos(540,1480)}ALL IN AND GETTING
+Dialogue: 1,0:00:42.27,0:00:43.33,Cap,,0,0,0,,{\an5\pos(540,1480)}{\c&H00D7FF&}ZERO{\c&HFFFFFF&} {\c&H00D7FF&}REWARD,{\c&HFFFFFF&}
+Dialogue: 1,0:00:43.33,0:00:43.73,Cap,,0,0,0,,{\an5\pos(540,1480)}AND THEN IT'S LIKE,
+Dialogue: 1,0:00:44.47,0:00:45.03,Cap,,0,0,0,,{\an5\pos(540,1480)}OH MY GOD, THERE
+Dialogue: 1,0:00:45.03,0:00:45.65,Cap,,0,0,0,,{\an5\pos(540,1480)}WAS A
+Dialogue: 1,0:00:45.65,0:00:46.83,Cap,,0,0,0,,{\an5\pos(540,1480)}{\c&H00D7FF&}NEGATIVE{\c&HFFFFFF&} {\c&H00D7FF&}ROI{\c&HFFFFFF&} TO THAT
+Dialogue: 1,0:00:46.83,0:00:47.49,Cap,,0,0,0,,{\an5\pos(540,1480)}ENTIRE,
+Dialogue: 1,0:00:47.49,0:00:47.79,Cap,,0,0,0,,{\an5\pos(540,1480)}YOU KNOW,
+Dialogue: 1,0:00:47.79,0:00:48.27,Cap,,0,0,0,,{\an5\pos(540,1480)}{\c&H00D7FF&}ALL-IN{\c&HFFFFFF&}
+Dialogue: 1,0:00:48.27,0:00:49.20,Cap,,0,0,0,,{\an5\pos(540,1480)}SCENARIO THAT WE JUST
+Dialogue: 1,0:00:49.20,0:00:49.33,Cap,,0,0,0,,{\an5\pos(540,1480)}SCENARIO THAT WE JUST
+Dialogue: 1,0:00:49.33,0:00:49.93,Cap,,0,0,0,,{\an5\pos(540,1500)}PARTOOK IN.

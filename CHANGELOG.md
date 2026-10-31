@@ -20,6 +20,13 @@ calls `gdown --quiet -O <dir>/ [--folder] <url>`. No rule change.
   goes 1.35x -> 1.6x on talking shows (beyond that the 1080p picture goes soft); pipeline.faces_ok keeps its 7.5% floor.
 - Branch claude/qa-layout-fixes, PR #2, after the studio PR #1 (480165d).
 
+## 2026-10-31 (17:50 UTC): Studio v2 release 1, the safety net (version 2.1.0)
+- rico 17:19 UTC: "release all 4" (board review 2, Studio_v2_Engineering_Plan_2026-10-31.pptx). Releases ship in order.
+- tests/: 18 gate tests, golden set of 4 approved ICH clips (baseline judge 78, 79, 73, 68), DIGGER replay (approved
+  moments rank 2-3). CI: .github/workflows/test.yml (pull requests only; ruff E9/F63/F7/F82 + pytest).
+- pipeline.report_card -> data/report_card.csv after every collect; studio.VERSION in the SUMMARY.
+- No change to what the bot cuts or keeps.
+
 ## 2026-10-31 (15:40 UTC): the clip studio, board decisions 1-3
 - rico 15:31 UTC: "approve 1 - 3" on the board deck (Clip_Studio_Board_Review_2026-10-31.pptx): the studio design,
   the campaign filter, a higher cap on proven campaigns. Decision 4 (a $0-60/month tool budget) was not approved.
