@@ -3,6 +3,15 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-10-31 (00:25 UTC): run 9 kept 1 of 4 (judge 79); cut edges and thin fallbacks fixed
+- Run 41146816827 (23:52-00:11): the $4M clip with its number cards reached judge 79 (variety 7/15: one 14 s
+  stretch without a visual change). Three dropped at the cut edges: whisper's sentence breaks with no pause
+  ("...the same Did you know", "...insider Like") left a clipped word at the start and the end; the Yuri clip also
+  ended on the one-word "Like". A lane had no second moment to fall back on (5 pitches passed for 4 lanes).
+- plan.refine now needs a pause at both edges (no gap = the window is avoided); the judge gives talking shows a
+  longer stretch between visual changes (15 s, their camera is still by rule); up to 4 number cards per clip;
+  pitch.gate hands the best near-misses (no audience gate failed, 50+) to the lanes as marked fallbacks.
+
 ## 2026-10-30 (23:55 UTC): first run with the audience read: 2 clips, both under the judge's bar
 - Run 41143673790 (23:19-23:43): 18 brief ideas read, 8 of 12 pitches passed, 2 kept under the bar (judge 76: the
   still camera left "variety" at 4/15 because punch-ins and b-roll were counted), 2 dropped for a stray cut (the

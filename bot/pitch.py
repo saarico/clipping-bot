@@ -180,6 +180,13 @@ def gate(specs, words, brief=None, log=print):
         notes.append(line(tag, r))
         scored.append((r, sp))
     keep = [sp for r, sp in scored if r["verdict"] == "PASS"]
+    # thin material (2026-10-31: 5 passes for 4 render lanes, so a lane had no second moment to fall back on): the best
+    # near-misses that failed no audience gate follow the passes as marked fallbacks
+    near = sorted(((r, sp) for r, sp in scored if r["verdict"] != "PASS" and not r.get("audience", {}).get("fails") and r["total"] >= 50),
+                  key=lambda x: -x[0]["total"])
+    for r, sp in near[:max(0, 8 - len(keep))]:
+        sp["_why"] = f"PITCH UNDER THE BAR ({r['total']} < {PITCH_BAR}, fallback) | " + sp.get("_why", "")
+        keep.append(sp)
     if not keep and scored:
         best = max(scored, key=lambda x: x[0]["total"])[1]
         best["_why"] = f"PITCH UNDER THE BAR ({best['_pitch']['total']} < {PITCH_BAR}) | " + best.get("_why", "")

@@ -66,9 +66,20 @@ def refine(c, sents, lo, hi, style=None):
     if not inside:
         return c
     i0, i1 = inside[0], inside[-1]
-    words = [w for s in sents[max(i0 - 1, 0):min(i1 + 3, len(sents))] for w in s.get("words", [])]
+    words = [w for s in sents[max(i0 - 2, 0):min(i1 + 4, len(sents))] for w in s.get("words", [])]
     if not words:
         return c
+
+    def gap_before(k):   # silence between the previous word and this sentence's first word
+        w0 = sents[k]["words"][0]
+        prev = [w["end"] for w in words if w["end"] <= w0["start"] + 0.01 and w is not w0]
+        return w0["start"] - max(prev) if prev else 1.0
+
+    def gap_after(k):
+        w1 = sents[k]["words"][-1]
+        nxt = [w["start"] for w in words if w["start"] >= w1["end"] - 0.01 and w is not w1]
+        return min(nxt) - w1["end"] if nxt else 1.0
+
     best = None
     for a in range(i0, min(i0 + 4, i1 + 1)):
         for b in range(max(a, i1 - 4), min(i1 + 3, len(sents))):
@@ -77,6 +88,10 @@ def refine(c, sents, lo, hi, style=None):
                 continue
             r = engage.read(words, [[sents[a]["start"], sents[b]["end"]]], style)
             score = r["total"] - 40 * len(r["fails"]) - 2 * abs(a - i0) - abs(b - i1)
+            # an edge needs a pause to cut in: whisper's sentence breaks with no gap ("...the same Did you know")
+            # left clipped words at both ends of run 9's Yuri clip
+            for g in (gap_before(a), gap_after(b)):
+                score -= 45 if g < 0.12 else 10 if g < 0.25 else 0
             if best is None or score > best[0]:
                 best = (score, a, b, r)
     if not best:
@@ -90,7 +105,7 @@ def refine(c, sents, lo, hi, style=None):
 UNIT = re.compile(r"^(million|billion|thousand|percent|people|months?|years?|days?|weeks?|hours?|dollars?|bucks|x|k|m|b)\b[.,]?$", re.I)
 
 
-def auto_callouts(words, start, end, limit=3, gap=6.0):
+def auto_callouts(words, start, end, limit=4, gap=5.0):
     """Big number cards for a talking show (rico 2026-10-30: "bump up editing"): every dollar figure or number the
     speaker says inside the cut becomes a 2.5 s callout ("$4 MILLION", "30% LOWER"), at most `limit` per clip and
     `gap` seconds apart. Words only, so it is allowed where outside footage is not."""

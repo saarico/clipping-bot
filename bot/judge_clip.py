@@ -95,7 +95,12 @@ def main(folder):
     cards = sum(s["to"] - s["from"] for s in shots if s["layout"].split("+")[0] in ("side", "bottom", "fit", "banner")) + sum(b - a for a, b in call)
     zooms = sum(1 for s in shots if "zoom" in s["layout"])
     v = 15
-    if longest > 12: v -= 6
+    # a talking show holds a still camera by rule (RULES 39): its visual changes are speaker cuts and our number
+    # cards, so the stretch a scroller tolerates is longer than on a movie
+    if prof["cards"]:
+        if longest > 15: v -= 6
+        elif longest > 10: v -= 3
+    elif longest > 12: v -= 6
     elif longest > 8: v -= 3
     lens = sorted(s["to"] - s["from"] for s in shots)
     if len(lens) >= 6 and lens[len(lens) // 2] < 1.2 and sum(1 for l in lens if l < 1.0) > 0.6 * len(lens):
