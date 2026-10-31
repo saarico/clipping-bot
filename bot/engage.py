@@ -59,7 +59,7 @@ def bad_end(t, n):
     """Why a sentence cannot end a clip (None when it can): an aside or the host's next lead-in, a hanging question,
     a one-word answer, an unfinished line."""
     t = t.rstrip('"\')')
-    if ASIDE_END.match(t):
+    if ASIDE_END.match(t) or re.search(r"\b(by the way|(great|good|best|interesting|fair) question|we'll get to|let's come back)\b", t, re.I):
         return "ends on an aside or the host's next lead-in"
     if t.endswith("?"):
         return "ends on a hanging question"

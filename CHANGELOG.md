@@ -3,6 +3,16 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-10-31 (00:45 UTC): run 10: 2 clips above every bar in 1_CHECK
+- Run 41149166104 (00:25-00:39, 14 min): "We spend $4M a month on AI for 400 people" (31 s, judge 88, audience 92,
+  three number cards) and "Google and OpenAI will kill the $20 AI plans" (41 s, judge 83, audience 96). Both
+  YouTube @fedsaa. "My mom worked three jobs" ended on "did sacrifice" (dropped), "One full day with my son" judged 72.
+- The $4M clip ends on Harry's "How has that changed over time? That's the best question of the whole show, by the
+  way." A compliment on a question is not an answer: bad_end now also fails a last line with "by the way" or
+  "great/good/best question" anywhere in it (applies from the next run; the clip stays for rico's verdict).
+- Moments dropped for a render glitch (a stray cut, a clipped edge) sit in tried_moments like content rejects; the
+  brief's "Top creatives $100k", "Open models 80% margins" and "Investors shook hands" are blocked by that for now.
+
 ## 2026-10-31 (00:25 UTC): run 9 kept 1 of 4 (judge 79); cut edges and thin fallbacks fixed
 - Run 41146816827 (23:52-00:11): the $4M clip with its number cards reached judge 79 (variety 7/15: one 14 s
   stretch without a visual change). Three dropped at the cut edges: whisper's sentence breaks with no pause
