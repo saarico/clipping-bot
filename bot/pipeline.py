@@ -248,10 +248,13 @@ def inspect(folder, style=None):
     return {"fails": fails, "line": line}
 
 
+FACE_FLOOR = 0.04
+
+
 def faces_ok(source, spec, samples=5):
     """(ok, why): a face big enough to frame in most of the moment. Five 2-second looks spread over the cut at 720p
-    (analyze_shots.faces_in hi=True); a face counts from 7.5% of the picture's height (render_clip punches a small
-    face in by up to 1.35x, QA wants ~10% on the finished clip) and has to be there in 3 of the 5 looks."""
+    (analyze_shots.faces_in hi=True); a face counts from FACE_FLOOR (4%, release 4; was 7.5%: the Camera punches a 4% face in
+    by up to 2.5x, sharpened, to the ~10% QA wants) and has to be there in 3 of the 5 looks."""
     import analyze_shots
     parts = spec.get("parts") or []
     total = sum(b - a for a, b in parts)
@@ -271,7 +274,7 @@ def faces_ok(source, spec, samples=5):
             faces = [f for f in analyze_shots.faces_in(str(source), max(at - 1, 0), at + 1, hi=True) if f[1] <= 0.75 and f[2] >= 0.03]
         except Exception as e:
             return True, f"face probe failed ({type(e).__name__})"   # never drop a moment over a broken probe
-        big = [f for f in faces if f[2] >= 0.075]
+        big = [f for f in faces if f[2] >= FACE_FLOOR]
         if big:
             seen += 1
             sizes.append(max(f[2] for f in big))

@@ -321,6 +321,10 @@ def pan_expr(keys, cw, place, left_limit, right_limit, ease=None):
     return expr
 
 
+WIDE_PUNCH_MAX = 2.5   # talking shows filmed from across the room: punch in up to 2.5x (was 1.6x), sharpened
+SHARPEN_FROM = 1.6     # zoom above this gets lanczos + unsharp (face_crop)
+
+
 def face_crop(cx, zoom=1.0, place=0.5, right_limit=SRC_W, left_limit=0, max_h=SRC_H, keys=None, cy=None):
     """Window the shape of the picture area with the face at `place` of the width; tighter when
     zoomed, and no taller than max_h (to keep a source graphic at the bottom out of frame).
@@ -334,6 +338,10 @@ def face_crop(cx, zoom=1.0, place=0.5, right_limit=SRC_W, left_limit=0, max_h=SR
         y = int(min(max(cy * SRC_H - ch * 0.45, 0), SRC_H - ch))
     else:
         y = int((SRC_H - ch) * 0.18)
+    if zoom > SHARPEN_FROM:
+        # the wide-shot punch-in (release 4 experiment): lanczos upscale + a light unsharp so a 2.5x window of a
+        # 1080p interview stays crisp; below SHARPEN_FROM the filter is exactly what it always was
+        return f"crop={cw}:{ch}:'{x}':{y},scale={W}:{HC}:flags=lanczos,unsharp=5:5:0.8:5:5:0"
     return f"crop={cw}:{ch}:'{x}':{y},scale={W}:{HC}"
 
 

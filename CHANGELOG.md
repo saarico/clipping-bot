@@ -3,7 +3,15 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
-## 2026-10-31 17:45 UTC - Studio v2 release 3: inspection v2 (version 2.3.0)
+## 2026-10-31 17:45 UTC - Studio v2 release 4: tune and learn (version 2.4.0)
+
+Edge guard (no edge inside a word), candid genre (interview stories count as entertainment), wide-shot punch-in up to
+2.5x sharpened with faces from 4%, and the Analyst views loop (clip_scores.csv + posts.csv -> weights_tuned.json at
+20 posts per content type). Golden baseline re-recorded on purpose: candid moves ICH-004 73->75 and ICH-005 68->72
+(entertainment 4->6 and 4->8), ICH-002 79->78 (entertainment 8->7). Add-ons other than ruff/pytest on hold until the
+golden set has video. RULES 49.
+
+## 2026-10-31 17:37 UTC - Studio v2 release 3: inspection v2 (version 2.3.0)
 
 First-piece preview (first 20 s of the top 3 moments rendered small in prepare; failures go to the back of the
 queue), contract checks on every agent hand-off, last-piece inspection (flash ending, silent tail). Broken hand-offs

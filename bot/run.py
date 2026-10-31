@@ -27,6 +27,7 @@ import brief as briefer  # noqa: E402
 import drive  # noqa: E402
 import pipeline  # noqa: E402
 import studio  # noqa: E402
+import analyst  # noqa: E402
 import post_kit  # noqa: E402
 import lanes  # noqa: E402
 
@@ -966,6 +967,10 @@ def collect():
                     notes.append("TRY   " + t)
                 results.append(res)
             results.sort(key=lambda r: (-int(bool(r.get("ok"))), -(r.get("judge") or 0)))   # best clips first
+            try:   # the views loop (release 4): real 7-day views nudge the judge's weights once there are enough posts
+                notes += analyst.review()[0]
+            except Exception as e:
+                notes.append(f"Analyst skipped ({type(e).__name__})")
             cap = studio.clip_cap(st)   # board decision 2026-10-31: 3 clips, up to 6 once rico approved 2+ of this campaign
             if cap > pipeline.planner.MAX_CLIPS:
                 notes.append(f"clip cap {cap} this run: rico approved {len(st.get('kits') or {})} clip(s) of this campaign")
@@ -995,6 +1000,11 @@ def publish(name, st, stage, kept, summary, t0):
             log(f"could not clear old clips from 1_CHECK: {e}")
     for k, c in enumerate(kept, 1):
         drive.upload(c["mp4"], stage["1_CHECK"], name=f"{k:02d}_{Path(c['mp4']).name.split('_', 1)[-1]}")
+        try:   # the Analyst's side of the views loop: what the judge measured on every clip rico gets
+            analyst.record(name, f"{k:02d}_{Path(c['mp4']).name.split('_', 1)[-1]}", c.get("style"), c.get("judge"),
+                           analyst.areas_from_report(Path(c["mp4"]).parent / "judge_report.md"))
+        except Exception as e:
+            log(f"analyst record failed: {e}")
         if c.get("thumb") and Path(c["thumb"]).exists():
             drive.upload(c["thumb"], stage["1_CHECK"], name=f"{k:02d}_{Path(c['mp4']).stem.split('_', 1)[-1]}_thumbnail.png")
             opts = Path(c["thumb"]).with_name("thumbnail_options.jpg")

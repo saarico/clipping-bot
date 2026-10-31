@@ -18,6 +18,7 @@ Every window of the transcript gets a score per genre (0-20) from word choice an
   sports     game, score, champion, coach
   gaming     clutch, insane plays, streamer hype
   music      song, stage, crowd, album
+  candid     an interview's own story: first-person turns, admissions, the host's question, it went right or wrong
 
 The campaign's entertainment score for a window is the mix-weighted sum of the genre scores, plus
 the comedy score whenever comedy is anywhere in the mix (a laugh travels in every genre).
@@ -55,6 +56,16 @@ LEX = {
               r"playoffs?|finals?|mvp|draft\w*|injur\w+|train(ed|ing)?|practice|gym|lift\w*|record|race|win|won|lost|loss)\b",
     "gaming": r"\b(clutch|insane|cracked|goated|gg|ez|chat|stream\w*|rank(ed)?|lobby|respawn|headshot|kill\w*|loot|boss|"
               r"level|speedrun|glitch\w*|lag|noob|pro|gamer|controller|keyboard|twitch|kick)\b",
+    # candid (Studio v2 release 4, 2026-10-31): a calm interview is entertaining when someone tells their own story with
+    # stakes: first-person turns, admissions, the host's sharp question, the moment it went right or wrong. Without this
+    # genre rico's approved ICH clips read 4/10 on entertainment (no jokes, no fights, still the best clips we made).
+    "candid": r"\b((i|we) (made|bought|took|lost|learned|realized|remember|thought|decided|quit|started|said|told|knew|never|"
+              r"wanted|had to|had never|had no idea|didn'?t (get|see|know|expect))|we would be|you had no idea|no idea|"
+              r"not (one|a single)|out of nowhere|totally|wow|how\?|the best|"
+              r"my (family|dad|mom|father|mother|wife|husband|first|career|company|business|life|kids?|brother|sister)|"
+              r"when i|early on|back then|at the time|the first|honestly|to be honest|the truth is|i'?m curious|"
+              r"what did you|how did you|why did you|did you ever|what was|risk\w*|bet|all[- ]in|worked out|didn'?t work|"
+              r"went wrong|mistake\w*|regret\w*|turning point|that'?s when|until|suddenly|scared|nervous|proud)\b",
     "music": r"\b(song\w*|sing\w*|album\w*|track|beat\w*|bars|verse|chorus|hook|stage|crowd|concert|tour\w*|guitar|drum\w*|"
              r"piano|vocal\w*|melody|lyric\w*|band|rapper|producer|studio|record\w*|dj|festival)\b",
 }
@@ -72,6 +83,7 @@ BRIEF_HINTS = {
     "truecrime": r"\b(true crime|crime|murder|detective|investigation)\b",
     "sports": r"\b(sports?|football|soccer|basketball|nba|nfl|ufc|mma|boxing|fitness|athlete\w*)\b",
     "gaming": r"\b(gaming|gamer\w*|gameplay|twitch|esports|minecraft|fortnite|warzone|roblox|streamer\w*)\b",
+    "candid": r"\b(interview\w*|conversation\w*|sit[- ]?down|podcast guest|candid|opens up|personal story|founder story|life story|how (he|she|they) (built|made|started))\b",
     "music": r"\b(music video|musician\w*|concert\w*|album\w*|rapper\w*|singer\w*|the band|festival\w*|live performance\w*|setlist|on stage)\b",
 }
 

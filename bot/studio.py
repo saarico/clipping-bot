@@ -23,7 +23,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 import profiles  # noqa: E402
 
-VERSION = "2.3.0"   # Studio v2 release 3 (inspection v2: first piece, contracts, last piece). Printed in every SUMMARY so a clip traces to the code that made it.
+VERSION = "2.4.0"   # Studio v2 release 4 (tune and learn: edge guard, candid genre, wide punch-in, Analyst). Printed in every SUMMARY so a clip traces to the code that made it.
 
 # (stage, role, job, module(s) that do it today, whom a failure goes back to)
 ROSTER = [
@@ -41,7 +41,7 @@ ROSTER = [
     ("PROVE", "Inspectors", "first-piece, in-process, layout and final inspection", "pitch.py, pipeline.faces_ok, qa_check.py, studio.layout_check", "the role that owns the failure"),
     ("PROVE", "Judge", "blind grade on the content's own scorecard", "judge_clip.py + studio.weighted_total", "Story Editor (one re-edit), then Moment Hunter"),
     ("PROVE", "Publisher", "post kit per platform, tags checked against the brief", "post_kit.py, lanes.py", "Brief Reader"),
-    ("PROVE", "Analyst", "logs views per post and retunes the weights", "data/posts.csv (weekly review)", "Content Classifier"),
+    ("PROVE", "Analyst", "joins 7-day views to the judge's area scores and nudges the weights", "analyst.py (data/clip_scores.csv + data/posts.csv, every run)", "Content Classifier"),
 ]
 
 # the 9 checkpoints (board deck slide "Nine checkpoints"), and where each one is enforced
@@ -245,7 +245,8 @@ def contract_check(agents, style=None):
             notes.append(f"camera: a face framed {share:.0%} of the clip")
         soft = [f for f in frames if f.get("zoom", 1) > 1.65]
         if soft:
-            notes.append(f"camera: {len(soft)} segment(s) punched in past 1.65x (soft picture)")
+            notes.append(f"camera: {len(soft)} segment(s) punched in past 1.65x (sharpened wide-shot punch-in, up to "
+                         f"{max(f['zoom'] for f in soft):.2f}x): check the picture")
     audio = agents.get("audio") or {}
     want = "loudnorm" if profiles.profile(style)["cards"] else "plain_gain"
     if audio and audio.get("mode") != want:

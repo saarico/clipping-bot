@@ -5,7 +5,7 @@ Out: video.mp4 (picture only, no captions) and frame.json, one record per render
      {from, to (output s), src (source s), layout, zoom, face [cx, cy, size] or null, pan_keys, overlay}.
 Owns: who is on screen, the crop window, pans, punch-ins, overlay layouts. Never touches sound or text.
 """
-from render_clip import (CINE_MIN_FACE, FPS, HC, HOOK_SECS, SRC_H, SRC_W, W, Framer, analyze_shots, build_filter,
+from render_clip import (CINE_MIN_FACE, FPS, HC, HOOK_SECS, SRC_H, SRC_W, W, WIDE_PUNCH_MAX, Framer, analyze_shots, build_filter,
                          card_source, deflash, pan_keys, people, profiles, run, sub_ranges, talker)
 
 
@@ -77,9 +77,10 @@ def shoot(spec, src, pieces, overlays, focus, marks, has_teaser, tmp):
                         fine = people(analyze_shots.faces_in(src, vs, vs + b - a, hi=True), min_size=0.03, max_size=0.6)
                         ppl = [talker(fine if len(fine) == 2 else ppl)]
                         if ppl[0][2] < 0.10:
-                            # up to 1.6x (was 1.35): a 1080p interview filmed from across the room (Spotlight, faces 4-7%
-                            # of the picture, 2026-10-31) is otherwise a dot; beyond 1.6x the picture goes soft
-                            zoom = max(zoom, min(1.6, 0.11 / max(ppl[0][2], 0.03)))
+                            # a 1080p interview filmed from across the room (Spotlight, faces 4-7% of the picture,
+                            # 2026-10-31) is otherwise a dot: up to WIDE_PUNCH_MAX (2.5x, release 4; was 1.6x), and
+                            # face_crop sharpens anything past 1.6x so it does not go soft
+                            zoom = max(zoom, min(WIDE_PUNCH_MAX, 0.11 / max(ppl[0][2], 0.03)))
                     lay = "face" if ppl else "wide"
                     t_in = t_out = 0
                     if whole_when_lost:
