@@ -3,6 +3,20 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-10-31 (03:35 UTC): next campaign picked: Rolling Stone & Malcolm Todd Interviews (Instagram lane)
+- Board of 64 cards (scan 41164326405): every card over 55 is a game-launch ad, a brand ad, Mark Manson or a
+  dedicated-account campaign. The campaign pages themselves are readable from the sandbox (pay per platform, budget,
+  description; rules hidden until joined), so the real-content "?" lane cards were checked by hand: Rolling Stone &
+  Malcolm Todd Interviews (creatorXchange, $2/1K TikTok + Instagram, max $200, $2,336 left, 112 clippers) is a real
+  interview and fits the Instagram celebrity lane; picked, 0_START folder + JOIN doc made. Runner-up Parrot (Shark Tank
+  episode): $1.50/1K on all three, $5k untouched, 0 clippers, real show footage but the company's own pitch = brand
+  rule; told rico, not joined. Skipped: Michael Sartain (a mentoring business, rules hidden), Sabri Malle (Spanish,
+  dedicated-account style), Backyard Breaks and Up Next Fighting (dedicated/niche accounts), Open Road (app), Mad Honey
+  ($884 left), DJ Drama Business of HipHop ($0.75 floor, $1.8k, 0 clippers; clean lane-A fallback), Reuben A Geimah and
+  Jackelyne (no description at all).
+- Scan lesson: the "fits none of the three accounts" stop hides interview/music/documentary shows whose title has no
+  lane word; the campaign page's description is fetchable and should feed content_fit.
+
 ## 2026-10-31 (03:30 UTC): Higgsfield killed by rico
 - rico (03:25): "trash this campaign, the guy is just horrible at speaking and so bad at communicating, hard to listen
   to. Scan for another campaign. Remove the files, wipe clean each inner folder. I will leave the campaign."
