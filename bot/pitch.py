@@ -169,9 +169,10 @@ def line(tag, r):
             + " ".join(f"{k} {v}" for k, v in r["areas"].items()) + ")" + (" | " + "; ".join(r["why"]) if r["why"] else ""))
 
 
-def gate(specs, words, brief=None, log=print):
+def gate(specs, words, brief=None, log=print, want=8):
     """Pitch every spec. Returns (specs to render, notes). Passing specs keep their order (reviewer picks first);
-    rejects are dropped. Nothing passes -> the best reject is rendered, marked."""
+    rejects are dropped. Nothing passes -> the best reject is rendered, marked. want: how many to hand on at most
+    (passes first, then near-misses)."""
     notes, scored = [], []
     for i, sp in enumerate(specs):
         r = score(sp, words, brief)
@@ -184,7 +185,7 @@ def gate(specs, words, brief=None, log=print):
     # near-misses that failed no audience gate follow the passes as marked fallbacks
     near = sorted(((r, sp) for r, sp in scored if r["verdict"] != "PASS" and not r.get("audience", {}).get("fails") and r["total"] >= 50),
                   key=lambda x: -x[0]["total"])
-    for r, sp in near[:max(0, 8 - len(keep))]:
+    for r, sp in near[:max(0, want - len(keep))]:
         sp["_why"] = f"PITCH UNDER THE BAR ({r['total']} < {PITCH_BAR}, fallback) | " + sp.get("_why", "")
         keep.append(sp)
     if not keep and scored:
@@ -192,6 +193,7 @@ def gate(specs, words, brief=None, log=print):
         best["_why"] = f"PITCH UNDER THE BAR ({best['_pitch']['total']} < {PITCH_BAR}) | " + best.get("_why", "")
         keep = [best]
         notes.append(f"no pitch reached {PITCH_BAR}: rendering the best one anyway, marked, so you can see what the material gives")
+    keep = keep[:want]
     notes.append(f"{len(keep)} of {len(specs)} pitches go to render")
     for n in notes:
         log(n)

@@ -153,8 +153,58 @@ def prepare(work, source, brief, words=None, campaign="campaign", log=print, use
              f"transcript + graphics ready after {(time.time() - t0) / 60:.1f} min"]
     # the pitch (rico 2026-10-29): read every candidate's words against the campaign's style before spending a render on it
     import pitch
-    specs, pnotes = pitch.gate(specs, json.loads(Path(words).read_text()), brief, log=log)
-    return specs, origin, words, notes + pnotes
+    specs, pnotes = pitch.gate(specs, json.loads(Path(words).read_text()), brief, log=log, want=12)
+    # the picture (2026-10-31, Malcolm Todd: the one moment rendered had no face for 30 of its 50 s and a face 8% tall
+    # in the rest; QA dropped it after 3.5 min of rendering): a talking-show moment is looked at before it is rendered
+    import profiles
+    if source.exists() and profiles.profile(brief.get("style"))["clarity"]:
+        kept = []
+        for sp in specs:
+            ok, why = faces_ok(source, sp)
+            if ok:
+                kept.append(sp)
+            else:
+                log(f"PICTURE {planner.slug(sp.get('hook', ''))}: {why}: not rendered")
+                pnotes.append(f"PICTURE {planner.slug(sp.get('hook', ''))}: {why}: not rendered")
+            if len(kept) >= 8:
+                break
+        specs = kept
+    return specs[:8], origin, words, notes + pnotes
+
+
+def faces_ok(source, spec, samples=5):
+    """(ok, why): a face big enough to frame in most of the moment. Five 2-second looks spread over the cut at 720p
+    (analyze_shots.faces_in hi=True); a face counts from 7.5% of the picture's height (render_clip punches a small
+    face in by up to 1.35x, QA wants ~10% on the finished clip) and has to be there in 3 of the 5 looks."""
+    import analyze_shots
+    parts = spec.get("parts") or []
+    total = sum(b - a for a, b in parts)
+    if total <= 0:
+        return True, ""
+    seen, sizes = 0, []
+    for k in range(samples):
+        t = total * (k + 0.5) / samples
+        for a, b in parts:   # the k-th look, on the source clock
+            if t <= b - a:
+                at = a + t
+                break
+            t -= b - a
+        else:
+            continue
+        try:
+            faces = [f for f in analyze_shots.faces_in(str(source), max(at - 1, 0), at + 1, hi=True) if f[1] <= 0.75 and f[2] >= 0.03]
+        except Exception as e:
+            return True, f"face probe failed ({type(e).__name__})"   # never drop a moment over a broken probe
+        big = [f for f in faces if f[2] >= 0.075]
+        if big:
+            seen += 1
+            sizes.append(max(f[2] for f in big))
+        elif faces:
+            sizes.append(max(f[2] for f in faces))
+    if seen >= 3:
+        return True, ""
+    typical = (sorted(sizes)[len(sizes) // 2] if sizes else 0.0)
+    return False, f"a face in {seen} of {samples} looks (typical height {typical:.0%} of the picture)"
 
 
 def reedit(spec, res):

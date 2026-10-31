@@ -3,6 +3,25 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-10-31 (08:30 UTC): the picker after Malcolm Todd's first cut (0 clips kept of 6 pitches)
+- Run 41172674913 (07:05-07:42, the 4-interview episode): 6 moments pitched, all 6 failed the audience gates ("the
+  headline is not said in the first 6 s", "title has no name"), the best was rendered anyway and dropped by QA: no face
+  for 30 of its 50 s, a face 8% tall in the rest, frozen opening frames. The brief's own subjects (Earrings, the
+  sold-out tour, going viral) were never in the pool.
+- Why: (1) the title was the window's strongest sentence, wherever it sat, so the gate "said in the first 6 s" could
+  only pass by luck; (2) the brief's CONTENT IDEAS are bullet topics, not quoted hooks with times, so brief.clip_ideas
+  found nothing; (3) only 6 moments were pitched (the render budget) out of a 3-hour episode; (4) whisper returned two
+  of the four interviews with no punctuation, so one hour was 38 "sentences" of 93 words and had no window under 60 s;
+  (5) nothing looked at the picture before rendering.
+- Fixes: brief.topics (subjects from the idea sections, quoted titles double) feed find_moments.score_window ("brief"
+  up to 15) and lead the candidate pool (the best window that OPENS on each subject, score 60+); talking shows only
+  open on a hook line (find_moments.opener_ok) and the title IS that line (hook_from_opener); plan.PITCH_POOL 24 pitched,
+  pitch.gate hands on up to 12; pipeline.faces_ok looks at five 2-second stretches at 720p and drops a moment without a
+  face 7.5%+ tall in 3 of 5 (prepare only, where the episode is); find_moments.sentences breaks unpunctuated runs at the
+  widest pause after 18 words and at 30 words regardless; transcribe.py gives whisper a punctuated initial_prompt.
+- Offline check on the committed transcript (scratch harness): the pool now holds the tour (6-8 min), Earrings (157 min),
+  virality vs a real career (93 min), "never went searching for success" (168 min); 9 of 24 pitches pass.
+
 ## 2026-10-31 (07:20 UTC): every file in 0_START is used; parts cached; transcript tied to the episode (Malcolm Todd runs 2-3)
 - Run 2 (05:10-07:05): rico's 5 interviews were in 0_START; the bot skipped "Malcolm Todd on Ice Cream Dreams, TikTok
   Fame ... | Office Of" because its skip rule read "tiktok" in the name as a vertical cut, then converted the other 4

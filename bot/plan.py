@@ -22,6 +22,8 @@ import genres  # noqa: E402
 import profiles  # noqa: E402
 
 MAX_CLIPS, MAX_TRIES = 3, 6
+PITCH_POOL = 24   # moments read by the pitch (words only, cheap); MAX_TRIES of them are rendered. 6 were pitched before and
+                  # all 6 failed a gate (Malcolm Todd, 2026-10-31): the pool has to be wider than the render budget
 STAKES = fm.MONEY + "|" + fm.FAIL + "|" + fm.SURPRISE + "|" + fm.EMOTION + "|" + fm.FAMOUS
 
 
@@ -217,7 +219,7 @@ def auto_specs(words_path, gfx_path, source, brief, campaign, out_dir, used=()):
             c["callouts"] = auto_callouts(all_words, c["start"], c["end"])
         why = f"score {c['score']}: " + ", ".join(f"{k} {v}" for k, v in c["reasons"].items() if v and k != "genres") + f" [{c['reasons'].get('genres', '')}]"
         specs.append(spec_for(c, why, source, words_path, brief, campaign, out_dir, mix))
-        if len(specs) >= MAX_TRIES:
+        if len(specs) >= PITCH_POOL:
             break
     return specs
 
@@ -246,31 +248,50 @@ def fm_candidates(words_path, gfx_path, brief, prof_name="podcast", energy=None)
     mix = genre_mix(brief, words)
     sents = fm.sentences(words)
     lo, hi = brief.get("min_s", 20), brief.get("max_s", 60)
+    topics = brief.get("topics") or []
+    talk = prof["clarity"]
     cands = []
     for i in range(len(sents)):
+        if FILLER_START.match(sents[i]["text"]):
+            continue   # a clip never opens on "Because, I mean..." (rico lost interest in 4 s, Higgsfield c01, 2026-10-30)
+        if talk and not fm.opener_ok(sents[i], topics):
+            continue   # talking shows open on the hook line itself (RULES 41): the title is what is said first
         for j in range(i + 1, min(i + 40, len(sents))):
             dur = sents[j]["end"] - sents[i]["start"]
             if dur < lo:
                 continue
             if dur > hi + 2:
                 break
-            if FILLER_START.match(sents[i]["text"]):
-                continue   # a clip never opens on "Because, I mean..." (rico lost interest in 4 s, Higgsfield c01, 2026-10-30)
-            total, reasons, text, g = fm.score_window(sents[i:j + 1], gfx, prof, energy, mix)
+            total, reasons, text, g = fm.score_window(sents[i:j + 1], gfx, prof, energy, mix, topics)
             cands.append({"start": round(sents[i]["start"], 2), "end": round(sents[j]["end"], 2), "dur": round(dur, 1),
                           "score": total, "reasons": reasons, "first_line": sents[i]["text"],
-                          "ij": (i, j), "graphics": g, "text": text})
+                          "ij": (i, j), "graphics": g, "text": text,
+                          "topic_open": [ph for ph, _ in fm.topic_hits((sents[i]["text"] + " " + sents[min(i + 1, j)]["text"]).lower(), topics)]})
     cands.sort(key=lambda c: -c["score"])
-    picked = []
+    # the brief's subjects first (2026-10-31, Malcolm Todd: "Earrings" and the sold-out tour were in the brief and in the
+    # episode, and never in the pool of 20 among a 3-hour episode's thousands of windows): the best window that OPENS
+    # on each subject, up to two per subject, leads the pool; the plain top of the scorecard follows
+    by_topic = {}
     for c in cands:
+        if c["score"] < 60:   # a subject word alone is no clip (an ad read that said "changed", 2026-10-31)
+            break
+        for ph in c["topic_open"]:
+            if len(by_topic.setdefault(ph, [])) < 2 and all(min(c["end"], p["end"]) - max(c["start"], p["start"]) <= 0 for p in by_topic[ph]):
+                by_topic[ph].append(c)
+    lead = sorted({id(c): c for lst in by_topic.values() for c in lst}.values(), key=lambda c: -c["score"])
+    for c in lead:
+        c["reasons"] = dict(c["reasons"], **{"opens_on": ", ".join(c["topic_open"][:3])})
+    picked = []
+    for c in lead + [c for c in cands if id(c) not in {id(x) for x in lead}]:
         if "hook" not in c:   # the hook is only written for windows that reach the pick loop (thousands never do)
             i, j = c.pop("ij")
-            c["hook"] = fm.hook_from(sents[i:j + 1], prof)
+            c["hook"] = fm.hook_from_opener(sents[i:j + 1]) if talk else fm.hook_from(sents[i:j + 1], prof)
+        c.pop("topic_open", None)
         if any(p["first_line"] == c["first_line"] or p["hook"] == c["hook"] for p in picked):
             continue   # run 1 of DIGGER rendered the same opening line twice at two lengths
         if all(min(c["end"], p["end"]) - max(c["start"], p["start"]) < 0.4 * min(c["dur"], p["dur"]) for p in picked):
             picked.append(c)
-        if len(picked) >= 20:
+        if len(picked) >= PITCH_POOL + 6:
             break
     return picked
 
@@ -316,5 +337,5 @@ def load(campaign_dir, words_path, gfx_path, source, brief, campaign, out_dir, u
     if own:   # the campaign wrote down what sells: those moments first, the scorecard's picks behind them
         taken = tuple(used) + tuple((p[0], p[1]) for sp in own for p in sp.get("parts", []))
         extra = auto_specs(words_path, gfx_path, source, brief, campaign, out_dir, used=taken)
-        return (own + extra)[:MAX_TRIES * 2], f"the brief's clip ideas ({len(own)}) + scorecard"
+        return (own + extra)[:len(own) + PITCH_POOL], f"the brief's clip ideas ({len(own)}) + scorecard"
     return auto_specs(words_path, gfx_path, source, brief, campaign, out_dir, used=used), "entertainment scorecard (auto)"

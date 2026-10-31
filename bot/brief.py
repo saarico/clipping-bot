@@ -82,6 +82,63 @@ def clip_ideas(text):
     return out
 
 
+IDEA_HEAD = re.compile(r"^\s*(content ideas|clip ideas|ideas|angles|moments|what to clip|suggested text|text[- ]on[- ]screen|hooks?)\b", re.I)
+STOP_HEAD = re.compile(r"^\s*(campaign rules|rules|requirements|assets|links|payout|payment|do not|don'?ts?|disclosure|hashtags?|tags)\b", re.I)
+TOPIC_NOISE = {"malcolm", "todd", "clips", "clip", "moments", "moment", "interview", "interviews", "anything", "especially", "perform",
+               "pages", "present", "typically", "different", "quotes", "standout", "about", "where", "which", "these", "those", "their",
+               "other", "shows", "fans", "reason", "deeper", "campaign", "video", "videos", "podcast", "appearance", "official", "across",
+               "discussing", "talks", "himself", "herself", "really", "every", "everyone", "right", "making", "proves", "speaks", "facts",
+               "expect", "trying", "biggest", "career", "words", "being", "having", "there", "well", "like", "this", "that", "with", "from",
+               "most", "real", "just", "even", "than", "them", "when", "what", "into", "your", "yet", "his", "her", "him", "its", "the",
+               "show", "side", "year", "give", "goes", "went", "come", "came", "take", "took", "make", "made", "same", "some", "such",
+               "each", "both", "been", "were", "have", "will", "would", "could", "should", "does", "done", "want", "need", "keep",
+               "back", "down", "here", "while", "they", "then", "also", "over", "only", "time", "more", "much", "many", "very",
+               "look", "looks", "feel", "feels", "gets", "says", "said", "tell", "tells", "told", "goal", "build", "hype", "give",
+               "across", "around", "before", "after", "during", "through", "without", "within", "between", "again", "first", "last",
+               "whole", "entire", "please", "ensure", "always", "never", "still", "already", "something", "anything", "everything",
+               "nothing", "someone", "anyone", "everyone", "people", "person", "thing", "things", "stuff", "line", "lines", "text",
+               "screen", "caption", "captions", "title", "titles", "hook", "hooks", "suggested", "ideas", "idea", "content",
+               "visual", "visuals", "angle", "angles", "trimming", "trim", "circulate", "highlighting", "huge", "right"}
+
+
+def topics(text):
+    """The brief's subjects, for the scorecard (2026-10-31, Malcolm Todd: the brief listed "Chest Pain", "Earrings",
+    Do That Again, the sold-out tour, going viral; the scorecard picked "literally literally" instead).
+    Reads the idea sections (CONTENT IDEAS, ANGLES, SUGGESTED TEXT-ON-SCREEN ...) up to the next rules/assets heading:
+    quoted phrases and Title Case names count double, every other content word once.
+    -> [[phrase, weight], ...] lower case, at most 40."""
+    lines, on = [], False
+    for ln in text.splitlines():
+        if IDEA_HEAD.match(ln):
+            on = True
+            continue
+        if STOP_HEAD.match(ln):
+            on = False
+        if on and ln.strip():
+            lines.append(ln.strip())
+    if not lines:
+        return []
+    body = "\n".join(lines)
+    out, quoted_words = {}, set()
+    for q in re.findall(r"[\"\u201c]([^\"\u201d\n]{3,60})[\"\u201d]", body) + re.findall(r"(?<![a-z])'([^'\n]{3,40})'(?![a-z])", body):
+        # a quoted title or line: "Chest Pain", 'Earrings'; a whole suggested caption is split into its content words below
+        ph = re.sub(r"\s+", " ", q).strip(" ,.;:!?").lower()
+        words = ph.split()
+        if 1 <= len(words) <= 4 and "malcolm todd" not in ph:
+            out[ph] = 2
+            quoted_words.update(words)   # the title's own words are not topics on their own ("chest", "pain")
+    for m in re.finditer(r"\b([A-Z][a-z]+(?: [A-Z][a-z]+){1,3})\b", body):
+        ph = m.group(1).lower()
+        if "malcolm todd" not in ph and not all(w in TOPIC_NOISE for w in ph.split()):
+            out.setdefault(ph, 2)
+    for w in re.findall(r"[a-z][a-z-]{3,}", re.sub(r"[a-z]+'[a-z]+", " ", body.lower())):   # "wasn't", "you'd" are not words
+        w = w.strip("-")
+        if len(w) >= 4 and w not in TOPIC_NOISE and w not in quoted_words and not w.endswith("ly") and len(set(w)) > 2:
+            out.setdefault(w, 1)
+    ranked = sorted(out.items(), key=lambda kv: (-kv[1], kv[0]))
+    return [[k, v] for k, v in ranked[:40]]
+
+
 def parse(text):
     low = text.lower()
     # platforms are named in the rules, never read off the asset links: "youtube.com/watch?v=..." in a brief that

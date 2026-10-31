@@ -54,15 +54,33 @@ def sentences(words):
     letter on a sentence starter after an unpunctuated word ("...never gonna be the same Did you know..."; 2026-10-30,
     the Yuri clip opened on the tail of the previous answer because the two ran as one sentence)."""
     out, cur = [], []
+
+    def flush(ws):
+        out.append({"start": ws[0]["start"], "end": ws[-1]["end"], "speaker": ws[0]["speaker"],
+                    "text": " ".join(x["text"] for x in ws), "n": len(ws), "words": ws})
+
     for w, nxt in zip(words, words[1:] + [None]):
         cur.append(w)
         end = w["text"].rstrip('"\')').endswith((".", "?", "!"))
         if (not end and nxt is not None and len(cur) >= 3 and nxt["text"][:1].isupper() and nxt["text"].lower().strip(",") in STARTERS
                 and not w["text"].endswith(",")):
             end = True
+        if not end and nxt is not None and len(cur) >= 18 and nxt["speaker"] == w["speaker"]:
+            # whisper wrote no punctuation at all for two of the Malcolm Todd interviews (2026-10-31: one hour came out as
+            # 38 "sentences" of 93 words, so no window under 60 s existed there): a run of 18+ words breaks at the widest
+            # pause (0.3 s or more) among its last 12 words, and at 30 words whatever the pauses
+            tail = cur[-12:]
+            gaps = [(b["start"] - a["end"], k) for k, (a, b) in enumerate(zip(tail, tail[1:]))]
+            g, k = max(gaps) if gaps else (0.0, 0)
+            if g >= 0.3:
+                cut = len(cur) - 12 + k + 1
+                flush(cur[:cut])
+                cur = cur[cut:]
+                continue
+            if len(cur) >= 30:
+                end = True
         if nxt is None or end or nxt["speaker"] != w["speaker"] or nxt["start"] - w["end"] > 1.0:
-            out.append({"start": cur[0]["start"], "end": cur[-1]["end"], "speaker": cur[0]["speaker"],
-                        "text": " ".join(x["text"] for x in cur), "n": len(cur), "words": cur})
+            flush(cur)
             cur = []
     return out
 
@@ -71,13 +89,51 @@ def count(rx, text):
     return len(re.findall(rx, text, flags=re.I))
 
 
-def score_window(sents, graphics, prof=None, energy=None, mix=None):
+def topic_hits(low, topics):
+    """The brief's subjects said in this text: [(phrase, weight)] (brief.topics)."""
+    hits = []
+    for t in topics or []:
+        ph, wgt = (t[0], t[1]) if isinstance(t, (list, tuple)) else (t, 1)
+        if re.search(r"\b" + re.escape(ph.lower()).replace("\\-", "[ -]?") + r"\b", low):   # "come-up" also matches "come up"
+            hits.append((ph, wgt))
+    return hits
+
+
+INTEREST_OPEN = MONEY + "|" + FAIL + "|" + SURPRISE + "|" + EMOTION + "|" + FAMOUS + "|" + CONTRAST + r"|\b(first|last|never|only|biggest|worst|best)\b"
+
+
+def opener_ok(sent, topics=None):
+    """A sentence a clip may open on: it IS the hook (RULES 41, rico 2026-10-31: the headline is said, not read).
+    At least 5 words, no pointer/back-reference start, and something to grab: a stake word, a number, a name,
+    a question, or one of the brief's subjects."""
+    t = sent["text"].strip()
+    if sent["n"] < 5 or re.match(BACKREF, t, flags=re.I):
+        return False
+    low = t.lower()
+    if re.search(PODCAST_TALK, low):
+        return False
+    return bool(re.search(INTEREST_OPEN, low) or re.search(NUMBER, low) or t.endswith("?")
+                or re.search(r"(?<![.?!]\s)(?<!^)\b[A-Z][a-z]{2,}\b", t[1:]) or topic_hits(low, topics))
+
+
+def hook_from_opener(sents):
+    """The title is the opening line itself, trimmed to 12 words; a very short first line hands over to the second."""
+    toks = sents[0]["text"].split()
+    if len(toks) <= 4 and len(sents) > 1:
+        toks += sents[1]["text"].split()
+    return " ".join(toks[:12]) + ("..." if len(toks) > 12 else "")
+
+
+def score_window(sents, graphics, prof=None, energy=None, mix=None, topics=None):
     """prof = profiles.PROFILES[...] (podcast rules when None); energy = dB per second (audio_energy);
-    mix = {genre: weight} from genres.detect_mix (what this campaign's audience came for)."""
+    mix = {genre: weight} from genres.detect_mix (what this campaign's audience came for);
+    topics = the brief's subjects (brief.topics): a window that talks about them scores up to 15 more."""
     prof = prof or profiles.PROFILES["podcast"]
     mix = mix or {"drama": 0.5, "business": 0.5}
     text = " ".join(s["text"] for s in sents)
     low = text.lower()
+    th = topic_hits(low, topics)
+    reasons_brief = min(15, 3 * sum(w for _, w in th))
     dur = sents[-1]["end"] - sents[0]["start"]
     nwords = sum(s["n"] for s in sents)
     wps = nwords / max(dur, 1)
@@ -155,9 +211,13 @@ def score_window(sents, graphics, prof=None, energy=None, mix=None):
     (l0, l1), (o0, o1) = prof["length"], prof["ok_len"]
     reasons["length"] = 5 if l0 <= dur <= l1 else 3 if o0 <= dur <= o1 else 0
     reasons["self_contained"] = -4 * min(inside, 3)   # every podcast back-reference costs 4
+    if topics:
+        reasons["brief"] = reasons_brief
     gs = reasons.pop("_genres")
     total = sum(reasons.values())
     reasons["genres"] = ", ".join(f"{g} {v}" for g, v in sorted(gs.items(), key=lambda kv: -kv[1])[:3] if v)
+    if th:
+        reasons["genres"] += " | brief: " + ", ".join(ph for ph, _ in th[:4])
     return total, reasons, text, gfx
 
 

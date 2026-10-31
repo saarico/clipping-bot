@@ -66,7 +66,10 @@ def main(src, out, model=None, part=None):
         print(f"whisper {model}")
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", *cut, "-i", src, "-vn", "-ac", "1", "-ar", "16000", str(wav)], check=True)
     m = WhisperModel(model, device="cpu", compute_type="int8")
-    segs, _ = m.transcribe(str(wav), word_timestamps=True, vad_filter=True, beam_size=1)
+    # initial_prompt: punctuated text makes whisper punctuate too. Two of the four Malcolm Todd interviews came back
+    # with no punctuation at all (2026-10-31), so the sentence splitter saw one hour as 38 sentences
+    segs, _ = m.transcribe(str(wav), word_timestamps=True, vad_filter=True, beam_size=1,
+                           initial_prompt="Hello, and welcome back. Today we're talking about music, touring, and life. Let's get into it.")
     words = []
     for s in segs:
         for w in s.words or []:
