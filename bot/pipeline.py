@@ -244,7 +244,7 @@ def try_until(specs, work, source, words, tag, budget=3, log=print):
     return best, results
 
 
-def decide(results, work, kept=None, notes=None):
+def decide(results, work, kept=None, notes=None, allowed=None):
     """Keep the first MAX_CLIPS results that passed QA and the judge; move the rest to work/dropped."""
     kept, notes = kept if kept is not None else [], notes if notes is not None else []
     for res in results:
@@ -272,7 +272,7 @@ def decide(results, work, kept=None, notes=None):
     # one platform per clip, by what the clip is about (bot/lanes.py); shown in the SUMMARY and used by the POST KIT
     by_hook = {r["hook"]: r for r in results if not r.get("error")}
     picks = lanes.assign([{"hook": k["hook"], "text": " ".join(k.get("captions", "").split()),
-                           "style": by_hook.get(k["hook"], {}).get("style", ""), "lane": by_hook.get(k["hook"], {}).get("lane_pin")} for k in kept])
+                           "style": by_hook.get(k["hook"], {}).get("style", ""), "lane": by_hook.get(k["hook"], {}).get("lane_pin")} for k in kept], allowed=allowed)
     for k, (lane, why) in zip(kept, picks):
         k["lane"], k["lane_why"] = lane, why
         notes.append(f"LANE  {Path(k['folder']).name}: {lane} ({why})")

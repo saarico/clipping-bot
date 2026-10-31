@@ -3,6 +3,16 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-10-31 (02:05 UTC): run 11 under the story format: 3 clips in 1_CHECK; lanes obey the brief's platforms
+- Run 41155818876 (01:36-01:55): "Top creatives could spend $100,000 a month on AI" (50 s, judge 89, audience 83,
+  opens on Harry's question), "We spend $4M a month on AI for 400 people" (35 s, judge 84, audience 88, opens on the
+  $10,000-a-month line, ends on "$10,000 per person"), "I thought AI would replace legal and support. I was wrong."
+  (37 s, judge 84, audience 91). 7 of 12 pitches passed; "Open models" and "30% churn" dropped at the cut (stray cut,
+  clipped word).
+- The lane picker moved the third clip to TikTok for lane diversity although the brief allows YouTube Shorts and
+  Instagram Reels only. lanes.assign now takes the campaign's platforms and never leaves them (pipeline.decide and the
+  post-kit path pass them); the clip's lane in state is corrected to YouTube.
+
 ## 2026-10-31 (01:40 UTC): rico on run 10: "poor ending on the 1st clip, confusing; both clips yap for the first few seconds; the storyline, 5 Ws, progression and hook are weak; revamp the md files"
 - The $4M clip opened on "And remember like we're split across United States and Asia" and ended on "That's the best
   question of the whole show, by the way"; the $20 clip opened on "But fundamentally, I think they are going to..."

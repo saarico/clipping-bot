@@ -57,12 +57,20 @@ def pick(hook, text, style="", override=None):
     return best, f"{why}; baseline {base} ({style or 'podcast'})"
 
 
-def assign(clips):
+def assign(clips, allowed=None):
     """Lanes for a campaign's kept clips: [(platform, reason)] in order. Each clip is picked on its own;
     then, when every clip landed in the same lane, the clip whose second lane is at least half as strong
     moves there, so one campaign feeds more than one channel (rico: lane diversity counts).
     clips = [{"hook", "text", "style", "lane"(optional pin)}]"""
     out = [list(pick(c.get("hook", ""), c.get("text", ""), c.get("style", ""), c.get("lane"))) for c in clips]
+    # the campaign's own platform list wins (2026-10-31: a Higgsfield clip was sent to TikTok on a YouTube + Instagram
+    # brief): a lane outside it moves to the strongest allowed one
+    allowed = [a for a in (allowed or []) if a in LANE_GENRES]
+    for i, c in enumerate(clips):
+        if allowed and out[i][0] not in allowed:
+            sc = scores(c.get("hook", ""), c.get("text", ""), c.get("style", ""))
+            best = max(allowed, key=lambda p: sc.get(p, 0))
+            out[i] = [best, out[i][1] + f"; {out[i][0]} is not in this campaign's platforms, moved to {best}"]
     lanes = {o[0] for o in out}
     if len(clips) >= 2 and len(lanes) == 1:
         best_i, best_ratio, best_alt = None, 0.5, None
@@ -71,7 +79,10 @@ def assign(clips):
                 continue
             sc = scores(c.get("hook", ""), c.get("text", ""), c.get("style", ""))
             cur = out[i][0]
-            alt = max((p for p in sc if p != cur), key=sc.get)
+            alts = [p for p in sc if p != cur and (not allowed or p in allowed)]
+            if not alts:
+                continue
+            alt = max(alts, key=sc.get)
             ratio = sc[alt] / max(sc[cur], 1.0)
             if ratio >= best_ratio:
                 best_i, best_ratio, best_alt = i, ratio, alt

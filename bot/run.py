@@ -586,7 +586,7 @@ def do_campaign(name, cpath, phase="all"):
         if any(f["Name"] in clips and not clips[f["Name"]].get("lane") for f in new_kits):
             # clips kept before lanes existed: assign now from their words
             old = [clips[f["Name"]] for f in new_kits if f["Name"] in clips and not clips[f["Name"]].get("lane")]
-            for c, (lane, _) in zip(old, lanes.assign([{"hook": c["hook"], "text": c.get("text", c.get("caption", "")), "style": st["brief"].get("style", "")} for c in old])):
+            for c, (lane, _) in zip(old, lanes.assign([{"hook": c["hook"], "text": c.get("text", c.get("caption", "")), "style": st["brief"].get("style", "")} for c in old], allowed=st["brief"].get("platforms"))):
                 c["lane"] = lane
         for f in new_kits:
             c = clips.get(f["Name"], {})
@@ -766,7 +766,7 @@ def collect():
                     notes.append("TRY   " + t)
                 results.append(res)
             results.sort(key=lambda r: (-int(bool(r.get("ok"))), -(r.get("judge") or 0)))   # best clips first
-            kept, notes = pipeline.decide(results, work, [], notes)
+            kept, notes = pipeline.decide(results, work, [], notes, allowed=st["brief"].get("platforms"))
             mins = [r.get("minutes", 0) for r in results if r.get("minutes")]
             notes.append(f"{len(kept)} clip(s) kept of {len(results)} rendered on {len(results)} machines, "
                          f"longest render {max(mins) if mins else 0:.1f} min")
