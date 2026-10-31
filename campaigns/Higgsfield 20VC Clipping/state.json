@@ -51,30 +51,10 @@
    "start": 1305.58,
    "end": 1342.24,
    "hook": "30% churn in month one."
-  },
-  {
-   "start": 2119.98,
-   "end": 2169.8,
-   "hook": "Top creatives could spend $100,000 a month on AI."
-  },
-  {
-   "start": 2004.98,
-   "end": 2040.78,
-   "hook": "We spend $4M a month on AI for 400 people."
-  },
-  {
-   "start": 1912.78,
-   "end": 1959.48,
-   "hook": "Open models: 80%+ margins. Closed: 20\u201330%."
-  },
-  {
-   "start": 1438.2,
-   "end": 1469.14,
-   "hook": "90 minutes of film took 100+ hours of AI footage."
   }
  ],
  "clips": [],
- "needs_redo": false,
+ "needs_redo": true,
  "empty_runs": 1,
  "empty_told": false,
  "brief": {

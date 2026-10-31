@@ -3,7 +3,14 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
-## 2026-10-31 (02:30 UTC): no title band, one caption spot, a who-line (rule 42)
+## 2026-10-31 (02:45 UTC): run 12 rendered 0 clips: the QA face-size line, not the look
+- Run 41159114829 (02:15-02:37): all 4 renders failed "Somebody in frame | no face for ..." on the stretches where the
+  show is on its wide two-shot. Under rule 42 that shot is no longer split but cropped on the talker and punched in
+  1.35x, which leaves the face ~19% of the picture width; the QA line for talking shows demanded 25% (a close-up is
+  ~38%). The line is now 15% (bot/qa_check.py, "Somebody in frame"); it still catches an empty room. The sharpness is
+  the same as the old split's panels (both upscale the wide shot about 2.1-2.4x). Same 3 moments re-rendered = run 13.
+
+## 2026-10-31 (02:15 UTC): no title band, one caption spot, a who-line (rule 42)
 - rico (02:02, on run 11's clips): "kinda close but you're still losing me on what. What are we talking about, who is this
   guy, what is the topic, when where why, why does it matter. Also the text captions are not consistent, very hard to
   track, sometimes above, other bottom, other center. Keep it nice and nice to look at. Also do we need to have an above

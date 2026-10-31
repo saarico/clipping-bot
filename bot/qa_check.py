@@ -428,8 +428,9 @@ def check_nobody(rep, mp4, details):
         if not any(a <= t < b for a, b in single):
             continue
         pic = f[TOP // 2:]
-        # a podcast speaker is big (face 25%+ of the width); on a movie any face from 8% up, or a person, counts
-        found = [fc for fc in analyze_shots.detect_faces(pic, 0.6) if fc[2] >= (0.08 if movie else 0.25)]
+        # a podcast speaker is big (face 15%+ of the width: a close-up is ~38%, the wide two-shot cropped on the
+        # talker and punched in 1.35x is ~19% since 2026-10-31, rule 42); on a movie any face from 8% up, or a person, counts
+        found = [fc for fc in analyze_shots.detect_faces(pic, 0.6) if fc[2] >= (0.08 if movie else 0.15)]
         if not found and movie:
             found = analyze_shots.persons(pic)
         if not found:
