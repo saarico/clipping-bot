@@ -3,7 +3,7 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
-## 2026-10-31 (15:55 UTC): the clip studio, board decisions 1-3
+## 2026-10-31 (15:40 UTC): the clip studio, board decisions 1-3
 - rico 15:31 UTC: "approve 1 - 3" on the board deck (Clip_Studio_Board_Review_2026-10-31.pptx): the studio design,
   the campaign filter, a higher cap on proven campaigns. Decision 4 (a $0-60/month tool budget) was not approved.
 - bot/studio.py (new): ROSTER of 15 roles and INSPECTION_LINE of 9 checkpoints mapped to the modules that do them;
