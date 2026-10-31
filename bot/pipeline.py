@@ -153,7 +153,8 @@ def prepare(work, source, brief, words=None, campaign="campaign", log=print, use
         sh([PY, str(HERE / "graphics_map.py"), str(source), str(gfx)], work / "gfx.log")
     specs, origin = planner.load(plan_dir or work, words, gfx if gfx.exists() else None, source, brief, campaign, work / "renders", used=used)
     (work / "renders").mkdir(exist_ok=True)
-    notes = [f"moments from: {origin}", f"style: {brief.get('style') or 'podcast'}" + (f", look: {json.dumps(brief['look'])}" if brief.get("look") else ""),
+    import studio as _studio
+    notes = [f"bot version {_studio.VERSION}", f"moments from: {origin}", f"style: {brief.get('style') or 'podcast'}" + (f", look: {json.dumps(brief['look'])}" if brief.get("look") else ""),
              f"transcript + graphics ready after {(time.time() - t0) / 60:.1f} min"]
     # the campaign gate's listen (board decision 2026-10-31: skip hard-to-listen speakers): reported on every run so
     # rico sees it in the SUMMARY; it does not stop a campaign he already joined
@@ -306,6 +307,33 @@ def try_until(specs, work, source, words, tag, budget=3, log=print):
     return best, results
 
 
+REPORT_CARD = HERE.parent / "data" / "report_card.csv"
+
+
+def report_card(results, kept, campaign):
+    """Release 1 (board review 2): one line per run with how often each gate failed, so a gate that fails run after
+    run shows up as a bug to fix, not bad luck. Columns: time, campaign, rendered, kept, judge median, gate fails (JSON)."""
+    import csv
+    from collections import Counter
+    from datetime import datetime, timezone
+    done = [r for r in results if not r.get("error")]
+    gates = Counter()
+    for r in done:
+        for f in r.get("fails", []):
+            gates[f.strip("| ").split("|")[0].strip()] += 1
+        for area in r.get("judge_notes", {}):
+            gates[f"judge: {area}"] += 1
+    js = sorted(r.get("judge", 0) for r in done)
+    new = not REPORT_CARD.exists()
+    REPORT_CARD.parent.mkdir(parents=True, exist_ok=True)
+    with open(REPORT_CARD, "a", newline="") as fh:
+        w = csv.writer(fh)
+        if new:
+            w.writerow(["time", "campaign", "rendered", "kept", "judge_median", "gate_fails"])
+        w.writerow([datetime.now(timezone.utc).isoformat(timespec="minutes"), campaign, len(done), len(kept),
+                    js[len(js) // 2] if js else "", json.dumps(dict(gates.most_common()))])
+
+
 def decide(results, work, kept=None, notes=None, allowed=None, cap=None):
     """Keep the first `cap` results that passed QA and the judge (planner.MAX_CLIPS = 3 by default; up to 6 on a campaign
     rico already approved 2+ clips of: studio.clip_cap, board decision 2026-10-31); move the rest to work/dropped."""
@@ -333,6 +361,10 @@ def decide(results, work, kept=None, notes=None, allowed=None, cap=None):
             if Path(res["folder"]).exists() and not dropped.exists():
                 dropped.parent.mkdir(parents=True, exist_ok=True)
                 shutil.move(str(res["folder"]), str(dropped))
+    try:
+        report_card(results, kept, Path(work).name)
+    except Exception as e:   # the report card must never cost a run its clips
+        notes.append(f"report card not written ({type(e).__name__})")
     # one platform per clip, by what the clip is about (bot/lanes.py); shown in the SUMMARY and used by the POST KIT
     by_hook = {r["hook"]: r for r in results if not r.get("error")}
     picks = lanes.assign([{"hook": k["hook"], "text": " ".join(k.get("captions", "").split()),

@@ -1,0 +1,217 @@
+{
+ "cuts": [
+  [
+   147.5994375,
+   153.1985
+  ],
+  [
+   119.95925000000001,
+   145.725
+  ],
+  [
+   147.5994375,
+   153.1985
+  ],
+  [
+   155.03499999999997,
+   187.804875
+  ]
+ ],
+ "shots": [
+  {
+   "from": 0.0,
+   "to": 2.77,
+   "layout": "face"
+  },
+  {
+   "from": 2.76,
+   "to": 5.59,
+   "layout": "face+zoom"
+  },
+  {
+   "from": 5.6,
+   "to": 9.4,
+   "layout": "split"
+  },
+  {
+   "from": 9.39,
+   "to": 13.82,
+   "layout": "side"
+  },
+  {
+   "from": 13.84,
+   "to": 17.14,
+   "layout": "split"
+  },
+  {
+   "from": 17.13,
+   "to": 21.33,
+   "layout": "fit"
+  },
+  {
+   "from": 21.34,
+   "to": 22.11,
+   "layout": "face"
+  },
+  {
+   "from": 22.1,
+   "to": 29.27,
+   "layout": "split"
+  },
+  {
+   "from": 29.27,
+   "to": 31.37,
+   "layout": "face"
+  },
+  {
+   "from": 31.37,
+   "to": 34.13,
+   "layout": "face"
+  },
+  {
+   "from": 34.13,
+   "to": 36.96,
+   "layout": "face+zoom"
+  },
+  {
+   "from": 36.97,
+   "to": 40.73,
+   "layout": "face+zoom"
+  },
+  {
+   "from": 40.73,
+   "to": 47.1,
+   "layout": "face"
+  },
+  {
+   "from": 47.1,
+   "to": 49.73,
+   "layout": "fit"
+  },
+  {
+   "from": 49.73,
+   "to": 54.73,
+   "layout": "face"
+  },
+  {
+   "from": 54.73,
+   "to": 61.47,
+   "layout": "banner"
+  },
+  {
+   "from": 61.48,
+   "to": 69.75,
+   "layout": "face"
+  }
+ ],
+ "spec": {
+  "source": "/mnt/user-data/uploads/Documents/CLIPPING_SYSTEM/CAMPAIGNS/2026-10_iced-coffee-hour/0_REQUIREMENTS/source_videos/ich_2196.mp4",
+  "words": "words_B.json",
+  "teaser": [
+   147.96,
+   152.76
+  ],
+  "parts": [
+   [
+    120.18,
+    145.6
+   ],
+   [
+    147.96,
+    152.76
+   ],
+   [
+    155.42,
+    187.72
+   ]
+  ],
+  "hook": "What really went wrong with Prime?",
+  "emphasis": [
+   "Prime",
+   "Prime?",
+   "Prime,",
+   "Logan",
+   "Paul",
+   "unsustainable,",
+   "$50",
+   "billion.",
+   "test",
+   "time",
+   "Congo",
+   "Brands.",
+   "Alani",
+   "Celsius,",
+   "$2",
+   "POV."
+  ],
+  "out": "/tmp/claude-0/-home-claude/44bb3412-a216-5200-b127-9cf671ad8e0e/scratchpad/ich/out6/ICH-002.mp4",
+  "focus": [
+   [
+    150.36,
+    152.76
+   ],
+   [
+    155.03,
+    158.8
+   ]
+  ],
+  "hook_hi": [
+   "Prime?"
+  ],
+  "overlays": [
+   {
+    "from": 123.75,
+    "to": 128.2,
+    "box": [
+     44,
+     54,
+     534,
+     966
+    ],
+    "style": "side",
+    "card_window": [
+     124.35,
+     127.4
+    ]
+   },
+   {
+    "from": 131.5,
+    "to": 135.7,
+    "box": [
+     107,
+     59,
+     1704,
+     971
+    ],
+    "style": "fit"
+   },
+   {
+    "from": 165.2,
+    "to": 167.7,
+    "box": [
+     107,
+     59,
+     1704,
+     971
+    ],
+    "style": "fit"
+   },
+   {
+    "from": 172.8,
+    "to": 179.55,
+    "box": [
+     300,
+     872,
+     1312,
+     188
+    ],
+    "style": "banner",
+    "card_window": [
+     173.6,
+     179.0
+    ],
+    "hard_out": true
+   }
+  ]
+ }
+}

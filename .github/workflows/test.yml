@@ -1,0 +1,26 @@
+# Release 1 (board review 2, approved 2026-10-31): every pull request runs the tests and the golden set.
+# A red check here means the change broke a gate or moved an approved clip's score; fix it before merging.
+name: test
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          pip install -q -r requirements.txt pytest ruff
+      - name: Lint (crash-prone lines only)
+        run: ruff check --select E9,F63,F7,F82 bot tests
+      - name: Unit tests + golden set
+        run: python -m pytest -q tests

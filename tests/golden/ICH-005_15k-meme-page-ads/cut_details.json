@@ -1,0 +1,176 @@
+{
+ "cuts": [
+  [
+   472.7418335001668,
+   478.155
+  ],
+  [
+   478.42481250000003,
+   480.86475
+  ],
+  [
+   484.63018750000003,
+   486.904
+  ],
+  [
+   499.5754375,
+   502.8326875
+  ],
+  [
+   505.64,
+   517.285
+  ],
+  [
+   517.5121250000001,
+   530.8449999999999
+  ],
+  [
+   531.125,
+   542.785125
+  ]
+ ],
+ "shots": [
+  {
+   "from": 0.0,
+   "to": 5.4,
+   "layout": "face"
+  },
+  {
+   "from": 5.4,
+   "to": 7.83,
+   "layout": "split"
+  },
+  {
+   "from": 7.83,
+   "to": 10.1,
+   "layout": "face"
+  },
+  {
+   "from": 10.1,
+   "to": 11.6,
+   "layout": "face"
+  },
+  {
+   "from": 11.6,
+   "to": 13.37,
+   "layout": "center"
+  },
+  {
+   "from": 13.37,
+   "to": 14.23,
+   "layout": "center"
+  },
+  {
+   "from": 14.23,
+   "to": 25.0,
+   "layout": "face"
+  },
+  {
+   "from": 25.0,
+   "to": 28.77,
+   "layout": "face+zoom"
+  },
+  {
+   "from": 28.77,
+   "to": 32.13,
+   "layout": "face"
+  },
+  {
+   "from": 32.13,
+   "to": 33.67,
+   "layout": "split"
+  },
+  {
+   "from": 33.67,
+   "to": 37.13,
+   "layout": "face"
+  },
+  {
+   "from": 37.13,
+   "to": 38.33,
+   "layout": "face+zoom"
+  },
+  {
+   "from": 38.33,
+   "to": 44.47,
+   "layout": "face"
+  },
+  {
+   "from": 44.47,
+   "to": 49.2,
+   "layout": "face+zoom"
+  },
+  {
+   "from": 49.2,
+   "to": 50.0,
+   "layout": "center"
+  }
+ ],
+ "spec": {
+  "source": "/mnt/user-data/uploads/Documents/CLIPPING_SYSTEM/CAMPAIGNS/2026-10_iced-coffee-hour/0_REQUIREMENTS/source_videos/ich_915.mp4",
+  "words": "words_E.json",
+  "parts": [
+   [
+    472.94,
+    478.14
+   ],
+   [
+    478.48,
+    480.8
+   ],
+   [
+    484.7,
+    486.82
+   ],
+   [
+    499.88,
+    502.66
+   ],
+   [
+    505.66,
+    517.22
+   ],
+   [
+    517.56,
+    530.78
+   ],
+   [
+    531.16,
+    542.72
+   ]
+  ],
+  "hook": "He bet $15K on ads. It backfired.",
+  "hook_hi": [
+   "backfired."
+  ],
+  "emphasis": [
+   "risks",
+   "all-in",
+   "$15,000",
+   "meme",
+   "bots",
+   "Shopify",
+   "traffic.",
+   "zero",
+   "reward,",
+   "negative",
+   "ROI"
+  ],
+  "focus": [
+   [
+    517.56,
+    521.28
+   ],
+   [
+    529.64,
+    530.78
+   ],
+   [
+    537.26,
+    542.72
+   ]
+  ],
+  "out": "/tmp/claude-0/-home-claude/44bb3412-a216-5200-b127-9cf671ad8e0e/scratchpad/ich/out9/ICH-005.mp4",
+  "hold_end_from": 49.33
+ }
+}

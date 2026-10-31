@@ -23,6 +23,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 import profiles  # noqa: E402
 
+VERSION = "2.1.0"   # Studio v2 release 1 (safety net). Printed in every SUMMARY so a clip traces to the code that made it.
+
 # (stage, role, job, module(s) that do it today, whom a failure goes back to)
 ROSTER = [
     ("PLAN", "Campaign Scout", "ranks offers on pay, fit and risk; stops ads, gambling, crypto, low pay", "campaign_scan.py, campaign_score.py", "-"),

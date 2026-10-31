@@ -1,0 +1,62 @@
+{
+ "ICH-001_20M-house-upgrade": {
+  "total": 78,
+  "areas": {
+   "hook": 15,
+   "pace": 5,
+   "variety": 10,
+   "framing": 4,
+   "story": 10,
+   "entertainment": 8,
+   "comedy": 4,
+   "captions": 10,
+   "length": 6,
+   "sound": 10
+  }
+ },
+ "ICH-002_what-went-wrong-with-prime": {
+  "total": 79,
+  "areas": {
+   "hook": 20,
+   "pace": 10,
+   "variety": 15,
+   "framing": 4,
+   "story": 10,
+   "entertainment": 8,
+   "comedy": 1,
+   "captions": 8,
+   "length": 0,
+   "sound": 10
+  }
+ },
+ "ICH-004_kylie-jenner-post-zero-sales": {
+  "total": 73,
+  "areas": {
+   "hook": 10,
+   "pace": 10,
+   "variety": 12,
+   "framing": 4,
+   "story": 8,
+   "entertainment": 4,
+   "comedy": 2,
+   "captions": 10,
+   "length": 10,
+   "sound": 10
+  }
+ },
+ "ICH-005_15k-meme-page-ads": {
+  "total": 68,
+  "areas": {
+   "hook": 10,
+   "pace": 7,
+   "variety": 7,
+   "framing": 4,
+   "story": 8,
+   "entertainment": 4,
+   "comedy": 2,
+   "captions": 10,
+   "length": 10,
+   "sound": 10
+  }
+ }
+}

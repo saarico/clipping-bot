@@ -1,0 +1,94 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 0
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Cap,Montserrat Black,76,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,0,0,0,0,100,100,1,0,1,7,3,5,70,70,0,1
+Style: Hook,Montserrat ExtraBold,62,&H00FFFFFF,&H00FFFFFF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,0,0,5,50,50,0,1
+Style: Label,Montserrat ExtraBold,44,&H00000000,&H00000000,&H0000D7FF,&H0000D7FF,0,0,0,0,100,100,2,0,3,12,0,8,80,80,0,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 2,0:00:00.00,0:01:09.73,Hook,,0,0,0,,{\an5\pos(540,124)\fs80}What really went\Nwrong with {\c&H00D7FF&}Prime?{\c&HFFFFFF&}
+Dialogue: 1,0:00:00.36,0:00:00.94,Cap,,0,0,0,,{\an5\pos(540,1480)}A {\c&H00D7FF&}$50{\c&HFFFFFF&} MILLION
+Dialogue: 1,0:00:01.40,0:00:01.84,Cap,,0,0,0,,{\an5\pos(540,1480)}BUSINESS IS
+Dialogue: 1,0:00:02.34,0:00:02.76,Cap,,0,0,0,,{\an5\pos(540,1480)}AWESOME.
+Dialogue: 1,0:00:02.76,0:00:03.84,Cap,,0,0,0,,{\an5\pos(540,1480)}IT PROBABLY ISN'T AWESOME
+Dialogue: 1,0:00:03.84,0:00:04.42,Cap,,0,0,0,,{\an5\pos(540,1480)}IF YOU WERE ONCE
+Dialogue: 1,0:00:04.42,0:00:05.16,Cap,,0,0,0,,{\an5\pos(540,1480)}DOING A {\c&H00D7FF&}BILLION.{\c&HFFFFFF&}
+Dialogue: 1,0:00:05.82,0:00:06.86,Cap,,0,0,0,,{\an5\pos(540,1080)}SPEAKING OF {\c&H00D7FF&}PRIME,{\c&HFFFFFF&}
+Dialogue: 1,0:00:06.86,0:00:07.36,Cap,,0,0,0,,{\an5\pos(540,1080)}WHAT DO YOU THINK
+Dialogue: 1,0:00:07.36,0:00:07.80,Cap,,0,0,0,,{\an5\pos(540,1080)}WENT
+Dialogue: 1,0:00:07.80,0:00:08.78,Cap,,0,0,0,,{\an5\pos(540,1080)}WRONG WITH {\c&H00D7FF&}PRIME?{\c&HFFFFFF&}
+Dialogue: 1,0:00:08.78,0:00:09.50,Cap,,0,0,0,,{\an5\pos(540,1080)}BECAUSE IT SEEMED LIKE
+Dialogue: 1,0:00:09.50,0:00:09.96,Cap,,0,0,0,,{\an5\pos(540,1490)}THEY
+Dialogue: 1,0:00:09.96,0:00:10.54,Cap,,0,0,0,,{\an5\pos(540,1490)}STARTED
+Dialogue: 1,0:00:10.54,0:00:11.12,Cap,,0,0,0,,{\an5\pos(540,1490)}SO
+Dialogue: 1,0:00:11.12,0:00:11.78,Cap,,0,0,0,,{\an5\pos(540,1490)}STRONG.
+Dialogue: 1,0:00:11.78,0:00:12.26,Cap,,0,0,0,,{\an5\pos(540,1490)}I KNOW.
+Dialogue: 1,0:00:12.26,0:00:13.74,Cap,,0,0,0,,{\an5\pos(540,1490)}AND THEN DEMAND STARTED
+Dialogue: 1,0:00:13.74,0:00:14.68,Cap,,0,0,0,,{\an5\pos(540,1490)}TO TAPER OFF, AND
+Dialogue: 1,0:00:14.68,0:00:15.22,Cap,,0,0,0,,{\an5\pos(540,1080)}THEN YOU HEAR THESE
+Dialogue: 1,0:00:15.22,0:00:16.12,Cap,,0,0,0,,{\an5\pos(540,1080)}STORIES OF LIKE, "OH,
+Dialogue: 1,0:00:16.12,0:00:16.68,Cap,,0,0,0,,{\an5\pos(540,1080)}THEY'RE BEING SOLD A
+Dialogue: 1,0:00:16.68,0:00:17.62,Cap,,0,0,0,,{\an5\pos(540,1080)}LITTLE LESS."
+Dialogue: 1,0:00:17.62,0:00:18.40,Cap,,0,0,0,,{\an5\pos(540,1500)}WE SPOKE WITH {\c&H00D7FF&}LOGAN{\c&HFFFFFF&}
+Dialogue: 1,0:00:18.40,0:00:19.16,Cap,,0,0,0,,{\an5\pos(540,1500)}{\c&H00D7FF&}PAUL{\c&HFFFFFF&} ABOUT THIS
+Dialogue: 1,0:00:19.16,0:00:19.90,Cap,,0,0,0,,{\an5\pos(540,1500)}AND HE SAID
+Dialogue: 1,0:00:19.90,0:00:20.56,Cap,,0,0,0,,{\an5\pos(540,1500)}THEY JUST SAW
+Dialogue: 1,0:00:20.56,0:00:21.56,Cap,,0,0,0,,{\an5\pos(540,1500)}SUCH A BIG INCREASE
+Dialogue: 1,0:00:22.08,0:00:22.64,Cap,,0,0,0,,{\an5\pos(540,1480)}SO QUICKLY
+Dialogue: 1,0:00:23.10,0:00:24.36,Cap,,0,0,0,,{\an5\pos(540,1080)}THAT THAT'S {\c&H00D7FF&}UNSUSTAINABLE,{\c&HFFFFFF&} AND
+Dialogue: 1,0:00:24.36,0:00:24.86,Cap,,0,0,0,,{\an5\pos(540,1080)}NOW THEY'VE
+Dialogue: 1,0:00:25.30,0:00:26.22,Cap,,0,0,0,,{\an5\pos(540,1080)}RETURNED TO, LIKE,
+Dialogue: 1,0:00:26.22,0:00:27.22,Cap,,0,0,0,,{\an5\pos(540,1080)}A BASELINE
+Dialogue: 1,0:00:27.22,0:00:27.68,Cap,,0,0,0,,{\an5\pos(540,1080)}THAT ANY
+Dialogue: 1,0:00:27.68,0:00:28.00,Cap,,0,0,0,,{\an5\pos(540,1080)}COMPANY WOULD BE HAPPY
+Dialogue: 1,0:00:28.00,0:00:28.48,Cap,,0,0,0,,{\an5\pos(540,1080)}BUT HE CLAIMS THEY'RE
+Dialogue: 1,0:00:28.48,0:00:29.46,Cap,,0,0,0,,{\an5\pos(540,1080)}STILL DOING WELL.
+Dialogue: 1,0:00:29.46,0:00:30.04,Cap,,0,0,0,,{\an5\pos(540,1480)}I GUESS WELL IS
+Dialogue: 1,0:00:30.04,0:00:30.46,Cap,,0,0,0,,{\an5\pos(540,1480)}RELATIVE,
+Dialogue: 1,0:00:31.02,0:00:31.24,Cap,,0,0,0,,{\an5\pos(540,1480)}RIGHT?
+Dialogue: 1,0:00:31.73,0:00:32.31,Cap,,0,0,0,,{\an5\pos(540,1480)}A {\c&H00D7FF&}$50{\c&HFFFFFF&} MILLION
+Dialogue: 1,0:00:32.77,0:00:33.21,Cap,,0,0,0,,{\an5\pos(540,1480)}BUSINESS IS
+Dialogue: 1,0:00:33.71,0:00:34.13,Cap,,0,0,0,,{\an5\pos(540,1480)}AWESOME.
+Dialogue: 1,0:00:34.13,0:00:35.21,Cap,,0,0,0,,{\an5\pos(540,1480)}IT PROBABLY ISN'T AWESOME
+Dialogue: 1,0:00:35.21,0:00:35.79,Cap,,0,0,0,,{\an5\pos(540,1480)}IF YOU WERE ONCE
+Dialogue: 1,0:00:35.79,0:00:36.53,Cap,,0,0,0,,{\an5\pos(540,1480)}DOING A {\c&H00D7FF&}BILLION.{\c&HFFFFFF&}
+Dialogue: 1,0:00:37.35,0:00:38.05,Cap,,0,0,0,,{\an5\pos(540,1480)}I DON'T THINK THAT
+Dialogue: 1,0:00:38.05,0:00:38.21,Cap,,0,0,0,,{\an5\pos(540,1480)}THEY
+Dialogue: 1,0:00:38.21,0:00:38.75,Cap,,0,0,0,,{\an5\pos(540,1480)}WILL STAND THE
+Dialogue: 1,0:00:38.75,0:00:39.37,Cap,,0,0,0,,{\an5\pos(540,1480)}{\c&H00D7FF&}TEST{\c&HFFFFFF&} OF {\c&H00D7FF&}TIME{\c&HFFFFFF&}
+Dialogue: 1,0:00:39.97,0:00:40.81,Cap,,0,0,0,,{\an5\pos(540,1480)}UNFORTUNATELY.
+Dialogue: 1,0:00:40.81,0:00:41.37,Cap,,0,0,0,,{\an5\pos(540,1480)}I DON'T WANT ANY
+Dialogue: 1,0:00:41.37,0:00:42.53,Cap,,0,0,0,,{\an5\pos(540,1480)}BUSINESS TO EVER GO,
+Dialogue: 1,0:00:42.53,0:00:42.79,Cap,,0,0,0,,{\an5\pos(540,1480)}TO
+Dialogue: 1,0:00:42.79,0:00:43.49,Cap,,0,0,0,,{\an5\pos(540,1480)}EVER GO UNDER.
+Dialogue: 1,0:00:43.95,0:00:44.59,Cap,,0,0,0,,{\an5\pos(540,1480)}THE
+Dialogue: 1,0:00:44.59,0:00:46.27,Cap,,0,0,0,,{\an5\pos(540,1480)}OWNERS OF {\c&H00D7FF&}PRIME,{\c&HFFFFFF&} IT'S
+Dialogue: 1,0:00:46.27,0:00:47.35,Cap,,0,0,0,,{\an5\pos(540,1480)}OWNED BY
+Dialogue: 1,0:00:47.35,0:00:48.47,Cap,,0,0,0,,{\an5\pos(540,1500)}A PORTFOLIO OF {\c&H00D7FF&}BRANDS{\c&HFFFFFF&}
+Dialogue: 1,0:00:48.47,0:00:49.39,Cap,,0,0,0,,{\an5\pos(540,1500)}CALLED {\c&H00D7FF&}CONGO{\c&HFFFFFF&} {\c&H00D7FF&}BRANDS.{\c&HFFFFFF&}
+Dialogue: 1,0:00:49.99,0:00:51.05,Cap,,0,0,0,,{\an5\pos(540,1480)}{\c&H00D7FF&}CONGO{\c&HFFFFFF&} {\c&H00D7FF&}BRANDS{\c&HFFFFFF&}
+Dialogue: 1,0:00:51.05,0:00:51.97,Cap,,0,0,0,,{\an5\pos(540,1480)}OWNED {\c&H00D7FF&}PRIME{\c&HFFFFFF&}
+Dialogue: 1,0:00:51.97,0:00:52.73,Cap,,0,0,0,,{\an5\pos(540,1480)}AND OWNED {\c&H00D7FF&}ALANI,{\c&HFFFFFF&}
+Dialogue: 1,0:00:53.31,0:00:54.51,Cap,,0,0,0,,{\an5\pos(540,1480)}{\c&H00D7FF&}ALANI{\c&HFFFFFF&} ENERGY DRINK.
+Dialogue: 1,0:00:54.51,0:00:55.69,Cap,,0,0,0,,{\an5\pos(540,1480)}THEY JUST SOLD
+Dialogue: 1,0:00:55.69,0:00:57.35,Cap,,0,0,0,,{\an5\pos(540,1480)}{\c&H00D7FF&}ALANI{\c&HFFFFFF&} TO {\c&H00D7FF&}CELSIUS,{\c&HFFFFFF&} WHO'S
+Dialogue: 1,0:00:57.35,0:00:57.99,Cap,,0,0,0,,{\an5\pos(540,1480)}OWNED BY, A LITTLE
+Dialogue: 1,0:00:57.99,0:00:58.77,Cap,,0,0,0,,{\an5\pos(540,1480)}BIT BY PEPSI,
+Dialogue: 1,0:00:59.23,0:01:00.41,Cap,,0,0,0,,{\an5\pos(540,1480)}AND I WOULD IMAGINE
+Dialogue: 1,0:01:00.41,0:01:01.89,Cap,,0,0,0,,{\an5\pos(540,1480)}THEY'RE HANDLING THAT {\c&H00D7FF&}$2{\c&HFFFFFF&}
+Dialogue: 1,0:01:01.89,0:01:02.51,Cap,,0,0,0,,{\an5\pos(540,1480)}{\c&H00D7FF&}BILLION{\c&HFFFFFF&}
+Dialogue: 1,0:01:02.51,0:01:03.83,Cap,,0,0,0,,{\an5\pos(540,1480)}TRANSACTION WITH {\c&H00D7FF&}ALANI{\c&HFFFFFF&} THAT
+Dialogue: 1,0:01:03.83,0:01:04.37,Cap,,0,0,0,,{\an5\pos(540,1480)}THEY JUST HAD
+Dialogue: 1,0:01:04.79,0:01:05.59,Cap,,0,0,0,,{\an5\pos(540,1480)}A LITTLE BIT MORE
+Dialogue: 1,0:01:05.59,0:01:06.47,Cap,,0,0,0,,{\an5\pos(540,1480)}THAN THIS BUSINESS THAT
+Dialogue: 1,0:01:06.47,0:01:07.19,Cap,,0,0,0,,{\an5\pos(540,1480)}THEY'RE NOT SURE IF
+Dialogue: 1,0:01:07.19,0:01:07.85,Cap,,0,0,0,,{\an5\pos(540,1480)}IT'S GONNA MAKE IT
+Dialogue: 1,0:01:07.85,0:01:08.45,Cap,,0,0,0,,{\an5\pos(540,1480)}OR NOT.
+Dialogue: 1,0:01:08.45,0:01:09.17,Cap,,0,0,0,,{\an5\pos(540,1480)}THAT WOULD BE MY
+Dialogue: 1,0:01:09.17,0:01:09.65,Cap,,0,0,0,,{\an5\pos(540,1480)}{\c&H00D7FF&}POV.{\c&HFFFFFF&}
