@@ -1003,7 +1003,7 @@ def publish(name, st, stage, kept, summary, t0):
     body = [f"SUMMARY  ({now()}, {(time.time() - t0) / 60:.0f} min)", "", f"{len(kept)} clip(s) in 1_CHECK. Max 3 per campaign.", ""]
     for k, c in enumerate(kept, 1):
         body += [f"{k:02d}  {c['hook']}  ({c['dur']} s, judge {c['judge']}, audience {c.get('audience', '?')})", f"    post on: {c.get('lane', '?').upper()} ({lanes.handle(c.get('lane', ''))})",
-                 f"    why: {c['why']}", "    captions:", *("    " + l for l in c["captions"].splitlines()[:40]), ""]
+                 f"    why: {c['why']}", *([f"    inspection: {c['inspection']}"] if c.get("inspection") else []), "    captions:", *("    " + l for l in c["captions"].splitlines()[:40]), ""]
     body += ["Run notes:", summary, "", "Approve: drag the mp4 to 3_APPROVED. Change: put a Word doc with your notes in 2_REDO."]
     drive.write_doc("SUMMARY", "\n".join(body), stage["1_CHECK"])
     st["clips"] = [{"mp4": f"{k:02d}_{Path(c['mp4']).name.split('_', 1)[-1]}", "hook": c["hook"], "judge": c["judge"], "audience": c.get("audience"), "dur": c["dur"],
