@@ -45,6 +45,16 @@ account's cookies anywhere). rico 2026-10-30: the home PC must play no part; eve
 When the bot notes "YOUTUBE COOKIES NEEDED OR EXPIRED" in a SUMMARY or state, repeat steps 2-3 (cookies last weeks
 to months). If Google locks the throwaway account, make another; nothing else is affected.
 
+## Episodes by PowerShell (the standing method since 2026-10-31)
+When the bot notes "YOUTUBE COOKIES NEEDED OR EXPIRED", do not fight the cookies. Run this once on the PC, with every
+link of the campaign at the end (one command, all videos):
+```
+yt-dlp -P "$HOME\Downloads" --windows-filenames -S "res:1080,vcodec:h264,ext:mp4:m4a" -f "bv*[height<=1080]+ba/b[height<=1080]/b" --merge-output-format mp4 -o "%(title)s [%(id)s].%(ext)s" <link 1> <link 2> ...
+```
+Then drag the mp4 files from Downloads into CLIPPING/0_START/<campaign>/. If Google Drive for Desktop is installed,
+put the synced folder path after -P instead of Downloads and skip the drag. The bot joins every file into one episode
+(name order) on its next run; "yt-dlp not found" -> `winget install yt-dlp` once.
+
 ## Posting (what is automatic, what is your click)
 - **YouTube Shorts / TikTok / Instagram**: each approved clip goes to ONE platform, chosen by what the clip is about
   (YouTube = business/money, Instagram = celebrity/drama, TikTok = entertainment; the SUMMARY shows it as "post on").

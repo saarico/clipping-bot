@@ -3,6 +3,18 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-10-31 (04:05 UTC): rule 43, episodes by PowerShell; Malcolm Todd run 1 blocked on YouTube
+- Run 41165260381 (03:40): brief read (7 rules, 5 links, TikTok + Instagram only), all 5 YouTube links refused
+  ("Sign in to confirm you're not a bot"): the YT_COOKIES cookies expired again. rico: "can you just download on
+  PowerShell or GitHub" -> "no, let's just continue with PowerShell; consistent correct paste format and no errors;
+  ensure all videos get downloaded when provided; ensure the md knows this".
+- RULES 43 + SETUP.md "Episodes by PowerShell": one yt-dlp command (all links, -P Downloads, --windows-filenames,
+  1080p h264), drag into 0_START; the bot joins every file (run.get_source / join_videos, unchanged). The first
+  command sent wrote into C:\Windows\system32 (admin PowerShell) and failed with Permission denied; -P fixes it.
+- brief.parse: platforms are read from the rules text with URLs removed (the YouTube asset links had added "youtube"
+  to a TikTok + Instagram brief); the Malcolm Todd state was patched before collect.
+- Options declined for now: residential proxy (YT_PROXY, pay per GB), yt-dlp token plugin test.
+
 ## 2026-10-31 (03:35 UTC): next campaign picked: Rolling Stone & Malcolm Todd Interviews (Instagram lane)
 - Board of 64 cards (scan 41164326405): every card over 55 is a game-launch ad, a brand ad, Mark Manson or a
   dedicated-account campaign. The campaign pages themselves are readable from the sandbox (pay per platform, budget,
