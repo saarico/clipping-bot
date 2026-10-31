@@ -34,9 +34,10 @@
   "2026-10-31 00:01 UTC  4 candidate(s) picked (the brief's clip ideas (15) + scorecard), 1 fallback(s); rendering on 4 machines with grade-and-retry",
   "2026-10-31 00:11 UTC  1 clip(s) uploaded to 1_CHECK",
   "2026-10-31 00:17 UTC  episode taken from the Drive cache (same source files as last time)",
-  "2026-10-31 00:30 UTC  4 candidate(s) picked (the brief's clip ideas (12) + scorecard), 0 fallback(s); rendering on 4 machines with grade-and-retry"
+  "2026-10-31 00:30 UTC  4 candidate(s) picked (the brief's clip ideas (12) + scorecard), 0 fallback(s); rendering on 4 machines with grade-and-retry",
+  "2026-10-31 00:39 UTC  2 clip(s) uploaded to 1_CHECK"
  ],
- "updated": "2026-10-31 00:30 UTC",
+ "updated": "2026-10-31 00:39 UTC",
  "critiques_seen": [],
  "watermark": "20vc podcast higgsfield black.png",
  "used_moments": [
@@ -64,6 +65,16 @@
    "start": 2124.42,
    "end": 2169.8,
    "hook": "I think it really stabilizes around like $500 ,000 a month very."
+  },
+  {
+   "start": 2013.82,
+   "end": 2045.58,
+   "hook": "We spend $4M a month on AI for 400 people."
+  },
+  {
+   "start": 1190.68,
+   "end": 1231.86,
+   "hook": "Google and OpenAI will kill the $20 AI plans."
   }
  ],
  "tried_moments": [
@@ -121,27 +132,53 @@
    "start": 1645.54,
    "end": 1687.4,
    "hook": "Our film prompts are 3,000 words long."
+  },
+  {
+   "start": 3018.56,
+   "end": 3049.99,
+   "hook": "My mom worked three jobs."
+  },
+  {
+   "start": 3612.63,
+   "end": 3644.77,
+   "hook": "One full day with my son in three months."
   }
  ],
  "clips": [
   {
    "mp4": "01_we-spend-4m-a-month-on-ai-fo.mp4",
    "hook": "We spend $4M a month on AI for 400 people.",
-   "judge": 79,
+   "judge": 88,
    "audience": 92,
-   "dur": 34.7,
+   "dur": 30.7,
    "caption": "",
    "lane": "youtube",
-   "text": "TITLE: We spend $4M a month on AI for 400 people. CAPTIONS AS SHOWN (one line per cut): LIKE ON AVERAGE AT HICKS FIELD, PERSON ON THE TEAM SPENDS OVER $10,000 A MONTH ON VARIOUS MODELS. AND REMEMBER LIKE WE'RE SPLIT ACROSS UNITED STATES AND ASIA. SO HOW MUCH DO YOU SPEND ON MODELS PER MONTH? SO INTERNAL USAGE OF MODELS A MONTH IS OVER 4 MILLION. WOW. HOW MANY PEOPLE DO YOU HAVE? WE HAVE CLOSE TO 400 PEOPLE AND JUST WANT TO MAKE SURE THAT THE MATH ADDS UP. YES, IT'S DEFINITELY OVER $10,000 PER PERSON. CARDS ON SCREEN (our own text cards, shown beside the captions): 3.0-5.6s $10,000 A MONTH 19.8-20.9s 4 MILLION 24.7-27.3s 400 PEOPLE",
+   "text": "TITLE: We spend $4M a month on AI for 400 people. CAPTIONS AS SHOWN (one line per cut): AND REMEMBER LIKE WE'RE SPLIT ACROSS UNITED STATES AND ASIA. SO HOW MUCH DO YOU SPEND ON MODELS PER MONTH? SO INTERNAL USAGE OF MODELS A MONTH IS OVER 4 MILLION. WOW. HOW MANY PEOPLE DO YOU HAVE? WE HAVE CLOSE TO 400 PEOPLE AND JUST WANT TO MAKE SURE THAT THE MATH ADDS UP. YES, IT'S DEFINITELY OVER $10,000 PER PERSON. HOW HAS THAT CHANGED OVER TIME? THAT'S THE BEST QUESTION OF THE WHOLE SHOW, BY THE WAY. CARDS ON SCREEN (our own text cards, shown beside the captions): 11.0-12.2s 4 MILLION 15.9-18.6s 400 PEOPLE 22.2-24.8s $10,000 PER PERSON",
    "parts": [
     [
-     2004.98,
-     2040.78
+     2013.82,
+     2045.58
+    ]
+   ]
+  },
+  {
+   "mp4": "02_google-and-openai-will-kill.mp4",
+   "hook": "Google and OpenAI will kill the $20 AI plans.",
+   "judge": 83,
+   "audience": 96,
+   "dur": 41.1,
+   "caption": "",
+   "lane": "youtube",
+   "text": "TITLE: Google and OpenAI will kill the $20 AI plans. CAPTIONS AS SHOWN (one line per cut): BUT FUNDAMENTALLY, I THINK THEY ARE GOING TO COMPLETELY DEMOLISH ALL THE PROSUMER SUBSCRIPTION MARKETS, WHICH IS $20 A MONTH SUBSCRIPTIONS. OH, SO YOU'RE SAYING THAT BECAUSE THEY PROVIDE A HORIZONTAL PRODUCT THAT'S VERY GOOD, YOU'RE JUST GOING TO NOT PAY FOR A LOT OF THE VERTICALIZED PRODUCTS THAT YOU SPEND $20, $30 A MONTH FOR. YEAH, I DO BELIEVE THAT THAT'S ESSENTIALLY WHAT'S GOING TO HAPPEN OVER THE TIME. I KNOW THIS IS A VERY CONTRARIAN BET, BUT AT LEAST WE CAN SEE SOME OF THAT. WE'RE SEEING IT CANNIBALIZE CANVA'S GROWTH, IF YOU'RE HONEST. A LOT OF THE LOW HANGING FRUIT ON THE CONSUMER DESIGN SIDE THAT CANVA USED TO SERVE CAN NOW BE DONE IN OPENAI IN PARTICULAR. CARDS ON SCREEN (our own text cards, shown beside the captions): 8.9-11.5s $20 A MONTH 20.6-23.2s $20",
+   "parts": [
+    [
+     1190.68,
+     1231.86
     ]
    ]
   }
  ],
- "needs_redo": true,
+ "needs_redo": false,
  "empty_runs": 0,
  "empty_told": false,
  "brief": {
