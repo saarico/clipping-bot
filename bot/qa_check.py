@@ -345,11 +345,18 @@ def check_faces(rep, mp4, events):
     # the hook + who-line sit at the top for the first seconds: a face must stay below them
     hook = [e for e in events if e["style"] in ("Hook", "Tag")]
     hook_end = max((e["end"] for e in hook), default=0)
-    hook_bottom = 0
+    # the hook + who-line block: top-anchored (\an8) under the watermark, or bottom-anchored (\an2) above the captions
+    # when render_clip moved it off a high-framed face (2026-10-31); a face must stay out of that zone while it shows
+    z_top, z_bot = 10 ** 6, 0
     for e in hook:
         m = re.search(r"\\pos\(\d+,(\d+)\)", e["text"]); fs = re.search(r"\\fs(\d+)", e["text"])
         if m:
-            hook_bottom = max(hook_bottom, int(m.group(1)) + (e["text"].count("\\N") + 1) * int(int(fs.group(1)) * 1.22 if fs else 70))
+            h = (e["text"].count("\\N") + 1) * int(int(fs.group(1)) * 1.22 if fs else 70)
+            y0 = int(m.group(1))
+            top, bot = (y0 - h, y0) if "\\an2" in e["text"] else (y0, y0 + h)
+            z_top, z_bot = min(z_top, top), max(z_bot, bot)
+    if not hook:
+        z_top = z_bot = 0
     in_band, on_caption = [], []
     for i, f in enumerate(frames(mp4)):
         t = i / 2
@@ -360,7 +367,7 @@ def check_faces(rep, mp4, events):
             w = h = int(sz * pw * 2)
             x, y = int(cx * pw * 2 - w / 2), int(cy * ph * 2 - h / 2)           # back to 1080x1920
             y += TOP
-            if y < 0.1 * h or (t < hook_end and w >= 220 and y + h * 0.2 < hook_bottom):   # head cut off, or under the hook text
+            if y < 0.1 * h or (t < hook_end and w >= 220 and y + h * 0.2 < z_bot and y + h * 0.8 > z_top):   # head cut off, or under the hook text
                 in_band.append(t)
             cap = next((e for e in caps if e["start"] <= t < e["end"]), None)
             if cap and w >= 220:                                # the speaker's face, not a logo or a far-off head
@@ -456,8 +463,11 @@ def check_nobody(rep, mp4, details):
 
 def check_picture(rep, mp4, details):
     # freezedetect noise 0.001 (was 0.003): a static wide two-shot, shown whole on a blurred background,
-    # moves less than 0.3% per frame and was flagged frozen (2026-10-26); a cloned frame still trips 0.001
-    log = ff_log(["-i", str(mp4), "-vf", f"crop={W}:{H - TOP}:0:{TOP},blackdetect=d=0.2:pix_th=0.06,freezedetect=n=0.001:d=1.5", "-an"])
+    # moves less than 0.3% per frame and was flagged frozen (2026-10-26); a cloned frame still trips 0.001.
+    # Talking shows (still camera since rule 39) sit at 0.003 again: a listener holding still in a locked-off
+    # interview shot read as "frozen picture" and cost a clip (Malcolm Todd c03, 2026-10-31)
+    noise = "0.003" if profiles.profile(details.get("spec", {}).get("style"))["cards"] else "0.001"
+    log = ff_log(["-i", str(mp4), "-vf", f"crop={W}:{H - TOP}:0:{TOP},blackdetect=d=0.2:pix_th=0.06,freezedetect=n={noise}:d=1.5", "-an"])
     black = re.findall(r"black_start:([\d.]+) black_end:([\d.]+)", log)
     frozen = re.findall(r"freeze_start: ([\d.]+)", log)
     short = [s for s in details["shots"] if s["to"] - s["from"] < 0.5]
@@ -477,7 +487,7 @@ def check_picture(rep, mp4, details):
 
     # rico's "lag at the start": a frozen frame or a stray shot in the first 2 seconds
     dur = float(probe(mp4)["format"]["duration"])
-    log = ff_log(["-t", "2", "-i", str(mp4), "-vf", f"crop={W}:{H - TOP}:0:{TOP},freezedetect=n=0.001:d=0.2", "-an"])
+    log = ff_log(["-t", "2", "-i", str(mp4), "-vf", f"crop={W}:{H - TOP}:0:{TOP},freezedetect=n={noise}:d=0.2", "-an"])
     stuck = re.findall(r"freeze_start: ([\d.]+)", log)
     stray = [s for s in details["shots"] if s["to"] - s["from"] < 0.6 and (s["from"] < 1.5 or s["to"] > dur - 0.3)]
     bad = (["frozen picture at " + ", ".join(f"{float(a):.2f}s" for a in stuck)] if stuck else []) + \
