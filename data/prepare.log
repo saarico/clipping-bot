@@ -1,4 +1,14 @@
-[07:44:41] CLIPPING root CLIPPING
-[07:46:39] downloading 5 of 5 videos from 0_START and joining them (0 converted before)
-[08:04:46] part 00: 00_Don Toliver & Malcolm Todd ｜ Musicians on Musicians [Up93 1920x1080 1904s (crop=1920:1072:0:4)
-[08:42:18] part 01: 01_I’m doing that again with Malcolm Todd [lhjf0hZvReI].mp4 1920x1080 3532s (crop=1920:1072:0:4)
+[09:47:28] CLIPPING root CLIPPING
+[09:47:46] 3 of 5 parts are converting on the transcribe machines; waiting
+[10:28:41] waited 41 min: 5 of 5 parts converted
+[10:29:48] downloading 5 of 5 videos from 0_START and joining them (5 converted before)
+[10:29:49] part 00: 00_ready.mp4 already converted 1904s
+[10:29:50] part 01: 01_ready.mp4 already converted 3532s
+[10:29:50] part 02: 02_ready.mp4 already converted 2189s
+[10:29:50] part 03: 03_ready.mp4 already converted 2904s
+[10:29:50] part 04: 04_ready.mp4 already converted 3096s
+[10:35:36] episode saved to the Drive cache
+[10:36:26] the transcript is from another episode (files added or changed): transcribing again
+[10:36:26] episode built this run (3.8 h, cached): the next run transcribes it on 4 machines
+[10:36:28] follow-up run dispatched
+[10:36:28] 0 render job(s)
