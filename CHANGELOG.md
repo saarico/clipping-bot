@@ -3,6 +3,15 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-10-31 (03:05 UTC): run 13 under rule 42: 2 clips in 1_CHECK
+- Run 41161111496 (02:42-02:59): "Top creatives could spend $100,000 a month on AI" (50 s, judge 89, audience 83) and
+  "We spend $4M a month on AI for 400 people" (35 s, judge 85, audience 92) passed every check with the new look
+  (framing 10 on both; run 12's "Somebody in frame" failures are gone). "Open models" dropped again on a stray cut at
+  0.13 s, "90 minutes of film" on a clipped word at its start; "I thought AI would replace legal and support" did not
+  get a render lane this time (4 lanes, 6 pitches). Both clips YouTube @fedsaa.
+- captions.txt (build_clip_folder) no longer lists the who-line as spoken words (it was prefixed to the first caption
+  line in the SUMMARY, which the judge reads).
+
 ## 2026-10-31 (02:45 UTC): run 12 rendered 0 clips: the QA face-size line, not the look
 - Run 41159114829 (02:15-02:37): all 4 renders failed "Somebody in frame | no face for ..." on the stretches where the
   show is on its wide two-shot. Under rule 42 that shot is no longer split but cropped on the talker and punched in

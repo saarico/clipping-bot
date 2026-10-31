@@ -26,7 +26,7 @@ for l in (folder / "captions.ass").read_text().splitlines():
     if not l.startswith("Dialogue:"): continue
     p = l.split(",", 9)
     if p[3] not in ("Default", "Cap", "Caption", "Captions") and "Title" in p[3]: continue
-    if p[3] == "Label": continue
+    if p[3] in ("Label", "Tag"): continue   # the who-line under the hook is not spoken
     txt = re.sub(r"\{[^}]*\}", "", p[9]).replace("\\N", " ").strip()
     if p[3] == "Callout":          # our own text card: listed separately, never inside the spoken line
         cards.append((ts(p[1]), ts(p[2]), txt)); continue
