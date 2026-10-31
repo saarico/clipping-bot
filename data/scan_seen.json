@@ -85,5 +85,19 @@
   "lane": "B",
   "offered": "2026-10-31T03:30+00:00",
   "by": "reviewer (rico killed Higgsfield 03:25 UTC and asked for the next campaign; the only real-content card passing every stop)"
+ },
+ "DJ Drama - Business of HipHop": {
+  "link": "https://contentrewards.com/c/campaigns/53596900-58fc-4441-8719-43b737ca9762",
+  "score": 38,
+  "lane": "C",
+  "offered": "2026-10-31T16:39+00:00",
+  "note": "offered by hand after Rolling Stone was dropped: only real-content podcast on the board"
+ },
+ "SEGA - Virtua Fighter Crossroads Lionel Rafale": {
+  "link": "https://contentrewards.com/c/campaigns/8b79c473-d295-4901-8aee-e43c7ad03663",
+  "score": 71,
+  "lane": "C",
+  "offered": "2026-10-31T16:39+00:00",
+  "note": "NOT offered: game trailer / cinematics with no person in it (rico's no-game-promo rule); the game_promo gate missed it"
  }
 }
