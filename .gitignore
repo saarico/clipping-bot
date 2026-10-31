@@ -9,3 +9,5 @@ client_secret.json
 *.jpg
 /campaigns/*/critiques/*.docx
 /campaigns/test-manson/
+data/fetch/*.mp4
+data/fetch/*.jpg

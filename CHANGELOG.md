@@ -446,7 +446,7 @@ RULES.md; the acceptance gates are scorecards/acceptance.md.
   since the rebuild.
 
 ## 2026-10-29 (01:01 UTC): rico's run-6 verdict → full quality inspection
-- rico: "still not centering correctly", "the transitions are ass", "the audio sounds weird", "the faces are not in
+- rico: "still not centering correctly", "the transitions are [bad]", "the audio sounds weird", "the faces are not in
   frame", "some of the internal text in the show is cut off", "have a full quality rating and acceptance criteria",
   "heavy increase in judgement", "better scoring cards", "better rejecting meter", and asked about a secondary app.
 - Bot (commit ea6a508):
@@ -470,7 +470,7 @@ RULES.md; the acceptance gates are scorecards/acceptance.md.
 
 ## 2026-10-28 (21:52 UTC): rico's run-4 verdict → grading and re-edit loop
 - rico: "the screen is not focusing on actors", "the text font and shape isn't nice or good size", "the clips are
-  fucking boring", "the screen keeps switching between 16:9 and 9:16 which is horrible and bad production", "have a
+  [very] boring", "the screen keeps switching between 16:9 and 9:16 which is horrible and bad production", "have a
   bot grading the outcome of this clip and throw it back to re-edit or choose a better clip", "entertainment and
   amazing high tier quality is the most important".
 - Rules: ONE 9:16 look per clip (the whole-frame "fit"/letterbox layouts are banned mid-clip, qa_check "One 9:16 look"
