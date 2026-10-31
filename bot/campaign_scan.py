@@ -159,6 +159,10 @@ def is_ad(c):
     return ad >= 2 and ad > show
 
 
+# board decision 2026-10-31 (rico: "approve 1 - 3"): real people only; never gambling or crypto, whatever the pay
+RISKY = r"\b(casino|casinos|gambling|gamble|betting|bets?|sportsbook|slot machines?|roulette|blackjack|poker|stake\.com|stake\.us|roobet|rollbit|shuffle\.com|case opening|crypto|cryptocurrency|bitcoin|btc|ethereum|solana|memecoin|meme coin|token|tokens|nft|nfts|web3|airdrop|defi|blockchain|presale)\b"
+
+
 PERSON = r"\b(streamer|streamers|twitch|kick|youtuber|youtubers|creator|creators|podcast|podcasts|show|host|reacts?|reaction|vlog|vlogs|clipping army|his|her|their|he|she|comedian|caster|commentary|facecam|irl)\b"
 GAME = r"\b(gaming|video ?game|roblox|minecraft|fortnite|call of duty|cod|modern warfare|warzone|gta|valorant|esports|multiplayer|dlc|gameplay|campaign moments)\b"
 
@@ -230,6 +234,11 @@ def auto_score(c):
         stops.append("rico said never")
     if is_ad(c):
         stops.append("brand ad, not a show (rico: clips must grow the channels)")
+    blob = " ".join(str(c.get(k, "")) for k in ("name", "org", "category", "description")).lower()
+    if re.search(RISKY, blob) or str(c.get("category", "")).lower() == "crypto":   # board decision 2026-10-31
+        stops.append("gambling or crypto (board filter 2026-10-31: platform-ban risk to our accounts)")
+    if c.get("rate") is not None and c["rate"] < 0.5:
+        stops.append("pays under $0.50 per 1k views (board filter 2026-10-31)")
     if game_promo(c):
         stops.append("game footage with no person in it = a game-launch ad (rico 2026-10-29: the page would look like it just posts ads)")
     if re.search(DEDICATED, f"{name} {c.get('org', '')} {c.get('description', '')}", re.I) and not re.search(r"no fan page needed", str(c.get("description", "")), re.I):

@@ -20,7 +20,8 @@ LANE_GENRES = {
     "instagram": ("gossip", "romance", "drama"),
     "tiktok": ("comedy", "action", "horror", "sports", "gaming", "music"),
 }
-BASELINE = {"podcast": "youtube", "": "youtube", "cinematic": "tiktok", "stream": "tiktok", "performance": "tiktok"}
+BASELINE = {"podcast": "youtube", "": "youtube", "cinematic": "tiktok", "stream": "tiktok", "performance": "tiktok",
+            "talker": "youtube", "serious": "youtube", "edit": "tiktok"}   # board plan 2026-10-31: three more kinds of content
 MONEY = r"\$\s?\d|\b\d+ ?(k|m|million|billion|trillion|percent|%)\b|\b(dollar|dollars|salary|revenue|profit|invest\w*|market|markets|stock|stocks|crypto|bitcoin|business|company|startup|ceo|founder|money|rich|billionaire|millionaire)\b"
 CELEB = r"\b(kardashian|jenner|drake|taylor swift|kanye|beyonc|rihanna|bieber|tom cruise|cruise|celebrit\w*|famous|dating|boyfriend|girlfriend|ex\b|breakup|cheat\w*|divorce|wedding|pregnan\w*|drama|gossip|exposed|scandal)\b"
 

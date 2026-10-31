@@ -26,6 +26,7 @@ sys.path.insert(0, str(HERE))
 import brief as briefer  # noqa: E402
 import drive  # noqa: E402
 import pipeline  # noqa: E402
+import studio  # noqa: E402
 import post_kit  # noqa: E402
 import lanes  # noqa: E402
 
@@ -854,7 +855,7 @@ def do_campaign(name, cpath, phase="all"):
         if (WORK / name / "gfx.json").exists():
             shutil.copy(WORK / name / "gfx.json", d / "gfx.json")
         (d / "notes.json").write_text(json.dumps(notes))
-        slots = min(MATRIX_MAX, len(specs))
+        slots = min(MATRIX_MAX + studio.clip_cap(st) - 3, len(specs))   # one spare machine over the campaign's clip cap
         jobs = [{"campaign": name, "cpath": cpath, "spec": sp, "fallbacks": specs[slots:][i::slots] if slots else [], "origin": origin, "t0": t0}
                 for i, sp in enumerate(specs[:slots])]
         note(st, f"{len(jobs)} candidate(s) picked ({origin}), {len(specs) - len(jobs)} fallback(s); rendering on {len(jobs)} machines with grade-and-retry")
@@ -965,7 +966,10 @@ def collect():
                     notes.append("TRY   " + t)
                 results.append(res)
             results.sort(key=lambda r: (-int(bool(r.get("ok"))), -(r.get("judge") or 0)))   # best clips first
-            kept, notes = pipeline.decide(results, work, [], notes, allowed=st["brief"].get("platforms"))
+            cap = studio.clip_cap(st)   # board decision 2026-10-31: 3 clips, up to 6 once rico approved 2+ of this campaign
+            if cap > pipeline.planner.MAX_CLIPS:
+                notes.append(f"clip cap {cap} this run: rico approved {len(st.get('kits') or {})} clip(s) of this campaign")
+            kept, notes = pipeline.decide(results, work, [], notes, allowed=st["brief"].get("platforms"), cap=cap)
             mins = [r.get("minutes", 0) for r in results if r.get("minutes")]
             notes.append(f"{len(kept)} clip(s) kept of {len(results)} rendered on {len(results)} machines, "
                          f"longest render {max(mins) if mins else 0:.1f} min")

@@ -47,3 +47,12 @@ hook 20 · pace 10 · variety 15 (a montage of sub-second shots loses 6) · fram
 
 ## What the inspection cannot see
 Whether the moment is actually funny or interesting to a stranger. That is the entertainment scorecard (`scorecards/entertainment.md`) at pick time and rico's own eye at review time. When rico rejects a clip, the fix goes into one of these tables, so the same mistake is caught by the machine next time.
+
+## Text & layout gate (board-approved 2026-10-31, bot/studio.layout_check, shown in judge_report.md)
+| Gate | Measured how | Pass |
+|---|---|---|
+| One caption spot | caption heights in captions.ass, weighted by time on screen | away from the main spot under 15% of the time |
+| Caption zone | the main caption height | between y 1190 and 1536 of 1920 (clear of the platform's caption and buttons) |
+| Hook fades | end time of the hook and who-line overlay | gone by 6.5 s |
+| Like/share rail | any text centred at x 930+ between 45% and 90% of the height | none |
+A failure holds the judge at 79 and the clip is never uploaded as UNDER THE BAR. The judge is weighted per kind of content (scorecards/judgment.md).

@@ -108,12 +108,16 @@ def one_clip(spec, work, source, words, tag):
         qa = "FAIL"
     elif aud["total"] < engage.BAR:
         fails = fails + [f"| Audience read | UNDER | {aud['total']} under {engage.BAR} |"]
-    jn = {}
+    jn, layout_fail = {}, False
     try:
         for line in (folder / "judge_report.md").read_text().splitlines():
-            m = re.match(r"\| (\w+) \| (\d+)/(\d+) \| (.*) \|", line)
+            # | area | measured/scale | weight | points | notes |  (weights per kind of content since 2026-10-31)
+            m = re.match(r"\| (\w+) \| (\d+)/(\d+) \| [^|]* \| [^|]* \| (.*) \|", line)
             if m and int(m.group(2)) < int(m.group(3)) * 0.6 and m.group(4).strip():
                 jn[m.group(1)] = m.group(4).strip()
+            if line.startswith("| layout | FAIL"):
+                layout_fail = True
+                jn["layout"] = line.split("|")[4].strip()
     except Exception:
         pass
     dur = sum(b - a for a, b in json.loads((folder / "cut_details.json").read_text()).get("cuts", [[0, 0]]))
@@ -126,7 +130,7 @@ def one_clip(spec, work, source, words, tag):
     res.update({"folder": folder, "mp4": folder / f"{folder.name}.mp4", "thumb": str(thumb) if thumb and thumb.exists() else "",
                 "qa": qa, "fails": fails, "judge": js, "dur": round(dur, 1), "caption": spec.get("caption", ""),
                 "ok": qa == "PASS" and js >= JUDGE_BAR and aud["total"] >= engage.BAR,
-                "near": qa == "PASS" and js >= NEAR_BAR and aud["total"] >= engage.BAR - 5,
+                "near": qa == "PASS" and js >= NEAR_BAR and aud["total"] >= engage.BAR - 5 and not layout_fail,
                 "audience": aud["total"], "audience_fix": aud.get("fix", {}), "judge_notes": jn, "areas": areas,
                 "captions": (folder / "captions.txt").read_text() if (folder / "captions.txt").exists() else "",
                 "minutes": round((time.time() - t0) / 60, 1)})
@@ -151,6 +155,14 @@ def prepare(work, source, brief, words=None, campaign="campaign", log=print, use
     (work / "renders").mkdir(exist_ok=True)
     notes = [f"moments from: {origin}", f"style: {brief.get('style') or 'podcast'}" + (f", look: {json.dumps(brief['look'])}" if brief.get("look") else ""),
              f"transcript + graphics ready after {(time.time() - t0) / 60:.1f} min"]
+    # the campaign gate's listen (board decision 2026-10-31: skip hard-to-listen speakers): reported on every run so
+    # rico sees it in the SUMMARY; it does not stop a campaign he already joined
+    import studio
+    try:
+        ok, why = studio.speaker_check(json.loads(Path(words).read_text()))
+        notes.append(("speaker: easy to follow, " if ok else "SPEAKER WARNING: hard to listen to: ") + why)
+    except Exception as e:
+        notes.append(f"speaker check skipped ({type(e).__name__})")
     # the pitch (rico 2026-10-29): read every candidate's words against the campaign's style before spending a render on it
     import pitch
     specs, pnotes = pitch.gate(specs, json.loads(Path(words).read_text()), brief, log=log, want=12)
@@ -294,19 +306,21 @@ def try_until(specs, work, source, words, tag, budget=3, log=print):
     return best, results
 
 
-def decide(results, work, kept=None, notes=None, allowed=None):
-    """Keep the first MAX_CLIPS results that passed QA and the judge; move the rest to work/dropped."""
+def decide(results, work, kept=None, notes=None, allowed=None, cap=None):
+    """Keep the first `cap` results that passed QA and the judge (planner.MAX_CLIPS = 3 by default; up to 6 on a campaign
+    rico already approved 2+ clips of: studio.clip_cap, board decision 2026-10-31); move the rest to work/dropped."""
     kept, notes = kept if kept is not None else [], notes if notes is not None else []
+    cap = cap or planner.MAX_CLIPS
     for res in results:
         if res.get("error"):
             notes.append(f"render failed: {res['hook']} {res['error']}")
             continue
         line = f"{Path(res['folder']).name}: {res['dur']:.0f}s  qa {res['qa']}  judge {res['judge']} ({res.get('areas', '')})  {res.get('minutes', '?')} min  hook: {res['hook']}  [{res['why']}]"
-        if res["ok"] and len(kept) < planner.MAX_CLIPS:
+        if res["ok"] and len(kept) < cap:
             kept.append({"folder": str(res["folder"]), "mp4": str(res["mp4"]), "thumb": res.get("thumb", ""), "hook": res["hook"], "parts": res["parts"], "judge": res["judge"], "audience": res.get("audience"),
                          "dur": res["dur"], "why": res["why"], "captions": res["captions"], "caption": res.get("caption", "")})
             notes.append("KEPT  " + line)
-        elif res.get("near") and not any(r.get("ok") for r in results) and len(kept) < planner.MAX_CLIPS:
+        elif res.get("near") and not any(r.get("ok") for r in results) and len(kept) < cap:
             # every hard production gate passed but the entertainment judge stayed under the bar, and nothing
             # in this run reached it: hand rico the best of them, clearly marked, rather than an empty folder
             res["why"] = f"UNDER THE BAR (judge {res['judge']} < {JUDGE_BAR}, every production gate passed) | " + res["why"]
@@ -335,7 +349,7 @@ def run(work, source, brief, words=None, campaign="campaign", log=print, used=()
     specs, origin, words, notes = prepare(work, source, brief, words, campaign, log, used, plan_dir)
     work = Path(work)
     kept = []
-    slots = min(planner.MAX_CLIPS, len(specs))
+    slots = min(planner.MAX_CLIPS, len(specs))   # local runs keep the default cap
     lanes = [specs[i::slots] for i in range(slots)]   # each slot: its moment, then the fallbacks it may fall through to
     with ThreadPoolExecutor(max_workers=max(1, min(PAR, slots))) as ex:
         outs = list(ex.map(lambda it: try_until(it[1], work, source, words, f"c{it[0] + 1:02d}", log=log), enumerate(lanes)))
