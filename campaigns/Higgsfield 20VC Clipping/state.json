@@ -1,8 +1,6 @@
 {
  "name": "Higgsfield 20VC Clipping",
  "log": [
-  "2026-10-27 20:03 UTC  waiting for the requirements file in 0_START",
-  "2026-10-27 23:46 UTC  waiting for the requirements file in 0_START",
   "2026-10-28 05:31 UTC  waiting for the requirements file in 0_START",
   "2026-10-28 16:36 UTC  waiting for the requirements file in 0_START",
   "2026-10-29 00:01 UTC  waiting for the requirements file in 0_START",
@@ -40,9 +38,11 @@
   "2026-10-31 01:55 UTC  3 clip(s) uploaded to 1_CHECK",
   "2026-10-31 02:17 UTC  episode taken from the Drive cache (same source files as last time)",
   "2026-10-31 02:26 UTC  4 candidate(s) picked (the brief's clip ideas (19) + scorecard), 2 fallback(s); rendering on 4 machines with grade-and-retry",
-  "2026-10-31 02:37 UTC  0 clip(s) uploaded to 1_CHECK"
+  "2026-10-31 02:37 UTC  0 clip(s) uploaded to 1_CHECK",
+  "2026-10-31 02:42 UTC  episode taken from the Drive cache (same source files as last time)",
+  "2026-10-31 02:51 UTC  4 candidate(s) picked (the brief's clip ideas (19) + scorecard), 2 fallback(s); rendering on 4 machines with grade-and-retry"
  ],
- "updated": "2026-10-31 02:37 UTC",
+ "updated": "2026-10-31 02:51 UTC",
  "critiques_seen": [],
  "watermark": "20vc podcast higgsfield black.png",
  "used_moments": [],
