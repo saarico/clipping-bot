@@ -37,7 +37,7 @@ Local test of the cutting line without Drive: `python3 bot/pipeline.py <work dir
 
 ## Grading profiles (per kind of footage)
 
-`bot/profiles.py`: podcast, cinematic (trailers, scene clips), stream (gaming, live reactions), performance (music, concerts). The profile decides which QA checks are hard FAILs, the pace and length targets, and what counts as a strong moment (stakes words for podcasts, short quotable lines for trailers, hype words and loud seconds for streams). Set it in `plan.json` `brief_overrides.style`; otherwise the bot reads the brief, then the footage.
+`bot/profiles.py`: podcast, talker (one person to camera), cinematic (trailers, scene clips), stream (gaming, live reactions), performance (music, concerts), serious (news, documentary), edit (montages). Each profile also sets the judge's weights (board-approved 2026-10-31); `python3 bot/studio.py` prints the 15 studio roles and the 9-checkpoint inspection line. The profile decides which QA checks are hard FAILs, the pace and length targets, and what counts as a strong moment (stakes words for podcasts, short quotable lines for trailers, hype words and loud seconds for streams). Set it in `plan.json` `brief_overrides.style`; otherwise the bot reads the brief, then the footage.
 
 ## Brand mode (silent product footage, parked: no ad campaigns)
 

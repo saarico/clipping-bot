@@ -16,6 +16,16 @@ Profiles:
                captions can lag the chaos, 15-45 s
   performance  concerts, music, live performance: audio energy is the story, lyrics are not graded
                for spelling or repeats, 15-45 s
+  talker       one person talking to camera (YouTuber, TikToker, vlog, commentary, rant): the boldest claim
+               first, claim -> proof -> lesson, 20-40 s (board deck 2026-10-31)
+  serious      news, documentary, explainers, history, true crime, lectures: the fact that shocks, then why and
+               what it means; calm, no SFX, story weighs most, 30-60 s (board deck 2026-10-31)
+  edit         fan edits, montages, compilations: the strongest picture in frame 1, cut on the beat, no
+               spoken story needed, 10-25 s (board deck 2026-10-31)
+
+Board-approved 2026-10-31 (rico: "approve 1 - 3"): every profile also carries its own judge WEIGHTS (how the
+100 points of bot/judge_clip.py are split for this kind of content) and the minimum-per-area rule (AREA_MIN):
+a clip that scores under half of an area that carries 10+ points is under the bar, whatever its total.
 
 The profile comes from the reviewer (plan.json brief_overrides "style"), else from the brief text,
 else from the footage itself (average shot length, words per second).
@@ -40,13 +50,47 @@ PROFILES = {
                         soft_qa={"Speaker centred", "Somebody in frame", "Smooth transitions", "Clean first 2 seconds", "Audio",
                                  "Captions cover the whole clip", "Ends on a finished sentence", "Nothing said twice",
                                  "Caption spelling", "Caption text reads clean"}),   # concerts: crowd shots are the material
+    # board deck 2026-10-31: three more kinds of content. The keys are the same ones the rest of the bot reads
+    # (clarity=True = a talking show for the opener rule and the face probe; cards=True = still camera + number cards)
+    "talker": dict(wps=(2.4, 4.0), pause_penalty=True, filler=True, clarity=True, back_refs=True,
+                   length=(20, 40), ok_len=(15, 50), energy=0, quotes=2, reactions=0, cards=True,
+                   soft_qa=set()),
+    "serious": dict(wps=(2.0, 3.4), pause_penalty=True, filler=True, clarity=True, back_refs=True,
+                    length=(30, 60), ok_len=(25, 70), energy=0, quotes=0, reactions=0, cards=True,
+                    soft_qa=set()),
+    "edit": dict(wps=(0.0, 9.0), pause_penalty=False, filler=False, clarity=False, back_refs=False,
+                 length=(10, 25), ok_len=(8, 35), energy=12, quotes=4, reactions=0, cards=False,
+                 soft_qa={"Speaker centred", "Smooth transitions", "Clean first 2 seconds", "Captions cover the whole clip",
+                          "Ends on a finished sentence", "Nothing said twice", "Caption spelling", "Caption text reads clean"}),
 }
+
+# How the judge's 100 points are split per kind of content (board deck slide "Scorecards shift weight to what matters
+# for each type", approved 2026-10-31). Areas are bot/judge_clip.py's: each area is measured on its own scale and
+# then weighted here. Deck area -> judge areas: Hook = hook; Story & payoff = story; Entertainment = entertainment +
+# comedy; Visual & framing = framing + variety; Pace = pace; Captions = captions; Sound = sound; Brief fit = length.
+WEIGHTS = {
+    "podcast":     dict(hook=20, story=20, entertainment=10, comedy=5, framing=5, variety=5, pace=10, captions=10, sound=5, length=10),
+    "talker":      dict(hook=25, story=20, entertainment=10, comedy=5, framing=5, variety=5, pace=10, captions=10, sound=5, length=5),
+    "stream":      dict(hook=20, story=10, entertainment=15, comedy=5, framing=8, variety=7, pace=15, captions=5, sound=10, length=5),
+    "cinematic":   dict(hook=20, story=15, entertainment=10, comedy=5, framing=10, variety=10, pace=10, captions=5, sound=10, length=5),
+    "performance": dict(hook=15, story=10, entertainment=10, comedy=5, framing=12, variety=13, pace=15, captions=5, sound=10, length=5),
+    "serious":     dict(hook=20, story=25, entertainment=5, comedy=0, framing=5, variety=5, pace=10, captions=15, sound=5, length=10),
+    "edit":        dict(hook=20, story=10, entertainment=10, comedy=5, framing=10, variety=15, pace=15, captions=0, sound=10, length=5),
+}
+AREA_MIN = (10, 0.5)   # an area weighted 10+ points must score at least half of them, or the clip is under the bar
+
+
+def weights(name):
+    return WEIGHTS.get(name or "", WEIGHTS["podcast"])
 
 TEXT_HINTS = {
     "cinematic": r"\b(trailer|trailers|tv spots?|movie|film|in theaters|in cinemas|scene clips?|official clips?|warner|universal|paramount|disney|a24|netflix original|premiere|box office)\b",
     "stream": r"\b(stream|streams|streamer|streamers|twitch|kick|gameplay|gaming|roblox|minecraft|fortnite|warzone|vod|vods|live clipping|react|reacts|reaction)\b",
     "performance": r"\b(concert|concerts|performance|performances|live show|tour|festival|setlist|on stage|acoustic|music video|song|songs|single|album)\b",
     "podcast": r"\b(podcast|podcasts|episode|episodes|interview|interviews|talk show|conversation|guest|host)\b",
+    "talker": r"\b(vlogs?|youtubers?|tiktokers?|commentary|commentator|rants?|storytimes?|monologues?|talking heads?|to camera|solo videos?)\b",
+    "serious": r"\b(news|documentar(?:y|ies)|investigations?|true crime|history|historical|explainers?|science|lectures?|ted talks?|keynotes?|journalism|current events)\b",
+    "edit": r"\b(fan ?edits?|montages?|amvs?|velocity edits?|compilations?|edit style|beat ?sync(?:ed)?|phonk)\b",
 }
 HYPE = r"\b(insane|clutch|no way|let'?s go|lets go|gg|oh my god|omg|bro|what the|wtf|rage|cooked|cracked|goated|w|l|nah|yo|chat|ez|unreal|sheesh|bruh)\b"
 
@@ -64,6 +108,12 @@ LOOK = {
                    cap_font="Montserrat Black", cap_bold=0, cap_size=86, outline=8, shadow=2, cap_group=(2, 4), accent="&H00D7FF&"),
     "performance": dict(title_font="Montserrat ExtraBold", title_file="Montserrat-ExtraBold.ttf", title_max=88, title_bold=0, title_spacing=0,
                         cap_font="Montserrat Black", cap_bold=0, cap_size=84, outline=8, shadow=3, cap_group=(2, 5), accent="&H2BC6FF&"),
+    "talker": dict(title_font="Montserrat ExtraBold", title_file="Montserrat-ExtraBold.ttf", title_max=84, title_bold=0, title_spacing=0,
+                   cap_font="Montserrat Black", cap_bold=0, cap_size=84, outline=8, shadow=2, cap_group=(2, 4), accent="&H00D7FF&"),
+    "serious": dict(title_font="Montserrat ExtraBold", title_file="Montserrat-ExtraBold.ttf", title_max=80, title_bold=0, title_spacing=0,
+                    cap_font="Montserrat Black", cap_bold=0, cap_size=76, outline=6, shadow=2, cap_group=(3, 5), accent="&HFFFFFF&"),   # calm: white keywords
+    "edit": dict(title_font="Montserrat ExtraBold", title_file="Montserrat-ExtraBold.ttf", title_max=88, title_bold=0, title_spacing=0,
+                 cap_font="Montserrat Black", cap_bold=0, cap_size=86, outline=8, shadow=3, cap_group=(1, 3), accent="&H2BC6FF&"),
 }
 
 

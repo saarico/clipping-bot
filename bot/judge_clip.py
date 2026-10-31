@@ -20,6 +20,12 @@ Machine measures (0-100), rebalanced 2026-10-28 (rico: "ensure captions are read
   captions      /10  read like a person: 2-6 words per caption, nothing flashing, numbers whole, no
                      unknown words, no cut-off fragments, swearing masked
   length        /10  inside the profile's sweet spot
+  sound         /10  qa_report's Audio row (board deck 2026-10-31)
+
+Board-approved 2026-10-31: each area above is measured on its own scale, then weighted by the content's profile
+(bot/profiles.WEIGHTS: a podcast leans on hook and story, music on picture and pace, serious content on story and
+captions). An area worth 10+ points that scores under half, or a Text & layout failure (bot/studio.layout_check),
+holds the clip under the bar whatever its total.
 """
 import json
 import re
@@ -32,6 +38,11 @@ import find_moments as fm  # noqa: E402
 import genres  # noqa: E402
 import pitch  # noqa: E402
 import profiles  # noqa: E402
+import studio  # noqa: E402
+
+# each area's own scale; the points it is worth come from the content's profile (profiles.WEIGHTS)
+MAXES = {"hook": 20, "pace": 10, "variety": 15, "framing": 10, "story": 10, "entertainment": 10, "comedy": 5, "captions": 10, "length": 10, "sound": 10}
+BAR = 80   # the judge bar (scorecards/acceptance.md); pipeline.JUDGE_BAR is the one that decides
 
 
 def silence(mp4):
@@ -174,22 +185,43 @@ def main(folder):
     notes["captions"] = cn or ["read clean"]
 
     rep["length"], _ = pitch.length_points(dur, prof, spec.get("brief"))
-    total = sum(rep.values())
-    out = [f"# Judge report: {folder.name}", "", f"Profile: {spec.get('style') or 'podcast'}", "",
+
+    # sound (board deck 2026-10-31: sound is its own area, weighted per kind of content), from qa_report's Audio row
+    m = re.search(r"\| Audio \| (\w+) \| ([^|]*)", qa)
+    rep["sound"] = 10 if not m or m.group(1) == "PASS" else 5 if m.group(1) == "WARN" else 0
+    notes["sound"] = [m.group(2).strip()[:80]] if m and m.group(1) != "PASS" else ["clean"]
+
+    # Text & layout inspector (studio.layout_check): one caption spot, out of the platform UI, hook gone by ~6 s
+    lay = studio.layout_check(folder / "captions.ass")
+    notes["layout"] = lay["notes"]
+
+    # the board-approved scorecard per kind of content: each area's share of its own scale x the profile's weight
+    style = spec.get("style") or "podcast"
+    total, under, weighted = studio.weighted_total(rep, MAXES, style)
+    cap_why = []
+    if under:
+        cap_why.append("under half in " + ", ".join(under))
+    if lay["fails"]:
+        cap_why.append("layout: " + "; ".join(lay["fails"]))
+    if cap_why and total >= BAR:
+        total = BAR - 1   # under the bar whatever the total: one re-edit, then the next moment (pipeline.try_until)
+    out = [f"# Judge report: {folder.name}", "", f"Profile: {style} (scorecard weights from bot/profiles.WEIGHTS)", "",
            "Part 1, measured by bot/judge_clip.py. Part 2 (below) is the judge agent's blind read (scorecards/judgment.md).", "",
-           "| Area | Points | Notes |", "|---|---|---|"]
-    maxes = {"hook": 20, "pace": 10, "variety": 15, "framing": 10, "story": 10, "entertainment": 10, "comedy": 5, "captions": 10, "length": 10}
+           "| Area | Measured | Weight | Points | Notes |", "|---|---|---|---|---|"]
     for k, v in rep.items():
-        out.append(f"| {k} | {v}/{maxes[k]} | {'; '.join(notes.get(k, []))} |")
-    out += ["", f"**Machine score: {total}/100** (length {dur:.1f} s, {len(words)} words)", "",
-            "## Part 2: judge agent", "", "_not yet graded_", ""]
+        out.append(f"| {k} | {v}/{MAXES[k]} | {weighted[k][1]} | {weighted[k][0]:.1f} | {'; '.join(notes.get(k, []))} |")
+    out.append(f"| layout | {'FAIL' if lay['fails'] else 'PASS'} | gate | - | {'; '.join(lay['fails'] + lay['notes'])} |")
+    out += ["", f"**Machine score: {total}/100** (length {dur:.1f} s, {len(words)} words)"]
+    if cap_why:
+        out += ["", f"Held under the bar ({BAR}): " + "; ".join(cap_why)]
+    out += ["", "## Part 2: judge agent", "", "_not yet graded_", ""]
     # keep the judge agent's Part 2 if it has already been written for this render
     rp = folder / "judge_report.md"
     if rp.exists() and "_not yet graded_" not in rp.read_text() and "## Part 2: judge agent" in rp.read_text():
         part2 = rp.read_text().split("## Part 2: judge agent", 1)[1]
         out = out[:out.index("## Part 2: judge agent")] + ["## Part 2: judge agent" + part2]
     rp.write_text("\n".join(out))
-    print(f"{folder.name}: machine {total}/100  " + "  ".join(f"{k} {v}" for k, v in rep.items()))
+    print(f"{folder.name}: machine {total}/100  " + "  ".join(f"{k} {v}" for k, v in rep.items()) + (f"  HELD: {'; '.join(cap_why)}" if cap_why else ""))
     return total
 
 

@@ -102,12 +102,29 @@ def topic_hits(low, topics):
 INTEREST_OPEN = MONEY + "|" + FAIL + "|" + SURPRISE + "|" + EMOTION + "|" + FAMOUS + "|" + CONTRAST + r"|\b(first|last|never|only|biggest|worst|best)\b"
 
 
+HOOK_JUNK_START = r"^(oh|ah|uh|um|hmm|yeah|yes|yep|no|nah|okay|ok|right|well|so|and|but|like|i mean|you know|anyway|wait)\b"
+DANGLING = {"and", "but", "or", "so", "the", "a", "an", "to", "of", "in", "on", "at", "for", "with", "by", "from", "that",
+            "be", "is", "was", "are", "like", "my", "your", "his", "her", "their", "our", "if", "because", "as", "into", "about"}
+HOOK_FILLERS = {"like", "um", "uh", "yeah", "oh", "kinda", "basically", "literally", "actually", "whatever"}
+
+
 def opener_ok(sent, topics=None):
     """A sentence a clip may open on: it IS the hook (RULES 41, rico 2026-10-31: the headline is said, not read).
     At least 5 words, no pointer/back-reference start, and something to grab: a stake word, a number, a name,
     a question, or one of the brief's subjects."""
     t = sent["text"].strip()
     if sent["n"] < 5 or re.match(BACKREF, t, flags=re.I):
+        return False
+    # Hook Writer floor (board plan 2026-10-31; Malcolm Todd run 41213092925 titled a clip "Oh yeah, but he does this
+    # wrong, and he does like, now."): never open on a filler or reaction start, and never on a line that is
+    # half fillers or ends on a dangling word
+    junk = re.match(HOOK_JUNK_START, t, flags=re.I)
+    if junk and not (t.endswith("?") and junk.group(1).lower() in ("so", "and", "but", "well", "okay", "ok", "wait")):
+        return False   # a host's "So what did you do with $100 million?" still opens a clip
+    toks = re.findall(r"[a-z']+", t.lower())
+    if toks and sum(1 for w in toks if w in HOOK_FILLERS) / len(toks) > 0.25:
+        return False
+    if re.search(r"\b(and|but|or|like|the|a|to|of|now|so)[.!]?$", t, flags=re.I) and not t.endswith("?"):
         return False
     low = t.lower()
     if re.search(PODCAST_TALK, low):
@@ -121,7 +138,16 @@ def hook_from_opener(sents):
     toks = sents[0]["text"].split()
     if len(toks) <= 4 and len(sents) > 1:
         toks += sents[1]["text"].split()
-    return " ".join(toks[:12]) + ("..." if len(toks) > 12 else "")
+    if len(toks) <= 12:
+        return " ".join(toks)
+    # Hook Writer (board plan 2026-10-31): a long line is cut at a clause, never mid-phrase ("...but be the.")
+    cut = toks[:12]
+    commas = [k for k in range(5, 12) if cut[k - 1].endswith((",", ";", ":"))]
+    if commas:
+        cut = cut[:commas[-1]]
+    while len(cut) > 5 and re.sub(r"[^a-z']", "", cut[-1].lower()) in DANGLING:
+        cut = cut[:-1]
+    return " ".join(cut).rstrip(",;:") + "..."
 
 
 def score_window(sents, graphics, prof=None, energy=None, mix=None, topics=None):

@@ -42,3 +42,24 @@ python3 bot/qa_check.py <folder> --source <episode>
 python3 bot/judge_clip.py <folder>
 # then spawn the judge agent with the prompt in bot/judge_prompt.txt and the folder path; it appends Part 2
 ```
+
+## Weights per kind of content (board-approved 2026-10-31)
+The machine areas above are each measured on their own scale (plus **sound /10** from the QA Audio row), then weighted
+by the clip's content profile (`bot/profiles.WEIGHTS`, total 100):
+
+| Area | podcast | talker | stream | cinematic | performance | serious | edit |
+|---|---|---|---|---|---|---|---|
+| hook | 20 | 25 | 20 | 20 | 15 | 20 | 20 |
+| story | 20 | 20 | 10 | 15 | 10 | 25 | 10 |
+| entertainment | 10 | 10 | 15 | 10 | 10 | 5 | 10 |
+| comedy | 5 | 5 | 5 | 5 | 5 | 0 | 5 |
+| framing | 5 | 5 | 8 | 10 | 12 | 5 | 10 |
+| variety | 5 | 5 | 7 | 10 | 13 | 5 | 15 |
+| pace | 10 | 10 | 15 | 10 | 15 | 10 | 15 |
+| captions | 10 | 10 | 5 | 5 | 5 | 15 | 0 |
+| sound | 5 | 5 | 10 | 10 | 10 | 5 | 10 |
+| length | 10 | 5 | 5 | 5 | 5 | 10 | 5 |
+
+Minimum per area: an area worth 10+ points that scores under half holds the clip under the bar (79), whatever the total.
+The Text & layout inspector (`bot/studio.layout_check`) does the same on a layout failure. Starting weights are the
+board's judgement; the Analyst retunes them once 50+ posts have retention data in data/posts.csv.

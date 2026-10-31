@@ -3,6 +3,25 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-10-31 (15:55 UTC): the clip studio, board decisions 1-3
+- rico 15:31 UTC: "approve 1 - 3" on the board deck (Clip_Studio_Board_Review_2026-10-31.pptx): the studio design,
+  the campaign filter, a higher cap on proven campaigns. Decision 4 (a $0-60/month tool budget) was not approved.
+- bot/studio.py (new): ROSTER of 15 roles and INSPECTION_LINE of 9 checkpoints mapped to the modules that do them;
+  weighted_total, layout_check (Text & layout inspector), speaker_check, clip_cap. `python3 bot/studio.py` prints both.
+- bot/profiles.py: talker, serious and edit profiles (same keys as the others), LOOK for each, TEXT_HINTS; WEIGHTS per
+  profile (sum 100) and AREA_MIN (10, 0.5). bot/lanes.py baseline for the new profiles.
+- bot/judge_clip.py: a sound area (qa Audio row); every area measured on its own scale and weighted per profile; under
+  half on a 10+ area or a layout failure holds the clip at 79. judge_report.md has Measured / Weight / Points columns;
+  bot/pipeline.py reads the new table and a layout failure is never "near" (no UNDER THE BAR upload).
+- bot/find_moments.py: opener_ok refuses filler/reaction starts (a host question starting "So..." still opens), lines
+  over a quarter fillers and lines ending on a dangling word; hook_from_opener cuts a long title at a clause (Malcolm
+  Todd run 41213092925 titled a clip "Oh yeah, but he does this wrong, and he does like, now.").
+- bot/campaign_scan.py: RISKY stop (gambling, crypto, tokens) and pay under $0.50 stop.
+- bot/pipeline.py: speaker check note in every SUMMARY; decide(cap=). bot/run.py: collect passes studio.clip_cap(state),
+  the render matrix gets one machine over the cap.
+- Checked offline: weights sum to 100 for all 7 profiles; the judge re-scored ICH-001/004 (pre-rule-42 title band:
+  layout FAIL as expected); Malcolm Todd pitch reproduced (24 pitched, 7 passed, no dangling titles).
+
 ## 2026-10-31 (09:55 UTC): the transcribe machines convert a multi-file episode side by side
 - Run 41179325133 (07:42-09:43) rebuilt the 5-interview episode on the prepare machine alone: 2 of 5 parts converted
   (18 and 38 min) when the 120-minute job limit of its workflow version cut it off. Nothing was lost: both parts are in

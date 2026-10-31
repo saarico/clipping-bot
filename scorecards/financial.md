@@ -12,7 +12,7 @@ A campaign is a bet of our time against views we don't control. We only join whe
 | Pay-to-join, or must buy a product/course to clip | Never pay to work |
 | Platforms don't include at least one of our lanes (YouTube = business and money, TikTok = entertainment and cool stuff, Instagram = girly stuff and drama; rico 2026-10-27) | Our accounts are built per lane; off-lane posts hurt the account |
 | Audience rule we can't meet (e.g. "60% of viewers in Turkey", "French posts") | Views that don't count are unpaid work |
-| Content we won't post: gambling, adult, political, crypto pumps, supplements with health claims | Platform bans and account strikes outlast any campaign |
+| Content we won't post: gambling, adult, political, any crypto or token campaign (board filter 2026-10-31, campaign_scan.RISKY), supplements with health claims | Platform bans and account strikes outlast any campaign |
 | "Application required" with no public brief | We can't check the rules before committing time |
 | Creator or brand with a recent scandal, lawsuit, or platform ban in progress | Their reach can vanish mid-campaign, and our account carries the association |
 
@@ -45,3 +45,6 @@ With a new YouTube account: 15k views × 0.6 counted × $1.25 / 1000 × 0.9 = **
 
 ## 3. Automatic scan (bot/campaign_scan.py, every 5 h)
 Discover cards only show pay, budget, spend and views, so the bot scores (max 100): pay+budget 25, rules 10, traction (budget already paid out, views) 25, competition (clippers) 10, time left 5, **lane fit by topic 10** (YouTube = business/money, TikTok = entertainment/cool stuff, Instagram = girly/drama; platform must allow that lane), **entertainment 15** (podcast, interview, show, story, stream, celebrity = high; UGC, app promos, sign-up links, split-screen = low). JOIN at 65+. One new folder per lane per run, lanes with no live campaign first, never the same campaign twice. Every scored card is in data/scan_cards.json.
+
+## Board filter (2026-10-31, rico approved decision 2)
+Real people only (no ads, app promos, product footage or AI voice); never gambling or crypto; never under $0.50 per 1k (the $0.75 floor above still applies); speakers must be easy to follow (every run's SUMMARY carries `speaker:` from bot/studio.speaker_check; a warning until calibrated). Campaigns rico has approved 2+ clips of may keep up to 6 clips per run (studio.clip_cap).
