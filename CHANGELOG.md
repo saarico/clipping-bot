@@ -3,6 +3,15 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-10-31 (03:30 UTC): Higgsfield killed by rico
+- rico (03:25): "trash this campaign, the guy is just horrible at speaking and so bad at communicating, hard to listen
+  to. Scan for another campaign. Remove the files, wipe clean each inner folder. I will leave the campaign."
+- Every Higgsfield folder and file in 0_START, 1_CHECK, 2_REDO, 3_APPROVED, _cache and the bot's _trash went to the
+  Drive trash (recoverable for 30 days, nothing permanently deleted). The campaign is in config/dropped.txt; its state
+  is gone from the repo; its critique files (the source of rules 39-42) live on in docs/critiques/higgsfield-20vc.
+- Lesson for the scorecard: a guest who speaks haltingly kills a campaign however good the numbers are. The pitch's
+  clarity read (restarts + fillers) saw it clip by clip; the campaign scan cannot hear the speaker before joining.
+
 ## 2026-10-31 (03:05 UTC): run 13 under rule 42: 2 clips in 1_CHECK
 - Run 41161111496 (02:42-02:59): "Top creatives could spend $100,000 a month on AI" (50 s, judge 89, audience 83) and
   "We spend $4M a month on AI for 400 people" (35 s, judge 85, audience 92) passed every check with the new look
