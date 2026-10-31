@@ -343,10 +343,13 @@ def words_valid(st, cdir, sig):
     return (cdir / "words.json").exists() and bool(sig) and st.get("words_sig") == sig
 
 
-def get_source(name, st, stage, cdir, for_audio=False):
+def get_source(name, st, stage, cdir, for_audio=False, any_cache=False):
     """Episode file: from 0_START, else yt-dlp on the brief's first link (best effort).
     for_audio (the transcribe machines): the single raw file as it is, no conversion, no cache writes; several
-    files = None (their joined timeline exists only after prepare converts them)."""
+    files = None (their joined timeline exists only after prepare converts them).
+    any_cache (the render machines): the cached episode whatever its signature; the picks they render were made on
+    that very file by prepare, and a signature change in between (new code, a file added) must not make four machines
+    rebuild a 3-hour episode inside a 60-minute job."""
     dest = WORK / name / "episode.mp4"
     if dest.exists():
         return dest
@@ -354,13 +357,16 @@ def get_source(name, st, stage, cdir, for_audio=False):
     if vids:
         import hashlib
         sig, used = source_sig(st, stage)
-        if not for_audio:
+        if not for_audio and not any_cache:
             remember_source(st, sig, used)
         cache = f"{drive.root()}/_cache/{name}"   # a converted episode is kept on Drive, so a redo skips download + convert
         cached = {f["Name"]: f for f in drive.files(cache)}
         if "episode.mp4" in cached and "source.json" in cached:
             try:
                 meta = json.loads(drive.text_of(cached["source.json"]["Path"], "source.json"))
+                if any_cache and (not meta.get("size") or int(meta["size"]) == int(cached["episode.mp4"].get("Size") or -1)):
+                    note(st, "episode taken from the Drive cache (the one prepare picked from)")
+                    return drive.download(cached["episode.mp4"]["Path"], dest)
                 if meta.get("sig") == sig and (not meta.get("size") or int(meta["size"]) == int(cached["episode.mp4"].get("Size") or -1)):
                     note(st, "episode taken from the Drive cache (same source files as last time)")
                     return drive.download(cached["episode.mp4"]["Path"], dest)
@@ -836,7 +842,7 @@ def render_job(n):
             shutil.copy(PREP / name / f, work / f)
     words = work / "words.json"
     spec["words"] = str(words)
-    src = get_source(name, st, stage, cdir)
+    src = get_source(name, st, stage, cdir, any_cache=True)
     if not src:
         raise RuntimeError("source not available on the render machine")
     spec["source"] = str(src)
