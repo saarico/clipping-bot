@@ -84,11 +84,14 @@ def clip_ideas(text):
 
 def parse(text):
     low = text.lower()
+    # platforms are named in the rules, never read off the asset links: "youtube.com/watch?v=..." in a brief that
+    # allows only TikTok + Instagram Reels (Malcolm Todd, 2026-10-31) must not make YouTube a lane
+    low_np = re.sub(r"(https?://\S+|\b[\w.-]+\.(?:com|be|tv|net|org)\S*)", " ", low)
     b = {"text": text, "platforms": [], "tags": [], "links": [], "min_s": 20, "max_s": 60,
          "rate_per_1k": None, "min_payout": None, "max_per_clip": None, "face_first_s": None,
          "captions_required": False, "no_ads": False, "assigned_video": False, "rules": []}
     for p in ("youtube", "tiktok", "instagram", "facebook", "x.com", "snapchat"):
-        if p in low:
+        if p in (low if p == "x.com" else low_np):
             b["platforms"].append("x" if p == "x.com" else p)
     b["tags"] = sorted({t.rstrip(".") for t in re.findall(r"(?<![\w.])@[A-Za-z0-9_.]{2,30}", text)} | set(re.findall(r"(?<![\w&])#[A-Za-z][A-Za-z0-9_]{2,30}", text)))
     # source links: YouTube first, then Drive / Dropbox / direct video files (the bot downloads those itself)
