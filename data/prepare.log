@@ -1,14 +1,8 @@
-[03:40:32] CLIPPING root CLIPPING
-[03:41:37] brief read: 7 rules, 5 links, tags []
-[03:41:39] trying yt-dlp with cookies: https://www.youtube.com/watch?v=lhjf0hZvReI
-[03:41:41] YOUTUBE COOKIES NEEDED OR EXPIRED: refresh the YT_COOKIES secret (SETUP.md, YouTube section)
-[03:41:41] trying yt-dlp with cookies: https://www.youtube.com/watch?v=_VQ4pZQ2nAA
-[03:41:43] YOUTUBE COOKIES NEEDED OR EXPIRED: refresh the YT_COOKIES secret (SETUP.md, YouTube section)
-[03:41:43] trying yt-dlp with cookies: https://www.youtube.com/watch?v=cuNHuBUDbmk
-[03:41:44] YOUTUBE COOKIES NEEDED OR EXPIRED: refresh the YT_COOKIES secret (SETUP.md, YouTube section)
-[03:41:44] trying yt-dlp with cookies: https://www.youtube.com/watch?v=Up93f0DIVw8
-[03:41:46] YOUTUBE COOKIES NEEDED OR EXPIRED: refresh the YT_COOKIES secret (SETUP.md, YouTube section)
-[03:41:46] trying yt-dlp with cookies: https://www.youtube.com/watch?v=5AizOR1xxIw
-[03:41:47] YOUTUBE COOKIES NEEDED OR EXPIRED: refresh the YT_COOKIES secret (SETUP.md, YouTube section)
-[03:41:47] no link could be downloaded; asked rico for the file
-[03:41:49] 0 render job(s)
+[05:06:26] CLIPPING root CLIPPING
+[05:06:41] skipped vertical cut Malcolm Todd on Ice Cream Dreams, TikTok Fame, and ＂Harry St
+[05:06:41] downloading 4 of 5 videos from 0_START and joining them
+[05:24:13] part 00: 00_Don Toliver & Malcolm Todd ｜ Musicians on Musicians [Up93 1920x1080 1904s (crop=1920:1072:0:4)
+[05:57:58] part 01: 01_I’m doing that again with Malcolm Todd [lhjf0hZvReI].mp4 1920x1080 3532s (crop=1920:1072:0:4)
+[06:28:35] part 02: 02_Malcolm Todd ｜ Sweet Boy, Roommates, 4me 4me [_VQ4pZQ2nAA 1920x1080 2904s (crop=1920:1072:0:4)
+[07:01:16] part 03: 03_Spotlight： Malcolm Todd [5AizOR1xxIw].mp4 1920x1080 3096s (crop=1920:1072:0:4)
+[07:02:35] episode saved to the Drive cache
