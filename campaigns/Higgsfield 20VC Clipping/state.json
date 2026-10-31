@@ -31,9 +31,10 @@
   "2026-10-30 23:43 UTC  2 clip(s) uploaded to 1_CHECK",
   "2026-10-30 23:45 UTC  2 clip(s) wait for rico's review in 1_CHECK (approve -> 3_APPROVED, notes -> 2_REDO)",
   "2026-10-30 23:52 UTC  episode taken from the Drive cache (same source files as last time)",
-  "2026-10-31 00:01 UTC  4 candidate(s) picked (the brief's clip ideas (15) + scorecard), 1 fallback(s); rendering on 4 machines with grade-and-retry"
+  "2026-10-31 00:01 UTC  4 candidate(s) picked (the brief's clip ideas (15) + scorecard), 1 fallback(s); rendering on 4 machines with grade-and-retry",
+  "2026-10-31 00:11 UTC  1 clip(s) uploaded to 1_CHECK"
  ],
- "updated": "2026-10-31 00:01 UTC",
+ "updated": "2026-10-31 00:11 UTC",
  "critiques_seen": [],
  "watermark": "20vc podcast higgsfield black.png",
  "used_moments": [
@@ -61,6 +62,11 @@
    "start": 2124.42,
    "end": 2169.8,
    "hook": "I think it really stabilizes around like $500 ,000 a month very."
+  },
+  {
+   "start": 2004.98,
+   "end": 2040.78,
+   "hook": "We spend $4M a month on AI for 400 people."
   }
  ],
  "tried_moments": [
@@ -103,43 +109,42 @@
    "start": 1408.7,
    "end": 1450.34,
    "hook": "We don't do any paid ads."
+  },
+  {
+   "start": 2795.6,
+   "end": 2826.84,
+   "hook": "Investors shook hands. Then came back 30% lower."
+  },
+  {
+   "start": 1299.48,
+   "end": 1336.54,
+   "hook": "30% churn in month one."
+  },
+  {
+   "start": 1645.54,
+   "end": 1687.4,
+   "hook": "Our film prompts are 3,000 words long."
   }
  ],
  "clips": [
   {
    "mp4": "01_we-spend-4m-a-month-on-ai-fo.mp4",
    "hook": "We spend $4M a month on AI for 400 people.",
-   "judge": 76,
-   "audience": null,
+   "judge": 79,
+   "audience": 92,
    "dur": 34.7,
    "caption": "",
    "lane": "youtube",
-   "text": "TITLE: We spend $4M a month on AI for 400 people. CAPTIONS AS SHOWN (one line per cut): LIKE ON AVERAGE AT HICKS FIELD, PERSON ON THE TEAM SPENDS OVER $10,000 A MONTH ON VARIOUS MODELS. AND REMEMBER LIKE WE'RE SPLIT ACROSS UNITED STATES AND ASIA. SO HOW MUCH DO YOU SPEND ON MODELS PER MONTH? SO INTERNAL USAGE OF MODELS A MONTH IS OVER 4 MILLION. WOW. HOW MANY PEOPLE DO YOU HAVE? WE HAVE CLOSE TO 400 PEOPLE AND JUST WANT TO MAKE SURE THAT THE MATH ADDS UP. YES, IT'S DEFINITELY OVER $10,000 PER PERSON.",
+   "text": "TITLE: We spend $4M a month on AI for 400 people. CAPTIONS AS SHOWN (one line per cut): LIKE ON AVERAGE AT HICKS FIELD, PERSON ON THE TEAM SPENDS OVER $10,000 A MONTH ON VARIOUS MODELS. AND REMEMBER LIKE WE'RE SPLIT ACROSS UNITED STATES AND ASIA. SO HOW MUCH DO YOU SPEND ON MODELS PER MONTH? SO INTERNAL USAGE OF MODELS A MONTH IS OVER 4 MILLION. WOW. HOW MANY PEOPLE DO YOU HAVE? WE HAVE CLOSE TO 400 PEOPLE AND JUST WANT TO MAKE SURE THAT THE MATH ADDS UP. YES, IT'S DEFINITELY OVER $10,000 PER PERSON. CARDS ON SCREEN (our own text cards, shown beside the captions): 3.0-5.6s $10,000 A MONTH 19.8-20.9s 4 MILLION 24.7-27.3s 400 PEOPLE",
    "parts": [
     [
      2004.98,
      2040.78
     ]
    ]
-  },
-  {
-   "mp4": "02_investors-shook-hands-then-c.mp4",
-   "hook": "Investors shook hands. Then came back 30% lower.",
-   "judge": 76,
-   "audience": null,
-   "dur": 37.3,
-   "caption": "",
-   "lane": "youtube",
-   "text": "TITLE: Investors shook hands. Then came back 30% lower. CAPTIONS AS SHOWN (one line per cut): THIS INDUSTRY STILL GONNA BE VERY VALUABLE, BUT IT'S NEVER GONNA BE THE SAME DID YOU KNOW WHEN YOU LEFT THE MEETING WITH YURI THAT HE WAS GONNA WRITE THE CHECK? YOU KNOW SOPHISTICATED INVESTORS. THEY CAN PLAY GAMES. I HAD LIKE SO MANY SCARS LIKE PEOPLE REALLY SHOOK HANDS AND WE DO AT THIS PRICE AND NEXT DAY WHAT I LEARNED IS THAT THEY CALLED OTHER INVESTORS AND THEY PULLED THE SYNDICATE AND TO INVEST IN 30% LOWER VALUATION COMPARED TO WHAT WE DISCUSSED. SO LIKE LOOK THESE THINGS JUST HAPPEN. SO YOU NEVER CAN BE SURE WHEN THEY DIDN'T HAPPEN WITH YURI I THINK THERE'S A DISCOUNT PLACED ON HIGGS FIELD BECAUSE YOU'RE NOT SILICON VALLEY INSIDER LIKE LET'S BE CLEAR. YOU'RE AT A BILLION IN REVENUE NOW.",
-   "parts": [
-    [
-     2791.68,
-     2829.72
-    ]
-   ]
   }
  ],
- "needs_redo": true,
+ "needs_redo": false,
  "empty_runs": 0,
  "empty_told": false,
  "brief": {
