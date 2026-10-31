@@ -3,6 +3,25 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-10-31 (07:20 UTC): every file in 0_START is used; parts cached; transcript tied to the episode (Malcolm Todd runs 2-3)
+- Run 2 (05:10-07:05): rico's 5 interviews were in 0_START; the bot skipped "Malcolm Todd on Ice Cream Dreams, TikTok
+  Fame ... | Office Of" because its skip rule read "tiktok" in the name as a vertical cut, then converted the other 4
+  (3.2 h) for 1 h 50 and hit the 120-minute job limit before transcribing; the episode did reach the cache. Run 3 cuts
+  from that cache.
+- run.VERTICAL_NAME is now only vertical / igtv / 9x16 / 9_16 / portrait (join_videos drops real portrait files by their
+  size anyway); pick_files + source_sig give one answer to "which files make the episode" for prepare and the transcribe
+  machines; JOIN_VERSION in the signature rebuilds caches made by the old selection.
+- Drive part cache _cache/<campaign>/parts/<md5(name:size)>.mp4: each converted part is kept, so adding one interview
+  converts one file (join_videos ready= / saved=).
+- state.source {sig, files} + state.words_sig: a transcript is valid only for the episode it was made from; the
+  transcribe machines redo it otherwise, and used/tried moments are cleared when the file order changes (kept when
+  files were only appended). A transcript without words_sig (from before today) is redone once.
+- A long episode (over 40 min) built in this run no longer gets transcribed by the prepare machine alone: prepare
+  caches it, dispatches a follow-up run (gh workflow run; run.yml actions: write) and ends; the follow-up's 4 machines
+  transcribe from the cache. prepare timeout 120 -> 300 min as a safety net.
+- Policy unchanged: with 3 clips waiting in 1_CHECK the bot does not touch the episode; the 5th interview joins at the
+  next cut (a redo note, or fewer than 3 clips kept).
+
 ## 2026-10-31 (04:05 UTC): rule 43, episodes by PowerShell; Malcolm Todd run 1 blocked on YouTube
 - Run 41165260381 (03:40): brief read (7 rules, 5 links, TikTok + Instagram only), all 5 YouTube links refused
   ("Sign in to confirm you're not a bot"): the YT_COOKIES cookies expired again. rico: "can you just download on

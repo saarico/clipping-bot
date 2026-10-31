@@ -159,10 +159,12 @@ def bars_crop(path, dur):
     return m[-1] if m else None
 
 
-def join_videos(parts, dest, log=print):
+def join_videos(parts, dest, log=print, ready=(), saved=None):
     """Several source files -> one 1920x1080 30 fps episode. Duplicate downloads (same size) are dropped,
     vertical files are left out (they are finished social cuts, not raw material), black bars are cut
-    away and wide pictures are centre-cropped to 16:9 so no clip ever shows a letterbox."""
+    away and wide pictures are centre-cropped to 16:9 so no clip ever shows a letterbox.
+    ready: parts that are converted already (the Drive part cache), taken as they are. saved(raw, converted) is
+    called after every conversion so the caller can keep the converted part."""
     norm, seen = [], set()
     for i, pth in enumerate(sorted(parts, key=lambda p: p.name)):
         size = pth.stat().st_size
@@ -171,6 +173,13 @@ def join_videos(parts, dest, log=print):
             continue
         seen.add(size)
         w, h, dur = video_info(pth)
+        if pth in set(ready):
+            if (w, h) == (1920, 1080) and dur > 1:
+                norm.append(pth)
+                log(f"part {i:02d}: {pth.name[:60]} already converted {dur:.0f}s")
+                continue
+            log(f"part {i:02d}: cached conversion {pth.name[:60]} is {w}x{h} {dur:.0f}s: dropped")
+            continue
         if h > w:
             log(f"skipped vertical file {pth.name} ({w}x{h})")
             continue
@@ -192,6 +201,8 @@ def join_videos(parts, dest, log=print):
         norm.append(o)
         log(f"part {i:02d}: {pth.name[:60]} {w}x{h} {dur:.0f}s" + (f" ({crop})" if crop else ""))
         pth.unlink(missing_ok=True)   # the original is not needed again on this machine
+        if saved:
+            saved(pth, o)
     if not norm:
         return None
     lst = dest.parent / "parts" / "list.txt"
@@ -272,6 +283,66 @@ def ensure_thumbnail(name, st, stage, cdir, f, c):
 YT_ID = re.compile(r"\[([A-Za-z0-9_-]{11})\]")   # yt-dlp names downloads "Title [videoid].mp4"
 
 
+JOIN_VERSION = "2"      # bump when join_videos or the file selection changes: the cached episode is rebuilt
+VERTICAL_NAME = re.compile(r"vertical|igtv|9x16|9_16|portrait", re.I)   # a finished social cut, not raw material. Never a word
+# like "tiktok" or "shorts": an interview titled "... TikTok Fame ..." was skipped for its name (Malcolm Todd, 2026-10-31)
+FRESH = set()           # campaigns whose episode was built in this process (not taken from the cache)
+
+
+def part_key(v):
+    import hashlib
+    return hashlib.md5(f"{v['Name']}:{v.get('Size')}".encode()).hexdigest()[:12]
+
+
+def pick_files(vids, st=None):
+    """The 0_START videos that make the episode, in name order: duplicates (same size) and vertical cuts left out.
+    EVERY other file is in: rico drops all the interviews of a campaign and expects all of them used (rule 43)."""
+    todo, sizes = [], set()
+    for v in vids:
+        if v.get("Size") in sizes:
+            if st is not None:
+                note(st, f"skipped duplicate {v['Name'][:60]}")
+        elif VERTICAL_NAME.search(v["Name"]):
+            if st is not None:
+                note(st, f"skipped vertical cut {v['Name'][:60]}")
+        else:
+            todo.append(v)
+        sizes.add(v.get("Size"))
+    return todo
+
+
+def source_sig(st, stage):
+    """(sig, files) of the episode this campaign would get now: the chosen 0_START files, else the brief's links.
+    The transcript and the cache are only valid for the same sig."""
+    import hashlib
+    vids = sorted(drive.files(stage["0_START"], VID_EXT), key=lambda f: f["Name"])
+    if vids:
+        todo = pick_files(vids)
+        return "v" + JOIN_VERSION + ":" + hashlib.md5("|".join(f"{v['Name']}:{v.get('Size')}" for v in todo).encode()).hexdigest()[:12], [v["Name"] for v in todo]
+    links = st.get("brief", {}).get("links", [])
+    return ("links:" + hashlib.md5("|".join(links[:6]).encode()).hexdigest()[:12], []) if links else (None, [])
+
+
+def remember_source(st, sig, files):
+    """The episode's identity in state. A changed episode (a file added to 0_START) makes the transcript stale,
+    and the moments seen so far too unless the old files are a prefix of the new ones (same timeline, longer)."""
+    old = st.get("source") or {}
+    st["source"] = {"sig": sig, "files": files}
+    if not old or old.get("sig") == sig:
+        return
+    if files[:len(old.get("files") or [])] != (old.get("files") or []):
+        note(st, "the episode's files changed: the moments seen so far no longer match the timeline, starting over")
+        st["used_moments"], st["tried_moments"] = [], []
+    else:
+        note(st, f"episode grew from {len(old.get('files') or [])} to {len(files)} file(s): same timeline, longer")
+
+
+def words_valid(st, cdir, sig):
+    """The committed transcript belongs to this episode (words_sig). Without a words_sig it is from before the
+    check existed and is redone once."""
+    return (cdir / "words.json").exists() and bool(sig) and st.get("words_sig") == sig
+
+
 def get_source(name, st, stage, cdir, for_audio=False):
     """Episode file: from 0_START, else yt-dlp on the brief's first link (best effort).
     for_audio (the transcribe machines): the single raw file as it is, no conversion, no cache writes; several
@@ -282,7 +353,9 @@ def get_source(name, st, stage, cdir, for_audio=False):
     vids = sorted(drive.files(stage["0_START"], VID_EXT), key=lambda f: f["Name"])
     if vids:
         import hashlib
-        sig = hashlib.md5("|".join(f"{v['Name']}:{v.get('Size')}" for v in vids).encode()).hexdigest()[:12]
+        sig, used = source_sig(st, stage)
+        if not for_audio:
+            remember_source(st, sig, used)
         cache = f"{drive.root()}/_cache/{name}"   # a converted episode is kept on Drive, so a redo skips download + convert
         cached = {f["Name"]: f for f in drive.files(cache)}
         if "episode.mp4" in cached and "source.json" in cached:
@@ -295,7 +368,7 @@ def get_source(name, st, stage, cdir, for_audio=False):
                     note(st, "the Drive cache holds a cut-short episode (size mismatch): rebuilding it")
             except Exception as e:
                 note(st, f"cache check failed ({type(e).__name__}); rebuilding the episode")
-        got = None
+        got, ready, saved = None, set(), None
         if len(vids) == 1:
             # one file: used as is when it already is 1920x1080 landscape, else converted like a joined episode
             # (render_clip refuses any other size; a 1280x720 or 4K episode stopped every render with SystemExit)
@@ -323,24 +396,40 @@ def get_source(name, st, stage, cdir, for_audio=False):
         elif for_audio:
             return None
         else:   # several files (scene clips, trailers, episode parts): one landscape episode in name order
-            todo, sizes = [], set()
-            for v in vids:   # don't even download duplicates or finished vertical cuts
-                if v.get("Size") in sizes:
-                    note(st, f"skipped duplicate {v['Name'][:60]}")
-                elif re.search(r"vertical|igtv|9x16|9_16|portrait|reels|tiktok|shorts", v["Name"], re.I):
-                    note(st, f"skipped vertical cut {v['Name'][:60]}")
+            todo = pick_files(vids, st)   # don't even download duplicates or finished vertical cuts
+            pcache = f"{cache}/parts"   # every converted part is kept too: one interview added to an episode converts one file, not five
+            try:
+                have = {f["Name"]: f for f in drive.files(pcache)}
+            except Exception as e:
+                note(st, f"part cache unreadable ({type(e).__name__})")
+                have = {}
+            parts, keys = [], {}
+            for i, v in enumerate(todo):
+                raw = dest.parent / "parts" / f"{i:02d}_{v['Name']}"
+                if f"{part_key(v)}.mp4" in have:
+                    p = dest.parent / "parts" / f"{i:02d}_ready.mp4"
+                    parts.append(drive.download(have[f"{part_key(v)}.mp4"]["Path"], p))
+                    ready.add(p)
                 else:
-                    todo.append(v)
-                sizes.add(v.get("Size"))
-            note(st, f"downloading {len(todo)} of {len(vids)} videos from 0_START and joining them")
-            parts = [drive.download(v["Path"], dest.parent / "parts" / f"{i:02d}_{v['Name']}") for i, v in enumerate(todo)]
-        out = got or join_videos(parts, dest, log=lambda m: note(st, m))
+                    parts.append(drive.download(v["Path"], raw))
+                    keys[raw] = part_key(v)
+            note(st, f"downloading {len(todo)} of {len(vids)} videos from 0_START and joining them ({len(ready)} converted before)")
+
+            def saved(raw, conv):
+                try:
+                    drive.be().mkdir(pcache)
+                    drive.upload(conv, pcache, name=f"{keys[Path(raw)]}.mp4")
+                except Exception as e:
+                    note(st, f"part cache skipped ({type(e).__name__}: {str(e)[:60]})")
+        out = got or join_videos(parts, dest, log=lambda m: note(st, m), ready=ready, saved=saved)
+        if out:
+            FRESH.add(name)
         if not out:
             note(st, "the video in 0_START could not be converted (no usable landscape picture)")
         if out:
             try:
                 meta = dest.parent / "source.json"
-                meta.write_text(json.dumps({"sig": sig, "files": [v["Name"] for v in vids], "size": Path(out).stat().st_size}))
+                meta.write_text(json.dumps({"sig": sig, "files": used, "size": Path(out).stat().st_size}))
                 drive.be().mkdir(cache)
                 drive.upload(out, cache, name="episode.mp4")
                 up = {f["Name"]: f for f in drive.files(cache)}.get("episode.mp4", {})
@@ -353,10 +442,11 @@ def get_source(name, st, stage, cdir, for_audio=False):
             return out
     links = st.get("brief", {}).get("links", [])
     if links and not st.get("download_failed"):
+        sig, _ = source_sig(st, stage)
+        if not for_audio:
+            remember_source(st, sig, [])
         if for_audio and len(links) > 1:   # whichever link works, prepare caches it; a transcribe machine tries the first only
             links = links[:1]
-        import hashlib
-        sig = "links:" + hashlib.md5("|".join(links[:6]).encode()).hexdigest()[:12]
         cache = f"{drive.root()}/_cache/{name}"   # a downloaded episode is kept on Drive: YouTube is asked once, not on every machine
         cached = {f["Name"]: f for f in drive.files(cache)}
         if "episode.mp4" in cached and "source.json" in cached:
@@ -409,7 +499,7 @@ def transcribe_job(i, n, only=None):
     (WORDS / "ready.txt").write_text(f"part {i} of {n}\n")   # the artifact exists even when there is nothing to do
     dropped = [l.strip() for l in (ROOT / "config" / "dropped.txt").read_text().splitlines() if l.strip() and not l.startswith("#")] if (ROOT / "config" / "dropped.txt").exists() else []
     for name, cpath in drive.campaigns():
-        if name in dropped or (only and name != only) or (ROOT / "campaigns" / name / "words.json").exists():
+        if name in dropped or (only and name != only):
             continue
         st = load_state(name)
         stage = drive.stages(cpath, create=False)
@@ -417,6 +507,9 @@ def transcribe_job(i, n, only=None):
         try:
             if not drive.files(stage["0_START"], VID_EXT) and not st.get("brief", {}).get("links"):
                 log(f"{name}: no episode yet (prepare reads the brief first)")
+                continue
+            if words_valid(st, ROOT / "campaigns" / name, source_sig(st, stage)[0]):
+                log(f"{name}: transcript is there for this episode")
                 continue
             src = get_source(name, st, stage, ROOT / "campaigns" / name, for_audio=True)
             if not src or not has_speech(src):
@@ -641,7 +734,19 @@ def do_campaign(name, cpath, phase="all"):
         save_state(name, st)
         return
     words = cdir / "words.json"
+    sig = (st.get("source") or {}).get("sig")
+    if words.exists() and not words_valid(st, cdir, sig):
+        note(st, "the transcript is from another episode (files added or changed): transcribing again")
+        words.unlink()
     if not words.exists() and phase == "prepare" and os.environ.get("GITHUB_RUN_ID"):
+        _, _, dur = video_info(src)
+        if name in FRESH and dur > 40 * 60:
+            # the transcribe machines of this run had no episode to work on (it was built just now): a 3-hour episode
+            # on this one machine hit the job limit (Malcolm Todd run 2, 2026-10-31). The next run's 4 machines take it.
+            note(st, f"episode built this run ({dur / 3600:.1f} h, cached): the next run transcribes it on 4 machines")
+            follow_up(name, st, sig)
+            save_state(name, st)
+            return
         # the 4 transcribe machines run beside this one (run.yml): map the graphics meanwhile, then take their parts
         gfx = WORK / name / "gfx.json"
         if not gfx.exists():
@@ -665,6 +770,7 @@ def do_campaign(name, cpath, phase="all"):
                                                        log=log, used=used, plan_dir=cdir)
         if not words.exists():
             shutil.copy(wpath, words)
+        st["words_sig"] = sig
         d = PREP / name
         d.mkdir(parents=True, exist_ok=True)
         shutil.copy(wpath, d / "words.json")
@@ -682,7 +788,23 @@ def do_campaign(name, cpath, phase="all"):
     remember_moments(st, kept, tried)
     if (WORK / name / "words.json").exists() and not words.exists():
         shutil.copy(WORK / name / "words.json", words)   # /tmp and the repo are different disks on the runner
+    st["words_sig"] = sig
     publish(name, st, stage, kept, summary, t0)
+
+
+def follow_up(name, st, sig):
+    """Dispatch the next run for this campaign right away (gh workflow run, once per episode) so the transcript does
+    not wait for the 5-hour schedule."""
+    if st.get("follow_up_for") == sig:
+        note(st, "a follow-up run was dispatched for this episode already; waiting for the schedule")
+        return
+    repo = os.environ.get("GITHUB_REPOSITORY", "")
+    r = subprocess.run(["gh", "workflow", "run", "run.yml", "-R", repo, "--ref", "main", "-f", f"campaign={name}"], capture_output=True, text=True)
+    if r.returncode == 0:
+        st["follow_up_for"] = sig
+        note(st, "follow-up run dispatched")
+    else:
+        note(st, f"follow-up run not dispatched ({r.stderr.strip()[-120:]}); the schedule picks it up")
 
 
 def remember_moments(st, kept, tried=()):

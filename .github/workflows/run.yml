@@ -13,7 +13,8 @@ concurrency:
   cancel-in-progress: false
 permissions:
   contents: write
-  actions: read            # prepare pulls the transcript parts (artifacts) of the same run with gh; without this: 403 for 50 min (run 3)
+  actions: write           # prepare pulls the transcript parts (artifacts) of the same run with gh (read; without it: 403 for 50 min,
+                           # run 3) and dispatches the follow-up run after building a long episode (write; Malcolm Todd, 2026-10-31)
 env:
   CLIP_WORK: /mnt/clipwork   # the runner's big disk (~60 GB free); / has ~20 GB and a converted 4K episode filled it (2026-10-30)
 
@@ -72,7 +73,7 @@ jobs:
 
   prepare:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 300     # five 1-hour interviews convert at about 1.7x real time (Malcolm Todd run 2 hit 120 min, 2026-10-31)
     outputs:
       count: ${{ steps.prep.outputs.count }}
       jobs: ${{ steps.prep.outputs.jobs }}
