@@ -159,6 +159,31 @@ def bars_crop(path, dur):
     return m[-1] if m else None
 
 
+def convert_part(pth, o, log=print, tag=""):
+    """One source file -> 1920x1080 30 fps h264 (black bars cut, wide pictures centre-cropped). None when the
+    conversion came out short or the file is portrait."""
+    w, h, dur = video_info(pth)
+    if h > w:
+        log(f"skipped vertical file {pth.name} ({w}x{h})")
+        return None
+    crop = bars_crop(pth, dur)
+    vf = ((crop + ",") if crop else "") + "scale=-2:1080:flags=bicubic,crop='min(iw,1920)':1080,pad=1920:1080:(ow-iw)/2:(oh-ih)/2,fps=30,setsar=1"
+    o.parent.mkdir(parents=True, exist_ok=True)
+    # veryfast crf 21: about 4 Mbit/s. ultrafast crf 17 wrote ~20 Mbit/s, 10 GB for a 1-hour 4K episode, and the
+    # GitHub machine ran out of disk (Higgsfield, 2026-10-30)
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(pth), "-vf", vf, "-r", "30", "-c:v", "libx264", "-preset", "veryfast",
+                    "-crf", "21", "-c:a", "aac", "-ar", "48000", "-ac", "2", "-af", "aresample=async=1", str(o)], check=False)
+    ow, oh, odur = video_info(o) if o.exists() else (0, 0, 0.0)
+    if (ow, oh) != (1920, 1080) or abs(odur - dur) > max(2.0, 0.02 * dur):
+        # a conversion that stopped short (disk full, killed) must never become the episode: run 1 of Higgsfield
+        # cached a 5 GB torso with no sound (2026-10-30)
+        log(f"{tag}conversion of {pth.name[:60]} came out {ow}x{oh} {odur:.0f}s of {dur:.0f}s: dropped")
+        o.unlink(missing_ok=True)
+        return None
+    log(f"{tag}{pth.name[:60]} {w}x{h} {dur:.0f}s" + (f" ({crop})" if crop else ""))
+    return o
+
+
 def join_videos(parts, dest, log=print, ready=(), saved=None):
     """Several source files -> one 1920x1080 30 fps episode. Duplicate downloads (same size) are dropped,
     vertical files are left out (they are finished social cuts, not raw material), black bars are cut
@@ -180,26 +205,10 @@ def join_videos(parts, dest, log=print, ready=(), saved=None):
                 continue
             log(f"part {i:02d}: cached conversion {pth.name[:60]} is {w}x{h} {dur:.0f}s: dropped")
             continue
-        if h > w:
-            log(f"skipped vertical file {pth.name} ({w}x{h})")
-            continue
-        crop = bars_crop(pth, dur)
-        vf = ((crop + ",") if crop else "") + "scale=-2:1080:flags=bicubic,crop='min(iw,1920)':1080,pad=1920:1080:(ow-iw)/2:(oh-ih)/2,fps=30,setsar=1"
-        o = dest.parent / "parts" / f"n{i:02d}.mp4"
-        o.parent.mkdir(parents=True, exist_ok=True)
-        # veryfast crf 21: about 4 Mbit/s. ultrafast crf 17 wrote ~20 Mbit/s, 10 GB for a 1-hour 4K episode, and the
-        # GitHub machine ran out of disk (Higgsfield, 2026-10-30)
-        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(pth), "-vf", vf, "-r", "30", "-c:v", "libx264", "-preset", "veryfast",
-                        "-crf", "21", "-c:a", "aac", "-ar", "48000", "-ac", "2", "-af", "aresample=async=1", str(o)], check=False)
-        ow, oh, odur = video_info(o) if o.exists() else (0, 0, 0.0)
-        if (ow, oh) != (1920, 1080) or abs(odur - dur) > max(2.0, 0.02 * dur):
-            # a conversion that stopped short (disk full, killed) must never become the episode: run 1 of Higgsfield
-            # cached a 5 GB torso with no sound (2026-10-30)
-            log(f"part {i:02d}: conversion of {pth.name[:60]} came out {ow}x{oh} {odur:.0f}s of {dur:.0f}s: dropped")
-            o.unlink(missing_ok=True)
+        o = convert_part(pth, dest.parent / "parts" / f"n{i:02d}.mp4", log, tag=f"part {i:02d}: ")
+        if not o:
             continue
         norm.append(o)
-        log(f"part {i:02d}: {pth.name[:60]} {w}x{h} {dur:.0f}s" + (f" ({crop})" if crop else ""))
         pth.unlink(missing_ok=True)   # the original is not needed again on this machine
         if saved:
             saved(pth, o)
@@ -311,6 +320,56 @@ def pick_files(vids, st=None):
     return todo
 
 
+def part_cache(name):
+    """Drive folder of the converted parts and what is in it: (path, {file name: entry})."""
+    pcache = f"{drive.root()}/_cache/{name}/parts"
+    try:
+        return pcache, {f["Name"]: f for f in drive.files(pcache)}
+    except Exception:
+        return pcache, {}
+
+
+def parts_for_machine(todo, i, n):
+    """The parts machine i of n converts: the biggest files first, each to the machine with the least so far
+    (five interviews on four machines: 824, 771, 747 and 652+244 MB)."""
+    load = [0] * n
+    mine = []
+    for v in sorted(todo, key=lambda v: -int(v.get("Size") or 0)):
+        k = load.index(min(load))
+        load[k] += int(v.get("Size") or 0)
+        if k == i:
+            mine.append(v)
+    return mine
+
+
+def convert_parts(name, st, stage, i, n, log=log):
+    """A transcribe machine with nothing to transcribe converts its share of a multi-file episode into the Drive
+    part cache, so the five conversions of a campaign run side by side instead of one after another on the prepare
+    machine (Malcolm Todd, 2026-10-31: 2 of 5 parts done when the 120-minute prepare job was cut off)."""
+    vids = sorted(drive.files(stage["0_START"], VID_EXT), key=lambda f: f["Name"])
+    if len(vids) < 2:
+        return 0
+    todo = pick_files(vids)
+    pcache, have = part_cache(name)
+    done = 0
+    for v in parts_for_machine(todo, i, n):
+        key = part_key(v)
+        if f"{key}.mp4" in have:
+            continue
+        raw = WORK / name / "parts" / f"raw_{key}_{v['Name']}"
+        log(f"{name}: converting {v['Name'][:60]} ({int(v.get('Size') or 0) // 1_000_000} MB) for the part cache")
+        drive.download(v["Path"], raw)
+        o = convert_part(raw, WORK / name / "parts" / f"{key}.mp4", log, tag=f"{name}: ")
+        raw.unlink(missing_ok=True)
+        if o:
+            drive.be().mkdir(pcache)
+            drive.upload(o, pcache, name=f"{key}.mp4")
+            o.unlink(missing_ok=True)
+            done += 1
+            log(f"{name}: {v['Name'][:60]} is in the part cache")
+    return done
+
+
 def source_sig(st, stage):
     """(sig, files) of the episode this campaign would get now: the chosen 0_START files, else the brief's links.
     The transcript and the cache are only valid for the same sig."""
@@ -403,12 +462,19 @@ def get_source(name, st, stage, cdir, for_audio=False, any_cache=False):
             return None
         else:   # several files (scene clips, trailers, episode parts): one landscape episode in name order
             todo = pick_files(vids, st)   # don't even download duplicates or finished vertical cuts
-            pcache = f"{cache}/parts"   # every converted part is kept too: one interview added to an episode converts one file, not five
-            try:
-                have = {f["Name"]: f for f in drive.files(pcache)}
-            except Exception as e:
-                note(st, f"part cache unreadable ({type(e).__name__})")
-                have = {}
+            pcache, have = part_cache(name)   # every converted part is kept: one interview added to an episode converts one file, not five
+            missing = [v for v in todo if f"{part_key(v)}.mp4" not in have]
+            if missing and os.environ.get("GITHUB_RUN_ID"):
+                # the transcribe machines of this run convert the missing parts side by side (convert_parts); wait for
+                # them (an hour of interview converts in ~40 min) before converting anything here
+                note(st, f"{len(missing)} of {len(todo)} parts are converting on the transcribe machines; waiting")
+                t_wait = time.time()
+                while missing and time.time() - t_wait < 110 * 60:
+                    time.sleep(60)
+                    pcache, have = part_cache(name)
+                    missing = [v for v in todo if f"{part_key(v)}.mp4" not in have]
+                note(st, f"waited {(time.time() - t_wait) / 60:.0f} min: {len(todo) - len(missing)} of {len(todo)} parts converted"
+                        + ("" if not missing else f"; converting {len(missing)} here"))
             parts, keys = [], {}
             for i, v in enumerate(todo):
                 raw = dest.parent / "parts" / f"{i:02d}_{v['Name']}"
@@ -518,6 +584,10 @@ def transcribe_job(i, n, only=None):
                 log(f"{name}: transcript is there for this episode")
                 continue
             src = get_source(name, st, stage, ROOT / "campaigns" / name, for_audio=True)
+            if not src and len(drive.files(stage["0_START"], VID_EXT)) > 1:
+                done = convert_parts(name, st, stage, i, n)
+                log(f"{name}: no joined episode yet; converted {done} part(s) for prepare to join")
+                continue
             if not src or not has_speech(src):
                 log(f"{name}: no source" if not src else f"{name}: no speech")
                 continue

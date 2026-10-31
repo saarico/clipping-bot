@@ -3,6 +3,18 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-10-31 (09:55 UTC): the transcribe machines convert a multi-file episode side by side
+- Run 41179325133 (07:42-09:43) rebuilt the 5-interview episode on the prepare machine alone: 2 of 5 parts converted
+  (18 and 38 min) when the 120-minute job limit of its workflow version cut it off. Nothing was lost: both parts are in
+  the Drive part cache.
+- run.convert_part (one file -> 1080p30) is factored out of join_videos. A transcribe machine that finds no joined
+  episode for a multi-file campaign converts its share (run.parts_for_machine: biggest files first, each to the machine
+  with the least so far) into _cache/<campaign>/parts and uploads it; prepare waits up to 110 min for the parts to
+  appear, joins them (concat copy), and only converts itself what is still missing. Five interviews now take about
+  one hour instead of four. transcribe job timeout 90 -> 150 min.
+- Then the usual follow-up: a fresh long episode is cached and the follow-up run (actions: write, in the workflow
+  since 07:20) transcribes it on 4 machines and cuts.
+
 ## 2026-10-31 (08:30 UTC): the picker after Malcolm Todd's first cut (0 clips kept of 6 pitches)
 - Run 41172674913 (07:05-07:42, the 4-interview episode): 6 moments pitched, all 6 failed the audience gates ("the
   headline is not said in the first 6 s", "title has no name"), the best was rendered anyway and dropped by QA: no face
