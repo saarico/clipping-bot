@@ -739,14 +739,26 @@ def build_ass(spec, pieces, layouts):
     hook_s = min(HOOK_SECS, max(total - 2, 3))
     hook_y = WM_Y + spec["_wm_h"] + 44 if spec.get("_wm_h") else 150
     fad = "\\fad(0,450)"
-    ev = [f"Dialogue: 2,{ts(0)},{ts(hook_s)},Hook,,0,0,0,,{{\\an8\\pos(540,{hook_y})\\fs{size}{sp}{fad}}}{title}"]
     # the who-line: who is talking and why they matter (rico 2026-10-31: "who is this guy, what is the topic"),
     # from the brief ("Alex built Higgsfield") or the campaign's own override, under the hook in the accent colour
     tag, tag_size = tag_line(spec.get("tag", ""), lk)
+    hook_h = (title.count("\\N") + 1) * int(size * 1.22)
+    tag_h = (int(tag_size * 1.3) + 26) if tag else 0
+    # a face framed high in the picture would sit under the hook (QA "Faces clear of the title" dropped c04 of Malcolm
+    # Todd, 2026-10-31): then the hook + who-line go to the bottom, just above the captions, for their 5 seconds
+    low = spec.get("_face_top", 9e9) < hook_y + hook_h + tag_h + 40
+    if low:
+        tag_y = CAP_DEFAULT - 90                       # bottom edge of the who-line (\\an2)
+        hook_y = tag_y - tag_h                         # bottom edge of the hook
+        an = "\\an2"
+    else:
+        tag_y = hook_y + hook_h + 26
+        an = "\\an8"
+    ev = [f"Dialogue: 2,{ts(0)},{ts(hook_s)},Hook,,0,0,0,,{{{an}\\pos(540,{hook_y})\\fs{size}{sp}{fad}}}{title}"]
     if tag:
-        tag_y = hook_y + (title.count("\\N") + 1) * int(size * 1.22) + 26
-        ev.append(f"Dialogue: 2,{ts(0)},{ts(hook_s)},Tag,,0,0,0,,{{\\an8\\pos(540,{tag_y})\\fs{tag_size}{fad}}}{tag}")
-    spec["_hook_bottom"] = (tag_y + int(tag_size * 1.3)) if tag else hook_y + (title.count("\\N") + 1) * int(size * 1.22)
+        ev.append(f"Dialogue: 2,{ts(0)},{ts(hook_s)},Tag,,0,0,0,,{{{an}\\pos(540,{tag_y})\\fs{tag_size}{fad}}}{tag}")
+    spec["_hook_low"] = low
+    spec["_hook_bottom"] = 0 if low else ((tag_y + int(tag_size * 1.3)) if tag else hook_y + hook_h)
     spec["_hook_s"] = hook_s
     if spec.get("teaser") and spec.get("label"):   # rico dislikes the label: off unless a spec asks
         start_main = pieces[1][2]
@@ -795,6 +807,8 @@ def build_ass(spec, pieces, layouts):
             if b - a < 0.3:
                 continue
             oa, ob = off + a - s, off + b - s
+            if spec.get("_hook_low") and oa < hook_s + 0.3:
+                continue   # the hook sits where the cards go during its seconds
             lay = layout_at(oa)
             y = CALLOUT_Y
             if lay in ("split", "bottom"):   # a stacked layout: above the top panel's face, under the watermark
@@ -954,7 +968,9 @@ def main(spec_path):
                             fine = people(analyze_shots.faces_in(src, vs, vs + b - a, hi=True), min_size=0.03, max_size=0.6)
                             ppl = [talker(fine if len(fine) == 2 else ppl)]
                             if ppl[0][2] < 0.10:
-                                zoom = max(zoom, min(1.35, 0.11 / max(ppl[0][2], 0.03)))
+                                # up to 1.6x (was 1.35): a 1080p interview filmed from across the room (Spotlight, faces 4-7%
+                                # of the picture, 2026-10-31) is otherwise a dot; beyond 1.6x the picture goes soft
+                                zoom = max(zoom, min(1.6, 0.11 / max(ppl[0][2], 0.03)))
                         lay = "face" if ppl else "wide"
                         t_in = t_out = 0
                         if whole_when_lost:
@@ -1028,6 +1044,13 @@ def main(spec_path):
                          "-c:v", "libx264", "-preset", "ultrafast", "-crf", "14", "-pix_fmt", "yuv420p", str(out)])
                     o = poff + (a - s)
                     layouts.append((o, o + n / FPS, lay + ("+zoom" if zoom > 1 and lay == "face" else "")))
+                    if o < HOOK_SECS and lay == "face" and ppl:
+                        # where the top of the face lands in the 1080x1920 picture while the hook text shows (build_ass
+                        # moves the hook to the bottom when a high-framed face would sit under it, 2026-10-31)
+                        ch = min(int(SRC_H / zoom), SRC_H) // 2 * 2
+                        y0 = 0 if ch == SRC_H else int(min(max(ppl[0][1] * SRC_H - ch * 0.45, 0), SRC_H - ch))
+                        face_top = (ppl[0][1] * SRC_H - ppl[0][2] * SRC_W * 0.55 - y0) * HC / ch
+                        spec["_face_top"] = min(spec.get("_face_top", 9e9), face_top)
                     segs.append(out)
         (tmp / "list.txt").write_text("".join(f"file '{p}'\n" for p in segs))
         run(["ffmpeg", "-loglevel", "error", "-y", "-f", "concat", "-safe", "0", "-i", str(tmp / "list.txt"),
