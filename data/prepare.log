@@ -1,24 +1,14 @@
-[02:42:40] CLIPPING root CLIPPING
-[02:42:54] episode taken from the Drive cache (same source files as last time)
-/home/runner/work/clipping-bot/clipping-bot/bot/run.py:497: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
-  c = sum(1 for v in a.getdata() if v > 40) / float(im.width * im.height)
-/home/runner/work/clipping-bot/clipping-bot/bot/run.py:497: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
-  c = sum(1 for v in a.getdata() if v > 40) / float(im.width * im.height)
-brief idea skipped, its words are not in this file: Keep his Google/Nvidia China has four.
-brief idea skipped, its words are not in this file: I made $1M and bought homes for my family. I own none.
-brief idea skipped, its words are not in this file: Yuri Milner saw the media shift early.
-[02:51:32] PITCH c01_we-spend-4m-a-month-on-ai-fo: 80/100 PASS (hook 20 story 9 entertainment 4 comedy 1 pace 8 length 10 audience 92)
-[02:51:32] PITCH c02_one-person-spent-30-000-on-a: 80/100 REJECT (hook 20 story 9 entertainment 4 comedy 1 pace 8 length 10 audience 80) | audience: flat stretch: 4 of 8 windows with nothing to hold on to (three in a row)
-[02:51:32] PITCH c03_top-creatives-could-spend-10: 94/100 PASS (hook 20 story 10 entertainment 10 comedy 1 pace 10 length 10 audience 83)
-[02:51:32] PITCH c04_investors-shook-hands-then-c: 74/100 REJECT (hook 15 story 8 entertainment 8 comedy 0 pace 7 length 10 audience 63) | first line names no one and nothing; audience: the headline is not said in the first 6 s: "You know sophisticated investors. They can play games. I had"; audience: ends on an aside or the host's next lead-in: "You're at a billion in revenue now."
-[02:51:32] PITCH c05_open-models-80-margins-close: 71/100 PASS (hook 15 story 9 entertainment 2 comedy 0 pace 10 length 10 audience 91) | first line names no one and nothing; little for this campaign's genres (business 5, sports 0, comedy 0)
-[02:51:32] PITCH c06_90-minutes-of-film-took-100: 77/100 PASS (hook 20 story 6 entertainment 4 comedy 0 pace 10 length 10 audience 91)
-[02:51:32] PITCH c07_our-film-prompts-are-3-000-w: 65/100 PASS (hook 15 story 7 entertainment 0 comedy 1 pace 9 length 10 audience 85) | first line names no one and nothing; little for this campaign's genres (business 0, sports 0, comedy 3)
-[02:51:32] PITCH c08_google-and-openai-will-kill: 86/100 REJECT (hook 20 story 10 entertainment 8 comedy 0 pace 8 length 10 audience 88) | audience: the viewer depends on the title: 17% of its words and no name said in the first 10 s
-[02:51:32] PITCH c09_we-don-t-do-any-paid-ads: 65/100 REJECT (hook 20 story 6 entertainment 0 comedy 1 pace 5 length 10 audience 86) | no stakes: no money, failure, surprise, emotion or famous name; little for this campaign's genres (business 0, sports 2, comedy 3); audience: the viewer depends on the title: 0% of its words and no name said in the first 10 s
-[02:51:32] PITCH c10_i-thought-ai-would-replace-l: 72/100 PASS (hook 20 story 6 entertainment 4 comedy 0 pace 7 length 10 audience 83) | no stakes: no money, failure, surprise, emotion or famous name
-[02:51:32] PITCH c11_the-faster-we-ship-the-harde: 69/100 REJECT (hook 20 story 4 entertainment 1 comedy 0 pace 10 length 10 audience 48) | ends mid-sentence; no stakes: no money, failure, surprise, emotion or famous name; little for this campaign's genres (business 2, sports 2, comedy 0); audience: the headline is not said in the first 6 s: "But also very important, the way how Nick thinks about that "; audience: flat stretch: 6 of 7 windows with nothing to hold on to (three in a row); audience: no progression: nothing new after the hook line
-[02:51:32] PITCH c12_researchers-game-tests-to-ge: 69/100 REJECT (hook 15 story 8 entertainment 2 comedy 0 pace 10 length 10 audience 87) | title has no name, number, question or quote; little for this campaign's genres (business 5, sports 5, comedy 1); audience: flat stretch: 3 of 6 windows with nothing to hold on to (three in a row)
-[02:51:32] 6 of 12 pitches go to render
-[02:51:32] 4 candidate(s) picked (the brief's clip ideas (19) + scorecard), 2 fallback(s); rendering on 4 machines with grade-and-retry
-[02:51:32] 4 render job(s)
+[03:40:32] CLIPPING root CLIPPING
+[03:41:37] brief read: 7 rules, 5 links, tags []
+[03:41:39] trying yt-dlp with cookies: https://www.youtube.com/watch?v=lhjf0hZvReI
+[03:41:41] YOUTUBE COOKIES NEEDED OR EXPIRED: refresh the YT_COOKIES secret (SETUP.md, YouTube section)
+[03:41:41] trying yt-dlp with cookies: https://www.youtube.com/watch?v=_VQ4pZQ2nAA
+[03:41:43] YOUTUBE COOKIES NEEDED OR EXPIRED: refresh the YT_COOKIES secret (SETUP.md, YouTube section)
+[03:41:43] trying yt-dlp with cookies: https://www.youtube.com/watch?v=cuNHuBUDbmk
+[03:41:44] YOUTUBE COOKIES NEEDED OR EXPIRED: refresh the YT_COOKIES secret (SETUP.md, YouTube section)
+[03:41:44] trying yt-dlp with cookies: https://www.youtube.com/watch?v=Up93f0DIVw8
+[03:41:46] YOUTUBE COOKIES NEEDED OR EXPIRED: refresh the YT_COOKIES secret (SETUP.md, YouTube section)
+[03:41:46] trying yt-dlp with cookies: https://www.youtube.com/watch?v=5AizOR1xxIw
+[03:41:47] YOUTUBE COOKIES NEEDED OR EXPIRED: refresh the YT_COOKIES secret (SETUP.md, YouTube section)
+[03:41:47] no link could be downloaded; asked rico for the file
+[03:41:49] 0 render job(s)
