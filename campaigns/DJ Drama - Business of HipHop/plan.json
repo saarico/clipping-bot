@@ -1,0 +1,24 @@
+{
+ "why": "Reviewer pins (2026-10-31 16:50 UTC): the campaign page pays Instagram + TikTok only ($0.75/1k, max $250 per platform) although the MasterClass brief lists YouTube Shorts and LinkedIn tags. Podcast: Other People's Business EP 5, host David Rogier (MasterClass CEO) with DJ Drama. Source = the brief's Drive folder only.",
+ "brief_overrides": {
+  "platforms": ["instagram", "tiktok"],
+  "tags": ["@masterclass"],
+  "min_s": 10,
+  "max_s": 60,
+  "rate_per_1k": 0.75,
+  "max_per_clip": 250,
+  "disclosure": "#Ad",
+  "captions_required": true,
+  "style": "podcast",
+  "rules": [
+   "Tag @masterclass in the caption of every post",
+   "Caption must mention 'Other People's Business' and read: DJ Drama on Other People's Business, MasterClass's podcast; mention EP 5 DJ Drama - Business of HipHop, out now",
+   "FTC disclosure #Ad (or #Sponsored / #MasterClassPartner) alone on its own line, first element after the caption text, no other hashtags",
+   "Only footage from the official content folder; no outside footage, no unrelated b-roll",
+   "Original podcast audio stays on the clip; royalty-free music may be added under it",
+   "On-screen text welcome; 'Other People's Business' must appear in the caption or on screen",
+   "Tone curious and sharp, never mocking or cynical about David Rogier, the guests, MasterClass or the podcast; no politics, no other brands or shows",
+   "At least 10 s, English, high-quality edits only, post stays live 60 days"
+  ]
+ }
+}
