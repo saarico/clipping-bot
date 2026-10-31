@@ -1,14 +1,2 @@
-[16:45:30] CLIPPING root CLIPPING
-[16:46:41] dropped Rolling Stone & Malcolm Todd Interviews Clipping: moved 1_CHECK, 2_REDO, 3_APPROVED to _trash
-Could not get FontBBox from font descriptor because None cannot be parsed as 4 floats
-[16:47:38] brief read: 33 rules, 1 links, tags ['#Advertisement', '#MasterClassPartner', '#Sponsored', '@masterclass']
-[16:47:43] downloading from Google Drive: https://drive.google.com/drive/folders/18WfIrK8WVHwDlX4-T2a19RaXcDd_wr1R?usp=sha
-usage: gdown [-h] [-V] [-O OUTPUT] [-q] [--proxy PROXY] [--speed SPEED]
-             [--cookies FILE] [--cookies-from-browser BROWSER] [--no-cookies]
-             [--no-check-certificate] [--continue] [--retries N] [--folder]
-             [--json] [--format FORMAT] [--user-agent USER_AGENT]
-             [--timeout SECONDS]
-             url_or_id
-gdown: error: unrecognized arguments: --fuzzy
-[16:47:44] no link could be downloaded; asked rico for the file
-[16:47:50] 0 render job(s)
+[16:51:37] CLIPPING root CLIPPING
+[16:51:55] 0 render job(s)
