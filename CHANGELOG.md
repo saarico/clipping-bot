@@ -3,6 +3,14 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-10-31 17:35 UTC - Studio v2 release 2: the render is six agents (version 2.2.0)
+
+rico approved all 4 releases of the Studio v2 plan (17:19). render_clip.main's 240 lines are now bot/agents/
+(editor, camera, sound, graphics, captions, finisher), each handing the next a contract kept as <name>.agents.json /
+agents.json. No output change: two test specs (podcast with teaser, card, callout, watermark, end hold; cinematic)
+rendered identically before and after (framemd5 of every video frame and audio packet). New test: tests/test_agents.py.
+RULES 47.
+
 ## 2026-10-31 16:55 UTC - Drive folder downloads broke on gdown 6
 
 gdown 6.x removed the `--fuzzy` flag (URLs are parsed by default), so every Drive link in a brief failed with
@@ -20,7 +28,7 @@ calls `gdown --quiet -O <dir>/ [--folder] <url>`. No rule change.
   goes 1.35x -> 1.6x on talking shows (beyond that the 1080p picture goes soft); pipeline.faces_ok keeps its 7.5% floor.
 - Branch claude/qa-layout-fixes, PR #2, after the studio PR #1 (480165d).
 
-## 2026-10-31 (17:50 UTC): Studio v2 release 1, the safety net (version 2.1.0)
+## 2026-10-31 (17:20 UTC): Studio v2 release 1, the safety net (version 2.1.0)
 - rico 17:19 UTC: "release all 4" (board review 2, Studio_v2_Engineering_Plan_2026-10-31.pptx). Releases ship in order.
 - tests/: 18 gate tests, golden set of 4 approved ICH clips (baseline judge 78, 79, 73, 68), DIGGER replay (approved
   moments rank 2-3). CI: .github/workflows/test.yml (pull requests only; ruff E9/F63/F7/F82 + pytest).

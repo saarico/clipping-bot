@@ -14,6 +14,8 @@ name = folder.name
 mp4 = folder / f"{name}.mp4"
 shutil.copy(out, mp4)
 shutil.copy(out.with_suffix(".ass"), folder / "captions.ass")
+if out.with_suffix(".agents.json").exists():   # the MAKE agents' hand-offs (bot/agents/), read by the inspectors
+    shutil.copy(out.with_suffix(".agents.json"), folder / "agents.json")
 lay = json.loads(out.with_suffix(".layout.json").read_text())
 old = json.loads((folder / "cut_details.json").read_text())
 lay["spec"] = json.loads(Path(sys.argv[3]).read_text()) if len(sys.argv) > 3 else old.get("spec")

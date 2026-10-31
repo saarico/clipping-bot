@@ -23,7 +23,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 import profiles  # noqa: E402
 
-VERSION = "2.1.0"   # Studio v2 release 1 (safety net). Printed in every SUMMARY so a clip traces to the code that made it.
+VERSION = "2.2.0"   # Studio v2 release 2 (MAKE stage split into bot/agents/). Printed in every SUMMARY so a clip traces to the code that made it.
 
 # (stage, role, job, module(s) that do it today, whom a failure goes back to)
 ROSTER = [
@@ -33,11 +33,11 @@ ROSTER = [
     ("FIND", "Moment Hunter", "reads the whole source and ranks the moments worth cutting", "find_moments.py, plan.py", "Content Classifier"),
     ("FIND", "Story Editor", "trims each moment to hook, context, escalation, payoff", "plan.refine, engage.py", "Moment Hunter"),
     ("FIND", "Hook Writer", "the spoken first line and the on-screen hook", "find_moments.opener_ok / hook_from_opener", "Story Editor"),
-    ("MAKE", "Camera Operator", "framing per profile: still on talkers, follow on movies", "render_clip.py (pan_keys), analyze_shots.py", "Story Editor"),
-    ("MAKE", "Caption Designer", "one caption spot, keyword colour, safe zones", "render_clip.py (captions), profiles.LOOK", "Camera Operator"),
-    ("MAKE", "Sound Designer", "voice levels, limiter, SFX only on reveals", "render_clip.py (audio)", "Camera Operator"),
-    ("MAKE", "Motion & Graphics", "punch-ins, number cards, pattern interrupts", "render_clip.py (callouts), graphics_map.py", "Story Editor"),
-    ("MAKE", "Finisher", "cleaning, last frame, cover thumbnail", "render_clip.py (deflash, tighten), thumbnail.py", "Motion & Graphics"),
+    ("MAKE", "Camera Operator", "framing per profile: still on talkers, follow on movies", "agents/camera.py, analyze_shots.py", "Story Editor"),
+    ("MAKE", "Caption Designer", "one caption spot, keyword colour, safe zones", "agents/captions.py, profiles.LOOK", "Camera Operator"),
+    ("MAKE", "Sound Designer", "voice levels, limiter, SFX only on reveals", "agents/sound.py", "Camera Operator"),
+    ("MAKE", "Motion & Graphics", "punch-ins, number cards, pattern interrupts", "agents/graphics.py, graphics_map.py", "Story Editor"),
+    ("MAKE", "Finisher", "cleaning, last frame, cover thumbnail", "agents/finisher.py, agents/editor.py (tighten), thumbnail.py", "Motion & Graphics"),
     ("PROVE", "Inspectors", "first-piece, in-process, layout and final inspection", "pitch.py, pipeline.faces_ok, qa_check.py, studio.layout_check", "the role that owns the failure"),
     ("PROVE", "Judge", "blind grade on the content's own scorecard", "judge_clip.py + studio.weighted_total", "Story Editor (one re-edit), then Moment Hunter"),
     ("PROVE", "Publisher", "post kit per platform, tags checked against the brief", "post_kit.py, lanes.py", "Brief Reader"),
@@ -49,7 +49,7 @@ INSPECTION_LINE = [
     ("Campaign gate", "pay, fit, risk, real person on camera, speaker easy to follow", "campaign_scan.auto_score, studio.speaker_check"),
     ("First-piece inspection", "every moment's words graded before render; picture probed for faces", "pitch.gate, pipeline.faces_ok"),
     ("In-process inspection", "each step's output checked as it is handed on (edges, opener, framing)", "plan.refine, engage.read, render_clip"),
-    ("Assembly", "cut, framed and captioned in one 9:16 look", "render_clip.py"),
+    ("Assembly", "cut, framed and captioned in one 9:16 look", "agents/finisher.py"),
     ("Finishing touches", "sound levels, punch-ins, number cards", "render_clip.py"),
     ("Cleaning", "flash frames, dead air, stutters, spelling", "render_clip.deflash / tighten, qa_check"),
     ("Text & layout", "one caption spot, out of the platform UI, hook gone by ~6 s", "studio.layout_check"),
