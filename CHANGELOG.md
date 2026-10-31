@@ -3,6 +3,28 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-10-31 (02:30 UTC): no title band, one caption spot, a who-line (rule 42)
+- rico (02:02, on run 11's clips): "kinda close but you're still losing me on what. What are we talking about, who is this
+  guy, what is the topic, when where why, why does it matter. Also the text captions are not consistent, very hard to
+  track, sometimes above, other bottom, other center. Keep it nice and nice to look at. Also do we need to have an above
+  header? Is that required by the campaign? Because it looks ugly."
+- The brief checked: the hook is required "on top, shows the first few seconds of the clip, like a spoiler" and the
+  on-screen text rule says "your own hook onscreen (first few seconds of clip)". A permanent header is NOT required.
+- bot/render_clip.py: TOP = 0 (the footage fills the whole 9:16 frame, no band, no pad); the hook is a timed overlay
+  under the watermark for the first 5 s with an outline and a fade (HOOK_SECS, HOOK_MAX 76 px); a who-line under it in
+  the accent colour (style Tag, 40 px shrinking to fit); captions at one fixed y (CAP_DEFAULT 1400) for the whole clip,
+  number cards at one fixed y (CALLOUT_Y 1150); the watermark in the top left corner (36, 36). Talking shows never
+  split the picture: a two-shot is cropped on whoever talks (the 720p face pass gives the mouth motion), punched in up
+  to 1.35x when the faces are small. Run 11's captions jumped because the stacked split put them on the seam and the
+  "center"/"side" layouts had their own spots.
+- bot/brief.py speaker_tag(): reads "X built Y, an ... company" + the full name elsewhere in the brief -> "Alex Mashrabov
+  · built Higgsfield (AI video)"; plan.spec_for passes it as spec["tag"]; a campaign's state may carry its own
+  "speaker_tag" (Higgsfield: "Alex Mashrabov · Founder of Higgsfield AI").
+- bot/qa_check.py: TOP = 0; "Faces clear of the title" now flags a face under the hook text in the first seconds.
+  brand_mode (parked) keeps its own 240 px band.
+- RULES 42, Story structure beat 5 rewritten (hook + who-line, no band), rules 18 and 38 reworded; acceptance.md.
+- Higgsfield: the same 3 moments re-rendered with the new look (used_moments cleared, needs_redo) = run 12.
+
 ## 2026-10-31 (02:05 UTC): run 11 under the story format: 3 clips in 1_CHECK; lanes obey the brief's platforms
 - Run 41155818876 (01:36-01:55): "Top creatives could spend $100,000 a month on AI" (50 s, judge 89, audience 83,
   opens on Harry's question), "We spend $4M a month on AI for 400 people" (35 s, judge 84, audience 88, opens on the

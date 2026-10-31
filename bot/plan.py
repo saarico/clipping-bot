@@ -15,6 +15,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 import audio_energy  # noqa: E402
+import brief as briefmod  # noqa: E402
 import engage  # noqa: E402
 import find_moments as fm  # noqa: E402
 import genres  # noqa: E402
@@ -52,6 +53,7 @@ def spec_for(c, why, source, words_path, brief, campaign, out_dir, mix):
         "focus": [], "overlays": [], "callouts": c.get("callouts", []), "sfx": False,
         "wide_split": [[0.25, 0.40, 0.06], [0.75, 0.40, 0.06]],   # generic two-shot seats; the reviewer's plan.json overrides
         "disclosure": brief.get("disclosure", ""), "style": brief.get("style", ""), "genres": mix, "look": brief.get("look") or {},
+        "tag": brief.get("speaker_tag") or briefmod.speaker_tag(brief.get("text", "")),   # who is talking (on screen for the first seconds)
         "brief": brief_lengths(brief),
         "out": str(Path(out_dir) / f"{slug(c['hook'])}.mp4"),
         "_why": why,

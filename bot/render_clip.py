@@ -77,12 +77,14 @@ import profiles  # noqa: E402
 FONTS_DIR = Path(__file__).parent / "fonts"
 TITLE_FONT, CAP_FONT = "Montserrat ExtraBold", "Montserrat Black"
 W, H, FPS = 1080, 1920, 30
-TOP = 240             # title band height; the picture uses the rest (keep HC/2 even)
-HC = H - TOP
+TOP = 0               # no title band (rico 2026-10-31: "it looks ugly"; the brief wants the hook only for the first seconds)
+HC = H - TOP          # the picture fills the whole 9:16 frame
+HOOK_SECS = 5.0       # the hook + who-line stay on screen this long, then fade (the brief: "first few seconds, like a spoiler")
+HOOK_MAX = 76         # hook font cap over footage (title_lines wraps to 2-3 lines below it)
 SRC_W, SRC_H = 1920, 1080
 SR = 16000
 SLIDE = 0.35          # seconds for an overlay to slide in or out
-WM_W, WM_X, WM_Y = 500, 36, TOP + 28   # a required watermark: 500 px wide, top left of the picture, under the title band
+WM_W, WM_X, WM_Y = 500, 36, 36   # a required watermark: 500 px wide, top left corner, above everything
 MIN_SPLIT = 1.5       # two-person shots shorter than this get a single crop instead of a split
 
 
@@ -556,9 +558,12 @@ def deflash(video):
 
 # ---------- 3. captions ----------
 
-# caption centre line (full-frame y) per layout: on the seam for stacked layouts, low otherwise
-CAP_Y = {"split": TOP + HC // 2, "bottom": TOP + HC // 2, "center": 1500, "side": 1490, "fit": 1500}
-CAP_DEFAULT = 1480
+# caption centre line (full-frame y): ONE spot for the whole clip (rico 2026-10-31: "captions are not consistent,
+# sometimes above, other bottom, other center; keep it nice"). Only a stacked split / bottom card moves it to the seam,
+# and talking shows never split any more (a two-shot is cropped on whoever talks).
+CAP_DEFAULT = 1400
+CAP_Y = {"split": TOP + HC // 2, "bottom": TOP + HC // 2}
+CALLOUT_Y = CAP_DEFAULT - 250   # number cards: between the chin and the captions, same spot every time
 
 
 ACCENT = ["&H00D7FF&"]   # set per render from the look
@@ -566,6 +571,25 @@ ACCENT = ["&H00D7FF&"]   # set per render from the look
 
 def paint(words, hi):
     return " ".join(r"{\c" + ACCENT[0] + "}" + esc(w) + r"{\c&HFFFFFF&}" if norm(w) in hi else esc(w) for w in words)
+
+
+def style_colour(inline):
+    """ASS inline colour override ("&H00D7FF&") -> style-line colour ("&H0000D7FF")."""
+    return "&H00" + inline.strip("&H&")
+
+
+def tag_line(text, lk):
+    """The who-line under the hook: upper case, one line, shrunk to fit the width (40 px down to 28)."""
+    text = " ".join((text or "").split())
+    if not text:
+        return "", 0
+    from PIL import ImageFont
+    ffile = str(FONTS_DIR / lk["title_file"])
+    up = text.upper()
+    for size in range(40, 27, -2):
+        if ImageFont.truetype(ffile, size).getlength(up) * 1.03 <= W - 120:
+            return esc(up), size
+    return esc(up), 28
 
 
 def title_lines(text, hi, lk=None):
@@ -708,8 +732,22 @@ def build_ass(spec, pieces, layouts):
     mask = spec.get("profanity", "mask") != "show"
     hook = " ".join(mask_swear(t) if mask else t for t in spec["hook"].split())
     size, title = title_lines(hook, spec.get("hook_hi", []), lk)
+    size = min(size, HOOK_MAX)
     sp = f"\\fsp{lk['title_spacing']}" if lk.get("title_spacing") else ""
-    ev = [f"Dialogue: 2,{ts(0)},{ts(total)},Hook,,0,0,0,,{{\\an5\\pos(540,{TOP // 2 + 4})\\fs{size}{sp}}}{title}"]
+    # the hook is a timed overlay, not a band: top of the picture under the watermark for the first seconds, then
+    # it fades and the footage has the whole frame (the brief: "shows the first few seconds of the clip, like a spoiler")
+    hook_s = min(HOOK_SECS, max(total - 2, 3))
+    hook_y = WM_Y + spec["_wm_h"] + 44 if spec.get("_wm_h") else 150
+    fad = "\\fad(0,450)"
+    ev = [f"Dialogue: 2,{ts(0)},{ts(hook_s)},Hook,,0,0,0,,{{\\an8\\pos(540,{hook_y})\\fs{size}{sp}{fad}}}{title}"]
+    # the who-line: who is talking and why they matter (rico 2026-10-31: "who is this guy, what is the topic"),
+    # from the brief ("Alex built Higgsfield") or the campaign's own override, under the hook in the accent colour
+    tag, tag_size = tag_line(spec.get("tag", ""), lk)
+    if tag:
+        tag_y = hook_y + (title.count("\\N") + 1) * int(size * 1.22) + 26
+        ev.append(f"Dialogue: 2,{ts(0)},{ts(hook_s)},Tag,,0,0,0,,{{\\an8\\pos(540,{tag_y})\\fs{tag_size}{fad}}}{tag}")
+    spec["_hook_bottom"] = (tag_y + int(tag_size * 1.3)) if tag else hook_y + (title.count("\\N") + 1) * int(size * 1.22)
+    spec["_hook_s"] = hook_s
     if spec.get("teaser") and spec.get("label"):   # rico dislikes the label: off unless a spec asks
         start_main = pieces[1][2]
         ev.append(f"Dialogue: 2,{ts(start_main)},{ts(start_main + 1.5)},Label,,0,0,0,,"
@@ -758,9 +796,9 @@ def build_ass(spec, pieces, layouts):
                 continue
             oa, ob = off + a - s, off + b - s
             lay = layout_at(oa)
-            y = TOP + 70 if lay in ("split", "bottom") else CAP_Y.get(lay, CAP_DEFAULT) - 230
-            if lay in ("split", "bottom") and spec.get("_wm_h"):   # the watermark sits there: the callout goes under it
-                y += spec["_wm_h"] + 20
+            y = CALLOUT_Y
+            if lay in ("split", "bottom"):   # a stacked layout: above the top panel's face, under the watermark
+                y = WM_Y + spec.get("_wm_h", 0) + 90
             ev.append(f"Dialogue: 3,{ts(oa)},{ts(ob)},Callout,,0,0,0,,{{\\an5\\pos(540,{y})\\fad(150,200)}}{text}")
 
     header = f"""[Script Info]
@@ -772,7 +810,8 @@ WrapStyle: 0
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
 Style: Cap,{lk['cap_font']},{lk['cap_size']},&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,{lk['cap_bold']},0,0,0,100,100,1,0,1,{lk['outline']},{lk['shadow']},5,70,70,0,1
-Style: Hook,{lk['title_font']},62,&H00FFFFFF,&H00FFFFFF,&H00000000,&H00000000,{lk['title_bold']},0,0,0,100,100,0,0,1,0,0,5,50,50,0,1
+Style: Hook,{lk['title_font']},62,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,{lk['title_bold']},0,0,0,100,100,0,0,1,{lk['outline']},{lk['shadow']},8,50,50,0,1
+Style: Tag,{lk['title_font']},40,{style_colour(lk['accent'])},{style_colour(lk['accent'])},&H00000000,&H80000000,{lk['title_bold']},0,0,0,100,100,1,0,1,5,2,8,50,50,0,1
 Style: Label,{TITLE_FONT},44,&H00000000,&H00000000,&H0000D7FF,&H0000D7FF,0,0,0,0,100,100,2,0,3,12,0,8,80,80,0,1
 Style: Callout,{TITLE_FONT},96,&H0000D7FF,&H0000D7FF,&H00000000,&H00000000,1,0,0,0,100,100,0,0,3,16,0,5,60,60,0,1
 Style: Disc,{CAP_FONT},34,&H00FFFFFF,&H00FFFFFF,&H00000000,&H90000000,0,0,0,0,100,100,0,0,3,10,0,2,40,40,0,1
@@ -884,8 +923,8 @@ def main(spec_path):
                         part_of_shot = (b - a) < (sh["end"] - sh["start"]) - 0.1   # e.g. after a b-roll
                         # a piece of a long shot gets its own face position (the speaker may have moved)
                         ppl = people(analyze_shots.faces_in(src, vs, vs + b - a) if sw or part_of_shot else sh["faces"])
-                        if len(ppl) == 2 and (sh["end"] - sh["start"]) < MIN_SPLIT:
-                            ppl = [talker(ppl)]   # short two-person shot: crop on whoever is speaking
+                        if len(ppl) == 2:
+                            ppl = [talker(ppl)]   # a two-person shot: crop on whoever is speaking, never a split (one look, one caption spot)
                         if not ppl:
                             # nobody big: the wide two-shot? (faces ~45 px) -> stacked split on both people.
                             # If the detector misses one of them (dark set, a turned head) fall back to the
@@ -908,7 +947,15 @@ def main(spec_path):
                                     ppl, panel_w = pair, 520
                                 elif len(small) == 1:
                                     ppl = small
-                        lay = "split" if len(ppl) == 2 else "face" if ppl else "wide"
+                        if len(ppl) == 2:
+                            # the wide two-shot of a talking show: no stacked split any more (rico 2026-10-31: the captions
+                            # jumped to the seam). Crop on whoever talks (mouth motion from the 720p pass when it has it) and
+                            # punch in so the face is not a dot; capped so the picture stays sharp enough
+                            fine = people(analyze_shots.faces_in(src, vs, vs + b - a, hi=True), min_size=0.03, max_size=0.6)
+                            ppl = [talker(fine if len(fine) == 2 else ppl)]
+                            if ppl[0][2] < 0.10:
+                                zoom = max(zoom, min(1.35, 0.11 / max(ppl[0][2], 0.03)))
+                        lay = "face" if ppl else "wide"
                         t_in = t_out = 0
                         if whole_when_lost:
                             # movies, streams, concerts: ONE 9:16 look for the whole clip (rico, 2026-10-28: "the screen
@@ -1028,7 +1075,7 @@ def main(spec_path):
             h = spec["hold_end_from"]
             pre = (f"trim=end={h:.3f},setpts=PTS-STARTPTS,tpad=stop_duration={total - h + 0.1:.3f}:stop_mode=clone,"
                    f"fade=out:st={h - 0.1:.3f}:d={total - h + 0.1:.3f},")
-        vf = f"{pre}pad={W}:{H}:0:{TOP}:color=0x0E0E0E,ass={tmp / 'caps.ass'}:fontsdir={FONTS_DIR}"
+        vf = f"{pre}ass={tmp / 'caps.ass'}:fontsdir={FONTS_DIR}"
         ins = ["-i", str(tmp / "video.mp4"), "-i", str(tmp / "audio.m4a")]
         if wm:   # the required watermark on top of everything, the whole clip (the brief: big, readable, never covered)
             ins += ["-i", wm]

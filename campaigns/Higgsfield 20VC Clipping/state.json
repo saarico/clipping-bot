@@ -43,23 +43,7 @@
  "updated": "2026-10-31 01:55 UTC",
  "critiques_seen": [],
  "watermark": "20vc podcast higgsfield black.png",
- "used_moments": [
-  {
-   "start": 2119.98,
-   "end": 2169.8,
-   "hook": "Top creatives could spend $100,000 a month on AI."
-  },
-  {
-   "start": 2004.98,
-   "end": 2040.78,
-   "hook": "We spend $4M a month on AI for 400 people."
-  },
-  {
-   "start": 2209.44,
-   "end": 2247.3,
-   "hook": "I thought AI would replace legal and support. I was wrong."
-  }
- ],
+ "used_moments": [],
  "tried_moments": [
   {
    "start": 1305.58,
@@ -117,7 +101,7 @@
    ]
   }
  ],
- "needs_redo": false,
+ "needs_redo": true,
  "empty_runs": 0,
  "empty_told": false,
  "brief": {
@@ -331,7 +315,8 @@
    }
   ],
   "style": "podcast",
-  "rider": ""
+  "rider": "",
+  "speaker_tag": "Alex Mashrabov · Founder of Higgsfield AI"
  },
  "review_told": true
 }

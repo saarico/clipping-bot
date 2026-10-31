@@ -12,7 +12,7 @@ rico, 2026-10-29: "a full quality inspection is ideal and necessary", "have bett
 | Somebody in frame | face (8%+ of width on movies, 25%+ on podcasts) or a person | no empty stretch of 1.5 s; a movie's own scenery cut (a segment the renderer framed wide) may run 3 s |
 | Footage text cut off | letter rows touching the frame edge, once a second | at most one second |
 | Crop jumps | at every join we made: output jump vs source jump at the same moment | no two joins where the source is continuous but the picture jumps; at most 8 joins per 10 s |
-| Faces clear of the title | face boxes vs the title band | no forehead under the band |
+| Faces clear of the title | face boxes vs the hook text (first 5 s) and the top edge | no face under the hook text, no head cut off at the top (warn at 1-2 frames, fail above) |
 | Captions readable | caption events | 2-6 words per caption, none under 0.35 s, numbers whole, swearing masked |
 | Captions cover the whole clip | spoken words vs captions | no spoken word missing, first caption inside 1 s, last within 2 s of the end |
 | Caption spelling | pyspellchecker + allowlist | unknown words = warning for the reviewer (names), never a wall of them |

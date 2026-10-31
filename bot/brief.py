@@ -144,3 +144,26 @@ def parse(text):
 if __name__ == "__main__":
     import sys
     print(json.dumps(parse(open(sys.argv[1]).read()), indent=1)[:4000])
+
+
+def speaker_tag(text):
+    """The who-line shown under the hook for the first seconds (rico 2026-10-31: "who is this guy, what is the
+    topic"): from brief wording like "Alex built Higgsfield, an AI video company" + "Alex Mashrabov talks with ...",
+    -> "Alex Mashrabov · built Higgsfield (AI video)". Empty when the brief does not say; the campaign's state
+    may carry a hand-written "speaker_tag" instead."""
+    text = text or ""
+    stop = {"Content", "Clip", "Find", "Hook", "Add", "Keep", "Shows", "The", "Use", "Make", "Post", "Watch"}
+    names = [n for n in re.findall(r"\b([A-Z][a-z]+ [A-Z][a-z]+(?:[a-z]+)?)\b", text) if n.split()[0] not in stop]
+    m = re.search(r"\b([A-Z][a-z]+(?: [A-Z][a-z]+)?) (built|founded|co-founded|runs|created|is the founder of|is the CEO of|leads) "
+                  r"([A-Z][\w.]+(?: [A-Z][\w.]+)?)(?:,\s*(?:an?|the)\s+([^,.;\n]{3,40}?))?(?=[,.;\n ]|$)", text)
+    if not m:
+        return ""
+    who, verb, company, desc = m.groups()
+    if " " not in who:
+        who = next((n for n in names if n.split()[0] == who), who)
+    verb = {"is the founder of": "founder of", "is the CEO of": "CEO of", "leads": "runs"}.get(verb, verb)
+    tag = f"{who} · {verb} {company}"
+    if desc:
+        desc = re.sub(r"\s+(company|startup|business|platform|app)$", "", desc.strip())
+        tag += f" ({desc})"
+    return tag

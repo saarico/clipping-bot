@@ -41,7 +41,9 @@ HERE = Path(__file__).parent
 sys.path.insert(0, str(HERE))
 import render_clip as rc  # noqa: E402  (constants, title_lines, ts, esc, norm)
 
-W, H, TOP, HC, FPS = rc.W, rc.H, rc.TOP, rc.HC, rc.FPS
+W, H, FPS = rc.W, rc.H, rc.FPS
+TOP = 240             # brand mode (parked) keeps its own title band; the main renderer has none since 2026-10-31
+HC = H - TOP
 MAX_CLIPS = 3
 VOICES = ["en-US-AndrewNeural", "en-US-BrianNeural", "en-US-GuyNeural"]
 RATE = "+8%"

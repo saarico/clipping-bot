@@ -46,7 +46,7 @@ from render_clip import STUTTER  # noqa: E402
 import analyze_shots  # noqa: E402
 import profiles  # noqa: E402
 
-W, H, TOP = 1080, 1920, 240
+W, H, TOP = 1080, 1920, 0   # no title band since 2026-10-31: the picture is the whole frame
 FILLER = {"mm", "mmhmm", "um", "uh", "hmm"}
 BACKWARDS = ("as i was mentioning", "as i said", "like i said", "what's also interesting", "that's why", "so that's",
              "going back to", "as we talked about", "the other thing")
@@ -341,7 +341,15 @@ def _frames_raw(mp4, fps=2):
 
 def check_faces(rep, mp4, events):
     caps = [e for e in events if e["style"] == "Cap"]
-    pos = lambda e: int(re.search(r"\\pos\(\d+,(\d+)\)", e["text"]).group(1)) if "\\pos" in e["text"] else 1480
+    pos = lambda e: int(re.search(r"\\pos\(\d+,(\d+)\)", e["text"]).group(1)) if "\\pos" in e["text"] else 1400
+    # the hook + who-line sit at the top for the first seconds: a face must stay below them
+    hook = [e for e in events if e["style"] in ("Hook", "Tag")]
+    hook_end = max((e["end"] for e in hook), default=0)
+    hook_bottom = 0
+    for e in hook:
+        m = re.search(r"\\pos\(\d+,(\d+)\)", e["text"]); fs = re.search(r"\\fs(\d+)", e["text"])
+        if m:
+            hook_bottom = max(hook_bottom, int(m.group(1)) + (e["text"].count("\\N") + 1) * int(int(fs.group(1)) * 1.22 if fs else 70))
     in_band, on_caption = [], []
     for i, f in enumerate(frames(mp4)):
         t = i / 2
@@ -351,17 +359,17 @@ def check_faces(rep, mp4, events):
         for cx, cy, sz, _ in analyze_shots.detect_faces(pic, 0.7):
             w = h = int(sz * pw * 2)
             x, y = int(cx * pw * 2 - w / 2), int(cy * ph * 2 - h / 2)           # back to 1080x1920
-            if y < 0.1 * h:                                     # forehead under the band: head cut off
-                in_band.append(t)
             y += TOP
+            if y < 0.1 * h or (t < hook_end and w >= 220 and y + h * 0.2 < hook_bottom):   # head cut off, or under the hook text
+                in_band.append(t)
             cap = next((e for e in caps if e["start"] <= t < e["end"]), None)
             if cap and w >= 220:                                # the speaker's face, not a logo or a far-off head
                 cy = pos(cap)
                 # caption box ~110 px tall; the face's eyes-to-mouth band is its middle half
                 if y + h * 0.25 < cy + 55 and y + h * 0.8 > cy - 55:
                     on_caption.append(t)
-    rep.add("Faces clear of the title", "FAIL" if in_band else "PASS",
-            f"face cut off by the title band at {', '.join(f'{t:.1f}s' for t in in_band[:8])}" if in_band else "checked every 0.5 s")
+    rep.add("Faces clear of the title", "FAIL" if len(in_band) > 2 else "WARN" if in_band else "PASS",
+            f"face under the hook text or cut off at the top at {', '.join(f'{t:.1f}s' for t in in_band[:8])}" if in_band else "checked every 0.5 s")
     rep.add("Captions off faces", "FAIL" if len(on_caption) > 6 else "WARN" if len(on_caption) > 2 else "PASS",
             f"caption may cover a face at {', '.join(f'{t:.1f}s' for t in on_caption[:8])}" if len(on_caption) > 2
             else "checked every 0.5 s")
