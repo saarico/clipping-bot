@@ -3,6 +3,13 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-11-01 01:10 UTC - Scan stops policy advocacy groups
+
+The scan offered "Alliance Podcast/News Clipping [VIRAL]" (78/100, JOIN): the Alliance for Secure AI, a DC advocacy
+nonprofit wanting "viral AI safety clips". campaign_scan.advocacy stops a campaign whose name/org names an alliance,
+coalition, institute, foundation, PAC, action fund or "news footage" AND whose text carries a policy cause. None of
+the 64 cards in data/scan_cards.json trips it.
+
 ## 2026-10-31 17:45 UTC - Studio v2 release 4: tune and learn (version 2.4.0)
 
 Edge guard (no edge inside a word), candid genre (interview stories count as entertainment), wide-shot punch-in up to

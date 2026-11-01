@@ -163,6 +163,20 @@ def is_ad(c):
 RISKY = r"\b(casino|casinos|gambling|gamble|betting|bets?|sportsbook|slot machines?|roulette|blackjack|poker|stake\.com|stake\.us|roobet|rollbit|shuffle\.com|case opening|crypto|cryptocurrency|bitcoin|btc|ethereum|solana|memecoin|meme coin|token|tokens|nft|nfts|web3|airdrop|defi|blockchain|presale)\b"
 
 
+# advocacy (bot thread 2026-11-01: "Alliance Podcast/News Clipping" = the Alliance for Secure AI, a DC policy nonprofit):
+# an alliance / coalition / institute / foundation / PAC / action fund behind the campaign, plus a policy cause, is
+# political commentary under another name, which rico's rules stop
+ADVOCACY_ORG = r"\b(alliance|coalition|institute|foundation|pac|super pac|action fund|advocacy|nonprofit|non-profit|think tank|policy center|news footage)\b"
+ADVOCACY_CAUSE = r"\b(policy|policies|advocacy|regulat\w*|legislat\w*|congress|senate|lawmakers?|washington|dc|election\w*|vote|voters|ballot|campaign finance|ai safety|secure ai|safe ai|awareness|petition|activis\w*|nonprofit|non-profit)\b"
+
+
+def advocacy(c):
+    """A policy/advocacy organisation's message dressed as a podcast or news clip."""
+    head = " ".join(str(c.get(k, "")) for k in ("name", "org")).lower()
+    blob = head + " " + str(c.get("description", "")).lower()[:1500]
+    return bool(re.search(ADVOCACY_ORG, head) and re.search(ADVOCACY_CAUSE, blob))
+
+
 PERSON = r"\b(streamer|streamers|twitch|kick|youtuber|youtubers|creator|creators|podcast|podcasts|show|host|reacts?|reaction|vlog|vlogs|clipping army|his|her|their|he|she|comedian|caster|commentary|facecam|irl)\b"
 GAME = r"\b(gaming|video ?game|roblox|minecraft|fortnite|call of duty|cod|modern warfare|warzone|gta|valorant|esports|multiplayer|dlc|gameplay|campaign moments|fighting game|virtua fighter|tekken|street fighter|mortal kombat)\b"
 
@@ -243,6 +257,8 @@ def auto_score(c):
     blob = " ".join(str(c.get(k, "")) for k in ("name", "org", "category", "description")).lower()
     if re.search(RISKY, blob) or str(c.get("category", "")).lower() == "crypto":   # board decision 2026-10-31
         stops.append("gambling or crypto (board filter 2026-10-31: platform-ban risk to our accounts)")
+    if advocacy(c):
+        stops.append("policy advocacy group (alliance / coalition / PAC with a cause): political commentary, which rico's rules stop")
     if c.get("rate") is not None and c["rate"] < 0.5:
         stops.append("pays under $0.50 per 1k views (board filter 2026-10-31)")
     if game_promo(c):
