@@ -1,0 +1,16 @@
+{
+ "why": "Reviewer pins (2026-11-01 19:20 UTC): rico's test pick after a dry board. The folder holds only the channel link (https://www.youtube.com/@jacobnach, Jacob Nachinson: men's health, biohacking, TRT, peptides, supplements); rico downloads the long videos by PowerShell (rule 43). Campaign page: $1/1k on TikTok, YouTube and Instagram, max $200 per platform; the one content rule is hidden until pasted.",
+ "brief_overrides": {
+  "platforms": ["tiktok", "youtube", "instagram"],
+  "min_s": 10,
+  "max_s": 60,
+  "rate_per_1k": 1.0,
+  "max_per_clip": 200,
+  "style": "talker",
+  "rules": [
+   "Clips about health, wellness, functional medicine, fitness and motivation from Jacob Nach's own videos only",
+   "No medical claims added by us: the speaker's words carry the clip; never misquote",
+   "Captions on; hook said by the speaker in the first seconds; who-line: Jacob Nach, men's health and biohacking creator"
+  ]
+ }
+}
