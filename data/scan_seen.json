@@ -99,5 +99,12 @@
   "lane": "C",
   "offered": "2026-10-31T16:39+00:00",
   "note": "NOT offered: game trailer / cinematics with no person in it (rico's no-game-promo rule); the game_promo gate missed it"
+ },
+ "Alliance Podcast/News Clipping [VIRAL]": {
+  "link": "https://contentrewards.com/c/campaigns/50786486-a49d-4a17-b81b-0c416cb635da",
+  "score": 78,
+  "lane": "C",
+  "offered": "2026-11-01T01:05+00:00",
+  "note": "NOT offered: Alliance for Secure AI is a DC policy-advocacy nonprofit (political strategist founder); 'viral AI safety clips' = advocacy, stopped by rico's no-politics rule"
  }
 }
