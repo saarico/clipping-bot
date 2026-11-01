@@ -5,7 +5,7 @@
   "category": "Entertainment",
   "lane": "C",
   "rate": 1.75,
-  "budget_left": 23489.52,
+  "budget_left": 23488.79,
   "budget_total": 30000,
   "views": null,
   "clippers": 85,
@@ -40,12 +40,12 @@
   "category": "Finance",
   "lane": "A",
   "rate": 2.0,
-  "budget_left": 15195.56,
+  "budget_left": 15195.55,
   "budget_total": 16000,
   "views": null,
   "clippers": 68,
   "days_left": null,
-  "days_est": 177,
+  "days_est": 178,
   "funded_ago": "1w",
   "platforms": [
    "instagram",
@@ -76,7 +76,7 @@
   "category": "Entertainment",
   "lane": "C",
   "rate": 1.0,
-  "budget_left": 20169.21,
+  "budget_left": 20169.19,
   "budget_total": 26300,
   "views": null,
   "clippers": 41,
@@ -107,15 +107,53 @@
   ]
  },
  {
+  "name": "Double Coverage Podcast",
+  "org": "Reach",
+  "category": "Podcasts",
+  "lane": "C",
+  "rate": 2.0,
+  "budget_left": 7323.69,
+  "budget_total": 15000,
+  "views": null,
+  "clippers": 1189,
+  "days_left": null,
+  "days_est": 2,
+  "funded_ago": "2d",
+  "platforms": [
+   "instagram",
+   "tiktok",
+   "x",
+   "youtube"
+  ],
+  "submissions": 5137,
+  "application_only": false,
+  "pts": {
+   "pay+budget": 18,
+   "paid out": 20,
+   "competition": 3,
+   "lane fit": 7,
+   "entertainment": 8,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/fc194db2-7097-4dcf-812e-e3d325d51e6a",
+  "raw": "json",
+  "total": 78,
+  "verdict": "STOP",
+  "stops": [
+   "wants a dedicated / niche-matching account (Reach style; rico dropped TJR for this 2026-10-30)",
+   "budget runs out in about 2 day(s) at its current pace"
+  ]
+ },
+ {
   "name": "Call of Duty - MW4 Multiplayer Launch Clipping",
   "org": "Clipping Culture",
   "category": "Entertainment",
   "lane": "C",
   "rate": 1.75,
-  "budget_left": 14171.13,
+  "budget_left": 14053.13,
   "budget_total": 23057.55,
   "views": null,
-  "clippers": 186,
+  "clippers": 190,
   "days_left": null,
   "days_est": 8,
   "funded_ago": "4d",
@@ -123,7 +161,7 @@
    "instagram",
    "tiktok"
   ],
-  "submissions": 548,
+  "submissions": 560,
   "application_only": false,
   "pts": {
    "pay+budget": 20,
@@ -187,7 +225,7 @@
   "category": "Roblox",
   "lane": "C",
   "rate": 1.0,
-  "budget_left": 17335.75,
+  "budget_left": 17331.5,
   "budget_total": 32000,
   "views": null,
   "clippers": 1006,
@@ -260,7 +298,7 @@
   "category": "Personal Brand",
   "lane": "C",
   "rate": 2.0,
-  "budget_left": 4487.22,
+  "budget_left": 4475.18,
   "budget_total": 10000,
   "views": null,
   "clippers": 144,
@@ -297,7 +335,7 @@
   "category": "Technology",
   "lane": "C",
   "rate": 1.5,
-  "budget_left": 56967.22999999998,
+  "budget_left": 56941.04999999999,
   "budget_total": 379306,
   "views": null,
   "clippers": 3900,
@@ -367,42 +405,6 @@
   ]
  },
  {
-  "name": "Sabri Malle Clipping",
-  "org": "Sabri Malle Clipping",
-  "category": "Lifestyle",
-  "lane": "B",
-  "rate": 1.0,
-  "budget_left": 9861.33,
-  "budget_total": 12000,
-  "views": null,
-  "clippers": 28,
-  "days_left": null,
-  "days_est": 185,
-  "funded_ago": "1mo",
-  "platforms": [
-   "instagram",
-   "tiktok",
-   "youtube"
-  ],
-  "submissions": 130,
-  "application_only": true,
-  "pts": {
-   "pay+budget": 17,
-   "paid out": 10,
-   "competition": 10,
-   "lane fit": 7,
-   "entertainment": 0,
-   "platform guessed": 0
-  },
-  "link": "https://contentrewards.com/c/campaigns/7e5c4c7a-1d93-49bb-8214-ca3a4ba60c62",
-  "raw": "json",
-  "total": 61,
-  "verdict": "STOP",
-  "stops": [
-   "application only and the brief is hidden"
-  ]
- },
- {
   "name": "Open Road Clipping | $5.25K Budget | $1.25 CPM",
   "org": "Clipix",
   "category": "Apps",
@@ -442,7 +444,7 @@
   "category": "Health & Wellness",
   "lane": "B",
   "rate": 1.5,
-  "budget_left": 4297.150000000001,
+  "budget_left": 4297.14,
   "budget_total": 4813.76,
   "views": null,
   "clippers": 46,
@@ -477,7 +479,7 @@
   "category": "Podcasts",
   "lane": "B",
   "rate": 1.25,
-  "budget_left": 8869.66,
+  "budget_left": 8869.24,
   "budget_total": 20000,
   "views": null,
   "clippers": 549,
@@ -513,7 +515,7 @@
   "category": "Entertainment",
   "lane": "C",
   "rate": 1.5,
-  "budget_left": 1615.25,
+  "budget_left": 1613.2299999999996,
   "budget_total": 6476.4,
   "views": null,
   "clippers": 444,
@@ -624,7 +626,7 @@
   "category": "Roblox",
   "lane": "C",
   "rate": 0.8,
-  "budget_left": 2513.58,
+  "budget_left": 2513.54,
   "budget_total": 4200,
   "views": null,
   "clippers": 332,
@@ -688,42 +690,6 @@
   "stops": [
    "wants a dedicated / niche-matching account (Reach style; rico dropped TJR for this 2026-10-30)",
    "fits none of the three accounts (no clear topic for YouTube money, Instagram drama or TikTok entertainment)"
-  ]
- },
- {
-  "name": "Double Coverage Podcast",
-  "org": "Reach",
-  "category": null,
-  "lane": "C",
-  "rate": 1.0,
-  "budget_left": 7300.0,
-  "budget_total": 15000.0,
-  "views": null,
-  "clippers": null,
-  "days_left": null,
-  "days_est": null,
-  "funded_ago": null,
-  "platforms": [
-   "youtube",
-   "tiktok",
-   "instagram"
-  ],
-  "submissions": null,
-  "application_only": null,
-  "pts": {
-   "pay+budget": 15,
-   "paid out": 12,
-   "competition": 5,
-   "lane fit": 7,
-   "entertainment": 4,
-   "platform guessed": -3
-  },
-  "link": "https://contentrewards.com/c/campaigns/fc194db2-7097-4dcf-812e-e3d325d51e6a",
-  "raw": " Reach \u00b7 2d Double Coverage Podcast $7.7K / $15K 1.2K $1\u2013$2 /1K ",
-  "total": 56,
-  "verdict": "STOP",
-  "stops": [
-   "wants a dedicated / niche-matching account (Reach style; rico dropped TJR for this 2026-10-30)"
   ]
  },
  {
@@ -805,7 +771,7 @@
   "category": "Roblox",
   "lane": "C",
   "rate": 0.8,
-  "budget_left": 2782.79,
+  "budget_left": 2782.75,
   "budget_total": 4500,
   "views": null,
   "clippers": 663,
@@ -1016,6 +982,42 @@
   ]
  },
  {
+  "name": "Turkish IRL VLOG in America",
+  "org": "Outis Clips",
+  "category": null,
+  "lane": "?",
+  "rate": 2.0,
+  "budget_left": 1300.0,
+  "budget_total": 3100.0,
+  "views": null,
+  "clippers": 41,
+  "days_left": null,
+  "days_est": null,
+  "funded_ago": null,
+  "platforms": [
+   "youtube",
+   "tiktok",
+   "instagram"
+  ],
+  "submissions": null,
+  "application_only": null,
+  "pts": {
+   "pay+budget": 15,
+   "paid out": 12,
+   "competition": 10,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": -3
+  },
+  "link": "https://contentrewards.com/c/campaigns/e36819b7-6b11-4ff3-98f8-43db273d13a3",
+  "raw": " Outis Clips \u00b7 1mo Extra 300$ Turkish IRL VLOG in America $1.8K / $3.1K 41 $2 /1K ",
+  "total": 47,
+  "verdict": "STOP",
+  "stops": [
+   "fits none of the three accounts (no clear topic for YouTube money, Instagram drama or TikTok entertainment)"
+  ]
+ },
+ {
   "name": "$$9,000 Jason Pool Campaign",
   "org": "Reach",
   "category": "Entertainment",
@@ -1207,7 +1209,7 @@
   "budget_left": 30000,
   "budget_total": 30000,
   "views": null,
-  "clippers": 2647,
+  "clippers": 2652,
   "days_left": null,
   "days_est": null,
   "funded_ago": "1w",
@@ -1217,7 +1219,7 @@
    "x",
    "youtube"
   ],
-  "submissions": 23299,
+  "submissions": 23379,
   "application_only": false,
   "pts": {
    "pay+budget": 12,
@@ -1418,12 +1420,48 @@
   ]
  },
  {
+  "name": "Sabri Malle Clipping",
+  "org": "Sabri Malle Clipping",
+  "category": null,
+  "lane": "?",
+  "rate": 1.0,
+  "budget_left": 9900.0,
+  "budget_total": 12000.0,
+  "views": null,
+  "clippers": 28,
+  "days_left": null,
+  "days_est": null,
+  "funded_ago": null,
+  "platforms": [
+   "youtube",
+   "tiktok",
+   "instagram"
+  ],
+  "submissions": null,
+  "application_only": null,
+  "pts": {
+   "pay+budget": 17,
+   "paid out": 5,
+   "competition": 10,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": -3
+  },
+  "link": "https://contentrewards.com/c/campaigns/7e5c4c7a-1d93-49bb-8214-ca3a4ba60c62",
+  "raw": " Sabri Malle Clipping \u00b7 1mo Sabri Malle Clipping $2.1K / $12K 28 $1 /1K ",
+  "total": 40,
+  "verdict": "STOP",
+  "stops": [
+   "fits none of the three accounts (no clear topic for YouTube money, Instagram drama or TikTok entertainment)"
+  ]
+ },
+ {
   "name": "ClippedIn",
   "org": "/1K",
   "category": null,
   "lane": "?",
   "rate": 1.0,
-  "budget_left": 2005.0,
+  "budget_left": 2004.0,
   "budget_total": 3000.0,
   "views": null,
   "clippers": 35,
@@ -1446,7 +1484,7 @@
    "platform guessed": -3
   },
   "link": "https://contentrewards.com/c/campaigns/5ad30f7a-db22-48e5-9d9a-b7076f7fa55e",
-  "raw": " ClippedIn \u00b7 3d $3,000 Rare Americans Apt 4 Sound Campaign $995 / $3K 35 $1 /1K ",
+  "raw": " ClippedIn \u00b7 3d $3,000 Rare Americans Apt 4 Sound Campaign $996 / $3K 35 $1 /1K ",
   "total": 39,
   "verdict": "STOP",
   "stops": [
@@ -1882,43 +1920,6 @@
   "link": "https://contentrewards.com/c/campaigns/b46e43fd-8879-4ce6-a0fa-167d5f3e830d",
   "raw": " Rendr Studios \u00b7 3mo Antoine Sallis Clipping $2 CPM All Plats $3.1K / $3.3K 196 $2 /1K ",
   "total": 35,
-  "verdict": "STOP",
-  "stops": [
-   "budget left under $1,000",
-   "fits none of the three accounts (no clear topic for YouTube money, Instagram drama or TikTok entertainment)"
-  ]
- },
- {
-  "name": "Dillon Danis Clipping",
-  "org": "ClipUp Official",
-  "category": null,
-  "lane": "?",
-  "rate": 1.0,
-  "budget_left": 100.0,
-  "budget_total": 2500.0,
-  "views": null,
-  "clippers": 66,
-  "days_left": null,
-  "days_est": null,
-  "funded_ago": null,
-  "platforms": [
-   "youtube",
-   "tiktok",
-   "instagram"
-  ],
-  "submissions": null,
-  "application_only": null,
-  "pts": {
-   "pay+budget": 8,
-   "paid out": 9,
-   "competition": 10,
-   "lane fit": 0,
-   "entertainment": 0,
-   "platform guessed": -3
-  },
-  "link": "https://contentrewards.com/c/campaigns/da416664-ae72-4fc4-b0c0-78acc04affaf",
-  "raw": " ClipUp Official \u00b7 1w Dillon Danis Clipping $2.4K / $2.5K 66 $1 /1K ",
-  "total": 33,
   "verdict": "STOP",
   "stops": [
    "budget left under $1,000",
