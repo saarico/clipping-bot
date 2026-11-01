@@ -580,3 +580,9 @@ calls `gdown --quiet -O <dir>/ [--folder] <url>`. No rule change.
   on the wide two-shot, "lag at the start". Rules 21–26 in RULES.md (cut on the show's own camera cut, deflash,
   centred speaker with a dead zone, never a letterbox, never an empty room, no dead air, cards boxed at their
   biggest, the show's own footage only).
+
+## 2026-11-01 23:05 UTC - Jacob Nach dropped (rico)
+Test campaign retired: two clean runs, 4 rendered, 0 kept. The creator's videos are voice-over on b-roll (face on screen
+under 40% of the time), so every cut failed "Somebody in frame" and "Actors fill the frame". The campaign also demands a
+dedicated account with the creator's handle in the bio. Added to config/dropped.txt; the next run moves its stage folders
+to _trash. Open finding for the studio: a voice-over profile would be needed for solo-creator campaigns like this.
