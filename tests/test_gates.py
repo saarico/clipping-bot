@@ -150,3 +150,14 @@ def test_report_card_counts_gate_failures(tmp_path, monkeypatch):
     assert row["rendered"] == "2" and row["kept"] == "0"
     g = js.loads(row["gate_fails"])
     assert g["Somebody in frame"] == 2 and g["Audio"] == 1 and g["judge: hook"] == 1
+
+
+def test_advocacy_groups_are_stopped_and_shows_are_not():
+    import campaign_scan as cs
+    alliance = {"name": "Alliance Podcast/News Clipping [VIRAL]", "org": "The Alliance for Secure AI", "category": "Podcasts",
+                "description": "Turn The Alliance for Secure AI's podcast and news footage into viral AI safety clips."}
+    assert cs.advocacy(alliance)
+    assert not cs.advocacy({"name": "Iced Coffee Hour Clipping", "org": "Graham Stephan", "category": "Podcasts",
+                            "description": "Clip the best moments of the podcast about money and business."})
+    assert not cs.advocacy({"name": "Diary of a CEO", "org": "Steven Bartlett", "category": "Podcasts",
+                            "description": "Guests talk about health, policy and business."})
