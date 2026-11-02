@@ -5,7 +5,7 @@
   "lane": "C",
   "offered": "2026-10-27T03:34+00:00"
  },
- "Mini Brands \u2014 Ulta Beauty Clipping": {
+ "Mini Brands — Ulta Beauty Clipping": {
   "link": "https://contentrewards.com/c/campaigns/6d11ea9e-b814-494a-a135-30dcbcc39645",
   "score": 57,
   "lane": "B",
@@ -23,7 +23,7 @@
   "lane": "C",
   "offered": "2026-10-27T03:40+00:00"
  },
- "SKULLPANDA at Doja Cat\u2019s 31st Birthday Party": {
+ "SKULLPANDA at Doja Cat’s 31st Birthday Party": {
   "link": "https://contentrewards.com/c/campaigns/2478f835-202a-4df4-9c34-8fd9fa47088c",
   "score": 56,
   "lane": "B",
@@ -113,5 +113,19 @@
   "lane": "B",
   "offered": "2026-11-01T19:02+00:00",
   "note": "DROPPED by rico 2026-11-01 23:01 UTC: voice-over on b-roll, 0 of 4 kept; dedicated-account rule. Never offer again."
+ },
+ "The Weeknd - Hong Kong Performance Clipping": {
+  "link": "https://contentrewards.com/c/campaigns/4c7d1ede-2fca-406a-971d-f651880168aa",
+  "score": 31,
+  "lane": "C",
+  "offered": "2026-11-02T16:28+00:00",
+  "note": "offered by hand after rico's RUN NOW on a dry board: the only card passing every stop; small budget ($1.5k, max $150/platform), TikTok+Instagram, performance profile"
+ },
+ "A24 - SLAYGROUND": {
+  "link": "https://contentrewards.com/c/campaigns/b21db5e5-3494-4efe-8783-4be34c17ec54",
+  "score": 39,
+  "lane": "?",
+  "offered": "2026-11-02T16:28+00:00",
+  "note": "NOT offered: film trailer promo (trailer rule)"
  }
 }
