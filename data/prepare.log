@@ -1,11 +1,5 @@
-[04:28:52] CLIPPING root CLIPPING
-Could not get FontBBox from font descriptor because None cannot be parsed as 4 floats
-[04:29:54] brief read: 10 rules, 2 links, tags ['#TheWeeknd', '#fayewong', '@theweeknd']
-[04:30:04] downloading file: https://www.dropbox.com/scl/fi/zns9az5ucz9w31qglaiqd/Video-02-11-2026-10-19-21-A
-[04:30:45] episode saved to the Drive cache
-[04:31:30] The Weeknd - Hong Kong Performance Clipping: 0 of 4 transcript parts arrived in 0 min; transcribing here
-[04:31:30] transcribing the whole episode
-[04:31:30] transcribing (whisper on CPU: medium under 25 min, else small)
-[04:31:56] 0 of 0 pitches go to render
-[04:31:56] 0 candidate(s) picked (entertainment scorecard (auto)), 0 fallback(s); rendering on 0 machines with grade-and-retry
-[04:31:56] 0 render job(s)
+[06:39:31] CLIPPING root CLIPPING
+[06:40:41] episode taken from the Drive cache (downloaded from the link last time)
+[06:41:33] 0 of 0 pitches go to render
+[06:41:33] 0 candidate(s) picked (entertainment scorecard (auto)), 0 fallback(s); rendering on 0 machines with grade-and-retry
+[06:41:35] 0 render job(s)
