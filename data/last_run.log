@@ -1,36 +1,30 @@
-[18:04:40] CLIPPING root CLIPPING
-[18:06:29] episode taken from the Drive cache (downloaded from the link last time)
-music mode: 221 s of sound, 20 shot changes, 10 windows of 12-30 s
-[18:07:43] music mode: 10 window(s) from sound peaks and shot changes; the pitch reads words and is skipped
-[18:07:48] FIRST PIECE the-weeknd-live-in-hong-kong: PASS (captions at y 1400 px)
-[18:08:20] FIRST PIECE the-weeknd-x-faye-wong-hong: PASS (captions carry no position tags: height not checked)
-[18:08:35] FIRST PIECE hong-kong-sang-every-word: PASS (captions carry no position tags: height not checked)
-[18:08:35] 4 candidate(s) picked (music mode (sound peaks + shot changes)), 4 fallback(s); rendering on 4 machines with grade-and-retry
-[18:08:36] waiting for the requirements file in 0_START
-[18:08:39] 4 render job(s)
-[18:15:36] bot version 2.5.0
+[18:31:26] CLIPPING root CLIPPING
+[18:32:35] episode taken from the Drive cache (downloaded from the link last time)
+music mode: 221 s of sound (median -13.1 dB, loudest tenth -11.3 dB, spread 1.8 dB), 20 shot changes, 10 windows of 12-30 s
+[18:33:30] music mode: 10 window(s) from sound peaks and shot changes; the pitch reads words and is skipped
+[18:33:53] FIRST PIECE the-weeknd-live-in-hong-kong: PASS (captions carry no position tags: height not checked)
+[18:34:15] FIRST PIECE the-weeknd-x-faye-wong-hong: PASS (captions carry no position tags: height not checked)
+[18:34:36] FIRST PIECE hong-kong-sang-every-word: PASS (captions carry no position tags: height not checked)
+[18:34:36] 4 candidate(s) picked (music mode (sound peaks + shot changes)), 4 fallback(s); rendering on 4 machines with grade-and-retry
+[18:34:36] 4 render job(s)
+[18:42:33] bot version 2.5.1
 moments from: music mode (sound peaks + shot changes)
 style: performance
-transcript + graphics ready after 0.7 min
+transcript + graphics ready after 0.5 min
 speaker: easy to follow, too few words to judge
 music mode: 10 window(s) from sound peaks and shot changes; the pitch reads words and is skipped
-FIRST PIECE the-weeknd-live-in-hong-kong: PASS (captions at y 1400 px)
+FIRST PIECE the-weeknd-live-in-hong-kong: PASS (captions carry no position tags: height not checked)
 FIRST PIECE the-weeknd-x-faye-wong-hong: PASS (captions carry no position tags: height not checked)
 FIRST PIECE hong-kong-sang-every-word: PASS (captions carry no position tags: height not checked)
-first-piece inspection: 3 passed, 0 sent back, 52 s
-TRY   c01_the-weeknd-live-in-hong-kong-1s: qa FAIL judge 63 (63/100  hook 8  pace 10  variety 15  framing 2  story 10  entertainment 2  comedy 0  captions 10  length 0  sound 10  HELD: under half in hook 8/20, framing 2/10, entertainment 2/10) | Format | FAIL | 1080x1920, 30 fps, 1.3 s, 0.1 MB (problem: length 1.3 s) |; | Last piece | FAIL | last shot is 0.13 s (a flash frame at the end) |
-TRY   c01r1_the-weeknd-live-in-hong-kong-1s-v2: qa FAIL judge 63 (63/100  hook 8  pace 10  variety 15  framing 2  story 10  entertainment 2  comedy 0  captions 10  length 0  sound 10  HELD: under half in hook 8/20, framing 2/10, entertainment 2/10) | Format | FAIL | 1080x1920, 30 fps, 1.3 s, 0.1 MB (problem: length 1.3 s) |; | Last piece | FAIL | last shot is 0.13 s (a flash frame at the end) |
-TRY   c02_the-weeknd-x-faye-wong-hong-11s: qa FAIL judge 66 (66/100  hook 20  pace 8  variety 15  framing 0  story 5  entertainment 1  comedy 0  captions 10  length 10  sound 10  HELD: under half in framing 0/10, entertainment 1/10) | Last piece | FAIL | last shot is 0.07 s (a flash frame at the end) |
-TRY   c02r1_the-weeknd-x-faye-wong-hong-11s-v2: qa FAIL judge 66 (66/100  hook 20  pace 8  variety 15  framing 0  story 5  entertainment 1  comedy 0  captions 10  length 10  sound 10  HELD: under half in framing 0/10, entertainment 1/10) | Last piece | FAIL | last shot is 0.07 s (a flash frame at the end) |
-TRY   c03_hong-kong-sang-every-word-164s: qa PASS judge 64 (64/100  hook 20  pace 6  variety 12  framing 2  story 5  entertainment 2  comedy 0  captions 10  length 10  sound 10  HELD: under half in framing 2/10, entertainment 2/10) 
-TRY   c03r1_hong-kong-sang-every-word-164s-v2: qa PASS judge 64 (64/100  hook 20  pace 6  variety 12  framing 2  story 5  entertainment 2  comedy 0  captions 10  length 10  sound 10  HELD: under half in framing 2/10, entertainment 2/10) 
-TRY   c04_the-weeknd-live-in-hong-kong-130s: qa PASS judge 79 (79/100  hook 20  pace 10  variety 15  framing 8  story 5  entertainment 2  comedy 0  captions 10  length 10  sound 10  HELD: under half in entertainment 2/10) 
-TRY   c04r1_the-weeknd-live-in-hong-kong-130s-v2: qa PASS judge 79 (79/100  hook 20  pace 10  variety 15  framing 10  story 5  entertainment 2  comedy 0  captions 10  length 10  sound 10  HELD: under half in entertainment 2/10) 
+first-piece inspection: 3 passed, 0 sent back, 66 s
+TRY   c04_the-weeknd-live-in-hong-kong-82s: qa PASS judge 77 (77/100  hook 20  pace 6  variety 9  framing 8  story 10  entertainment 6  comedy 0  captions 10  length 10  sound 10) 
 Analyst: no posted clip has 7-day views in data/posts.csv yet; judge weights stay at the board's table (they start moving at 20 posts per content type)
-KEPT (under the bar)  c04_the-weeknd-live-in-hong-kong-130s: 12s  qa PASS  judge 79 (79/100  hook 20  pace 10  variety 15  framing 8  story 5  entertainment 2  comedy 0  captions 10  length 10  sound 10  HELD: under half in entertainment 2/10)  0.9 min  hook: The Weeknd live in Hong Kong  [music 27: energy 12, hook 15 | +0.1 dB vs the episode, loud 0%, peak at 0 s]
-DROP  c01r2_the-weeknd-x-faye-wong-hong-154s: 12s  qa PASS  judge 70 (70/100  hook 8  pace 10  variety 15  framing 3  story 10  entertainment 2  comedy 0  captions 10  length 10  sound 10  HELD: under half in hook 8/20, framing 3/10, entertainment 2/10)  0.9 min  hook: The Weeknd x Faye Wong, Hong Kong  [music 27: energy 17, payoff 10 | +1.4 dB vs the episode, loud 0%, peak at 11 s]
-DROP  c02r2_hong-kong-sang-every-word-192s: 12s  qa PASS  judge 67 (67/100  hook 20  pace 6  variety 12  framing 5  story 5  entertainment 2  comedy 0  captions 10  length 10  sound 10  HELD: under half in entertainment 2/10)  0.8 min  hook: Hong Kong sang every word  [music 25: energy 10, hook 15 | -0.2 dB vs the episode, loud 0%, peak at 1 s]
-DROP  c03r2_the-weeknd-live-in-hong-kong-36s: 18s  qa PASS  judge 65 (65/100  hook 8  pace 10  variety 15  framing 0  story 10  entertainment 1  comedy 0  captions 10  length 10  sound 10  HELD: under half in hook 8/20, framing 0/10, entertainment 1/10)  1.3 min  hook: The Weeknd live in Hong Kong  [music 24: energy 4, payoff 10, variety 10 | -1.8 dB vs the episode, loud 0%, peak at 17 s]
-LANE  c04_the-weeknd-live-in-hong-kong-130s: tiktok (youtube 0, instagram 0, tiktok 0; baseline tiktok (performance))
-1 clip(s) kept of 4 rendered on 4 machines, longest render 1.3 min
-[18:15:50] 1 clip(s) uploaded to 1_CHECK
+KEPT  c02_the-weeknd-x-faye-wong-hong-1s: 13s  qa PASS  judge 92 (92/100  hook 20  pace 10  variety 15  framing 10  story 10  entertainment 7  comedy 0  captions 10  length 10  sound 10)  1.2 min  hook: The Weeknd x Faye Wong, Hong Kong  [music 76: energy 28, loud 13, hook 15, payoff 10, variety 5, on_cut 5 | louder than 81% of the episode (+1.2 dB), loud 54%, peak at 9 s]
+KEPT  c03_hong-kong-sang-every-word-152s: 18s  qa PASS  judge 85 (85/100  hook 20  pace 8  variety 15  framing 6  story 10  entertainment 8  comedy 0  captions 10  length 10  sound 10)  1.4 min  hook: Hong Kong sang every word  [music 74: energy 29, loud 16, hook 15, payoff 10, length 4 | louder than 85% of the episode (+1.3 dB), loud 67%, peak at 13 s]
+KEPT  c01_the-weeknd-live-in-hong-kong-67s: 18s  qa PASS  judge 84 (84/100  hook 20  pace 8  variety 12  framing 8  story 10  entertainment 7  comedy 0  captions 10  length 10  sound 10)  1.4 min  hook: The Weeknd live in Hong Kong  [music 86: energy 28, loud 14, hook 15, payoff 10, variety 10, on_cut 5, length 4 | louder than 81% of the episode (+1.2 dB), loud 58%, peak at 16 s]
+DROP  c04r1_the-weeknd-x-faye-wong-hong-172s: 24s  qa PASS  judge 79 (79/100  hook 20  pace 10  variety 15  framing 6  story 10  entertainment 3  comedy 0  captions 10  length 10  sound 10  HELD: under half in entertainment 3/10)  1.4 min  hook: The Weeknd x Faye Wong, Hong Kong  [music 52: energy 17, loud 2, hook 15, payoff 10, length 8 | louder than 49% of the episode (-0.0 dB), loud 8%, peak at 21 s]
+LANE  c02_the-weeknd-x-faye-wong-hong-1s: tiktok (youtube 0, instagram 0, tiktok 0; baseline tiktok (performance))
+LANE  c03_hong-kong-sang-every-word-152s: tiktok (youtube 0, instagram 0, tiktok 0; baseline tiktok (performance))
+LANE  c01_the-weeknd-live-in-hong-kong-67s: tiktok (youtube 0, instagram 0, tiktok 0; baseline tiktok (performance))
+3 clip(s) kept of 4 rendered on 4 machines, longest render 1.4 min
+[18:43:37] 3 clip(s) uploaded to 1_CHECK

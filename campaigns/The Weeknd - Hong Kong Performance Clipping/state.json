@@ -19,9 +19,10 @@
   "2026-11-03 18:27 UTC  1 clip(s) wait for rico's review in 1_CHECK (approve -> 3_APPROVED, notes -> 2_REDO)",
   "2026-11-03 18:36 UTC  the under-the-bar clip (judge 79 on the 2.5.0 read) released from review so music mode 2 can cut; publish moves it to _trash",
   "2026-11-03 18:32 UTC  episode taken from the Drive cache (downloaded from the link last time)",
-  "2026-11-03 18:34 UTC  4 candidate(s) picked (music mode (sound peaks + shot changes)), 4 fallback(s); rendering on 4 machines with grade-and-retry"
+  "2026-11-03 18:34 UTC  4 candidate(s) picked (music mode (sound peaks + shot changes)), 4 fallback(s); rendering on 4 machines with grade-and-retry",
+  "2026-11-03 18:43 UTC  3 clip(s) uploaded to 1_CHECK"
  ],
- "updated": "2026-11-03 18:34 UTC",
+ "updated": "2026-11-03 18:43 UTC",
  "brief": {
   "text": "The Weeknd - Hong Kong Performance | CLIPPING CAMPAIGN | NO BOTTING\nArtist: The Weeknd - Hong Kong Performance\nFocus: Dropbox Performance Video\nPlatforms: TikTok + Instagram\nREQUIRED AUDIO\nTT Audio:\nhttps://www.tiktok.com/music/Hong-Kong-%E7%8E%8B%E8%8F%B2%E5%AD%A3%E5%80%99%E\n9%A3%8E-7702836179004868609\nIG Audio: https://www.instagram.com/reels/audio/2188669935047731\n\u26a0 You must use the audios above. Any posts not utilizing the audio will be rejected.\nContent Guidelines:\nChoose footage from below to clip/repost. High Quality Edits similar to the recap videos will be\nprioritized!!! Make Edits 30 Sec or less.\nPerformance Reference: https://www.tiktok.com/@theweeknd/video/7701443774366485790\nDropBox Video:\nhttps://www.dropbox.com/scl/fi/zns9az5ucz9w31qglaiqd/Video-02-11-2026-10-19-21-AM.mp4?rlkey=xq\ngvwsk80qpnbqtsnxaobfrxl&st=pyrwo5bv&e=1&dl=0\nBefore posting: Use the official sound, mute its volume, and end the caption with both required hashtags.\nCONTENT REQUIREMENTS\u201d\n\u25cf Minimum Length: 12 seconds, Max: 60 Seconds | Sync drops to visual peaks\n\u25cf Always use provided audio links | Hook in the first two seconds.\n\u25cf Language: English\n\u25cf Audience: Tier 1 (majority) + Tier 2 + Tier 3\n\u25cf Engagement Rate: Minimum 1% (at least 10 likes per 1,000 views)\n\u25cf Likes & Comments: Must stay ON at all times\n\u25cf Optional Hashtags: #TheWeeknd #fayewong\n\u25cf Optional Caption: The Weeknd - Hong Kong Performance\n\u25cf Posting: You can post multiple clips per platform\nRULES\n\u25cf No story boosting, no dedicated accounts\n\u25cf No NSFW, sexual, aggressive, weird, mean, or rude content toward any person\n\u25cf No spamming the same clip across multiple accounts\n\u25cf No collab posts\n\u25cf Max Payout 20% of Budget\nANALYTICS & APPROVAL\nOnce your video reaches 1,000 views, send a screen recording of your analytics to support showing your\nwatch times, all view graphs, and locations. All pages must be clearly visible. Video-specific analytics\nonly \u2014 account analytics will be rejected.\nOnly submit if your engagement is above 1% AND your audience tier meets the requirement, or your\nsubmission will be rejected.\nQuestions? Reach out in the support chat!\n\nLinks in the file:\nhttps://www.tiktok.com/music/Hong-Kong-%E7%8E%8B%E8%8F%B2%E5%AD%A3%E5%80%99%E9%A3%8E-7702836179004868609\nhttps://www.dropbox.com/scl/fi/zns9az5ucz9w31qglaiqd/Video-02-11-2026-10-19-21-AM.mp4?rlkey=xqgvwsk80qpnbqtsnxaobfrxl&st=pyrwo5bv&e=1&dl=0",
   "platforms": [
@@ -71,9 +72,80 @@
   "files": []
  },
  "words_sig": "links:e656ecc9c90b",
- "used_moments": [],
- "tried_moments": [],
- "clips": [],
+ "used_moments": [
+  {
+   "start": 1.2,
+   "end": 14.0,
+   "hook": "The Weeknd x Faye Wong, Hong Kong"
+  },
+  {
+   "start": 152.0,
+   "end": 170.3,
+   "hook": "Hong Kong sang every word"
+  },
+  {
+   "start": 67.8,
+   "end": 86.1,
+   "hook": "The Weeknd live in Hong Kong"
+  }
+ ],
+ "tried_moments": [
+  {
+   "start": 172.0,
+   "end": 196.0,
+   "hook": "The Weeknd x Faye Wong, Hong Kong"
+  }
+ ],
+ "clips": [
+  {
+   "mp4": "01_the-weeknd-x-faye-wong-hong-1s.mp4",
+   "hook": "The Weeknd x Faye Wong, Hong Kong",
+   "judge": 92,
+   "audience": 100,
+   "dur": 12.8,
+   "caption": "",
+   "lane": "tiktok",
+   "text": "TITLE: The Weeknd x Faye Wong, Hong Kong CAPTIONS AS SHOWN (one line per cut):",
+   "parts": [
+    [
+     1.2,
+     14.0
+    ]
+   ]
+  },
+  {
+   "mp4": "02_hong-kong-sang-every-word-152s.mp4",
+   "hook": "Hong Kong sang every word",
+   "judge": 85,
+   "audience": 100,
+   "dur": 18.3,
+   "caption": "",
+   "lane": "tiktok",
+   "text": "TITLE: Hong Kong sang every word CAPTIONS AS SHOWN (one line per cut):",
+   "parts": [
+    [
+     152.0,
+     170.3
+    ]
+   ]
+  },
+  {
+   "mp4": "03_the-weeknd-live-in-hong-kong-67s.mp4",
+   "hook": "The Weeknd live in Hong Kong",
+   "judge": 84,
+   "audience": 100,
+   "dur": 18.3,
+   "caption": "",
+   "lane": "tiktok",
+   "text": "TITLE: The Weeknd live in Hong Kong CAPTIONS AS SHOWN (one line per cut):",
+   "parts": [
+    [
+     67.8,
+     86.1
+    ]
+   ]
+  }
+ ],
  "needs_redo": false,
  "empty_runs": 0,
  "empty_told": false,
