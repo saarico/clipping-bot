@@ -1,9 +1,17 @@
 {
- "why": "Reviewer pins (2026-11-03 04:30 UTC): picked by hand after rico's RUN NOW on a dry board. Brief PDF read from the folder (The Weeknd - Hong Kong Performance _ Clipping Campaign.pdf). The Dropbox link wraps across two lines in the PDF text, so it is pinned here in full. Brief: TikTok + Instagram only, 12-60 s with 'Make Edits 30 Sec or less' prioritized, hook in the first two seconds, sync drops to visual peaks, English, caption ends with #TheWeeknd #fayewong, official sound muted (rico's posting step), no dedicated accounts, max payout 20% of the $1,500 budget. Live performance: performance profile.",
+ "why": "Reviewer pins (2026-11-03 04:30 UTC): picked by hand after rico's RUN NOW on a dry board. Brief PDF read from the folder (The Weeknd - Hong Kong Performance _ Clipping Campaign.pdf). The Dropbox link wraps across two lines in the PDF text, so it is pinned here in full. Brief: TikTok + Instagram only, 12-60 s with 'Make Edits 30 Sec or less' prioritized, hook in the first two seconds, sync drops to visual peaks, English, caption ends with #TheWeeknd #fayewong, official sound muted (rico's posting step), no dedicated accounts, max payout 20% of the $1,500 budget. Live performance: performance profile. 2026-11-03 18:10 UTC: music mode pinned (rico: build music mode, retry); hooks for the on-screen title.",
  "brief_overrides": {
-  "platforms": ["tiktok", "instagram"],
-  "links": ["https://www.dropbox.com/scl/fi/zns9az5ucz9w31qglaiqd/Video-02-11-2026-10-19-21-AM.mp4?rlkey=xqgvwsk80qpnbqtsnxaobfrxl&st=pyrwo5bv&e=1&dl=0"],
-  "tags": ["#TheWeeknd", "#fayewong"],
+  "platforms": [
+   "tiktok",
+   "instagram"
+  ],
+  "links": [
+   "https://www.dropbox.com/scl/fi/zns9az5ucz9w31qglaiqd/Video-02-11-2026-10-19-21-AM.mp4?rlkey=xqgvwsk80qpnbqtsnxaobfrxl&st=pyrwo5bv&e=1&dl=0"
+  ],
+  "tags": [
+   "#TheWeeknd",
+   "#fayewong"
+  ],
   "min_s": 12,
   "max_s": 30,
   "rate_per_1k": 1.5,
@@ -16,6 +24,12 @@
    "12-30 s per clip (the brief prioritizes edits of 30 s or less)",
    "Caption ends with #TheWeeknd #fayewong; rico adds the official TikTok / Instagram sound muted when posting",
    "Nothing NSFW, aggressive, mean or rude toward any person"
+  ],
+  "music": true,
+  "music_hooks": [
+   "The Weeknd live in Hong Kong",
+   "The Weeknd x Faye Wong, Hong Kong",
+   "Hong Kong sang every word"
   ]
  }
 }

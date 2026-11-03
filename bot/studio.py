@@ -23,7 +23,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 import profiles  # noqa: E402
 
-VERSION = "2.4.0"   # Studio v2 release 4 (tune and learn: edge guard, candid genre, wide punch-in, Analyst). Printed in every SUMMARY so a clip traces to the code that made it.
+VERSION = "2.5.0"   # Music mode (sound-peak windows for performances, rico 2026-11-03) on Studio v2 release 4. Printed in every SUMMARY so a clip traces to the code that made it.
 
 # (stage, role, job, module(s) that do it today, whom a failure goes back to)
 ROSTER = [

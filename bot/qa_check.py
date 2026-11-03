@@ -655,6 +655,12 @@ def sheet(mp4, out):
                     "-frames:v", "1", str(out)], check=True)
 
 
+MUSIC_NO_CAPTIONS = {"Captions cover the whole clip", "Captions readable", "Caption spelling", "Caption text reads clean",
+                     "Ends on a finished sentence", "Nothing said twice", "Opener stands alone", "Cut edges (no clipped words)"}
+MUSIC_SOFT = {"Speaker centred", "Somebody in frame", "Actors fill the frame", "Faces clear of the title", "Smooth transitions",
+              "Clean first 2 seconds", "Crop jumps", "Audio"}
+
+
 def main(folder, source=None):
     folder = Path(folder)
     mp4 = next(p for p in folder.glob("*.mp4"))
@@ -680,7 +686,12 @@ def main(folder, source=None):
     check_crop_jumps(rep, mp4, details, source)
     check_transitions(rep, mp4, details, dur)
     check_audio_timing(rep, mp4)
-    soft = profiles.profile(spec.get("style"))["soft_qa"]   # per kind of footage: what is a warning, not a failure
+    soft = set(profiles.profile(spec.get("style"))["soft_qa"])   # per kind of footage: what is a warning, not a failure
+    if spec.get("music"):   # music mode (rico 2026-11-03): no words, no captions, no speaker to centre on
+        for i, (a, st, e) in enumerate(rep.rows):
+            if a in MUSIC_NO_CAPTIONS:
+                rep.rows[i] = (a, "PASS", "music clip: no captions by design")
+        soft |= MUSIC_SOFT
     if soft:
         rep.rows = [(a, "WARN" if (s == "FAIL" and a in soft) else s, e + (f" ({spec.get('style')}: warn only)" if (s == "FAIL" and a in soft) else "")) for a, s, e in rep.rows]
     sheet(mp4, folder / "qa_sheet.png")

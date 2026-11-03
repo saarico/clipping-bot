@@ -297,13 +297,12 @@ def fm_candidates(words_path, gfx_path, brief, prof_name="podcast", energy=None)
 
 
 def load(campaign_dir, words_path, gfx_path, source, brief, campaign, out_dir, used=()):
+    try:
+        words = json.load(open(words_path))
+    except Exception:
+        words = []
     if brief.get("style") not in profiles.PROFILES:   # no reviewer override: read the brief, then the footage
-        try:
-            words = json.load(open(words_path))
-            dur = words[-1]["end"] if words else 0
-        except Exception:
-            words, dur = [], 0
-        brief["style"] = profiles.resolve(brief, words, dur)
+        brief["style"] = profiles.resolve(brief, words, words[-1]["end"] if words else 0)
     plan = Path(campaign_dir) / "plan.json"
     if plan.exists() and json.loads(plan.read_text()).get("clips"):   # a plan without clips (overrides only) = auto picks
         p = json.loads(plan.read_text())
@@ -333,6 +332,13 @@ def load(campaign_dir, words_path, gfx_path, source, brief, campaign, out_dir, u
         for x in extra:
             x["_why"] = "fallback: " + x["_why"]
         return specs + extra[:MAX_TRIES - len(specs)], "plan.json (reviewer)"
+    # music mode (rico 2026-11-03, The Weeknd): a performance with (almost) no words is picked by sound and picture,
+    # not by sentences; the reviewer's plan.json (clips above win) can pin "music": true/false in brief_overrides
+    import music_moments
+    if music_moments.is_music(words, music_moments.duration(source), brief):
+        if brief.get("style") not in ("performance", "edit", "cinematic", "stream"):
+            brief["style"] = "performance"
+        return music_moments.specs(source, words_path, brief, campaign, out_dir, used=used), "music mode (sound peaks + shot changes)"
     own = brief_specs(words_path, source, brief, campaign, out_dir, used=used)
     if own:   # the campaign wrote down what sells: those moments first, the scorecard's picks behind them
         taken = tuple(used) + tuple((p[0], p[1]) for sp in own for p in sp.get("parts", []))

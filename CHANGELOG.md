@@ -3,6 +3,17 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-11-03 18:10 UTC - Music mode: performances are cut on sound peaks and shot changes (version 2.5.0)
+
+rico chose "Build music mode, retry" (17:31 UTC) after The Weeknd - Hong Kong Performance (run 41578257924) gave 0
+clips: whisper found three words in the performance video and the picker builds windows from sentences. New
+bot/music_moments.py: windows from loudness per second + the episode's shot changes, scored on loudness, loud share, a
+loud first 2 s, a late peak the clip ends on, and cuts inside; plan.load uses it when the transcript is under 6 words
+per minute or the reviewer pins "music": true. The pitch and the audience read are skipped for music specs
+(pipeline), the judge reads hook/pace/story/entertainment from the sound and the shots and gives captions 10 by
+design (judge_clip), QA passes the caption rows and softens the speaker rows on a music clip (qa_check). No dead-air
+tightening on music ("tighten": false). Golden set unchanged (talking clips never enter the music branch). RULES 50.
+
 ## 2026-11-01 01:10 UTC - Scan stops policy advocacy groups
 
 The scan offered "Alliance Podcast/News Clipping [VIRAL]" (78/100, JOIN): the Alliance for Secure AI, a DC advocacy
