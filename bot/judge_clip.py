@@ -127,16 +127,22 @@ def main(folder):
     # framing (from qa_report.md)
     qa = (folder / "qa_report.md").read_text() if (folder / "qa_report.md").exists() else ""
     f = 10
+    # a music clip (concert, performance) has no speaker to centre and no face to fill the frame: the stage, the
+    # crowd and the lights are the picture. Its framing reads the person-presence, crop-jump, format and segment
+    # rows only (rico 2026-11-03: the first Weeknd run lost 6-10 framing points to "no face found")
+    faces_matter = not spec.get("music")
     m = re.search(r"\| Speaker centred \| (\w+) \| ([^|]*)", qa)
-    if m:
+    if m and faces_matter:
         if m.group(1) == "FAIL": f -= 6
         elif m.group(1) == "WARN": f -= 3
         notes["framing"] = [m.group(2).strip()]
+    elif not faces_matter:
+        notes["framing"] = ["music clip: face size and centring not read (stage and crowd are the picture)"]
     m = re.search(r"\| Footage text cut off \| (\w+) \| ([^|]*)", qa)
     if m and m.group(1) != "PASS":
         f -= 6 if m.group(1) == "FAIL" else 3; notes.setdefault("framing", []).append(m.group(2).strip())
     m = re.search(r"\| Actors fill the frame \| (\w+) \| ([^|]*)", qa)
-    if m and m.group(1) != "PASS":
+    if m and m.group(1) != "PASS" and faces_matter:
         f -= 6 if m.group(1) == "FAIL" else 3; notes.setdefault("framing", []).append(m.group(2).strip())
     m = re.search(r"\| Crop jumps \| (\w+) \| ([^|]*)", qa)
     if m and m.group(1) != "PASS":

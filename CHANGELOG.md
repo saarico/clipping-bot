@@ -3,6 +3,23 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-11-03 18:40 UTC - Music mode 2: loudness ranked against the episode, no face reads on a music clip (version 2.5.1)
+
+The retry run 41686942547 (first run of music mode) rendered 4 Weeknd windows and kept none; the collect log shows
+why. (1) Every window read "+0.2 dB vs the episode, loud 0%": a concert is loud from start to end, so nothing is 6 dB
+over the median and the judge gave entertainment 1-2 and hook 8 (HELD under half). music_moments now ranks a
+window's loudness against the episode's own seconds (p_rank) and calls a second loud when it is above three
+quarters of the episode; the hook reads the first two seconds against the episode's 60th percentile or the window's
+own mean. (2) Framing 0-4/10: the judge took "Speaker centred" and "Actors fill the frame" (face size and centring)
+off a stage show; on a music clip judge_clip reads only person presence, crop jumps, format and short segments.
+(3) "last shot is 0.07 s (a flash frame at the end)": windows ended exactly on a shot change; they now end 0.3 s
+before one and open 0.1 s after one, never in a short opening shot (a title card: c02 rendered 1.3 s), and are cut
+0.6 s over the brief's minimum so the render's edge moves cannot leave a clip under it. (4) The pick now prefers the
+middle of the brief's length range (12-30 s gave four 12 s windows). (5) The re-edit reads words, so a music spec
+re-rendered identically (c01 = c01r1 at 63): pipeline.try_until goes to the next window instead. The prepare log
+prints the episode's median, loudest tenth and spread. Golden set unchanged (every change is gated on a music spec);
+no re-record. RULES 50 amended.
+
 ## 2026-11-03 18:10 UTC - Music mode: performances are cut on sound peaks and shot changes (version 2.5.0)
 
 rico chose "Build music mode, retry" (17:31 UTC) after The Weeknd - Hong Kong Performance (run 41578257924) gave 0

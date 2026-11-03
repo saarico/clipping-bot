@@ -371,6 +371,10 @@ def try_until(specs, work, source, words, tag, budget=3, log=print):
         best = res if best is None or rank(res) > rank(best) else best
         if res.get("error") or n >= budget:
             continue
+        if spec.get("music"):
+            # music mode: the re-edit moves edges to sentence starts and spoken lines (words); with none it
+            # re-renders the same window (Weeknd 2026-11-03: c01 and c01r1 identical at 63). The next window instead.
+            continue
         v = reedit(spec, res)
         log(f"render {tag} try {n + 1}: re-edit ({'; '.join(res.get('fails', [])[:2]) or 'judge ' + str(res.get('judge'))})")
         res2 = one_clip(v, work, source, words, f"{tag}r{n}")

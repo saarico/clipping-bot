@@ -5,11 +5,16 @@ transcript (find_moments.sentences), so a performance video with three transcrib
 windows come from the SOUND and the PICTURE instead:
 
   energy    bot/audio_energy.py: loudness per second (RMS dB) of the whole episode
+  stats     the episode's own loudness landmarks (median, percentiles). A concert is loud from the first second to
+            the last, so "loud" is judged against the episode's spread, never a fixed 6 dB (the first Weeknd run
+            read every window as "+0.2 dB, loud 0%" and the judge gave entertainment 1-2)
   cuts      the episode's own shot changes (ffmpeg scene detection at 320 px)
-  windows   lo-hi s long (the brief's min/max), opened on a shot change when one is near, scored on how loud the
-            window is against the episode, how much of it is loud, whether it OPENS on a peak (the brief: "hook in
-            the first two seconds"), whether it builds to its loudest point late (a payoff) and ends on a shot change,
-            and how many cuts it carries (variety). Non-overlapping, the best first.
+  windows   lo-hi s long (the brief's min/max), opened just after a shot change when one is near and ended just
+            BEFORE the next one (ending on a cut leaves a flash frame as the last shot), never in the opening shot
+            (a title card). Scored on where the window's loudness ranks in the episode, how much of it is loud,
+            whether it OPENS loud (the brief: "hook in the first two seconds"), whether it builds to its loudest
+            point late (a payoff), how many cuts it carries (variety) and a preference for the middle of the
+            brief's length range over the shortest allowed. Non-overlapping, the best first.
   specs     render_clip specs like plan.spec_for makes, with "music": {...} (the measurements the judge reads),
             "tighten": False (no dead air to cut: silence between notes is music), no captions (no words), the
             hook text from the reviewer's plan.json "music_hooks" or the campaign name.
@@ -20,7 +25,9 @@ checks do not apply; judge_areas() scores hook, pace, story and entertainment fr
 
   python3 bot/music_moments.py episode.mp4 [lo] [hi]     -> prints the top windows
 """
+import bisect
 import json
+import math
 import re
 import subprocess
 import sys
@@ -31,9 +38,12 @@ import audio_energy  # noqa: E402
 
 WPM_MUSIC = 6.0      # under this many transcribed words per minute the episode is music, not talk
 POOL = 24            # windows handed to the render queue (plan.PITCH_POOL)
-LOUD_DB = 6.0        # a second this far above the episode median is "loud"
 OPEN_S = 2.0         # the brief's hook window: the first two seconds
 SCENE = 0.30         # ffmpeg scene-change threshold (0-1); 0.3 catches camera cuts, not lighting flicker
+START_PAD = 0.1      # a window opens this far after a shot change: safely inside the new shot
+END_PAD = 0.3        # a window ends this far before the next shot change, never on it (a flash frame as the last shot)
+EDGE_S = 0.6         # the render may move an edge to a cut this far away: windows are cut this much longer than the brief's minimum
+OPENING_SHOT_S = 15  # an opening shot this short (a title card, the walk-on) is never where a window starts
 
 
 def duration(src):
@@ -72,34 +82,62 @@ def median(xs):
     return s[len(s) // 2] if s else 0.0
 
 
-def measure(energy, start, end, med=None):
+def stats(energy):
+    """The episode's loudness landmarks (dB) and the thresholds the measures use: "loud" is a second above three
+    quarters of the episode (at least 1 dB over the median), "quiet" is under its quietest tenth (at least 3 dB under)."""
+    s = sorted(energy)
+    n = len(s)
+    if not n:
+        return {"med": 0.0, "p10": 0.0, "p60": 0.0, "p75": 0.0, "p90": 0.0, "spread": 0.0, "loud": 0.0, "hook": 0.0, "quiet": 0.0, "_sorted": []}
+    q = lambda p: s[min(n - 1, int(p * (n - 1)))]
+    med = q(0.5)
+    st = {"med": med, "p10": q(0.10), "p60": q(0.60), "p75": q(0.75), "p90": q(0.90)}
+    st["spread"] = round(st["p90"] - med, 1)
+    st["loud"] = max(st["p75"], med + 1.0)
+    st["hook"] = max(st["p60"], med)
+    st["quiet"] = min(st["p10"], med - 3.0)
+    st["_sorted"] = s
+    return st
+
+
+def measure(energy, start, end, st=None):
     """What the judge and the pick read about one window of the episode's loudness curve."""
     a, b = int(start), max(int(end), int(start) + 1)
     seg = energy[a:b]
     if not seg:
         return None
-    med = median(energy) if med is None else med
+    st = st or stats(energy)
     n = len(seg)
+    mean = sum(seg) / n
     peak_i = max(range(n), key=lambda i: seg[i])
-    loud = sum(1 for v in seg if v > med + LOUD_DB)
     first = seg[:max(int(OPEN_S), 1)]
+    open_mean = sum(first) / len(first)
+    ranked = st.get("_sorted") or sorted(energy)
     return {
-        "rel_db": round(sum(seg) / n - med, 1),                 # mean loudness against the episode
-        "loud_share": round(loud / n, 2),                       # share of loud seconds
-        "peak_db": round(max(seg) - med, 1),
-        "peak_at": peak_i,                                      # seconds into the window
-        "opens_on_peak": max(first) >= med + LOUD_DB * 0.6 or peak_i < OPEN_S,   # the hook: loud from the first second
-        "builds": peak_i >= 0.4 * n,                            # the loudest second sits late: a payoff, not a fade
-        "ends_quiet": seg[-1] < med - LOUD_DB,                  # ends in a hole (the song stopped)
+        "rel_db": round(mean - st["med"], 1),                                  # mean loudness against the episode's median
+        "p_rank": round(bisect.bisect_left(ranked, mean) / max(len(ranked), 1), 2),   # louder than this share of the episode's seconds
+        "loud_share": round(sum(1 for v in seg if v > st["loud"]) / n, 2),     # share of loud seconds
+        "peak_db": round(max(seg) - st["med"], 1),
+        "peak_at": peak_i,                                                     # seconds into the window
+        # the hook: the first two seconds are loud for this episode, or at least as loud as the window itself (no quiet lead-in)
+        "opens_on_peak": open_mean >= st["hook"] or open_mean >= mean - 1.5 or peak_i < OPEN_S,
+        "builds": peak_i >= 0.4 * n,                                           # the loudest second sits late: a payoff, not a fade
+        "ends_quiet": seg[-1] < st["quiet"],                                   # ends in a hole (the song stopped)
     }
 
 
-def score_window(energy, cut_times, start, end, med):
-    m = measure(energy, start, end, med)
+def length_pts(dur, lo, hi):
+    """The brief's range is not a target of its minimum: a 12-30 s brief wants 17-30 s clips, not twelve 12 s ones."""
+    span = max(hi - lo, 1.0)
+    return 8 if dur >= lo + 0.4 * span else 4 if dur >= lo + 0.15 * span else 0
+
+
+def score_window(energy, cut_times, start, end, st, lo=None, hi=None):
+    m = measure(energy, start, end, st)
     if not m:
         return 0, {}, None
     pts = {}
-    pts["energy"] = int(max(0, min(35, 35 * (m["rel_db"] + 3) / 9)))
+    pts["energy"] = int(35 * m["p_rank"])
     pts["loud"] = int(25 * m["loud_share"])
     pts["hook"] = 15 if m["opens_on_peak"] else 0
     pts["payoff"] = 10 if m["builds"] and not m["ends_quiet"] else 0 if not m["ends_quiet"] else -10
@@ -107,27 +145,36 @@ def score_window(energy, cut_times, start, end, med):
     per10 = len(inside) / max((end - start) / 10, 0.1)
     pts["variety"] = 10 if 0.5 <= per10 <= 4 else 5 if inside else 0
     pts["on_cut"] = 5 if any(abs(c - start) < 0.3 for c in cut_times) else 0
+    if lo is not None and hi is not None:
+        pts["length"] = length_pts(end - start, lo, hi)
     return sum(pts.values()), pts, m
 
 
 def windows(energy, cut_times, lo, hi, used=(), top=POOL, step=2.0):
     """The best non-overlapping lo-hi s windows: [{"start", "end", "score", "pts", "music"}], best first.
-    Starts: every shot change, and every `step` seconds where the picture never cuts. Ends: the shot change
-    inside [start+lo, start+hi] that scores best, else start+lo..hi in steps."""
+    Starts: just after every shot change, and every `step` seconds where the picture never cuts, never inside a
+    short opening shot. Ends: just before the shot change inside the length range that scores best, else
+    start+lo..hi in steps. The minimum is cut EDGE_S longer than the brief's so the render's edge moves never
+    leave the clip under it."""
     n = len(energy)
-    if n < lo:
+    lo_c, hi_c = lo + EDGE_S, max(hi - END_PAD, lo + EDGE_S)
+    if n < lo_c:
         return []
-    med = median(energy)
-    starts = sorted({round(c, 1) for c in cut_times if c < n - lo} | {float(t) for t in range(0, int(n - lo) + 1, int(step))})
+    st = stats(energy)
+    first_ok = cut_times[0] if cut_times and cut_times[0] <= OPENING_SHOT_S else 0.0
+    starts = {round(c + START_PAD, 1) for c in cut_times if first_ok <= c and c + START_PAD < n - lo_c}
+    # the stepped starts fill the stretches without cuts; one that lands on a cut would open on its last frame
+    starts |= {float(t) for t in range(int(math.ceil(first_ok)), int(n - lo_c) + 1, int(step))
+               if not any(c - 0.3 <= t <= c + 0.3 for c in cut_times)}
     cands = []
-    for s in starts:
-        ends = [c for c in cut_times if s + lo <= c <= s + hi] or []
-        ends = ends + [s + lo + k * ((hi - lo) / 3.0) for k in range(4)]
+    for s in sorted(starts):
+        ends = [c - END_PAD for c in cut_times if s + lo_c <= c - END_PAD <= s + hi_c]
+        ends = ends + [s + lo_c + k * ((hi_c - lo_c) / 3.0) for k in range(4)]
         best = None
         for e in sorted(set(round(min(x, n), 1) for x in ends)):
-            if e - s < lo - 0.01:
+            if e - s < lo_c - 0.01:
                 continue
-            tot, pts, m = score_window(energy, cut_times, s, e, med)
+            tot, pts, m = score_window(energy, cut_times, s, e, st, lo, hi)
             if best is None or tot > best[0]:
                 best = (tot, pts, m, e)
         if best:
@@ -168,17 +215,20 @@ def specs(source, words_path, brief, campaign, out_dir, used=(), log=print):
     energy = json.load(open(ep))
     cut_times = cuts(source, work / "cuts.json")
     lo, hi = brief.get("min_s", 12), brief.get("max_s", 30)
+    st = stats(energy)
     wins = windows(energy, cut_times, lo, hi, used=used)
-    log(f"music mode: {len(energy)} s of sound, {len(cut_times)} shot changes, {len(wins)} windows of {lo}-{hi} s")
+    log(f"music mode: {len(energy)} s of sound (median {st['med']:.1f} dB, loudest tenth {st['p90']:.1f} dB, spread {st['spread']:.1f} dB), "
+        f"{len(cut_times)} shot changes, {len(wins)} windows of {lo}-{hi} s")
     out = []
     for k, w in enumerate(wins):
         hook = hook_text(brief, campaign, k)
+        m = w["music"]
         why = f"music {w['score']}: " + ", ".join(f"{a} {b}" for a, b in w["pts"].items() if b) + \
-              f" | {w['music']['rel_db']:+.1f} dB vs the episode, loud {w['music']['loud_share']:.0%}, peak at {w['music']['peak_at']} s"
+              f" | louder than {m['p_rank']:.0%} of the episode ({m['rel_db']:+.1f} dB), loud {m['loud_share']:.0%}, peak at {m['peak_at']} s"
         out.append({
             "campaign": campaign, "source": str(source), "words": str(words_path),
             "parts": [[w["start"], w["end"]]], "hook": hook, "emphasis": [], "focus": [], "overlays": [], "callouts": [],
-            "sfx": False, "tighten": False, "music": dict(w["music"], score=w["score"], pts=w["pts"]),
+            "sfx": False, "tighten": False, "music": dict(m, score=w["score"], pts=w["pts"]),
             "disclosure": brief.get("disclosure", ""), "style": brief.get("style") or "performance",
             "genres": brief.get("genres") if isinstance(brief.get("genres"), dict) else {"music": 1.0},
             "look": brief.get("look") or {}, "tag": brief.get("speaker_tag") or "",
@@ -195,7 +245,7 @@ def judge_areas(music, shots, dur, silences=()):
     m = music or {}
     areas, notes = {}, {}
     areas["hook"] = 20 if m.get("opens_on_peak") else 8
-    notes["hook"] = ["opens on a peak (loud from the first second)" if m.get("opens_on_peak") else "opens before the drop: the first 2 s are quieter than the rest"]
+    notes["hook"] = ["opens loud (the first two seconds carry the sound)" if m.get("opens_on_peak") else "opens before the drop: the first 2 s are quieter than the rest"]
     changes = sorted(s["from"] for s in shots) if shots else []
     gaps = [b - a for a, b in zip(changes, changes[1:] + [dur])] if changes else [dur]
     longest = max(gaps) if gaps else dur
@@ -209,9 +259,12 @@ def judge_areas(music, shots, dur, silences=()):
     areas["story"] = st
     notes["story"] = ["builds to its loudest point and ends on it" if st == 10 else "ends in a quiet hole" if st == 0 else "the peak comes early; the end holds"]
     rel, loud = m.get("rel_db", 0.0), m.get("loud_share", 0.0)
-    ent = int(max(0, min(10, round(5 * (rel + 3) / 9 + 5 * loud))))
+    rank = m.get("p_rank")
+    if rank is None:   # a spec from before the ranked measure (2.5.0): the old fixed-dB read
+        rank = max(0.0, min(1.0, (rel + 3) / 9))
+    ent = int(max(0, min(10, round(10 * (0.6 * rank + 0.4 * loud)))))
     areas["entertainment"] = ent
-    notes["entertainment"] = [f"{rel:+.1f} dB against the episode, loud {loud:.0%} of the clip (crowd, chorus, drop)"]
+    notes["entertainment"] = [f"louder than {rank:.0%} of the episode ({rel:+.1f} dB), loud {loud:.0%} of the clip (crowd, chorus, drop)"]
     return areas, notes
 
 
@@ -221,5 +274,7 @@ if __name__ == "__main__":
     lo, hi = (float(a[1]) if len(a) > 1 else 12), (float(a[2]) if len(a) > 2 else 30)
     e = audio_energy.energy(src)
     c = cuts(src)
+    st = stats(e)
+    print(f"{len(e)} s, median {st['med']:.1f} dB, loudest tenth {st['p90']:.1f} dB, spread {st['spread']:.1f} dB, {len(c)} cuts")
     for w in windows(e, c, lo, hi, top=10):
         print(f"{int(w['start']) // 60}:{int(w['start']) % 60:02d}  {w['dur']:5.1f}s  score {w['score']:3d}  {w['pts']}  {w['music']}")
