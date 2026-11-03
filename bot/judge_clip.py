@@ -186,6 +186,16 @@ def main(folder):
 
     rep["length"], _ = pitch.length_points(dur, prof, spec.get("brief"))
 
+    # music mode (rico 2026-11-03): nothing is said, so hook, pace, story and entertainment are read off the sound
+    # (bot/music_moments.measure, carried in the spec) and the shots; captions are not wanted on a music clip
+    if spec.get("music"):
+        import music_moments
+        m_areas, m_notes = music_moments.judge_areas(spec["music"], shots, dur, silence(mp4))
+        rep.update(m_areas)
+        notes.update(m_notes)
+        rep["captions"] = 10
+        notes["captions"] = ["music clip: no captions by design"]
+
     # sound (board deck 2026-10-31: sound is its own area, weighted per kind of content), from qa_report's Audio row
     m = re.search(r"\| Audio \| (\w+) \| ([^|]*)", qa)
     rep["sound"] = 10 if not m or m.group(1) == "PASS" else 5 if m.group(1) == "WARN" else 0

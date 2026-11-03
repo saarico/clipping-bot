@@ -103,10 +103,14 @@ def one_clip(spec, work, source, words, tag):
         qa = "FAIL"
     # the audience read (engage.py): a second pass with its own gates; a gate failure counts like a QA failure
     aud = {"total": 0, "fails": ["audience read missing"], "fix": {}}
-    try:
-        aud = engage.read_folder(folder)
-    except Exception as e:
-        aud["fails"] = [f"audience read failed: {e}"]
+    if spec.get("music"):   # music mode: no words to read; the judge scores the sound and the picture instead
+        aud = {"total": 100, "fails": [], "fix": {}}
+        (folder / "engage_report.md").write_text("# Audience read\n\nmusic clip: no words, not read.\n")
+    else:
+        try:
+            aud = engage.read_folder(folder)
+        except Exception as e:
+            aud["fails"] = [f"audience read failed: {e}"]
     if aud["fails"]:
         fails = fails + [f"| Audience read | FAIL | {f} |" for f in aud["fails"]]
         qa = "FAIL"
@@ -171,7 +175,12 @@ def prepare(work, source, brief, words=None, campaign="campaign", log=print, use
         notes.append(f"speaker check skipped ({type(e).__name__})")
     # the pitch (rico 2026-10-29): read every candidate's words against the campaign's style before spending a render on it
     import pitch
-    specs, pnotes = pitch.gate(specs, json.loads(Path(words).read_text()), brief, log=log, want=12)
+    if specs and all(sp.get("music") for sp in specs):   # music mode: nothing is said, so the pitch (words) does not apply
+        pnotes = [f"music mode: {len(specs)} window(s) from sound peaks and shot changes; the pitch reads words and is skipped"]
+        for n_ in pnotes:
+            log(n_)
+    else:
+        specs, pnotes = pitch.gate(specs, json.loads(Path(words).read_text()), brief, log=log, want=12)
     # the picture (2026-10-31, Malcolm Todd: the one moment rendered had no face for 30 of its 50 s and a face 8% tall
     # in the rest; QA dropped it after 3.5 min of rendering): a talking-show moment is looked at before it is rendered
     import profiles
