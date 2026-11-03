@@ -1,5 +1,9 @@
-[06:39:31] CLIPPING root CLIPPING
-[06:40:41] episode taken from the Drive cache (downloaded from the link last time)
-[06:41:33] 0 of 0 pitches go to render
-[06:41:33] 0 candidate(s) picked (entertainment scorecard (auto)), 0 fallback(s); rendering on 0 machines with grade-and-retry
-[06:41:35] 0 render job(s)
+[17:44:39] CLIPPING root CLIPPING
+[17:45:49] episode taken from the Drive cache (downloaded from the link last time)
+music mode: 221 s of sound, 20 shot changes, 14 windows of 12-30 s
+[17:47:35] music mode: 14 window(s) from sound peaks and shot changes; the pitch reads words and is skipped
+[17:48:11] FIRST PIECE the-weeknd-live-in-hong-kong: PASS (captions carry no position tags: height not checked)
+[17:48:16] FIRST PIECE the-weeknd-x-faye-wong-hong: PASS (captions at y 1400 px)
+[17:48:49] FIRST PIECE hong-kong-sang-every-word: PASS (captions carry no position tags: height not checked)
+[17:48:49] 4 candidate(s) picked (music mode (sound peaks + shot changes)), 4 fallback(s); rendering on 4 machines with grade-and-retry
+[17:48:49] 4 render job(s)
