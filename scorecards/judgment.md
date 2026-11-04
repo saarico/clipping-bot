@@ -43,25 +43,40 @@ python3 bot/judge_clip.py <folder>
 # then spawn the judge agent with the prompt in bot/judge_prompt.txt and the folder path; it appends Part 2
 ```
 
-## Weights per kind of content (board-approved 2026-10-31)
-The machine areas above are each measured on their own scale (plus **sound /10** from the QA Audio row), then weighted
-by the clip's content profile (`bot/profiles.WEIGHTS`, total 100):
+## Weights per kind of content: scorecard v3 (makeover release 9, approved 2026-11-04)
+Every machine area is measured on its own scale, then weighted by the clip's content profile (`bot/profiles.WEIGHTS`,
+total 100). New in v3: **picture /10** (QA "Picture detail": real source pixels across the 9:16 window; 900+ = 10,
+600+ = 8, a WARN 4, a FAIL 0) and **visual /10** (the Creative Director's tags of what the moment shows: close-ups,
+crowd, light and pyro moments, a face on screen, per content type). **framing** is subject focus: on talking shows the
+speaker gates (centred, fills the frame), on movies, streams, stages and music the "Subject in crop" gate
+(release 6). Music clips read hook, pace, story and entertainment from the sound (`music_moments.judge_areas`).
 
 | Area | podcast | talker | stream | cinematic | performance | serious | edit |
 |---|---|---|---|---|---|---|---|
-| hook | 20 | 25 | 20 | 20 | 15 | 20 | 20 |
-| story | 20 | 20 | 10 | 15 | 10 | 25 | 10 |
-| entertainment | 10 | 10 | 15 | 10 | 10 | 5 | 10 |
-| comedy | 5 | 5 | 5 | 5 | 5 | 0 | 5 |
-| framing | 5 | 5 | 8 | 10 | 12 | 5 | 10 |
-| variety | 5 | 5 | 7 | 10 | 13 | 5 | 15 |
-| pace | 10 | 10 | 15 | 10 | 15 | 10 | 15 |
-| captions | 10 | 10 | 5 | 5 | 5 | 15 | 0 |
-| sound | 5 | 5 | 10 | 10 | 10 | 5 | 10 |
-| length | 10 | 5 | 5 | 5 | 5 | 10 | 5 |
+| hook | 18 | 20 | 16 | 16 | 14 | 18 | 16 |
+| story | 14 | 14 | 8 | 12 | 8 | 22 | 6 |
+| entertainment | 10 | 10 | 12 | 10 | 12 | 6 | 10 |
+| comedy | 4 | 4 | 4 | 4 | 0 | 0 | 4 |
+| framing | 12 | 10 | 10 | 10 | 16 | 10 | 10 |
+| picture | 8 | 8 | 8 | 10 | 12 | 8 | 12 |
+| visual | 3 | 3 | 5 | 6 | 10 | 3 | 12 |
+| variety | 3 | 3 | 5 | 8 | 4 | 3 | 10 |
+| captions | 8 | 8 | 8 | 4 | 4 | 12 | 0 |
+| pace | 8 | 8 | 12 | 8 | 8 | 8 | 10 |
+| length | 6 | 6 | 4 | 4 | 4 | 6 | 4 |
+| sound | 6 | 6 | 8 | 8 | 8 | 4 | 6 |
 
-Minimum per area: an area worth 10+ points that scores under half holds the clip under the bar (79), whatever the total.
-The Text & layout inspector (`bot/studio.layout_check`) does the same on a layout failure. Starting weights are the
-board's judgement; the Analyst (bot/analyst.py, release 4) nudges them once 20+ posts of a content type have 7-day
-views in data/posts.csv: +2 on the two areas that track views best, -2 on the two that track worst, never more than 6
-from this table, written to data/weights_tuned.json.
+Minimum per area: an area worth 10+ points that scores under half holds the clip under the bar (79), whatever the total,
+and a held clip is never handed over as UNDER THE BAR (release 5). The Text & layout inspector (`bot/studio.layout_check`)
+does the same on a layout failure. The v2 table of 2026-10-31 is kept as `profiles.WEIGHTS_V2`.
+
+**The bar is calibrated on rico's verdicts (release 9, `bot/calibrator.py`).** Every clip rico approves (3_APPROVED) or
+sends back (a note in 2_REDO while it waits in 1_CHECK), and the board's rejections, go into data/verdicts.csv with the
+judge score the clip had. data/calibration.json holds the bar that sorts those verdicts best (the lowest such bar, never
+under the board's 80) and how often the judge agrees with rico. From 6 verdicts the pipeline uses that bar; the SUMMARY
+says how far the judge is trusted (under 80% agreement: bar raised, clips marked for a closer look). Seeded with the
+board's rejection of the four Weeknd clips judged 79-92.
+
+The Analyst (bot/analyst.py) still nudges the weights once 20+ posts of a content type have 7-day views in
+data/posts.csv (filled from the VIEWS doc in 3_APPROVED since release 5): +2 on the two areas that track views best,
+-2 on the two that track worst, never more than 6 from this table, written to data/weights_tuned.json.

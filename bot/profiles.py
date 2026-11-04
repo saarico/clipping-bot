@@ -70,6 +70,18 @@ PROFILES = {
 # then weighted here. Deck area -> judge areas: Hook = hook; Story & payoff = story; Entertainment = entertainment +
 # comedy; Visual & framing = framing + variety; Pace = pace; Captions = captions; Sound = sound; Brief fit = length.
 WEIGHTS = {
+    # Scorecard v3 (makeover release 9, board review 3, approved 2026-11-04; deck slide 18). Two areas are new:
+    # picture (real pixels across the window, QA "Picture detail") and visual (what the picture shows: the Creative
+    # Director's tags: close-ups, crowd, lights). framing now reads "Subject in crop" on movies, streams and stages.
+    "podcast":     dict(hook=18, story=14, entertainment=10, comedy=4, framing=12, picture=8, visual=3, variety=3, captions=8, pace=8, length=6, sound=6),
+    "talker":      dict(hook=20, story=14, entertainment=10, comedy=4, framing=10, picture=8, visual=3, variety=3, captions=8, pace=8, length=6, sound=6),
+    "stream":      dict(hook=16, story=8, entertainment=12, comedy=4, framing=10, picture=8, visual=5, variety=5, captions=8, pace=12, length=4, sound=8),
+    "cinematic":   dict(hook=16, story=12, entertainment=10, comedy=4, framing=10, picture=10, visual=6, variety=8, captions=4, pace=8, length=4, sound=8),
+    "performance": dict(hook=14, story=8, entertainment=12, comedy=0, framing=16, picture=12, visual=10, variety=4, captions=4, pace=8, length=4, sound=8),
+    "serious":     dict(hook=18, story=22, entertainment=6, comedy=0, framing=10, picture=8, visual=3, variety=3, captions=12, pace=8, length=6, sound=4),
+    "edit":        dict(hook=16, story=6, entertainment=10, comedy=4, framing=10, picture=12, visual=12, variety=10, captions=0, pace=10, length=4, sound=6),
+}
+WEIGHTS_V2 = {   # the board's table of 2026-10-31 (before release 9), kept for reference
     "podcast":     dict(hook=20, story=20, entertainment=10, comedy=5, framing=5, variety=5, pace=10, captions=10, sound=5, length=10),
     "talker":      dict(hook=25, story=20, entertainment=10, comedy=5, framing=5, variety=5, pace=10, captions=10, sound=5, length=5),
     "stream":      dict(hook=20, story=10, entertainment=15, comedy=5, framing=8, variety=7, pace=15, captions=5, sound=10, length=5),

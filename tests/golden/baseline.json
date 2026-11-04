@@ -1,6 +1,6 @@
 {
  "ICH-001_20M-house-upgrade": {
-  "total": 78,
+  "total": 74,
   "areas": {
    "hook": 15,
    "pace": 5,
@@ -11,11 +11,13 @@
    "comedy": 4,
    "captions": 10,
    "length": 6,
-   "sound": 10
+   "sound": 10,
+   "picture": 7,
+   "visual": 6
   }
  },
  "ICH-002_what-went-wrong-with-prime": {
-  "total": 78,
+  "total": 75,
   "areas": {
    "hook": 20,
    "pace": 10,
@@ -26,11 +28,13 @@
    "comedy": 1,
    "captions": 8,
    "length": 0,
-   "sound": 10
+   "sound": 10,
+   "picture": 7,
+   "visual": 6
   }
  },
  "ICH-004_kylie-jenner-post-zero-sales": {
-  "total": 75,
+  "total": 70,
   "areas": {
    "hook": 10,
    "pace": 10,
@@ -41,11 +45,13 @@
    "comedy": 2,
    "captions": 10,
    "length": 10,
-   "sound": 10
+   "sound": 10,
+   "picture": 7,
+   "visual": 6
   }
  },
  "ICH-005_15k-meme-page-ads": {
-  "total": 72,
+  "total": 69,
   "areas": {
    "hook": 10,
    "pace": 7,
@@ -56,7 +62,9 @@
    "comedy": 2,
    "captions": 10,
    "length": 10,
-   "sound": 10
+   "sound": 10,
+   "picture": 7,
+   "visual": 6
   }
  }
 }

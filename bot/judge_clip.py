@@ -41,7 +41,8 @@ import profiles  # noqa: E402
 import studio  # noqa: E402
 
 # each area's own scale; the points it is worth come from the content's profile (profiles.WEIGHTS)
-MAXES = {"hook": 20, "pace": 10, "variety": 15, "framing": 10, "story": 10, "entertainment": 10, "comedy": 5, "captions": 10, "length": 10, "sound": 10}
+MAXES = {"hook": 20, "pace": 10, "variety": 15, "framing": 10, "story": 10, "entertainment": 10, "comedy": 5, "captions": 10, "length": 10, "sound": 10,
+         "picture": 10, "visual": 10}   # picture + visual: scorecard v3 (makeover release 9)
 BAR = 80   # the judge bar (scorecards/acceptance.md); pipeline.JUDGE_BAR is the one that decides
 
 
@@ -49,6 +50,22 @@ def silence(mp4):
     log = subprocess.run(["ffmpeg", "-hide_banner", "-nostats", "-i", str(mp4), "-af", "silencedetect=n=-45dB:d=0.8",
                           "-vn", "-f", "null", "-"], capture_output=True, text=True).stderr
     return [float(x) for x in re.findall(r"silence_duration: ([\d.]+)", log)]
+
+
+def picture_points(qa):
+    """(0-10, notes) from QA's "Picture detail" row: real source pixels across the 9:16 window."""
+    m = re.search(r"\| Picture detail \| (\w+) \| ([^|]*)", qa)
+    if not m:
+        return 7, ["no picture-detail row (rendered before release 5)"]
+    px = re.search(r"(\d+) source px", m.group(2))
+    px = int(px.group(1)) if px else 0
+    if m.group(1) == "FAIL":
+        p = 0
+    elif m.group(1) == "WARN":
+        p = 4
+    else:
+        p = 10 if px >= 900 else 8 if px >= 600 else 6
+    return p, [m.group(2).strip()[:90]]
 
 
 def main(folder):
@@ -209,6 +226,16 @@ def main(folder):
     m = re.search(r"\| Audio \| (\w+) \| ([^|]*)", qa)
     rep["sound"] = 10 if not m or m.group(1) == "PASS" else 5 if m.group(1) == "WARN" else 0
     notes["sound"] = [m.group(2).strip()[:80]] if m and m.group(1) != "PASS" else ["clean"]
+
+    # scorecard v3 (makeover release 9): the picture's real detail and what it shows
+    rep["picture"], notes["picture"] = picture_points(qa)
+    vis = spec.get("visual") or {}
+    if isinstance(vis.get("points"), (int, float)):
+        rep["visual"] = int(max(0, min(10, vis["points"])))
+        notes["visual"] = vis.get("why") or ["tagged by the Creative Director"]
+    else:
+        rep["visual"] = 6
+        notes["visual"] = ["not tagged (rendered without the Creative Director): neutral 6"]
 
     # Text & layout inspector (studio.layout_check): one caption spot, out of the platform UI, hook gone by ~6 s
     lay = studio.layout_check(folder / "captions.ass")
