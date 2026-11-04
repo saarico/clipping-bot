@@ -73,30 +73,8 @@
   "files": []
  },
  "words_sig": "links:e656ecc9c90b",
- "used_moments": [
-  {
-   "start": 1.2,
-   "end": 14.0,
-   "hook": "The Weeknd x Faye Wong, Hong Kong"
-  },
-  {
-   "start": 152.0,
-   "end": 170.3,
-   "hook": "Hong Kong sang every word"
-  },
-  {
-   "start": 67.8,
-   "end": 86.1,
-   "hook": "The Weeknd live in Hong Kong"
-  }
- ],
- "tried_moments": [
-  {
-   "start": 172.0,
-   "end": 196.0,
-   "hook": "The Weeknd x Faye Wong, Hong Kong"
-  }
- ],
+ "used_moments": [],
+ "tried_moments": [],
  "clips": [
   {
    "mp4": "01_the-weeknd-x-faye-wong-hong-1s.mp4",
@@ -147,8 +125,8 @@
    ]
   }
  ],
- "needs_redo": false,
+ "needs_redo": true,
  "empty_runs": 0,
  "empty_told": false,
- "review_told": true
+ "review_told": false
 }
