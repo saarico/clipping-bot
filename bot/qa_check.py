@@ -661,6 +661,28 @@ MUSIC_SOFT = {"Speaker centred", "Somebody in frame", "Actors fill the frame", "
               "Clean first 2 seconds", "Crop jumps", "Audio"}
 
 
+def check_picture_detail(rep, mp4, folder):
+    """Makeover release 5 (Picture Engineer): the real source pixels across the 9:16 window (from the Camera's
+    frame records) and the delivered picture's detail score. A window upscaled more than 2.25x reads soft."""
+    import picture
+    try:
+        frames_ = json.loads((Path(folder) / "agents.json").read_text()).get("frame", [])
+    except (OSError, ValueError):
+        frames_ = []
+    px = [(f["to"] - f["from"], f["src_px"]) for f in frames_ if f.get("src_px")]
+    det = picture.detail(mp4)
+    if not px:
+        rep.add("Picture detail", "PASS", f"detail {det}" if det else "no frame records to read")
+        return
+    total = sum(d for d, _ in px) or 1
+    low = sum(d for d, p in px if p < picture.MIN_SRC_PX) / total
+    worst = min(p for _, p in px)
+    typical = sorted(p for _, p in px)[len(px) // 2]
+    st = "FAIL" if low > 0.5 else "WARN" if low > 0.15 else "PASS"
+    rep.add("Picture detail", st, f"{typical} source px across the window (worst {worst}; {low:.0%} of the clip under "
+            f"{picture.MIN_SRC_PX})" + (f"; detail score {det}" if det else ""))
+
+
 def main(folder, source=None):
     folder = Path(folder)
     mp4 = next(p for p in folder.glob("*.mp4"))
@@ -686,6 +708,7 @@ def main(folder, source=None):
     check_crop_jumps(rep, mp4, details, source)
     check_transitions(rep, mp4, details, dur)
     check_audio_timing(rep, mp4)
+    check_picture_detail(rep, mp4, folder)
     soft = set(profiles.profile(spec.get("style"))["soft_qa"])   # per kind of footage: what is a warning, not a failure
     if spec.get("music"):   # music mode (rico 2026-11-03): no words, no captions, no speaker to centre on
         for i, (a, st, e) in enumerate(rep.rows):

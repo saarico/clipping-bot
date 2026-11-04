@@ -3,6 +3,30 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-11-04 UTC - Makeover release 5: fix and sharpen (version 2.6.0)
+
+rico, 2026-11-04 02:57 UTC: "yes implement five fixes now (r5,r6,r7,r8,r9)" on the board deck
+CLIPPING_SYSTEM/BOARD/Studio_Extreme_Makeover_2026-11-04.pptx. Release 5 is the audit's bug list and the picture:
+- Picture (bug 1): new bot/picture.py (Picture Engineer). The render machine fetches the campaign's original file
+  (one file in 0_START, or one Dropbox / Drive / direct link) and the Camera cuts every window from it at its own
+  resolution (up to 2160 lines); faces, shots and words are still read on the 1080p episode. On a synthetic 4K
+  source the delivered clip's detail score went from 241 to 421. A punch-in never upscales a window more than 2.25x
+  (picture.MIN_SRC_PX = 480 real pixels across): 1.27x on a 1080p source, the full 2.5x on 4K.
+- Encodes (bug 4): the Finisher is the one lossy encode a viewer sees, now preset medium crf 18 (was veryfast 21);
+  the thumbnail cover is joined with a stream copy instead of re-encoding the whole clip (falls back to crf 16).
+- New QA row "Picture detail": real source pixels across the window per segment + a Laplacian detail score.
+- Under the bar (bug 5): a judge score HELD at 79 (an area under half, a layout failure) is never "near".
+- Collapsed window (bug 6): agents/editor.collapsed stops a window that trimming shrank under 40% of its plan /
+  80% of the brief's minimum before the Camera renders it; the machine moves to its next moment.
+- Analyst (bug 7): kept clips carry their content type; clip_scores.csv logged every clip as "podcast".
+- Views log (bug 8): approved clips get a row in data/posts.csv with the post kit; a VIEWS doc in 3_APPROVED
+  ("01 12400" per line) fills views_7d every run.
+- Run queue (bug 9): a scheduled run leaves a campaign alone for 4 h after a run dispatched for it.
+- Review hold (bug 10): a run dispatched for a campaign whose clips wait in 1_CHECK says so in the log every time.
+- tried_moments (bug 11): kept per picker version (studio.VERSION major.minor); a new picker may pick them again.
+- Scorecards (bug 12): acceptance.md describes music mode, picture detail and the held-score rule.
+Bugs 2 and 3 (camera on stage, subject in crop) are release 6. Tests: tests/test_release5.py.
+
 ## 2026-11-03 18:40 UTC - Music mode 2: loudness ranked against the episode, no face reads on a music clip (version 2.5.1)
 
 The retry run 41686942547 (first run of music mode) rendered 4 Weeknd windows and kept none; the collect log shows

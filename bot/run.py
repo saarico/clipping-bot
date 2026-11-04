@@ -68,7 +68,7 @@ def note(st, msg):
     st["log"] = (st.get("log", []) + [f"{now()}  {msg}"])[-40:]
 
 
-BOT_DOCS = {"BRIEF", "NEEDS THE VIDEO", "SUMMARY", "POST KIT", "JOIN", "RULES (fetched by the bot)"}
+BOT_DOCS = {"BRIEF", "NEEDS THE VIDEO", "SUMMARY", "POST KIT", "JOIN", "RULES (fetched by the bot)", "VIEWS"}
 
 
 def is_bot_doc(f):
@@ -643,6 +643,40 @@ def wait_for_parts(name, n=TRANSCRIBE_PARTS, limit=50 * 60):
     return None
 
 
+def get_master(name, st, stage, episode):
+    """Makeover release 5 (Picture Engineer): the campaign's original file at its own resolution, for the Camera to
+    crop from (bot/picture.py). Only when the episode is ONE source (one file in 0_START or one downloaded link) with
+    the episode's timeline, and the original is sharper than 1080p. None otherwise: the 1080p episode is used as
+    before. Never raises."""
+    import picture
+    try:
+        _, _, edur = video_info(episode)
+        raw_dir = WORK / name / "master"
+        vids = [v for v in drive.files(stage["0_START"], VID_EXT)]
+        raw = None
+        if len(vids) == 1:
+            size = int(vids[0].get("Size") or 0)
+            if size and abs(size - Path(episode).stat().st_size) < 1024:
+                return None   # the 1920x1080 file was used as the episode as it is: nothing sharper exists
+            if size > picture.MASTER_MAX_BYTES:
+                note(st, f"master skipped: {vids[0]['Name'][:50]} is {size / 1e9:.1f} GB")
+                return None
+            raw = drive.download(vids[0]["Path"], raw_dir / vids[0]["Name"])
+        elif not vids:
+            links = [u for u in st.get("brief", {}).get("links", []) if re.search(r"dropbox\.com|drive\.google\.com|\.(mp4|mov|mkv|webm|m4v)(\?|$)", u)]
+            if len(links) == 1:
+                raw_dir.mkdir(parents=True, exist_ok=True)
+                got = fetch_link(links[0], raw_dir / "master.mp4", {"log": []})
+                raw = got if got and Path(got).exists() else None
+        if not raw:
+            return None
+        crop = bars_crop(raw, edur)
+        return picture.master_spec(raw, edur, crop, log=lambda m: note(st, m))
+    except Exception as e:
+        note(st, f"master skipped ({type(e).__name__}: {str(e)[:80]})")
+        return None
+
+
 def get_watermark(name, st, stage):
     """The brand/show watermark a campaign requires (brief says "watermark", or a PNG named watermark/logo sits in
     0_START) -> WORK/<name>/watermark.png on this machine; render_clip keeps it on screen the whole clip. Several
@@ -769,15 +803,50 @@ def do_campaign(name, cpath, phase="all"):
             kits[f["Path"]] = f["Name"]
         drive.write_doc("POST KIT", "\n".join(text), stage["3_APPROVED"])
         st["kits"] = kits
+        try:   # the views loop (makeover release 5, bug 8): every approved clip gets a row in data/posts.csv
+            n_new = analyst.log_posts(name, [{"clip": f["Name"], "platform": (clips.get(f["Name"], {}).get("lane") or ""),
+                                              "account": lanes.handle(clips.get(f["Name"], {}).get("lane") or "")} for f in new_kits])
+            if n_new:
+                note(st, f"{n_new} approved clip(s) added to the views log (data/posts.csv)")
+            if not any(f["Name"].startswith("VIEWS") for f in drive.files(stage["3_APPROVED"])):
+                drive.write_doc("VIEWS", "7 days after posting, write each clip's views on its own line, e.g.\n01 12400\n02 3.4k\n"
+                                "The bot reads this every run; the judge learns from real views (Analyst).\n", stage["3_APPROVED"])
+        except Exception as e:
+            note(st, f"views log skipped ({type(e).__name__}: {str(e)[:60]})")
+    try:
+        vdoc = next((f for f in drive.files(stage["3_APPROVED"], REQ_EXT) if f["Name"].startswith("VIEWS")), None)
+        if vdoc:
+            got = analyst.read_views(name, drive.text_of(vdoc["Path"], vdoc["Name"]))
+            if got:
+                note(st, f"views read for {got} clip(s) from the VIEWS doc")
+    except Exception as e:
+        log(f"views read skipped: {e}")
         note(st, f"post kit written for {len(new_kits)} approved clip(s) ({len(changed)} new or changed)")
 
     # 1_CHECK: cut when there is nothing there yet, or after a critique
     if st.get("clips") and not st.get("needs_redo"):
-        if not st.get("review_told"):   # say once why nothing happens: the log used to go silent here (2026-10-30 22:19)
-            note(st, f"{len(st['clips'])} clip(s) wait for rico's review in 1_CHECK (approve -> 3_APPROVED, notes -> 2_REDO)")
+        if not st.get("review_told") or DISPATCHED[0] == name:
+            # say why nothing happens: the log used to go silent here (2026-10-30 22:19), and a run dispatched for this
+            # campaign read like a success after the first note (makeover release 5, bug 10)
+            note(st, ("RUN DISPATCHED FOR THIS CAMPAIGN DID NOTHING: " if DISPATCHED[0] == name else "")
+                 + f"{len(st['clips'])} clip(s) wait for rico's review in 1_CHECK (approve -> 3_APPROVED, notes -> 2_REDO; "
+                 "a note in 2_REDO makes the next run cut again)")
             st["review_told"] = True
         save_state(name, st)
         return
+    if phase == "prepare" and DISPATCHED[0] != name and st.get("dispatched_at"):
+        # makeover release 5 (bug 9): a scheduled run queued behind a run dispatched for this campaign used to render
+        # the same episode again minutes later (Weeknd 2026-11-03 17:45 shipped an under-the-bar clip after the fix)
+        try:
+            age = (datetime.now(timezone.utc) - datetime.fromisoformat(st["dispatched_at"])).total_seconds() / 3600
+        except ValueError:
+            age = 99
+        if age < SKIP_AFTER_DISPATCH_H:
+            note(st, f"skipped by the scheduled run: a run dispatched for this campaign started {age:.1f} h ago")
+            save_state(name, st)
+            return
+    if phase == "prepare" and DISPATCHED[0] == name:
+        st["dispatched_at"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
     if not st.get("needs_redo") and st.get("empty_runs", 0) >= 3:
         # three runs with nothing kept: the material (or the brief) is the problem, not the dice; rendering the same
         # episode every 5 hours only burns minutes. A note in 2_REDO or a plan.json starts it again.
@@ -841,6 +910,13 @@ def do_campaign(name, cpath, phase="all"):
     if st["brief"].get("text"):
         st["brief"]["moments"] = briefer.clip_ideas(st["brief"]["text"].split("\n\n=== ")[0])
         st["brief"]["topics"] = briefer.topics(st["brief"]["text"].split("\n\n=== ")[0])   # the brief's subjects steer the scorecard
+    # makeover release 5 (bug 11): moments tried by an older picker do not block the new one (they were cleared by
+    # hand on 2026-11-03): tried_moments are kept per picker version (studio.VERSION major.minor)
+    ver = ".".join(studio.VERSION.split(".")[:2])
+    if st.get("tried_ver") != ver:
+        if st.get("tried_moments"):
+            note(st, f"picker {ver}: {len(st['tried_moments'])} moment(s) tried by the old picker may be picked again")
+        st["tried_moments"], st["tried_ver"] = [], ver
     # moments rico already saw, plus moments rendered and dropped before: the scorecard moves on to new ones
     used = [(c["start"], c["end"]) for c in st.get("used_moments", []) + st.get("tried_moments", [])]
     t0 = time.time()
@@ -920,10 +996,13 @@ def render_job(n):
         raise RuntimeError("source not available on the render machine")
     spec["source"] = str(src)
     get_watermark(name, st, stage)
+    master = get_master(name, st, stage, src)
     (work / "renders").mkdir(exist_ok=True)
     lane = [spec] + j.get("fallbacks", [])
     for sp in lane:
         sp["words"], sp["source"] = str(words), str(src)
+        if master:
+            sp["master"] = master
     res, tries = pipeline.try_until(lane, work, src, words, f"c{n + 1:02d}", log=log)
     res = res or {"hook": spec["hook"], "error": "no render finished", "ok": False, "judge": 0, "qa": "FAIL", "fails": [], "why": "", "parts": spec.get("parts", []), "dur": 0}
     res["tries"] = [f"{Path(str(r.get('folder', r['hook']))).name}: qa {r.get('qa')} judge {r.get('judge')} ({r.get('areas', '')}) {'; '.join(r.get('fails', [])[:2])}" for r in tries]
@@ -1026,7 +1105,12 @@ def publish(name, st, stage, kept, summary, t0):
     note(st, f"{len(kept)} clip(s) uploaded to 1_CHECK")
     save_state(name, st)
 
+DISPATCHED = [None]          # the campaign a run was dispatched for (run.yml input), None on the schedule
+SKIP_AFTER_DISPATCH_H = 4    # a scheduled run leaves a campaign alone this long after a run dispatched for it
+
+
 def main(only=None, phase="all"):
+    DISPATCHED[0] = only
     rt = drive.root()
     log(f"CLIPPING root {rt}")
     dropped = [l.strip() for l in (ROOT / "config" / "dropped.txt").read_text().splitlines() if l.strip() and not l.startswith("#")] if (ROOT / "config" / "dropped.txt").exists() else []

@@ -27,8 +27,8 @@ def assemble(spec, cards, ranges, layouts, total, tmp):
                  + (",scale=540:960" if small else "") + "[v]", "-map", "[v]"]
     else:
         vargs = ["-vf", vf + (",scale=540:960" if small else ""), "-map", "0:v"]
-    run(["ffmpeg", "-loglevel", "error", "-y", *ins, *vargs, "-map", "1:a", "-c:v", "libx264", "-preset", "ultrafast" if small else "veryfast",
-         "-crf", "21", "-pix_fmt", "yuv420p", "-c:a", "copy", "-shortest", "-movflags", "+faststart",
+    run(["ffmpeg", "-loglevel", "error", "-y", *ins, *vargs, "-map", "1:a", "-c:v", "libx264", "-preset", "ultrafast" if small else "medium",
+         "-crf", "21" if small else "18",   # makeover release 5: the one lossy encode a viewer sees (was veryfast crf 21) "-pix_fmt", "yuv420p", "-c:a", "copy", "-shortest", "-movflags", "+faststart",
          spec["out"]])
     Path(spec["out"]).with_suffix(".layout.json").write_text(json.dumps(
         {"cuts": ranges, "shots": [{"from": round(a, 2), "to": round(b, 2), "layout": l}

@@ -30,12 +30,26 @@ def cut(spec, src, words):
     else:
         ranges = guard_edges(src, ranges, words)
 
+    collapsed(spec, ranges)
     pieces, off = [], 0
     for s, e in ranges:
         n = round((e - s) * FPS)
         pieces.append((s, s + n / FPS, off))
         off += n / FPS
     return ranges, pieces
+
+
+def collapsed(spec, ranges):
+    """Makeover release 5 (bug 6): a window that starts on a title card used to shrink to 1.3 s in trim_cards and only
+    failed at QA's Format row after a full render. Stop here instead, before the Camera spends minutes on it; the
+    render machine moves on to its next moment (pipeline.try_until treats a failed render as "next spec")."""
+    planned = sum(b - a for a, b in spec.get("parts", []))
+    total = sum(e - s for s, e in ranges)
+    lo = (spec.get("brief") or {}).get("min_s") or 0
+    need = max(5.0, 0.4 * planned, 0.8 * lo if lo else 0)
+    if planned and total < need:
+        raise SystemExit(f"window collapsed to {total:.1f} s of the planned {planned:.1f} s after trimming cards and pauses "
+                         f"(needs {need:.0f} s): not rendered")
 
 
 # ---------- edge guard (Studio v2 release 4, experiment "cut edges") ----------

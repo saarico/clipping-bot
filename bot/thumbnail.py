@@ -18,6 +18,7 @@ the PNG as a custom cover.
 import json
 import math
 import re
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -418,20 +419,69 @@ def duration(mp4):
     return float(out or 0)
 
 
+ENC = ["-c:v", "libx264", "-preset", "medium", "-crf", "18", "-pix_fmt", "yuv420p"]   # the Finisher's settings
+
+
+def _frames(mp4):
+    r = subprocess.run(["ffprobe", "-v", "error", "-count_packets", "-select_streams", "v:0", "-show_entries",
+                        "stream=nb_read_packets,width,height,r_frame_rate", "-of", "json", str(mp4)], capture_output=True, text=True)
+    try:
+        st = json.loads(r.stdout)["streams"][0]
+        return int(st["nb_read_packets"]), (int(st["width"]), int(st["height"]), st["r_frame_rate"])
+    except Exception:
+        return 0, None
+
+
 def append_cover(mp4, png, out=None, frames=2, strip_old=False):
-    """Re-encode the clip with the thumbnail as its last `frames` frames (silent), for the frame pickers.
+    """The thumbnail as the clip's last `frames` frames (silent), for the YouTube / TikTok frame pickers.
+    Makeover release 5: the clip is no longer re-encoded for this (it cost a generation of detail): the cover is
+    encoded alone with the Finisher's settings and joined with a stream copy. When the copy-join does not come out
+    with every frame, the old full re-encode runs instead (crf 16 now).
     `strip_old`: the clip already ends with an earlier cover (same number of frames): cut it off first."""
     out = out or mp4
     tmp = Path(str(out) + ".cover.mp4")
     d = frames / 30
+    keep = max(duration(mp4) - d - 0.001, 1.0) if strip_old else None
+    n0, geo = _frames(mp4)
+    try:
+        work = Path(str(out) + ".parts").resolve()
+        work.mkdir(exist_ok=True)
+        body = work / "body.mp4"
+        if keep:
+            subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(mp4), "-t", f"{keep:.3f}", "-c", "copy", str(body)], check=True)
+        else:
+            shutil.copy(mp4, body)
+        n_body, _ = _frames(body)
+        cover = work / "cover.mp4"
+        w, h = (geo[0], geo[1]) if geo else (W, H)
+        ar = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "a:0", "-show_entries", "stream=sample_rate,channels",
+                             "-of", "csv=p=0", str(mp4)], capture_output=True, text=True).stdout.strip().split(",")
+        rate, chans = (ar[0], ar[1]) if len(ar) >= 2 and ar[0].isdigit() and ar[1].isdigit() else ("48000", "2")
+        layout = "mono" if chans == "1" else "stereo"
+        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-loop", "1", "-framerate", "30", "-t", f"{d:.3f}", "-i", str(png),
+                        "-f", "lavfi", "-t", f"{d:.3f}", "-i", f"anullsrc=r={rate}:cl={layout}",
+                        "-vf", f"scale={w}:{h},format=yuv420p,setsar=1", "-r", "30", "-frames:v", str(frames), *ENC,
+                        "-c:a", "aac", "-b:a", "160k", "-ar", rate, "-ac", chans, str(cover)], check=True)
+        (work / "list.txt").write_text(f"file '{body}'\nfile '{cover}'\n")
+        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", str(work / "list.txt"),
+                        "-c", "copy", "-movflags", "+faststart", str(tmp)], check=True)
+        n1, _ = _frames(tmp)
+        bad = subprocess.run(["ffmpeg", "-v", "error", "-i", str(tmp), "-f", "null", "-"], capture_output=True, text=True).stderr.strip()
+        if n1 != n_body + frames or bad:
+            raise RuntimeError(f"copy-join came out {n1} frames of {n_body + frames}" + (f" ({bad[:80]})" if bad else ""))
+        shutil.rmtree(work, ignore_errors=True)
+        tmp.replace(out)
+        return out
+    except Exception as e:
+        print(f"cover copy-join failed ({e}); re-encoding")
+        shutil.rmtree(Path(str(out) + ".parts"), ignore_errors=True)
     main = "[0:v]setsar=1[m];[0:a]anull[ma]"
-    if strip_old:
-        keep = max(duration(mp4) - d - 0.001, 1.0)
+    if keep:
         main = f"[0:v]trim=0:{keep:.3f},setpts=PTS-STARTPTS,setsar=1[m];[0:a]atrim=0:{keep:.3f},asetpts=PTS-STARTPTS[ma]"
     cmd = ["ffmpeg", "-y", "-loglevel", "error", "-i", str(mp4), "-loop", "1", "-t", f"{d:.3f}", "-i", str(png),
            "-f", "lavfi", "-t", f"{d:.3f}", "-i", "anullsrc=r=48000:cl=stereo",
            "-filter_complex", f"{main};[1:v]scale={W}:{H},format=yuv420p,setsar=1,fps=30[c];[m][ma][c][2:a]concat=n=2:v=1:a=1[v][a]",
-           "-map", "[v]", "-map", "[a]", "-c:v", "libx264", "-preset", "veryfast", "-crf", "18", "-pix_fmt", "yuv420p",
+           "-map", "[v]", "-map", "[a]", "-c:v", "libx264", "-preset", "medium", "-crf", "16", "-pix_fmt", "yuv420p",
            "-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart", str(tmp)]
     subprocess.run(cmd, check=True)
     tmp.replace(out)
