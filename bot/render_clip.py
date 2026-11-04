@@ -574,11 +574,11 @@ CAP_Y = {"split": TOP + HC // 2, "bottom": TOP + HC // 2}
 CALLOUT_Y = CAP_DEFAULT - 250   # number cards: between the chin and the captions, same spot every time
 
 
-ACCENT = ["&H00D7FF&"]   # set per render from the look
+ACCENT = ["&H00D7FF&", "&HFFFFFF&"]   # set per render from the look: [keyword colour, the hook text colour after it]
 
 
 def paint(words, hi):
-    return " ".join(r"{\c" + ACCENT[0] + "}" + esc(w) + r"{\c&HFFFFFF&}" if norm(w) in hi else esc(w) for w in words)
+    return " ".join(r"{\c" + ACCENT[0] + "}" + esc(w) + r"{\c" + ACCENT[1] + "}" if norm(w) in hi else esc(w) for w in words)
 
 
 def style_colour(inline):
@@ -723,6 +723,19 @@ def phrases(inside, texts, lk):
     return out
 
 
+def ass_styles(lk):
+    """The Cap, Hook and Tag style lines of a look (profiles.look). Shared by build_ass and bot/looks.py (the sheet
+    rico picks looks from). BorderStyle 3 = a box behind each line (OutlineColour is the box, Outline its padding)."""
+    back = lk.get("back", "&H80000000")
+    cap = (f"Style: Cap,{lk['cap_font']},{lk['cap_size']},&H00FFFFFF,&H00FFFFFF,{lk.get('cap_box', '&H00000000')},{back},"
+           f"{lk['cap_bold']},0,0,0,100,100,1,0,{lk.get('cap_border', 1)},{lk['outline']},{lk['shadow']},5,70,70,0,1")
+    hook = (f"Style: Hook,{lk['title_font']},62,{lk.get('hook_primary', '&H00FFFFFF')},&H00FFFFFF,{lk.get('hook_box', '&H00000000')},{back},"
+            f"{lk['title_bold']},0,0,0,100,100,0,0,{lk.get('hook_border', 1)},{lk.get('hook_outline', lk['outline'])},{lk['shadow']},8,50,50,0,1")
+    tag = (f"Style: Tag,{lk['title_font']},40,{style_colour(lk['accent'])},{style_colour(lk['accent'])},&H00000000,{back},"
+           f"{lk['title_bold']},0,0,0,100,100,1,0,1,{min(5, lk['outline']) if lk['outline'] else 0},2,8,50,50,0,1")
+    return "\n".join((cap, hook, tag))
+
+
 def build_ass(spec, pieces, layouts):
     """pieces: (src_s, src_e, out_off); layouts: (out_s, out_e, layout)."""
     emph = {norm(e) for e in spec.get("emphasis", [])}
@@ -735,12 +748,13 @@ def build_ass(spec, pieces, layouts):
                 return lay
         return "face"
 
-    lk = profiles.look(spec.get("style"), spec.get("look"))   # the campaign's own look on top of the profile's
-    ACCENT[0] = lk["accent"]
+    lk = profiles.look(spec.get("style"), spec.get("look"))   # release 8: the content type's look, or the campaign's pick
+    ACCENT[0] = lk.get("hook_accent", lk["accent"])
+    ACCENT[1] = "&H" + lk.get("hook_primary", "&H00FFFFFF")[-6:] + "&"   # the hook's own text colour after a keyword
     mask = spec.get("profanity", "mask") != "show"
     hook = " ".join(mask_swear(t) if mask else t for t in spec["hook"].split())
     size, title = title_lines(hook, spec.get("hook_hi", []), lk)
-    size = min(size, HOOK_MAX)
+    size = min(size, lk.get("hook_max", HOOK_MAX))
     sp = f"\\fsp{lk['title_spacing']}" if lk.get("title_spacing") else ""
     # the hook is a timed overlay, not a band: top of the picture under the watermark for the first seconds, then
     # it fades and the footage has the whole frame (the brief: "shows the first few seconds of the clip, like a spoiler")
@@ -788,7 +802,7 @@ def build_ass(spec, pieces, layouts):
                 for tok in text.split():
                     if mask:
                         tok = mask_swear(tok)
-                    t = esc(tok.upper())
+                    t = esc(tok.upper() if lk.get("upper", True) else tok)
                     if norm(tok) in emph:
                         t = r"{\c" + lk["accent"] + "}" + t + r"{\c&HFFFFFF&}"
                     toks.append(t)
@@ -831,9 +845,7 @@ WrapStyle: 0
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Cap,{lk['cap_font']},{lk['cap_size']},&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,{lk['cap_bold']},0,0,0,100,100,1,0,1,{lk['outline']},{lk['shadow']},5,70,70,0,1
-Style: Hook,{lk['title_font']},62,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,{lk['title_bold']},0,0,0,100,100,0,0,1,{lk['outline']},{lk['shadow']},8,50,50,0,1
-Style: Tag,{lk['title_font']},40,{style_colour(lk['accent'])},{style_colour(lk['accent'])},&H00000000,&H80000000,{lk['title_bold']},0,0,0,100,100,1,0,1,5,2,8,50,50,0,1
+{ass_styles(lk)}
 Style: Label,{TITLE_FONT},44,&H00000000,&H00000000,&H0000D7FF,&H0000D7FF,0,0,0,0,100,100,2,0,3,12,0,8,80,80,0,1
 Style: Callout,{TITLE_FONT},96,&H0000D7FF,&H0000D7FF,&H00000000,&H00000000,1,0,0,0,100,100,0,0,3,16,0,5,60,60,0,1
 Style: Disc,{CAP_FONT},34,&H00FFFFFF,&H00FFFFFF,&H00000000,&H90000000,0,0,0,0,100,100,0,0,3,10,0,2,40,40,0,1

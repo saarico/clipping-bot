@@ -3,6 +3,18 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-11-04 UTC - Makeover release 8: text look v2 (version 2.9.0)
+
+rico, 2026-11-04: "a better look of text that we add is must needed" (he called the one heavy Montserrat look ugly
+twice). profiles.LOOKS adds three looks, and every kind of content gets its own by default (profiles.DEFAULT_LOOK):
+pill (Inter Bold, sentence case, a soft dark box behind each caption line, the hook as dark text on an accent box)
+for podcasts, news and movies; pop (Anton, upper case, 1-3 words, thin outline) for streams and talkers; minimal
+(Inter SemiBold, small, letter-spaced, soft shadow, no outline) for music and edits. The look before release 8 is
+"classic". A campaign picks another in plan.json: "brief_overrides": {"look": {"style": "pop", "accent": "cyan"}}
+(accent names: yellow, cyan, pink, white, gold). render_clip.ass_styles writes the style lines for every look; the
+caption positions, safe zones and the layout inspector are unchanged. New bot/looks.py renders the 12-look sheet
+(4 looks x 3 accents) on any frame of a campaign's footage so rico picks from pictures. Tests: tests/test_release8.py.
+
 ## 2026-11-04 UTC - Makeover release 7: the creative studio (version 2.8.0)
 
 rico, 2026-11-04: "have the music playing and throw in snippets of the clips or make it into b-roll", "think outside

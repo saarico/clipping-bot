@@ -23,7 +23,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 import profiles  # noqa: E402
 
-VERSION = "2.8.0"   # Makeover release 7 (board review 3, rico 2026-11-04): Visual Tagger, Creative Director (concepts + reasons), song-bed montage. On release 6. Printed in every SUMMARY so a clip traces to the code that made it.
+VERSION = "2.9.0"   # Makeover release 8 (board review 3, rico 2026-11-04): text look v2 (pill / pop / minimal per content type, look sheet). On release 7. Printed in every SUMMARY so a clip traces to the code that made it.
 
 # (stage, role, job, module(s) that do it today, whom a failure goes back to)
 ROSTER = [
