@@ -23,7 +23,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 import profiles  # noqa: E402
 
-VERSION = "2.6.0"   # Makeover release 5 (board review 3, rico 2026-11-04): native-resolution picture, one clean encode, 12-bug audit fixes. Printed in every SUMMARY so a clip traces to the code that made it.
+VERSION = "2.7.0"   # Makeover release 6 (board review 3, rico 2026-11-04): Subject Finder, the window follows the performer; subject-in-crop gate. On release 5. Printed in every SUMMARY so a clip traces to the code that made it.
 
 # (stage, role, job, module(s) that do it today, whom a failure goes back to)
 ROSTER = [
@@ -33,7 +33,9 @@ ROSTER = [
     ("FIND", "Moment Hunter", "reads the whole source and ranks the moments worth cutting", "find_moments.py, plan.py", "Content Classifier"),
     ("FIND", "Story Editor", "trims each moment to hook, context, escalation, payoff", "plan.refine, engage.py", "Moment Hunter"),
     ("FIND", "Hook Writer", "the spoken first line and the on-screen hook", "find_moments.opener_ok / hook_from_opener", "Story Editor"),
-    ("MAKE", "Camera Operator", "framing per profile: still on talkers, follow on movies", "agents/camera.py, analyze_shots.py", "Story Editor"),
+    ("MAKE", "Subject Finder", "finds who matters in every shot (face, body, spotlight) and tracks them", "subject.py", "Camera Operator"),
+    ("MAKE", "Camera Operator", "framing per profile: still on talkers, follow the Subject Finder's track on movies and stages", "agents/camera.py, analyze_shots.py", "Story Editor"),
+    ("MAKE", "Picture Engineer", "native-resolution windows, one clean encode, picture-detail gate", "picture.py, agents/finisher.py", "Camera Operator"),
     ("MAKE", "Caption Designer", "one caption spot, keyword colour, safe zones", "agents/captions.py, profiles.LOOK", "Camera Operator"),
     ("MAKE", "Sound Designer", "voice levels, limiter, SFX only on reveals", "agents/sound.py", "Camera Operator"),
     ("MAKE", "Motion & Graphics", "punch-ins, number cards, pattern interrupts", "agents/graphics.py, graphics_map.py", "Story Editor"),
@@ -293,6 +295,12 @@ def first_piece_check(agents, ass_path, style=None):
         share = _framed_share(frames)
         if share < FACE_SHARE_MIN:
             fails.append(f"a face framed {share:.0%} of the first piece (under {FACE_SHARE_MIN:.0%})")
+    elif frames:
+        # makeover release 6: movies, streams and stage shows are inspected for their subject in the window
+        import subject
+        c = subject.cover(frames)
+        if c < 0.6:
+            fails.append(f"the subject is in the window {c:.0%} of the first piece (under 60%)")
     lay = layout_check(ass_path)
     fails += lay["fails"]
     notes += lay["notes"]

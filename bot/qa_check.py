@@ -683,6 +683,25 @@ def check_picture_detail(rep, mp4, folder):
             f"{picture.MIN_SRC_PX})" + (f"; detail score {det}" if det else ""))
 
 
+def check_subject(rep, folder, spec):
+    """Makeover release 6 (bug 3): on movies, streams and stage shows, the Subject Finder's record of how much of the
+    clip has its subject (the performer, the actor) inside the 9:16 window. Hard on every kind of footage: the board
+    rejected Weeknd clips judged 84-92 whose window sat on the middle of the stage."""
+    import subject
+    if profiles.profile(spec.get("style"))["cards"] and not spec.get("music"):
+        return   # talking shows: the speaker gates above (centred, fill the frame) already measure this
+    try:
+        frames_ = json.loads((Path(folder) / "agents.json").read_text()).get("frame", [])
+    except (OSError, ValueError):
+        frames_ = []
+    if not frames_:
+        rep.add("Subject in crop", "WARN", "no frame records to read")
+        return
+    c = subject.cover(frames_)
+    rep.add("Subject in crop", "FAIL" if c < 0.6 else "WARN" if c < 0.8 else "PASS",
+            f"the subject (face or body) is inside the window for {c:.0%} of the clip (80%+ passes, under 60% fails)")
+
+
 def main(folder, source=None):
     folder = Path(folder)
     mp4 = next(p for p in folder.glob("*.mp4"))
@@ -709,6 +728,7 @@ def main(folder, source=None):
     check_transitions(rep, mp4, details, dur)
     check_audio_timing(rep, mp4)
     check_picture_detail(rep, mp4, folder)
+    check_subject(rep, folder, spec)
     soft = set(profiles.profile(spec.get("style"))["soft_qa"])   # per kind of footage: what is a warning, not a failure
     if spec.get("music"):   # music mode (rico 2026-11-03): no words, no captions, no speaker to centre on
         for i, (a, st, e) in enumerate(rep.rows):

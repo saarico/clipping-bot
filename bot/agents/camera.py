@@ -6,6 +6,7 @@ Out: video.mp4 (picture only, no captions) and frame.json, one record per render
 Owns: who is on screen, the crop window, pans, punch-ins, overlay layouts. Never touches sound or text.
 """
 import picture
+import subject
 from render_clip import (CINE_MIN_FACE, FPS, HC, HOOK_SECS, SRC_H, SRC_W, W, WIDE_PUNCH_MAX, Framer, analyze_shots, build_filter,
                          card_source, deflash, pan_keys, people, profiles, run, sub_ranges, talker)
 
@@ -41,6 +42,7 @@ def shoot(spec, src, pieces, overlays, focus, marks, has_teaser, tmp):
                 ov = next((o for o in overlays if o["from"] <= mid < o["to"]), None)
                 zoom = 1.17 if any(f[0] <= mid < f[1] for f in focus) else piece_zoom
                 keys, panel_w, small_used, tb = None, 630, False, None
+                subj_keys, seg_subject = None, None
                 same_shot = last_shot is not None and abs(last_shot - sh["start"]) < 0.01
                 if ov and ov["style"] == "hide" and not people(analyze_shots.faces_in(src, a, b), box=ov["box"]):
                     ov = None      # nobody to crop the strip away from (wide shot, b-roll): frame as usual
@@ -120,9 +122,29 @@ def shoot(spec, src, pieces, overlays, focus, marks, has_teaser, tmp):
                                 ppl, lay, zoom = [(pp[0][0], pp[0][1], 0.2)], "face", 1.0   # a person, no face: frame the body
                             else:
                                 lay = "wide"
+                        # makeover release 6 (Subject Finder): a stage show follows the performer by face, body or
+                        # spotlight, never the biggest head in the crowd; any other footage asks it only when the
+                        # window would otherwise sit on the middle of the picture
+                        stage = spec.get("style") in ("performance", "edit") or bool(spec.get("music"))
+                        if not tb and (stage or lay == "wide"):
+                            subj = subject.pan(src, vs, vs + b - a)
+                            if subj:
+                                subj_keys = subj["keys"]
+                                ppl = [(subj_keys[0][1], subj["cy"], max(subj["size"], CINE_MIN_FACE))]
+                                lay = "face"
+                                if subj["kind"] in ("face", "body"):
+                                    zoom = max(zoom, min(1.6, 0.12 / max(subj["size"], 0.02)))
+                                seg_subject = subj["cover"]
+                            elif stage:
+                                seg_subject = 0.0
+                        if seg_subject is None:
+                            seg_subject = 1.0 if lay == "face" and ppl and not tb else 0.0 if lay == "wide" else None
                         zoom = min(1.5, zoom * spec.get("zoom_boost", 1.0))
                 zoom = min(zoom, zcap)
-                if lay in ("face", "side", "bottom", "banner", "hide") and ppl and ppl[0][2] >= (CINE_MIN_FACE if whole_when_lost else 0.1) and not (whole_when_lost and tb):
+                if subj_keys:
+                    keys = subj_keys
+                    last_cx = keys[-1][1]
+                elif lay in ("face", "side", "bottom", "banner", "hide") and ppl and ppl[0][2] >= (CINE_MIN_FACE if whole_when_lost else 0.1) and not (whole_when_lost and tb):
                     # movies: the dead zone is 6% of the WINDOW width (a zoomed-in window is narrow: 8% of the
                     # source width was a third of the picture, which left Rockwell at the edge, c01 2026-10-29)
                     win_w = (SRC_H / zoom) * W / HC / SRC_W
@@ -170,7 +192,8 @@ def shoot(spec, src, pieces, overlays, focus, marks, has_teaser, tmp):
                 frames.append({"from": round(o, 3), "to": round(o + n / FPS, 3), "src": round(vs, 3), "layout": lay,
                                "zoom": round(zoom, 3), "face": [round(v, 4) for v in ppl[0]] if ppl else None,
                                "pan_keys": len(keys or []), "overlay": ov["style"] if ov else None,
-                               "src_px": picture.src_px(zoom, seg_k) if lay in ("face", "wide", "hide") else None})
+                               "src_px": picture.src_px(zoom, seg_k) if lay in ("face", "wide", "hide") else None,
+                               "subject": seg_subject})
                 if o < HOOK_SECS and lay == "face" and ppl:
                     # where the top of the face lands in the 1080x1920 picture while the hook text shows (build_ass
                     # moves the hook to the bottom when a high-framed face would sit under it, 2026-10-31)
