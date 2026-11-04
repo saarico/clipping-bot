@@ -23,7 +23,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 import profiles  # noqa: E402
 
-VERSION = "2.9.0"   # Makeover release 8 (board review 3, rico 2026-11-04): text look v2 (pill / pop / minimal per content type, look sheet). On release 7. Printed in every SUMMARY so a clip traces to the code that made it.
+VERSION = "3.0.0"   # Makeover release 9 (board review 3, rico 2026-11-04): scorecard v3 (picture + visual areas), Calibrator on rico's verdicts. Releases 5-9 complete. Printed in every SUMMARY so a clip traces to the code that made it.
 
 # (stage, role, job, module(s) that do it today, whom a failure goes back to)
 ROSTER = [
@@ -46,6 +46,7 @@ ROSTER = [
     ("PROVE", "Inspectors", "first-piece, in-process, layout and final inspection", "pitch.py, pipeline.faces_ok, qa_check.py, studio.layout_check", "the role that owns the failure"),
     ("PROVE", "Judge", "blind grade on the content's own scorecard", "judge_clip.py + studio.weighted_total", "Story Editor (one re-edit), then Moment Hunter"),
     ("PROVE", "Publisher", "post kit per platform, tags checked against the brief", "post_kit.py, lanes.py", "Brief Reader"),
+    ("PROVE", "Calibrator", "keeps the judge's bar in line with rico's approvals, redo notes and the board's rejections", "calibrator.py (data/verdicts.csv -> data/calibration.json)", "Judge"),
     ("PROVE", "Analyst", "joins 7-day views to the judge's area scores and nudges the weights", "analyst.py (data/clip_scores.csv + data/posts.csv, every run)", "Content Classifier"),
 ]
 

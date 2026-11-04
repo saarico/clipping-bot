@@ -3,6 +3,19 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-11-04 UTC - Makeover release 9: grading that agrees with the board (version 3.0.0)
+
+The board rejected Weeknd clips the judge scored 92, 85 and 84 (deck slide 2). Scorecard v3 (profiles.WEIGHTS, the v2
+table kept as WEIGHTS_V2): two new judge areas, picture /10 (QA "Picture detail") and visual /10 (the Creative
+Director's tags), and framing weighs more where the subject matters (16 on a stage show, so the subject gate holds a
+clip under half). New bot/calibrator.py: rico's verdicts (3_APPROVED = approved, a note in 2_REDO while clips wait =
+redo, the board's rejections) go to data/verdicts.csv with each clip's judge score; data/calibration.json holds the
+lowest bar that sorts them best and the agreement. From 6 verdicts pipeline uses that bar (never under 80) and the
+SUMMARY says how far the judge is trusted. Seeded with the four Weeknd clips the board rejected (bar 93 once 6
+verdicts exist). Golden set re-recorded under v3 (ICH 78/78/75/72 -> 74/75/70/69: the old title-band clips lose on
+framing, which now weighs 12 on a podcast). scorecards/judgment.md, entertainment.md and acceptance.md rewritten for
+v3, music and the picture (audit bug 12). Tests: tests/test_release9.py.
+
 ## 2026-11-04 UTC - Makeover release 8: text look v2 (version 2.9.0)
 
 rico, 2026-11-04: "a better look of text that we add is must needed" (he called the one heavy Montserrat look ugly

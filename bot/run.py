@@ -28,6 +28,7 @@ import drive  # noqa: E402
 import pipeline  # noqa: E402
 import studio  # noqa: E402
 import analyst  # noqa: E402
+import calibrator  # noqa: E402
 import post_kit  # noqa: E402
 import lanes  # noqa: E402
 
@@ -770,6 +771,14 @@ def do_campaign(name, cpath, phase="all"):
         if key in seen:
             continue
         txt = drive.text_of(f["Path"], f["Name"])
+        try:   # makeover release 9 (Calibrator): a note while clips wait in 1_CHECK is rico's "redo" on the ones not approved
+            appr = {a["Name"] for a in drive.files(stage["3_APPROVED"], VID_EXT)}
+            for c in st.get("clips", []):
+                if c["mp4"] not in appr:
+                    calibrator.record(name, c["mp4"], "redo", c.get("judge"), st.get("brief", {}).get("style", ""))
+            calibrator.calibrate()
+        except Exception as e:
+            log(f"calibrator skipped: {e}")
         (cdir / "critiques").mkdir(exist_ok=True)
         (cdir / "critiques" / f"{datetime.now(timezone.utc):%Y%m%d-%H%M}_{f['Name']}.md").write_text(txt)
         seen.add(key)
@@ -803,6 +812,14 @@ def do_campaign(name, cpath, phase="all"):
             kits[f["Path"]] = f["Name"]
         drive.write_doc("POST KIT", "\n".join(text), stage["3_APPROVED"])
         st["kits"] = kits
+        try:   # makeover release 9 (Calibrator): every approved clip is rico's "approved" verdict on its judge score
+            for f in new_kits:
+                if f["Name"] in clips:
+                    calibrator.record(name, f["Name"], "approved", clips[f["Name"]].get("judge"), st.get("brief", {}).get("style", ""))
+            cal = calibrator.calibrate()
+            note(st, f"Calibrator: {cal['n']} verdict(s), best bar {cal['bar']} (agrees {cal['agreement']})")
+        except Exception as e:
+            log(f"calibrator skipped: {e}")
         try:   # the views loop (makeover release 5, bug 8): every approved clip gets a row in data/posts.csv
             n_new = analyst.log_posts(name, [{"clip": f["Name"], "platform": (clips.get(f["Name"], {}).get("lane") or ""),
                                               "account": lanes.handle(clips.get(f["Name"], {}).get("lane") or "")} for f in new_kits])
@@ -1050,6 +1067,7 @@ def collect():
                 notes += analyst.review()[0]
             except Exception as e:
                 notes.append(f"Analyst skipped ({type(e).__name__})")
+            notes.append(calibrator.trusted()[1])
             cap = studio.clip_cap(st)   # board decision 2026-10-31: 3 clips, up to 6 once rico approved 2+ of this campaign
             if cap > pipeline.planner.MAX_CLIPS:
                 notes.append(f"clip cap {cap} this run: rico approved {len(st.get('kits') or {})} clip(s) of this campaign")

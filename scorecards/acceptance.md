@@ -47,8 +47,11 @@ cut is chosen (plan.refine picks the sentence window with the best read), and on
 a gate failure counts like a QA FAIL and the re-edit moves the cut to where the read says the clip should start and
 end). Under 70 with no gate failure: the clip is under the bar.
 
-## The judge (0-100, bar 80)
-hook 20 · pace 10 · variety 15 (a montage of sub-second shots loses 6) · framing 10 (the gates above feed it) · story 10 · entertainment 10 (genre mix) · comedy 5 · captions 10 · length 10. The title must carry a name, a number, a question or a quote, on every kind of footage.
+## The judge (0-100, bar 80 or the Calibrator's)
+Scorecard v3 (release 9): hook, story, entertainment, comedy, framing (subject focus), picture, visual, variety,
+captions, pace, length, sound, weighted per kind of content; the table is in `scorecards/judgment.md`. The bar is the
+board's 80 until rico has given 6 verdicts, then the Calibrator's (`bot/calibrator.py`, never under 80). The title must
+carry a name, a number, a question or a quote, on every kind of footage.
 
 ## What the inspection cannot see
 Whether the moment is actually funny or interesting to a stranger. That is the entertainment scorecard (`scorecards/entertainment.md`) at pick time and rico's own eye at review time. When rico rejects a clip, the fix goes into one of these tables, so the same mistake is caught by the machine next time.

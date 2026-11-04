@@ -30,7 +30,7 @@ def test_detect_from_text():
 
 
 # ---------- weighted judge + area minimum ----------
-MAXES = {"hook": 20, "pace": 10, "variety": 15, "framing": 10, "story": 10, "entertainment": 10, "comedy": 5, "captions": 10, "length": 10, "sound": 10}
+from judge_clip import MAXES  # noqa: E402  (scorecard v3, release 9: picture + visual)
 
 
 def test_perfect_clip_scores_100():

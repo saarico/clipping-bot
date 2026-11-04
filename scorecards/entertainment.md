@@ -26,3 +26,12 @@ Two things describe a campaign. The **media profile** (bot/profiles.py: podcast,
 ## Files
 - `bot/find_moments.py`, `bot/graphics_map.py`
 - Per campaign: `/tmp/clipwork/<campaign>/` on the runner (candidates.md, gfx.json); the kept clips carry words.json and the reports
+
+## Music and the picture (makeover releases 7 and 9, 2026-11-04)
+Words are not the only entertainment. On a music clip the judge's entertainment is where the clip's loudness ranks in
+the whole show and how much of it is loud (the crowd, the chorus, the drop; `music_moments.judge_areas`). On every kind
+of content the Creative Director tags what the moment SHOWS before it is rendered (`bot/tagger.py`: close-ups, crowd,
+light and pyro moments, a face on screen) and the judge's **visual** area carries it: what makes a music moment
+important is the crowd singing, the drop, a close-up of the artist, a light cue, a duet entrance; for talk it is a face
+on screen, big enough. The Director also brainstorms formats (the song-bed montage: the song whole, cutaways to the crowd
+and the lights on the beat) and writes each concept's reason into the SUMMARY.

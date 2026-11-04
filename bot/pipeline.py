@@ -29,6 +29,14 @@ NEAR_BAR = 75     # a clip that passes every hard gate at 75-79 is handed over m
 PY = sys.executable
 
 
+def bar_now():
+    try:
+        import calibrator
+        return calibrator.bar()
+    except Exception:
+        return JUDGE_BAR
+
+
 def sh(args, log=None, timeout=3600):
     """A step as a subprocess. A step that runs out of time comes back as a failed result (returncode 124) instead of
     an exception: one stuck render used to take the whole machine's other work down with it."""
@@ -138,7 +146,8 @@ def one_clip(spec, work, source, words, tag):
         pass
     res.update({"folder": folder, "mp4": folder / f"{folder.name}.mp4", "thumb": str(thumb) if thumb and thumb.exists() else "",
                 "qa": qa, "fails": fails, "judge": js, "dur": round(dur, 1), "caption": spec.get("caption", ""),
-                "ok": qa == "PASS" and js >= JUDGE_BAR and aud["total"] >= engage.BAR,
+                # makeover release 9: the bar is the Calibrator's (rico's verdicts; never under the board's 80)
+                "ok": qa == "PASS" and js >= bar_now() and aud["total"] >= engage.BAR,
                 # makeover release 5 (bug 5): a 79 that the judge HELD (an area under half, a layout failure) is not "near":
                 # the Weeknd clip handed over "under the bar" had a broken entertainment read held at 79
                 "near": qa == "PASS" and js >= NEAR_BAR and aud["total"] >= engage.BAR - 5 and not layout_fail and not held,
