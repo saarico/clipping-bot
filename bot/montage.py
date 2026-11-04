@@ -48,11 +48,17 @@ def beats(src, a, b):
     fps = SR / HOP
     lags = np.arange(int(fps * 60 / 180), int(fps * 60 / 70) + 1)
     ac = np.array([np.dot(flux[:-l], flux[l:]) for l in lags])
-    period = lags[int(np.argmax(ac))]
-    phase = max(range(period), key=lambda p: flux[p::period].sum())
+    k = int(np.argmax(ac))
+    period = float(lags[k])
+    if 0 < k < len(ac) - 1:   # sub-frame period (parabolic peak): a whole-frame period drifts ~10 ms a beat
+        den = ac[k - 1] - 2 * ac[k] + ac[k + 1]
+        if den < 0:
+            period += 0.5 * (ac[k - 1] - ac[k + 1]) / den
+    idx = lambda p: np.round(np.arange(p, len(flux), period)).astype(int)
+    phase = max(range(int(period) + 1), key=lambda p: flux[idx(p)[idx(p) < len(flux)]].sum())
     # walk the grid, each beat snapped to the strongest onset within 4 frames of where it is expected (the period is
     # only whole frames: a fixed step drifts 10 ms a beat)
-    out, i, step = [], phase, float(period)
+    out, i, step = [], float(phase), period
     while i < len(flux):
         lo, hi = max(0, int(i) - 4), min(len(flux), int(i) + 5)
         j = lo + int(np.argmax(flux[lo:hi]))
