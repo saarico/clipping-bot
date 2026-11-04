@@ -3,6 +3,23 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-11-04 UTC - Makeover release 7: the creative studio (version 2.8.0)
+
+rico, 2026-11-04: "have the music playing and throw in snippets of the clips or make it into b-roll", "think outside
+the box ... brainstorm ideas and reach for logic and reason when combining and making clips". Three new agents:
+- bot/tagger.py (Visual Tagger): one sample a second of every candidate window, tagged for close-ups, crowd (small
+  faces low in the picture, phone lights), lights / pyro, faces, dark and motion; stage shows also get the whole show
+  tagged (every 2 s up to 40 min, every keyframe beyond) as cutaway material.
+- bot/director.py (Creative Director): runs in pipeline.prepare after the picker. Every moment becomes one concept
+  per format that fits the content type (FORMATS, the deck's format library) and can be built; each concept gets
+  points (the picker's rank + what the picture shows, visual_points per content type + the format's fit) and a reason
+  written into the SUMMARY ("CONCEPT ..."). The first machines get different formats, not three versions of one.
+- bot/montage.py (Montage Editor): the song-bed format. The song plays whole (one window, never cut); the picture
+  cuts away ON THE BEAT (spectral-flux beat tracker) to the show's crowd, light and stage shots, never a close-up from
+  elsewhere (lip sync), never in the first 2.5 s (the hook), at most a third of the clip. Built on the Camera's
+  video_swap, so render, QA and judge work unchanged; a cutaway counts as subject in the "Subject in crop" gate.
+Formats not built yet are listed as planned in the SUMMARY (cold-open is plan.py's teaser). Tests: tests/test_release7.py.
+
 ## 2026-11-04 UTC - Makeover release 6: the camera stays on the subject (version 2.7.0)
 
 Audit bugs 2 and 3 (deck slide 12). New bot/subject.py (Subject Finder): follows the one person who matters by face
