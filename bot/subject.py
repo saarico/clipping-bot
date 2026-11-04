@@ -94,7 +94,8 @@ def pan(src, a, b, dead=0.05, hold=1):
     kinds = [p[4] for p in real]
     kind = max(set(kinds), key=kinds.count)
     return {"keys": keys[:40], "cy": float(np.median([p[2] for p in real])), "size": float(np.median([p[3] for p in real])),
-            "kind": kind, "cover": round(sum(1 for p in tr if p[4] in ("face", "body")) / len(tr), 2)}
+            # a face or a body is the subject for sure; a spotlit, moving shape most likely is (half credit)
+            "kind": kind, "cover": round(sum(1.0 if p[4] in ("face", "body") else 0.5 if p[4] == "light" else 0 for p in tr) / len(tr), 2)}
 
 
 def cover(frames):

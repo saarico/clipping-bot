@@ -185,6 +185,12 @@ def prepare(work, source, brief, words=None, campaign="campaign", log=print, use
             log(n_)
     else:
         specs, pnotes = pitch.gate(specs, json.loads(Path(words).read_text()), brief, log=log, want=12)
+    # makeover release 7 (Creative Director): look at every candidate, brainstorm the formats that fit (the moment as it
+    # is, a song-bed montage, ...), give each concept its reason, and mix the formats across the render machines
+    if source.exists() and specs:
+        import director
+        specs, dnotes = director.brainstorm(specs, source, brief, work, log=log)
+        pnotes += dnotes
     # the picture (2026-10-31, Malcolm Todd: the one moment rendered had no face for 30 of its 50 s and a face 8% tall
     # in the rest; QA dropped it after 3.5 min of rendering): a talking-show moment is looked at before it is rendered
     import profiles

@@ -23,13 +23,16 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 import profiles  # noqa: E402
 
-VERSION = "2.7.0"   # Makeover release 6 (board review 3, rico 2026-11-04): Subject Finder, the window follows the performer; subject-in-crop gate. On release 5. Printed in every SUMMARY so a clip traces to the code that made it.
+VERSION = "2.8.0"   # Makeover release 7 (board review 3, rico 2026-11-04): Visual Tagger, Creative Director (concepts + reasons), song-bed montage. On release 6. Printed in every SUMMARY so a clip traces to the code that made it.
 
 # (stage, role, job, module(s) that do it today, whom a failure goes back to)
 ROSTER = [
     ("PLAN", "Campaign Scout", "ranks offers on pay, fit and risk; stops ads, gambling, crypto, low pay", "campaign_scan.py, campaign_score.py", "-"),
     ("PLAN", "Brief Reader", "copies every rule, tag, length and clip idea word for word", "brief.py", "Campaign Scout"),
     ("PLAN", "Content Classifier", "names the kind of content and loads its profile", "profiles.resolve", "Brief Reader"),
+    ("FIND", "Visual Tagger", "tags what every candidate shows: close-ups, crowd, lights, faces, dark", "tagger.py", "Moment Hunter"),
+    ("FIND", "Creative Director", "brainstorms a concept per format for each moment, gives each a reason, mixes formats across machines", "director.py", "Moment Hunter"),
+    ("MAKE", "Montage Editor", "song-bed montage: the song whole, cutaways to the show's best shots on the beat", "montage.py (agents/camera.py video_swap)", "Creative Director"),
     ("FIND", "Moment Hunter", "reads the whole source and ranks the moments worth cutting", "find_moments.py, plan.py", "Content Classifier"),
     ("FIND", "Story Editor", "trims each moment to hook, context, escalation, payoff", "plan.refine, engage.py", "Moment Hunter"),
     ("FIND", "Hook Writer", "the spoken first line and the on-screen hook", "find_moments.opener_ok / hook_from_opener", "Story Editor"),

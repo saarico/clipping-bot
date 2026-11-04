@@ -29,8 +29,9 @@ def shoot(spec, src, pieces, overlays, focus, marks, has_teaser, tmp):
         piece_zoom = (1.0 if pi % 2 == 0 else 1.06) if not whole_when_lost else 1.0   # movies: no punch-in games between pieces
         for sh in analyze_shots.shots(src, s, e):
             subs = sub_ranges(max(sh["start"], s), min(sh["end"], e), marks)
-            for w in spec.get("video_swap", []):   # always split where a swap ends
-                subs = [r for a, b in subs for r in (((a, w[1]), (w[1], b)) if a < w[1] < b else ((a, b),))]
+            for w in spec.get("video_swap", []):   # always split where a swap starts and ends (release 7: cutaways)
+                for edge in (w[0], w[1]):
+                    subs = [r for a, b in subs for r in (((a, edge), (edge, b)) if a + 0.05 < edge < b - 0.05 else ((a, b),))]
             for a, b in subs:
                 n = round((b - a) * FPS)
                 if n <= 0:
@@ -139,6 +140,8 @@ def shoot(spec, src, pieces, overlays, focus, marks, has_teaser, tmp):
                                 seg_subject = 0.0
                         if seg_subject is None:
                             seg_subject = 1.0 if lay == "face" and ppl and not tb else 0.0 if lay == "wide" else None
+                        if sw and len(sw) > 3:
+                            seg_subject = 1.0   # a planned cutaway (montage.build: crowd, lights): the shot IS the subject
                         zoom = min(1.5, zoom * spec.get("zoom_boost", 1.0))
                 zoom = min(zoom, zcap)
                 if subj_keys:
