@@ -132,15 +132,49 @@ LOOK = {
 }
 
 
+# Text look v2 (makeover release 8, board review 3, approved by rico 2026-11-04: "a better look of text that we add
+# is must needed"; he called the one heavy Montserrat look ugly twice). Four looks; each kind of content gets its own
+# by default, and a campaign picks another with plan.json brief_overrides "look": {"style": "pop"}. "classic" is the
+# look every clip had before release 8 (LOOK above, per profile).
+#   pill     Inter Bold, sentence case, a soft dark box behind each caption line, the keyword in the accent colour;
+#            the hook is dark text on an accent box. Calm and readable: talk, news, movies.
+#   pop      Anton, upper case, 1-3 words at a time, thin outline, the keyword in the accent colour. Loud: streams,
+#            talkers.
+#   minimal  Inter SemiBold, small, letter-spaced, soft shadow, no outline; one quiet hook card. Music and edits:
+#            the picture is the clip.
+LOOKS = {
+    "pill": dict(kind="pill", title_font="Inter", title_file="Inter-Bold.otf", title_max=72, title_bold=-1, title_spacing=0,
+                 cap_font="Inter", cap_bold=-1, cap_size=68, outline=14, shadow=0, cap_group=(2, 4), accent="&H00D7FF&",
+                 upper=False, cap_border=3, cap_box="&H4D000000", hook_border=3, hook_box="&H0000D7FF", hook_primary="&H00121212",
+                 hook_outline=18, hook_accent="&H121212&", hook_max=72),
+    "pop": dict(kind="pop", title_font="Anton", title_file="Anton-Regular.ttf", title_max=96, title_bold=0, title_spacing=1,
+                cap_font="Anton", cap_bold=0, cap_size=94, outline=6, shadow=0, cap_group=(1, 3), accent="&H00D7FF&",
+                upper=True, hook_max=92),
+    "minimal": dict(kind="minimal", title_font="Inter SemiBold", title_file="Inter-SemiBold.otf", title_max=58, title_bold=0,
+                    title_spacing=2, cap_font="Inter SemiBold", cap_bold=0, cap_size=58, outline=0, shadow=3, cap_group=(2, 5),
+                    accent="&HFFFFFF&", upper=False, hook_max=58, back="&H64000000"),
+}
+DEFAULT_LOOK = {"podcast": "pill", "serious": "pill", "cinematic": "pill", "talker": "pop", "stream": "pop",
+                "performance": "minimal", "edit": "minimal"}
+ACCENTS = {"yellow": "&H00D7FF&", "cyan": "&HFFE14B&", "pink": "&H9F4BFF&", "white": "&HFFFFFF&", "gold": "&H2BC6FF&"}
+
 LOOK_KEYS = ("title_max", "cap_size", "outline", "shadow", "cap_group", "accent", "title_spacing")
 
 
 def look(name, overrides=None):
     """The profile's look, with the campaign's own overrides on top (plan.json brief_overrides "look":
     {"accent": "&H2BC6FF&" (ASS BGR), "cap_size": 86, "cap_group": [2, 4], "title_max": 88, "outline": 8, "shadow": 3}).
-    Fonts stay Montserrat (rico's rule 31); only sizes, colours and grouping change per campaign."""
-    base = dict(LOOK.get(name or "", LOOK["podcast"]))
-    for k, v in (overrides or {}).items():
+    Release 8: "style" picks one of LOOKS (pill / pop / minimal) or "classic"; without it the content type's
+    DEFAULT_LOOK. "accent" may be a name from ACCENTS ("cyan") or an ASS colour."""
+    overrides = dict(overrides or {})
+    style = overrides.pop("style", None) or DEFAULT_LOOK.get(name or "", "pill")
+    if style in LOOKS:
+        base = dict(LOOKS[style])
+    else:   # "classic" (or an unknown name): the per-profile look from before release 8
+        base = dict(LOOK.get(name or "", LOOK["podcast"]), kind="classic")
+    if overrides.get("accent") in ACCENTS:
+        overrides["accent"] = ACCENTS[overrides["accent"]]
+    for k, v in overrides.items():
         if k not in LOOK_KEYS or v in (None, ""):
             continue
         if k == "cap_group":
@@ -152,6 +186,8 @@ def look(name, overrides=None):
         elif isinstance(v, (int, float)) and not isinstance(v, bool) and 0 <= v <= 400:
             base[k] = int(v)
         # anything else (a string size, a CSS colour, a one-item group) keeps the profile's value: a bad look must never kill a render
+    if base.get("kind") == "pill":   # the hook's box takes the accent colour
+        base["hook_box"] = "&H00" + base["accent"][2:8]
     return base
 
 
