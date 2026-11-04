@@ -21,6 +21,7 @@ rico, 2026-10-29: "a full quality inspection is ideal and necessary", "have bett
 | Audio | ebur128 + silencedetect | -14 LUFS within 3.5 LU, peak under -0.5 dBFS, no silence over 2 s |
 | Format | ffprobe | 1080x1920, 30 fps, 10-90 s, AAC audio |
 | Picture | blackdetect / freezedetect | no black, frozen or flickering stretch |
+| Picture detail (release 5) | the Camera's frame records: real source pixels across the 9:16 window; Laplacian detail of 5 frames | under 480 source px (more than 2.25x upscale) for at most 15% of the clip (WARN to 50%, FAIL above) |
 | Cut edges | word times vs cut points | no clipped word at either end |
 | Audience read: cold open | first sentence and first 4 s of speech (bot/engage.py) | no host preamble or pointer back ("I do just want to go back to part of the story"); something to grab (a number, a stake, a name, a claim, a question) inside 4 s |
 | Audience read: clarity | restarts + fillers over the clip's words | under 8% of the words |
@@ -31,7 +32,11 @@ rico, 2026-10-29: "a full quality inspection is ideal and necessary", "have bett
 | Audience read: progression | distinct stakes (numbers, names, money, failure, surprise) over the clip | at least 2 |
 | Audience read: retention | 5-second windows of the spoken words | never three windows in a row with nothing to hold on to (number, stake, name, question, contrast, laugh, family/hardship); under 40% dead windows |
 
-Movies, streams and concerts turn a few podcast rules into warnings (`profiles.py soft_qa`): fast cuts, a quiet opener, an unfinished sentence under music. Centring, somebody in frame, actor size, crop jumps, text cut off and audio are **never** soft.
+Movies, streams and concerts turn a few podcast rules into warnings (`profiles.py soft_qa`): fast cuts, a quiet opener, an unfinished sentence under music. On movies, centring, somebody in frame, actor size, crop jumps, text cut off and audio stay hard.
+
+**Music clips (music mode, 2026-11-03; `qa_check.MUSIC_SOFT` / `MUSIC_NO_CAPTIONS`).** A concert has no speaker to centre and no words to caption: the caption rows (coverage, readable, spelling, clean text, finished sentence, said twice, opener, cut edges) pass by design, and speaker centred, somebody in frame, actors fill the frame, faces clear of the title, smooth transitions, clean first 2 seconds, crop jumps and audio are warnings. What a music clip is graded on instead: the judge's sound-led areas (`music_moments.judge_areas`), picture detail, one 9:16 look, format, and from release 6 the **subject in crop** gate (the performer inside the window for 90%+ of the seconds).
+
+**UNDER THE BAR (release 5):** a clip the judge HELD (an area under half its points, a layout failure) is never handed over as "under the bar", whatever its total.
 
 ## The audience read (0-100, bar 70) - the second grading pass (2026-10-30, story format 2026-10-31)
 

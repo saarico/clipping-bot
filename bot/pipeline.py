@@ -116,8 +116,9 @@ def one_clip(spec, work, source, words, tag):
         qa = "FAIL"
     elif aud["total"] < engage.BAR:
         fails = fails + [f"| Audience read | UNDER | {aud['total']} under {engage.BAR} |"]
-    jn, layout_fail = {}, False
+    jn, layout_fail, held = {}, False, False
     try:
+        held = "Held under the bar" in (folder / "judge_report.md").read_text()
         for line in (folder / "judge_report.md").read_text().splitlines():
             # | area | measured/scale | weight | points | notes |  (weights per kind of content since 2026-10-31)
             m = re.match(r"\| (\w+) \| (\d+)/(\d+) \| [^|]* \| [^|]* \| (.*) \|", line)
@@ -138,7 +139,10 @@ def one_clip(spec, work, source, words, tag):
     res.update({"folder": folder, "mp4": folder / f"{folder.name}.mp4", "thumb": str(thumb) if thumb and thumb.exists() else "",
                 "qa": qa, "fails": fails, "judge": js, "dur": round(dur, 1), "caption": spec.get("caption", ""),
                 "ok": qa == "PASS" and js >= JUDGE_BAR and aud["total"] >= engage.BAR,
-                "near": qa == "PASS" and js >= NEAR_BAR and aud["total"] >= engage.BAR - 5 and not layout_fail,
+                # makeover release 5 (bug 5): a 79 that the judge HELD (an area under half, a layout failure) is not "near":
+                # the Weeknd clip handed over "under the bar" had a broken entertainment read held at 79
+                "near": qa == "PASS" and js >= NEAR_BAR and aud["total"] >= engage.BAR - 5 and not layout_fail and not held,
+                "held": held,
                 "audience": aud["total"], "audience_fix": aud.get("fix", {}), "judge_notes": jn, "areas": areas,
                 "inspection": insp["line"],
                 "captions": (folder / "captions.txt").read_text() if (folder / "captions.txt").exists() else "",
@@ -425,14 +429,16 @@ def decide(results, work, kept=None, notes=None, allowed=None, cap=None):
         line = f"{Path(res['folder']).name}: {res['dur']:.0f}s  qa {res['qa']}  judge {res['judge']} ({res.get('areas', '')})  {res.get('minutes', '?')} min  hook: {res['hook']}  [{res['why']}]"
         if res["ok"] and len(kept) < cap:
             kept.append({"folder": str(res["folder"]), "mp4": str(res["mp4"]), "thumb": res.get("thumb", ""), "hook": res["hook"], "parts": res["parts"], "judge": res["judge"], "audience": res.get("audience"),
-                         "dur": res["dur"], "why": res["why"], "captions": res["captions"], "caption": res.get("caption", "")})
+                         "dur": res["dur"], "why": res["why"], "captions": res["captions"], "caption": res.get("caption", ""),
+                         "style": res.get("style") or "podcast", "inspection": res.get("inspection", "")})
             notes.append("KEPT  " + line)
         elif res.get("near") and not any(r.get("ok") for r in results) and len(kept) < cap:
             # every hard production gate passed but the entertainment judge stayed under the bar, and nothing
             # in this run reached it: hand rico the best of them, clearly marked, rather than an empty folder
             res["why"] = f"UNDER THE BAR (judge {res['judge']} < {JUDGE_BAR}, every production gate passed) | " + res["why"]
             kept.append({"folder": str(res["folder"]), "mp4": str(res["mp4"]), "thumb": res.get("thumb", ""), "hook": res["hook"], "parts": res["parts"], "judge": res["judge"], "audience": res.get("audience"),
-                         "dur": res["dur"], "why": res["why"], "captions": res["captions"], "caption": res.get("caption", "")})
+                         "dur": res["dur"], "why": res["why"], "captions": res["captions"], "caption": res.get("caption", ""),
+                         "style": res.get("style") or "podcast", "inspection": res.get("inspection", "")})
             notes.append("KEPT (under the bar)  " + line)
         else:
             notes.append("DROP  " + line + ("  " + "; ".join(res["fails"]) if res["fails"] else ""))

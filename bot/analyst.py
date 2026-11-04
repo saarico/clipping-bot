@@ -156,5 +156,64 @@ def review(scores=None, posts=None, tuned=None):
     return notes, out
 
 
+POST_COLS = ["campaign", "clip", "platform", "account", "post_url", "posted_at", "views_7d", "notes"]
+
+
+def log_posts(campaign, clips, path=None):
+    """Makeover release 5 (bug 8: posts.csv had 0 rows, so the views loop never learned): one row per approved clip,
+    written when its post kit is made. Existing rows are kept as they are. clips: [{"clip", "platform", "account"}]."""
+    path = Path(path or POSTS)
+    rows = _rows(path)
+    have = {(r.get("campaign", "").strip(), r.get("clip", "").strip()) for r in rows}
+    added = 0
+    for c in clips:
+        if (campaign, c["clip"]) in have:
+            continue
+        rows.append({"campaign": campaign, "clip": c["clip"], "platform": c.get("platform", ""), "account": c.get("account", ""),
+                     "post_url": "", "posted_at": datetime.now(timezone.utc).date().isoformat(), "views_7d": "", "notes": "approved; posted date = kit date"})
+        added += 1
+    if added:
+        _write(path, rows)
+    return added
+
+
+def read_views(campaign, text, path=None):
+    """rico's VIEWS doc in 3_APPROVED/<campaign>: one line per clip, "<clip number or name> <views>", e.g. "01 12400"
+    or "02_the-crowd-knew 3.4k". Fills views_7d (and a post link when the line has one). Returns rows updated."""
+    import re
+    path = Path(path or POSTS)
+    rows = _rows(path)
+    done = 0
+    for line in (text or "").splitlines():
+        m = re.match(r"\s*([0-9]{1,2}|[\w.-]+?)\s*[:=\-]?\s+([\d.,]+)\s*([kKmM]?)\b(.*)", line)
+        if not m:
+            continue
+        key, num, unit, rest = m.groups()
+        try:
+            v = float(num.replace(",", "")) * {"k": 1e3, "m": 1e6}.get(unit.lower(), 1)
+        except ValueError:
+            continue
+        url = re.search(r"https?://\S+", rest or "")
+        for r in rows:
+            clip = r.get("clip", "")
+            if r.get("campaign", "").strip() == campaign and (clip.startswith(key.zfill(2) + "_") if key.isdigit() else key in clip):
+                if r.get("views_7d") != str(int(v)):
+                    r["views_7d"] = str(int(v))
+                    if url and not r.get("post_url"):
+                        r["post_url"] = url.group(0)
+                    done += 1
+    if done:
+        _write(path, rows)
+    return done
+
+
+def _write(path, rows):
+    with open(path, "w", newline="") as fh:
+        w = csv.DictWriter(fh, fieldnames=POST_COLS, extrasaction="ignore")
+        w.writeheader()
+        for r in rows:
+            w.writerow({k: r.get(k, "") for k in POST_COLS})
+
+
 if __name__ == "__main__":
     print("\n".join(review()[0]))

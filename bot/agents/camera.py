@@ -5,6 +5,7 @@ Out: video.mp4 (picture only, no captions) and frame.json, one record per render
      {from, to (output s), src (source s), layout, zoom, face [cx, cy, size] or null, pan_keys, overlay}.
 Owns: who is on screen, the crop window, pans, punch-ins, overlay layouts. Never touches sound or text.
 """
+import picture
 from render_clip import (CINE_MIN_FACE, FPS, HC, HOOK_SECS, SRC_H, SRC_W, W, WIDE_PUNCH_MAX, Framer, analyze_shots, build_filter,
                          card_source, deflash, pan_keys, people, profiles, run, sub_ranges, talker)
 
@@ -12,6 +13,11 @@ from render_clip import (CINE_MIN_FACE, FPS, HC, HOOK_SECS, SRC_H, SRC_W, W, WID
 def shoot(spec, src, pieces, overlays, focus, marks, has_teaser, tmp):
     """Renders the picture into tmp/video.mp4. Returns (layouts, frames): layouts = [(from, to, "face+zoom"), ...]."""
     framer = Framer()
+    # makeover release 5 (Picture Engineer): the window is cut from the campaign's original file at its own
+    # resolution when run.render_job found one (spec["master"]); faces and shots are still read on the 1080p episode
+    master = spec.get("master") if spec.get("master") and not spec.get("preview") else None
+    k = float(master["k"]) if master else 1.0
+    zcap = picture.zoom_cap(k)
     whole_when_lost = not profiles.profile(spec.get("style"))["cards"]   # cinematic / stream / performance
     last_cx, last_shot = None, None
     wide_pair = None   # the two small faces of the wide two-shot, once found in this render
@@ -115,6 +121,7 @@ def shoot(spec, src, pieces, overlays, focus, marks, has_teaser, tmp):
                             else:
                                 lay = "wide"
                         zoom = min(1.5, zoom * spec.get("zoom_boost", 1.0))
+                zoom = min(zoom, zcap)
                 if lay in ("face", "side", "bottom", "banner", "hide") and ppl and ppl[0][2] >= (CINE_MIN_FACE if whole_when_lost else 0.1) and not (whole_when_lost and tb):
                     # movies: the dead zone is 6% of the WINDOW width (a zoomed-in window is narrow: 8% of the
                     # source width was a third of the picture, which left Rockwell at the edge, c01 2026-10-29)
@@ -136,6 +143,9 @@ def shoot(spec, src, pieces, overlays, focus, marks, has_teaser, tmp):
                 if ov and ov.get("card_window"):
                     c_ss, card_pre = card_source(ov, a, n)
                     extra = ["-ss", f"{c_ss:.3f}", "-i", src]
+                # never upscale a window past 2.25x (picture.MIN_SRC_PX real pixels across): a 1080p source keeps
+                # punch-ins to 1.27x, a 4K master allows the full 2.5x (makeover release 5, "weak picture")
+                zoom = min(zoom, zcap)
                 if ov and ov.get("hard_out"):
                     t_out = 1e6   # leave on the camera cut instead of sliding out (no half-gone card)
                 graph = build_filter(lay, ppl, zoom, ov, t_in, t_out, card_pre, keys=keys, panel_w=panel_w)
@@ -149,14 +159,18 @@ def shoot(spec, src, pieces, overlays, focus, marks, has_teaser, tmp):
                 if fades:
                     graph = graph[:-3] + "[pre];[pre]" + ",".join(fades) + "[v]"
                 out = tmp / f"v{len(segs):03d}.mp4"
-                run(["ffmpeg", "-loglevel", "error", "-y", "-ss", f"{vs:.3f}", "-i", src, *extra,
+                seg_src, seg_k = src, 1.0
+                if master and not extra:   # a card window reads a second input in 1080p coordinates: those stay on the episode
+                    graph, seg_src, seg_k = picture.scale_graph(graph, k, master["norm"]), master["path"], k
+                run(["ffmpeg", "-loglevel", "error", "-y", "-ss", f"{vs:.3f}", "-i", seg_src, *extra,
                      "-filter_complex", graph, "-map", "[v]", "-an", "-r", str(FPS), "-frames:v", str(n),
                      "-c:v", "libx264", "-preset", "ultrafast", "-crf", "14", "-pix_fmt", "yuv420p", str(out)])
                 o = poff + (a - s)
                 layouts.append((o, o + n / FPS, lay + ("+zoom" if zoom > 1 and lay == "face" else "")))
                 frames.append({"from": round(o, 3), "to": round(o + n / FPS, 3), "src": round(vs, 3), "layout": lay,
                                "zoom": round(zoom, 3), "face": [round(v, 4) for v in ppl[0]] if ppl else None,
-                               "pan_keys": len(keys or []), "overlay": ov["style"] if ov else None})
+                               "pan_keys": len(keys or []), "overlay": ov["style"] if ov else None,
+                               "src_px": picture.src_px(zoom, seg_k) if lay in ("face", "wide", "hide") else None})
                 if o < HOOK_SECS and lay == "face" and ppl:
                     # where the top of the face lands in the 1080x1920 picture while the hook text shows (build_ass
                     # moves the hook to the bottom when a high-framed face would sit under it, 2026-10-31)
