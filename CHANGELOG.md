@@ -3,6 +3,17 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
+## 2026-11-04 UTC - Makeover release 6: the camera stays on the subject (version 2.7.0)
+
+Audit bugs 2 and 3 (deck slide 12). New bot/subject.py (Subject Finder): follows the one person who matters by face
+(any size YuNet finds), body (HOG) when no face shows, or the lit, moving part of the picture (a spotlit performer);
+a small face along the bottom edge is a head in the crowd and scores low; continuity with the subject a moment before
+keeps the window from jumping. The Camera uses it on every stage show / music / edit clip, and on movies and streams
+whenever the window would otherwise sit on the middle of the picture. Every frame record now says how much of its
+seconds held the subject; QA's new hard row "Subject in crop" (movies, streams, stages, music: 80%+ passes, under 60%
+fails) and the first-piece inspection read it, and the judge's framing area loses 3-6 points on a WARN / FAIL.
+Tests: tests/test_release6.py (a synthetic spotlit performer at 25% of the width is framed, not the middle).
+
 ## 2026-11-04 UTC - Makeover release 5: fix and sharpen (version 2.6.0)
 
 rico, 2026-11-04 02:57 UTC: "yes implement five fixes now (r5,r6,r7,r8,r9)" on the board deck
