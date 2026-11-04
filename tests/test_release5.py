@@ -103,8 +103,9 @@ def test_collapsed_window_stops_before_render():
     editor.collapsed({"parts": [[100.0, 125.0]], "brief": {"min_s": 12}}, [[101.0, 124.0]])   # a normal trim passes
 
 
-def test_decide_keeps_style_and_near_needs_no_hold(tmp_path):
+def test_decide_keeps_style_and_near_needs_no_hold(tmp_path, monkeypatch):
     import pipeline
+    monkeypatch.setattr(pipeline, "REPORT_CARD", tmp_path / "report_card.csv")   # never the repo's data/
     f = tmp_path / "c01"
     f.mkdir()
     res = {"hook": "h", "why": "w", "parts": [[0, 20]], "ok": True, "qa": "PASS", "judge": 85, "fails": [], "dur": 20,
