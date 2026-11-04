@@ -13,6 +13,11 @@ jumping to the biggest head in the front row.
   track(src, a, b)  -> [(t, cx, cy, size, kind)]   kind: face / body / light / none
   pan(src, a, b)    -> {"keys": [(t_rel, cx)], "cy", "size", "kind", "cover"} or None, in the Camera's pan-key form
   cover(frames)     -> share of a clip's seconds with the subject in the window (QA "Subject in crop")
+  screen(src, a, b) -> (x0, y0, x1, y1) of a giant stage screen in a locked-off wide shot, or None
+
+Screen shows (makeover release 10, 2026-11-04): the Weeknd footage is ONE locked-off stadium shot for 221 s; the
+artist is a few pixels tall and the giant screen above the stage plays the film (Faye Wong, the red car, neon). No
+camera can frame a dot, so when the picture is a static frame around one big moving rectangle, the screen is the subject: the window sits on it and follows faces and light on it.
 """
 import numpy as np
 
@@ -53,12 +58,14 @@ def _candidates(frame, prev_g):
     return out, g
 
 
-def track(src, a, b, fps=FPS):
-    """[(t, cx, cy, size, kind)] at `fps` over [a, b] on the source clock."""
+def track(src, a, b, fps=FPS, box=None):
+    """[(t, cx, cy, size, kind)] at `fps` over [a, b] on the source clock; box: only candidates inside it."""
     frames = analyze_shots._frames_at(src, a, b, fps, *SEARCH)
     out, last, prev_g = [], None, None
     for i, f in enumerate(frames):
         cands, prev_g = _candidates(f, prev_g)
+        if box:
+            cands = [c for c in cands if box[0] <= c[1] <= box[2] and box[1] <= c[2] <= box[3]]
         if last is not None:
             cands = [(s + (1.5 if abs(cx - last[0]) < NEAR and abs(cy - last[1]) < 0.15 else 0), cx, cy, sz, k)
                      for s, cx, cy, sz, k in cands]
@@ -71,11 +78,46 @@ def track(src, a, b, fps=FPS):
     return out
 
 
-def pan(src, a, b, dead=0.05, hold=1):
+SCREEN_ACTIVE = 18    # grey-level std over the window: the screen's picture changes, the stadium around it does not
+
+
+def screen(src, a, b, w=96, h=54):
+    """The giant screen of a locked-off wide shot: the rectangle whose picture keeps changing while the rows below it
+    (stage, crowd) stay put. (x0, y0, x1, y1) in 0-1, or None for footage with camera moves or cuts (all of it changes)."""
+    import subprocess
+    r = subprocess.run(["ffmpeg", "-loglevel", "error", "-ss", f"{a:.3f}", "-to", f"{b:.3f}", "-i", str(src), "-vf",
+                        f"fps=2,scale={w}:{h}", "-f", "rawvideo", "-pix_fmt", "gray", "-"], capture_output=True)
+    n = len(r.stdout) // (w * h)
+    if n < 6:
+        return None
+    act = np.frombuffer(r.stdout[: n * w * h], np.uint8).reshape(n, h, w).astype(np.float32).std(0) > SCREEN_ACTIVE
+    rows = act.mean(1)
+    ys = np.nonzero(rows > 0.6)[0]
+    if not len(ys):
+        return None
+    y0, y1 = ys.min(), ys.max() + 1
+    xs = np.nonzero(act[y0:y1].mean(0) > 0.5)[0]
+    if not len(xs):
+        return None
+    box = (xs.min() / w, y0 / h, (xs.max() + 1) / w, y1 / h)
+    still = np.concatenate([rows[: max(y0 - 2, 0)], rows[min(y1 + 4, h):]])
+    if not (0.35 <= box[3] - box[1] <= 0.85 and box[2] - box[0] >= 0.5) or not len(still) or float(np.mean(still)) > 0.2:
+        return None
+    return tuple(round(float(v), 3) for v in box)
+
+
+def pan(src, a, b, dead=0.05, hold=1, screens=True):
     """Camera pan keys that follow the subject: [(t_rel, cx)] with a dead zone (no constant re-centring, rico
-    2026-10-31) and a median over a second. None when nothing in the stretch is a subject (empty stage, black)."""
-    tr = track(src, a, b)
-    real = [p for p in tr if p[4] != "none"]
+    2026-10-31) and a median over a second. None when nothing in the stretch is a subject (empty stage, black).
+    screens: a giant stage screen in a locked-off wide shot (screen()) becomes the subject."""
+    box = screen(src, max(0.0, a - 6), b + 6) if screens else None   # a short shot: the screen is read around it too
+    if box:   # a locked-off wide shot of a giant screen: what the tracker finds there is ON the screen, so it is calmer
+        dead, hold = max(dead, 0.12), max(hold, 3)
+        tr = [p if p[4] != "none" else (p[0], (box[0] + box[2]) / 2, (box[1] + box[3]) / 2, 0.0, "none")
+              for p in track(src, a, b, box=box)]
+    else:
+        tr = track(src, a, b)
+    real = tr if box else [p for p in tr if p[4] != "none"]
     if not real:
         return None
     xs = [p[1] for p in tr]
@@ -91,6 +133,8 @@ def pan(src, a, b, dead=0.05, hold=1):
                 out = 0
         else:
             out = 0
+    if box:   # the screen is the subject for the whole stretch: the window sits on it, the keys follow its picture
+        return {"keys": keys[:40], "cy": (box[1] + box[3]) / 2, "size": 0.0, "kind": "screen", "cover": 1.0, "box": box}
     kinds = [p[4] for p in real]
     kind = max(set(kinds), key=kinds.count)
     return {"keys": keys[:40], "cy": float(np.median([p[2] for p in real])), "size": float(np.median([p[3] for p in real])),
