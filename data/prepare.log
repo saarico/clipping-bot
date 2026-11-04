@@ -1,15 +1,16 @@
-[04:29:31] CLIPPING root CLIPPING
-[04:30:45] episode taken from the Drive cache (downloaded from the link last time)
+[05:19:35] CLIPPING root CLIPPING
+[05:21:38] episode taken from the Drive cache (downloaded from the link last time)
+[05:22:06] picker 3.1: 3 moment(s) tried by the old picker may be picked again
 music mode: 221 s of sound (median -13.1 dB, loudest tenth -11.3 dB, spread 1.8 dB), 20 shot changes, 10 windows of 12-30 s
-[04:31:46] music mode: 10 window(s) from sound peaks and shot changes; the pitch reads words and is skipped
-[04:32:19] Creative Director: 15 concept(s) from 8 moment(s); formats for performance: straight, song-bed
-[04:32:19] CONCEPT 16.0  song-bed  The Weeknd live in Hong Kong @ 68s  concept song-bed (the song plays whole; the picture cuts on the beat to the crowd, the lights and the stage); picture 6/10: crowd 100%
-[04:32:19] CONCEPT 14.0  straight  The Weeknd live in Hong Kong @ 68s  concept straight (one strong moment, hook in the first seconds); picture 4/10: crowd 100%
-[04:32:19] CONCEPT 15.5  song-bed  Hong Kong sang every word @ 152s  concept song-bed (the song plays whole; the picture cuts on the beat to the crowd, the lights and the stage); picture 8/10: crowd 100%
-[04:32:19] CONCEPT 13.5  straight  Hong Kong sang every word @ 152s  concept straight (one strong moment, hook in the first seconds); picture 6/10: crowd 100%
-[04:32:19] CONCEPT 13.2  song-bed  The Weeknd live in Hong Kong @ 82s  concept song-bed (the song plays whole; the picture cuts on the beat to the crowd, the lights and the stage); picture 7/10: crowd 100%
-[04:32:55] FIRST PIECE the-weeknd-live-in-hong-kong: PASS (captions carry no position tags: height not checked)
-[04:33:25] FIRST PIECE the-weeknd-live-in-hong-kong: FAIL the subject is in the window 54% of the first piece (under 60%): rendered after the moments that passed
-[04:33:56] FIRST PIECE hong-kong-sang-every-word: PASS (captions carry no position tags: height not checked)
-[04:33:56] 4 candidate(s) picked (music mode (sound peaks + shot changes)), 4 fallback(s); rendering on 4 machines with grade-and-retry
-[04:33:56] 4 render job(s)
+[05:22:52] music mode: 10 window(s) from sound peaks and shot changes; the pitch reads words and is skipped
+[05:23:34] Creative Director: 15 concept(s) from 8 moment(s); formats for performance: straight, song-bed
+[05:23:34] CONCEPT 16.0  song-bed  The Weeknd live in Hong Kong @ 68s  concept song-bed (the song plays whole; the picture cuts on the beat to the crowd, the lights and the stage); picture 6/10: crowd 100%
+[05:23:34] CONCEPT 14.0  straight  The Weeknd live in Hong Kong @ 68s  concept straight (one strong moment, hook in the first seconds); picture 4/10: crowd 100%
+[05:23:34] CONCEPT 15.5  song-bed  Hong Kong sang every word @ 152s  concept song-bed (the song plays whole; the picture cuts on the beat to the crowd, the lights and the stage); picture 8/10: crowd 100%
+[05:23:34] CONCEPT 13.5  straight  Hong Kong sang every word @ 152s  concept straight (one strong moment, hook in the first seconds); picture 6/10: crowd 100%
+[05:23:34] CONCEPT 13.2  song-bed  The Weeknd live in Hong Kong @ 82s  concept song-bed (the song plays whole; the picture cuts on the beat to the crowd, the lights and the stage); picture 7/10: crowd 100%
+[05:24:30] FIRST PIECE the-weeknd-live-in-hong-kong: PASS (captions carry no position tags: height not checked)
+[05:25:14] FIRST PIECE the-weeknd-live-in-hong-kong: PASS (captions carry no position tags: height not checked)
+[05:26:07] FIRST PIECE hong-kong-sang-every-word: PASS (captions carry no position tags: height not checked)
+[05:26:07] 4 candidate(s) picked (music mode (sound peaks + shot changes)), 4 fallback(s); rendering on 4 machines with grade-and-retry
+[05:26:07] 4 render job(s)
