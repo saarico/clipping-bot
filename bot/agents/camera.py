@@ -135,8 +135,6 @@ def shoot(spec, src, pieces, overlays, focus, marks, has_teaser, tmp):
                                 lay = "face"
                                 if subj["kind"] in ("face", "body"):
                                     zoom = max(zoom, min(1.6, 0.12 / max(subj["size"], 0.02)))
-                                elif subj["kind"] == "screen":   # makeover release 10: fill the window with the stage screen
-                                    zoom = max(zoom, min(1.6, 0.95 / max(subj["box"][3] - subj["box"][1], 0.3)))
                                 seg_subject = subj["cover"]
                             elif stage:
                                 seg_subject = 0.0

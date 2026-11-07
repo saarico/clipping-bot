@@ -3,15 +3,17 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
-## 2026-11-04 UTC - Makeover release 10: frame the big screen (version 3.1.0)
+## 2026-11-07 UTC - Release 10 rolled back, picture gate on the delivered frames (version 3.2.0)
 
-The Weeknd re-run on 3.0.0 kept 0 of 4: framing held every clip (subject in crop ~54%). The source is ONE locked-off
-stadium shot for 221 s: a giant screen plays the film (Faye Wong, the red car, neon) and The Weeknd is a few pixels
-tall on the stage below. rico chose "Frame the big screen" (05:00 UTC). New subject.screen(): the rectangle whose
-picture keeps changing while the rows below stay still; subject.pan() makes it the subject (kind "screen", cover 1.0),
-follows faces and light ON the screen with a wider dead zone (calm camera), and the Camera zooms to fill the window
-with it (capped by the source's pixels). Footage with camera moves or cuts never reads as a screen. Tests:
-tests/test_release10.py.
+rico on the 3.1.0 Weeknd clip ("Hong Kong sang every word", judge 81): "why is the quality so shit and why is it
+unclear what I'm watching ... why does it look 140p". He was right. Release 10 (3.1.0, PR #16) framed the giant stage
+screen of a locked-off stadium shot: the window magnified a stadium camera's soft view of an LED screen 2.25x (detail
+score 22; a clean 1080p render scores 240+), the screen showed unrelated film shots (a cook, a car mirror) with no
+context, and The Weeknd was a cut-off figure at the bottom. It passed because QA "Picture detail" only did crop
+arithmetic (480 source px = pass) and a screen counted as a full subject. Changes: release 10 reverted (a stage shot
+where the performer is a speck fails framing again, which is the truth about that footage); qa_check "Picture detail"
+FAILs a delivered picture with detail under 60 and warns under 120 (qa_check.DETAIL_FAIL / DETAIL_WARN); rico's
+rejection recorded for the Calibrator. Tests: tests/test_picture_gate.py.
 
 ## 2026-11-04 UTC - Makeover release 9: grading that agrees with the board (version 3.0.0)
 
