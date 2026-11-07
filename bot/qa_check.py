@@ -661,6 +661,10 @@ MUSIC_SOFT = {"Speaker centred", "Somebody in frame", "Actors fill the frame", "
               "Clean first 2 seconds", "Crop jumps", "Audio"}
 
 
+DETAIL_FAIL = 60      # Laplacian variance of the delivered 1080x1920 frames (picture.detail)
+DETAIL_WARN = 120
+
+
 def check_picture_detail(rep, mp4, folder):
     """Makeover release 5 (Picture Engineer): the real source pixels across the 9:16 window (from the Camera's
     frame records) and the delivered picture's detail score. A window upscaled more than 2.25x reads soft."""
@@ -671,14 +675,21 @@ def check_picture_detail(rep, mp4, folder):
         frames_ = []
     px = [(f["to"] - f["from"], f["src_px"]) for f in frames_ if f.get("src_px")]
     det = picture.detail(mp4)
+    # rico 2026-11-07 on the 3.1.0 Weeknd clip: "why does it look 140p". It had 480 source px across the window (a
+    # pass by the pixel count) but the pixels were a stadium camera's view of an LED screen: detail score 22, where a
+    # clean 1080p render scores 240+. The delivered picture is now measured, not only the crop arithmetic.
+    if det is not None and det < DETAIL_FAIL:
+        rep.add("Picture detail", "FAIL", f"detail score {det} (under {DETAIL_FAIL}: the picture reads blurry, like 140p)")
+        return
     if not px:
-        rep.add("Picture detail", "PASS", f"detail {det}" if det else "no frame records to read")
+        rep.add("Picture detail", "WARN" if det is not None and det < DETAIL_WARN else "PASS",
+                f"detail {det}" if det else "no frame records to read")
         return
     total = sum(d for d, _ in px) or 1
     low = sum(d for d, p in px if p < picture.MIN_SRC_PX) / total
     worst = min(p for _, p in px)
     typical = sorted(p for _, p in px)[len(px) // 2]
-    st = "FAIL" if low > 0.5 else "WARN" if low > 0.15 else "PASS"
+    st = "FAIL" if low > 0.5 else "WARN" if low > 0.15 or (det is not None and det < DETAIL_WARN) else "PASS"
     rep.add("Picture detail", st, f"{typical} source px across the window (worst {worst}; {low:.0%} of the clip under "
             f"{picture.MIN_SRC_PX})" + (f"; detail score {det}" if det else ""))
 
