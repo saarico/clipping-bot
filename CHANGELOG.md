@@ -3,16 +3,6 @@
 Newest first. Each entry: what rico said, the rule, and where it lives in the code. The living rule book is
 RULES.md; the acceptance gates are scorecards/acceptance.md.
 
-## 2026-11-04 UTC - Makeover release 10: frame the big screen (version 3.1.0)
-
-The Weeknd re-run on 3.0.0 kept 0 of 4: framing held every clip (subject in crop ~54%). The source is ONE locked-off
-stadium shot for 221 s: a giant screen plays the film (Faye Wong, the red car, neon) and The Weeknd is a few pixels
-tall on the stage below. rico chose "Frame the big screen" (05:00 UTC). New subject.screen(): the rectangle whose
-picture keeps changing while the rows below stay still; subject.pan() makes it the subject (kind "screen", cover 1.0),
-follows faces and light ON the screen with a wider dead zone (calm camera), and the Camera zooms to fill the window
-with it (capped by the source's pixels). Footage with camera moves or cuts never reads as a screen. Tests:
-tests/test_release10.py.
-
 ## 2026-11-04 UTC - Makeover release 9: grading that agrees with the board (version 3.0.0)
 
 The board rejected Weeknd clips the judge scored 92, 85 and 84 (deck slide 2). Scorecard v3 (profiles.WEIGHTS, the v2
