@@ -5,18 +5,18 @@
   "category": "Entertainment",
   "lane": "C",
   "rate": 2.0,
-  "budget_left": 12857.490000000002,
+  "budget_left": 11421.529999999999,
   "budget_total": 40000,
   "views": null,
-  "clippers": 153,
+  "clippers": 181,
   "days_left": null,
   "days_est": 3,
-  "funded_ago": "6d",
+  "funded_ago": "1w",
   "platforms": [
    "instagram",
    "tiktok"
   ],
-  "submissions": 1534,
+  "submissions": 1633,
   "application_only": false,
   "pts": {
    "pay+budget": 22,
@@ -36,12 +36,46 @@
   ]
  },
  {
+  "name": "LTK - Creator Earnings Clipping",
+  "org": "Clipping Culture",
+  "category": "Entertainment",
+  "lane": "C",
+  "rate": 2.5,
+  "budget_left": 5172.57,
+  "budget_total": 10500,
+  "views": null,
+  "clippers": 105,
+  "days_left": null,
+  "days_est": 11,
+  "funded_ago": "1w",
+  "platforms": [
+   "instagram",
+   "tiktok",
+   "youtube"
+  ],
+  "submissions": 434,
+  "application_only": false,
+  "pts": {
+   "pay+budget": 20,
+   "paid out": 20,
+   "competition": 6,
+   "lane fit": 7,
+   "entertainment": 8,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/4bb64122-7cce-46a3-960a-e2847754bf1a",
+  "raw": "json",
+  "total": 85,
+  "verdict": "JOIN",
+  "stops": []
+ },
+ {
   "name": "F1 ASTON MARTIN x COINBASE ",
   "org": "ClipHaus",
   "category": "Sports",
   "lane": "C",
   "rate": 1.5,
-  "budget_left": 6647.620000000001,
+  "budget_left": 6601.200000000001,
   "budget_total": 15000,
   "views": null,
   "clippers": 223,
@@ -77,19 +111,19 @@
   "category": "Entertainment",
   "lane": "C",
   "rate": 1.25,
-  "budget_left": 8637.6,
+  "budget_left": 8393.91,
   "budget_total": 10000,
   "views": null,
-  "clippers": 49,
+  "clippers": 53,
   "days_left": null,
-  "days_est": 51,
+  "days_est": 43,
   "funded_ago": "1w",
   "platforms": [
    "instagram",
    "tiktok",
    "youtube"
   ],
-  "submissions": 91,
+  "submissions": 106,
   "application_only": false,
   "pts": {
    "pay+budget": 17,
@@ -106,62 +140,28 @@
   "stops": []
  },
  {
-  "name": "LTK - Creator Earnings Clipping",
-  "org": "Clipping Culture",
-  "category": "Entertainment",
-  "lane": "C",
-  "rate": 2.5,
-  "budget_left": 5266.51,
-  "budget_total": 10500,
-  "views": null,
-  "clippers": 107,
-  "days_left": null,
-  "days_est": 11,
-  "funded_ago": "1w",
-  "platforms": [
-   "instagram",
-   "tiktok",
-   "youtube"
-  ],
-  "submissions": 438,
-  "application_only": false,
-  "pts": {
-   "pay+budget": 20,
-   "paid out": 17,
-   "competition": 6,
-   "lane fit": 7,
-   "entertainment": 8,
-   "platform guessed": 0
-  },
-  "link": "https://contentrewards.com/c/campaigns/4bb64122-7cce-46a3-960a-e2847754bf1a",
-  "raw": "json",
-  "total": 81,
-  "verdict": "JOIN",
-  "stops": []
- },
- {
   "name": "FOMO x ClipFarm (Creator Clipping)",
   "org": "Clip Farm",
   "category": "Entertainment",
   "lane": "C",
   "rate": 2.0,
-  "budget_left": 3878.5600000000004,
+  "budget_left": 1038.2700000000004,
   "budget_total": 10200,
   "views": null,
-  "clippers": 124,
+  "clippers": 154,
   "days_left": null,
-  "days_est": 3,
+  "days_est": 1,
   "funded_ago": "4d",
   "platforms": [
    "instagram",
    "tiktok",
    "youtube"
   ],
-  "submissions": 235,
+  "submissions": 328,
   "application_only": false,
   "pts": {
-   "pay+budget": 17,
-   "paid out": 17,
+   "pay+budget": 13,
+   "paid out": 20,
    "competition": 6,
    "lane fit": 5,
    "entertainment": 12,
@@ -169,11 +169,11 @@
   },
   "link": "https://contentrewards.com/c/campaigns/0c887034-ce77-4468-b33c-7592b799847b",
   "raw": "json",
-  "total": 79,
+  "total": 78,
   "verdict": "STOP",
   "stops": [
    "wants a dedicated / niche-matching account (Reach style; rico dropped TJR for this 2026-10-30)",
-   "budget runs out in about 3 day(s) at its current pace"
+   "budget runs out in about 1 day(s) at its current pace"
   ]
  },
  {
@@ -182,18 +182,18 @@
   "category": "Entertainment",
   "lane": "C",
   "rate": 2.0,
-  "budget_left": 26646.22,
+  "budget_left": 25906.77,
   "budget_total": 30000,
   "views": null,
-  "clippers": 42,
+  "clippers": 61,
   "days_left": null,
-  "days_est": 34,
+  "days_est": 29,
   "funded_ago": "4d",
   "platforms": [
    "instagram",
    "tiktok"
   ],
-  "submissions": 197,
+  "submissions": 254,
   "application_only": false,
   "pts": {
    "pay+budget": 24,
@@ -217,7 +217,7 @@
   "category": "Entertainment",
   "lane": "C",
   "rate": 1.85,
-  "budget_left": 3519.8100000000013,
+  "budget_left": 3460.209999999999,
   "budget_total": 30000,
   "views": null,
   "clippers": 220,
@@ -253,7 +253,7 @@
   "category": "Music",
   "lane": "C",
   "rate": 1.5,
-  "budget_left": 4993.7,
+  "budget_left": 4988.74,
   "budget_total": 6000,
   "views": null,
   "clippers": 183,
@@ -286,12 +286,12 @@
   "category": "Entertainment",
   "lane": "C",
   "rate": 2.0,
-  "budget_left": 21953.55,
+  "budget_left": 21690.739999999998,
   "budget_total": 26250,
   "views": null,
   "clippers": 198,
   "days_left": null,
-  "days_est": 16,
+  "days_est": 17,
   "funded_ago": "3d",
   "platforms": [
    "instagram",
@@ -322,12 +322,12 @@
   "category": "Gaming",
   "lane": "C",
   "rate": 2.5,
-  "budget_left": 19577.23,
+  "budget_left": 19453.5,
   "budget_total": 20000,
   "views": null,
   "clippers": 6,
   "days_left": null,
-  "days_est": 148,
+  "days_est": 124,
   "funded_ago": "3d",
   "platforms": [
    "instagram",
@@ -358,19 +358,19 @@
   "category": "Podcasts",
   "lane": "C",
   "rate": 1.0,
-  "budget_left": 2593.59,
+  "budget_left": 2511.1400000000003,
   "budget_total": 4000,
   "views": null,
-  "clippers": 156,
+  "clippers": 159,
   "days_left": null,
-  "days_est": 20,
+  "days_est": 19,
   "funded_ago": "1w",
   "platforms": [
    "instagram",
    "tiktok",
    "youtube"
   ],
-  "submissions": 317,
+  "submissions": 321,
   "application_only": false,
   "pts": {
    "pay+budget": 10,
@@ -387,12 +387,46 @@
   "stops": []
  },
  {
+  "name": "Backyard Breaks [Clipping Campaign]",
+  "org": "ClipHouse",
+  "category": "Sports",
+  "lane": "C",
+  "rate": 2.0,
+  "budget_left": 8730.159999999989,
+  "budget_total": 90104.87,
+  "views": null,
+  "clippers": 382,
+  "days_left": null,
+  "days_est": 16,
+  "funded_ago": "5mo",
+  "platforms": [
+   "instagram",
+   "tiktok",
+   "youtube"
+  ],
+  "submissions": 13298,
+  "application_only": false,
+  "pts": {
+   "pay+budget": 18,
+   "paid out": 17,
+   "competition": 6,
+   "lane fit": 7,
+   "entertainment": 2,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/e509f6d0-13bf-42bc-8450-09e12c216c33",
+  "raw": "json",
+  "total": 69,
+  "verdict": "JOIN",
+  "stops": []
+ },
+ {
   "name": "Pet Simulator 99! [ROBLOX]",
   "org": "BloxClips",
   "category": "Roblox",
   "lane": "C",
   "rate": 1.0,
-  "budget_left": 9052.16,
+  "budget_left": 8968.990000000002,
   "budget_total": 32000,
   "views": null,
   "clippers": 1372,
@@ -404,7 +438,7 @@
    "tiktok",
    "youtube"
   ],
-  "submissions": 6108,
+  "submissions": 6110,
   "application_only": false,
   "pts": {
    "pay+budget": 13,
@@ -423,12 +457,46 @@
   ]
  },
  {
+  "name": "Let Him Mansplain Podcast Clipping",
+  "org": "ClipLaunch",
+  "category": "Podcasts",
+  "lane": "C",
+  "rate": 0.75,
+  "budget_left": 8851.76,
+  "budget_total": 10500,
+  "views": null,
+  "clippers": 40,
+  "days_left": null,
+  "days_est": 68,
+  "funded_ago": "1w",
+  "platforms": [
+   "instagram",
+   "tiktok",
+   "youtube"
+  ],
+  "submissions": 84,
+  "application_only": false,
+  "pts": {
+   "pay+budget": 14,
+   "paid out": 10,
+   "competition": 10,
+   "lane fit": 7,
+   "entertainment": 8,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/705f6e21-38af-408c-9e55-c77e4611bf09",
+  "raw": "json",
+  "total": 68,
+  "verdict": "JOIN",
+  "stops": []
+ },
+ {
   "name": "November 2B1C Clipping",
   "org": "YMH Studios",
   "category": "Comedy Podcast",
   "lane": "C",
   "rate": 1.0,
-  "budget_left": 1559.79,
+  "budget_left": 1229.1100000000001,
   "budget_total": 5000,
   "views": null,
   "clippers": 148,
@@ -459,47 +527,12 @@
   ]
  },
  {
-  "name": "[UK] Blizzard - World of Warcraft Forever",
-  "org": "Clipping Culture",
-  "category": "Entertainment",
-  "lane": "C",
-  "rate": 4.0,
-  "budget_left": 7853.98,
-  "budget_total": 8000,
-  "views": null,
-  "clippers": 140,
-  "days_left": null,
-  "days_est": 546,
-  "funded_ago": "1w",
-  "platforms": [
-   "tiktok",
-   "youtube"
-  ],
-  "submissions": 404,
-  "application_only": false,
-  "pts": {
-   "pay+budget": 20,
-   "paid out": 8,
-   "competition": 6,
-   "lane fit": 7,
-   "entertainment": 8,
-   "platform guessed": 0
-  },
-  "link": "https://contentrewards.com/c/campaigns/3f22768b-de32-4123-98f6-b3a6e548ea77",
-  "raw": "json",
-  "total": 68,
-  "verdict": "STOP",
-  "stops": [
-   "game footage with no person in it = a game-launch ad (rico 2026-10-29: the page would look like it just posts ads)"
-  ]
- },
- {
   "name": "Call of Duty MW4 (en Fran\u00e7ais)",
   "org": "French Clipping",
   "category": null,
   "lane": "C",
   "rate": 2.0,
-  "budget_left": 9000.0,
+  "budget_left": 8900.0,
   "budget_total": 23000.0,
   "views": null,
   "clippers": 73,
@@ -522,7 +555,7 @@
    "platform guessed": -3
   },
   "link": "https://contentrewards.com/c/campaigns/18496202-6029-4a29-a44c-9fc33678fcb9",
-  "raw": " French Clipping \u00b7 3mo Call of Duty MW4 (en Fran\u00e7ais) $14K / $23K 73 $2 /1K ",
+  "raw": " French Clipping \u00b7 3mo Call of Duty MW4 (en Fran\u00e7ais) $14.1K / $23K 73 $2 /1K ",
   "total": 67,
   "verdict": "STOP",
   "stops": [
@@ -531,75 +564,39 @@
   ]
  },
  {
-  "name": "Let Him Mansplain Podcast Clipping",
-  "org": "ClipLaunch",
-  "category": "Podcasts",
+  "name": "Harrison Webb $300 per 1M Views",
+  "org": "Harrison Webb Clips",
+  "category": "Entertainment",
   "lane": "C",
-  "rate": 0.75,
-  "budget_left": 9055.22,
-  "budget_total": 10500,
+  "rate": 0.5,
+  "budget_left": 1090.46,
+  "budget_total": 6500,
   "views": null,
-  "clippers": 36,
+  "clippers": 99,
   "days_left": null,
-  "days_est": 78,
-  "funded_ago": "1w",
+  "days_est": 57,
+  "funded_ago": "9mo",
   "platforms": [
    "instagram",
    "tiktok",
    "youtube"
   ],
-  "submissions": 72,
+  "submissions": 1010,
   "application_only": false,
   "pts": {
-   "pay+budget": 14,
-   "paid out": 7,
-   "competition": 10,
-   "lane fit": 7,
-   "entertainment": 8,
-   "platform guessed": 0
-  },
-  "link": "https://contentrewards.com/c/campaigns/705f6e21-38af-408c-9e55-c77e4611bf09",
-  "raw": "json",
-  "total": 64,
-  "verdict": "JOIN",
-  "stops": []
- },
- {
-  "name": "Coinpoker Campaign PGT - Poker Clip Only",
-  "org": "Coin Group Media",
-  "category": "Poker",
-  "lane": "C",
-  "rate": 0.4,
-  "budget_left": 5178.079999999999,
-  "budget_total": 10789.3,
-  "views": null,
-  "clippers": 74,
-  "days_left": null,
-  "days_est": 14,
-  "funded_ago": "2w",
-  "platforms": [
-   "instagram",
-   "tiktok"
-  ],
-  "submissions": 461,
-  "application_only": false,
-  "pts": {
-   "pay+budget": 12,
+   "pay+budget": 5,
    "paid out": 20,
    "competition": 10,
-   "lane fit": 2,
-   "entertainment": 0,
+   "lane fit": 5,
+   "entertainment": 4,
    "platform guessed": 0
   },
-  "link": "https://contentrewards.com/c/campaigns/61aa88b5-e112-4abb-84e4-46bb652eae0a",
+  "link": "https://contentrewards.com/c/campaigns/a2726858-79e3-4d47-a681-f0fbba34d19e",
   "raw": "json",
   "total": 61,
   "verdict": "STOP",
   "stops": [
-   "pays under $0.75/1k, or an auction/pool with no fixed rate",
-   "gambling or crypto (board filter 2026-10-31: platform-ban risk to our accounts)",
-   "pays under $0.50 per 1k views (board filter 2026-10-31)",
-   "fits none of the three accounts (no clear topic for YouTube money, Instagram drama or TikTok entertainment)"
+   "pays under $0.75/1k, or an auction/pool with no fixed rate"
   ]
  },
  {
@@ -608,7 +605,7 @@
   "category": "Apps",
   "lane": "C",
   "rate": 1.25,
-  "budget_left": 3556.95,
+  "budget_left": 3550.29,
   "budget_total": 5250,
   "views": null,
   "clippers": 45,
@@ -619,7 +616,7 @@
    "instagram",
    "tiktok"
   ],
-  "submissions": 238,
+  "submissions": 240,
   "application_only": false,
   "pts": {
    "pay+budget": 12,
@@ -638,61 +635,23 @@
   ]
  },
  {
-  "name": "ForgeGUI [UNLIMITED]",
-  "org": "BloxClips",
-  "category": "Technology",
-  "lane": "C",
-  "rate": 1.5,
-  "budget_left": 16333.549999999988,
-  "budget_total": 396587,
-  "views": null,
-  "clippers": 4214,
-  "days_left": null,
-  "days_est": 8,
-  "funded_ago": "6mo",
-  "platforms": [
-   "instagram",
-   "tiktok",
-   "youtube"
-  ],
-  "submissions": 33657,
-  "application_only": false,
-  "pts": {
-   "pay+budget": 18,
-   "paid out": 17,
-   "competition": 0,
-   "lane fit": 7,
-   "entertainment": 0,
-   "platform guessed": 0
-  },
-  "link": "https://contentrewards.com/c/campaigns/1db63081-715e-4e04-9b11-fbc1d4e8e700",
-  "raw": "json",
-  "total": 58,
-  "verdict": "STOP",
-  "stops": [
-   "brand ad, not a show (rico: clips must grow the channels)",
-   "game footage with no person in it = a game-launch ad (rico 2026-10-29: the page would look like it just posts ads)",
-   "budget runs out in about 8 day(s) at its current pace"
-  ]
- },
- {
   "name": "$$5,000 Marlon Clipping Campaign",
   "org": "Reach",
   "category": "Content Creator",
   "lane": "C",
   "rate": 2.5,
-  "budget_left": 3653.13,
+  "budget_left": 3457.5,
   "budget_total": 5000,
   "views": null,
   "clippers": 10,
   "days_left": null,
-  "days_est": 11,
+  "days_est": 10,
   "funded_ago": "4d",
   "platforms": [
    "instagram",
    "tiktok"
   ],
-  "submissions": 16,
+  "submissions": 17,
   "application_only": false,
   "pts": {
    "pay+budget": 19,
@@ -717,10 +676,10 @@
   "category": null,
   "lane": "C",
   "rate": 2.0,
-  "budget_left": 17455.0,
+  "budget_left": 17281.0,
   "budget_total": 17500.0,
   "views": null,
-  "clippers": 6,
+  "clippers": 7,
   "days_left": null,
   "days_est": null,
   "funded_ago": null,
@@ -740,7 +699,7 @@
    "platform guessed": -3
   },
   "link": "https://contentrewards.com/c/campaigns/4a70ba91-44be-4dc8-946c-47e45a2403ea",
-  "raw": " Eclipse \u00b7 6d Jo Koy: Comedy Special $45 / $17.5K 6 $2 /1K ",
+  "raw": " Eclipse \u00b7 6d Jo Koy: Comedy Special $219 / $17.5K 7 $2 /1K ",
   "total": 58,
   "verdict": "MAYBE",
   "stops": []
@@ -751,10 +710,10 @@
   "category": null,
   "lane": "C",
   "rate": 1.0,
-  "budget_left": 15200.0,
+  "budget_left": 15100.0,
   "budget_total": 26300.0,
   "views": null,
-  "clippers": 76,
+  "clippers": 79,
   "days_left": null,
   "days_est": null,
   "funded_ago": null,
@@ -774,7 +733,7 @@
    "platform guessed": -3
   },
   "link": "https://contentrewards.com/c/campaigns/0afd04db-e183-4411-9957-0b890ef272b5",
-  "raw": " Arabic Clipping \u00b7 1mo Call of Duty MW4 \u0639\u0631\u0628\u064a V2 $11.1K / $26.3K 76 $1 /1K ",
+  "raw": " Arabic Clipping \u00b7 1mo Call of Duty MW4 \u0639\u0631\u0628\u064a V2 $11.2K / $26.3K 79 $1 /1K ",
   "total": 58,
   "verdict": "STOP",
   "stops": [
@@ -819,6 +778,80 @@
   ]
  },
  {
+  "name": "ForgeGUI [UNLIMITED]",
+  "org": "BloxClips",
+  "category": "Technology",
+  "lane": "C",
+  "rate": 1.0,
+  "budget_left": 15334.690000000002,
+  "budget_total": 229653,
+  "views": null,
+  "clippers": 4156,
+  "days_left": null,
+  "days_est": 14,
+  "funded_ago": "6mo",
+  "platforms": [
+   "instagram",
+   "tiktok",
+   "youtube"
+  ],
+  "submissions": 28355,
+  "application_only": false,
+  "pts": {
+   "pay+budget": 15,
+   "paid out": 17,
+   "competition": 0,
+   "lane fit": 7,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/1db63081-715e-4e04-9b11-fbc1d4e8e700",
+  "raw": "json",
+  "total": 54,
+  "verdict": "STOP",
+  "stops": [
+   "brand ad, not a show (rico: clips must grow the channels)",
+   "game footage with no person in it = a game-launch ad (rico 2026-10-29: the page would look like it just posts ads)"
+  ]
+ },
+ {
+  "name": "Mad Honey Hunters of the Himalayas \u2013 Clips",
+  "org": "NM Trade Company BV",
+  "category": "Documentary",
+  "lane": "C",
+  "rate": 1.0,
+  "budget_left": 1873.21,
+  "budget_total": 9000,
+  "views": null,
+  "clippers": 79,
+  "days_left": null,
+  "days_est": 13,
+  "funded_ago": "1mo",
+  "platforms": [
+   "facebook",
+   "instagram",
+   "tiktok",
+   "youtube"
+  ],
+  "submissions": 282,
+  "application_only": false,
+  "pts": {
+   "pay+budget": 8,
+   "paid out": 17,
+   "competition": 10,
+   "lane fit": 2,
+   "entertainment": 0,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/488d8a64-6c64-446d-8038-b74001934705",
+  "raw": "json",
+  "total": 51,
+  "verdict": "STOP",
+  "stops": [
+   "fits none of the three accounts (no clear topic for YouTube money, Instagram drama or TikTok entertainment)"
+  ]
+ },
+ {
   "name": "Stream House LA Clipping",
   "org": "Motion Clipping",
   "category": null,
@@ -827,7 +860,7 @@
   "budget_left": 2800.0,
   "budget_total": 4000.0,
   "views": null,
-  "clippers": 60,
+  "clippers": 62,
   "days_left": null,
   "days_est": null,
   "funded_ago": null,
@@ -847,7 +880,7 @@
    "platform guessed": -3
   },
   "link": "https://contentrewards.com/c/campaigns/5f6b6ac5-9878-4ad6-b90f-c2f2a3392e91",
-  "raw": " Motion Clipping \u00b7 1mo Stream House LA Clipping $4k Budget $1.2K / $4K 60 $2 /1K ",
+  "raw": " Motion Clipping \u00b7 1mo Stream House LA Clipping $4k Budget $1.2K / $4K 62 $2 /1K ",
   "total": 51,
   "verdict": "STOP",
   "stops": [
@@ -860,12 +893,12 @@
   "category": "Podcasts",
   "lane": "C",
   "rate": 2.0,
-  "budget_left": 19910.62,
+  "budget_left": 19900.41,
   "budget_total": 20833,
   "views": null,
   "clippers": 7,
   "days_left": null,
-  "days_est": 156,
+  "days_est": 160,
   "funded_ago": "1w",
   "platforms": [
    "instagram",
@@ -892,12 +925,49 @@
   ]
  },
  {
+  "name": "Jake Paul MVP x PFL Interview",
+  "org": "Clipflow",
+  "category": "Entertainment",
+  "lane": "C",
+  "rate": 0.5,
+  "budget_left": 1962.48,
+  "budget_total": 2000,
+  "views": null,
+  "clippers": 129,
+  "days_left": null,
+  "days_est": 250,
+  "funded_ago": "4d",
+  "platforms": [
+   "instagram",
+   "tiktok",
+   "x",
+   "youtube"
+  ],
+  "submissions": 302,
+  "application_only": false,
+  "pts": {
+   "pay+budget": 5,
+   "paid out": 8,
+   "competition": 6,
+   "lane fit": 5,
+   "entertainment": 12,
+   "platform guessed": 0
+  },
+  "link": "https://contentrewards.com/c/campaigns/f7ac5280-4d8b-4f96-9c49-351a0c1f6477",
+  "raw": "json",
+  "total": 50,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate"
+  ]
+ },
+ {
   "name": "Eneba Clipping and UGC",
   "org": "Eneba",
   "category": null,
   "lane": "?",
   "rate": 2.5,
-  "budget_left": 11245.0,
+  "budget_left": 11241.0,
   "budget_total": 11900.0,
   "views": null,
   "clippers": 17,
@@ -920,7 +990,7 @@
    "platform guessed": -3
   },
   "link": "https://contentrewards.com/c/campaigns/b8cf722b-8dd2-444b-b3cc-b1a7d23104ba",
-  "raw": " Eneba \u00b7 2w Eneba Clipping and UGC $655 / $11.9K 17 $2.50\u2013$3 /1K ",
+  "raw": " Eneba \u00b7 2w Eneba Clipping and UGC $659 / $11.9K 17 $2.50\u2013$3 /1K ",
   "total": 50,
   "verdict": "STOP",
   "stops": [
@@ -962,46 +1032,6 @@
   "verdict": "STOP",
   "stops": [
    "brand ad, not a show (rico: clips must grow the channels)",
-   "fits none of the three accounts (no clear topic for YouTube money, Instagram drama or TikTok entertainment)"
-  ]
- },
- {
-  "name": "FR Yomi Denzel Campagne Principale",
-  "org": "Yomi Denzel Clipping",
-  "category": "Personal Brand",
-  "lane": "C",
-  "rate": 0.7,
-  "budget_left": 5666.719999999972,
-  "budget_total": 343273.85,
-  "views": null,
-  "clippers": 356,
-  "days_left": null,
-  "days_est": 6,
-  "funded_ago": "11mo",
-  "platforms": [
-   "facebook",
-   "instagram",
-   "tiktok",
-   "youtube"
-  ],
-  "submissions": 62381,
-  "application_only": true,
-  "pts": {
-   "pay+budget": 10,
-   "paid out": 17,
-   "competition": 6,
-   "lane fit": 2,
-   "entertainment": 0,
-   "platform guessed": 0
-  },
-  "link": "https://contentrewards.com/c/campaigns/14f743b2-c5ca-4f3e-8c0d-3010c485005d",
-  "raw": "json",
-  "total": 49,
-  "verdict": "STOP",
-  "stops": [
-   "pays under $0.75/1k, or an auction/pool with no fixed rate",
-   "application only and the brief is hidden",
-   "budget runs out in about 6 day(s) at its current pace",
    "fits none of the three accounts (no clear topic for YouTube money, Instagram drama or TikTok entertainment)"
   ]
  },
@@ -1081,7 +1111,7 @@
   "category": null,
   "lane": "C",
   "rate": 1.0,
-  "budget_left": 362.0,
+  "budget_left": 359.0,
   "budget_total": 1000.0,
   "views": null,
   "clippers": 38,
@@ -1104,48 +1134,11 @@
    "platform guessed": -3
   },
   "link": "https://contentrewards.com/c/campaigns/96f76f67-78be-472b-a067-58ae07e98fc9",
-  "raw": " Sound Network \u00b7 1w Hunter Flynn - Roots Country Music Clipping [8455] $638 / $1K 38 $1 /1K ",
+  "raw": " Sound Network \u00b7 1w Hunter Flynn - Roots Country Music Clipping [8455] $641 / $1K 38 $1 /1K ",
   "total": 47,
   "verdict": "STOP",
   "stops": [
    "budget left under $1,000"
-  ]
- },
- {
-  "name": "Jake Paul MVP x PFL Interview",
-  "org": "Clipflow",
-  "category": "Entertainment",
-  "lane": "C",
-  "rate": 0.5,
-  "budget_left": 1909.53,
-  "budget_total": 2000,
-  "views": null,
-  "clippers": 113,
-  "days_left": null,
-  "days_est": 95,
-  "funded_ago": "4d",
-  "platforms": [
-   "instagram",
-   "tiktok",
-   "x",
-   "youtube"
-  ],
-  "submissions": 247,
-  "application_only": false,
-  "pts": {
-   "pay+budget": 5,
-   "paid out": 5,
-   "competition": 6,
-   "lane fit": 5,
-   "entertainment": 12,
-   "platform guessed": 0
-  },
-  "link": "https://contentrewards.com/c/campaigns/f7ac5280-4d8b-4f96-9c49-351a0c1f6477",
-  "raw": "json",
-  "total": 46,
-  "verdict": "STOP",
-  "stops": [
-   "pays under $0.75/1k, or an auction/pool with no fixed rate"
   ]
  },
  {
@@ -1154,12 +1147,12 @@
   "category": "Music",
   "lane": "C",
   "rate": 0.7,
-  "budget_left": 1911.85,
+  "budget_left": 1911.83,
   "budget_total": 2000,
   "views": null,
   "clippers": 1,
   "days_left": null,
-  "days_est": 115,
+  "days_est": 121,
   "funded_ago": "5d",
   "platforms": [
    "instagram",
@@ -1190,10 +1183,10 @@
   "category": null,
   "lane": "B",
   "rate": 1.0,
-  "budget_left": 148300.0,
+  "budget_left": 148100.0,
   "budget_total": 150000.0,
   "views": null,
-  "clippers": 13,
+  "clippers": 19,
   "days_left": null,
   "days_est": null,
   "funded_ago": null,
@@ -1213,7 +1206,7 @@
    "platform guessed": -3
   },
   "link": "https://contentrewards.com/c/campaigns/373e9c40-dfc5-4a6d-bab8-6c2f96dda100",
-  "raw": " Clip Farm \u00b7 3d The Loaded Tea Shop $1.7K / $150K 13 $1 /1K ",
+  "raw": " Clip Farm \u00b7 3d The Loaded Tea Shop $1.9K / $150K 19 $1 /1K ",
   "total": 46,
   "verdict": "SKIP",
   "stops": []
@@ -1333,7 +1326,7 @@
   "category": null,
   "lane": "?",
   "rate": 1.5,
-  "budget_left": 1800.0,
+  "budget_left": 1700.0,
   "budget_total": 5000.0,
   "views": null,
   "clippers": 26,
@@ -1356,7 +1349,7 @@
    "platform guessed": -3
   },
   "link": "https://contentrewards.com/c/campaigns/2549ea0b-bead-4e60-aeab-78c351446dfc",
-  "raw": " Bounty \u00b7 3w Ziggy [Viral Slideshows] $3.2K / $5K 26 $1.50 /1K ",
+  "raw": " Bounty \u00b7 3w Ziggy [Viral Slideshows] $3.3K / $5K 26 $1.50 /1K ",
   "total": 44,
   "verdict": "STOP",
   "stops": [
@@ -1369,7 +1362,7 @@
   "category": null,
   "lane": "?",
   "rate": 1.5,
-  "budget_left": 1900.0,
+  "budget_left": 1800.0,
   "budget_total": 4800.0,
   "views": null,
   "clippers": 53,
@@ -1392,7 +1385,7 @@
    "platform guessed": -3
   },
   "link": "https://contentrewards.com/c/campaigns/29c92590-738b-4421-a675-75e5ddfe4c32",
-  "raw": " Ruben Atienza Clipping \u00b7 1mo Ruben Atienza Clipping $2.9K / $4.8K 53 $1.50 /1K ",
+  "raw": " Ruben Atienza Clipping \u00b7 1mo Ruben Atienza Clipping $3K / $4.8K 53 $1.50 /1K ",
   "total": 44,
   "verdict": "STOP",
   "stops": [
@@ -1473,10 +1466,10 @@
   "category": null,
   "lane": "C",
   "rate": 1.0,
-  "budget_left": 938.0,
+  "budget_left": 862.0,
   "budget_total": 1400.0,
   "views": null,
-  "clippers": 45,
+  "clippers": 50,
   "days_left": null,
   "days_est": null,
   "funded_ago": null,
@@ -1496,7 +1489,7 @@
    "platform guessed": -3
   },
   "link": "https://contentrewards.com/c/campaigns/0c18e861-37bc-48a0-a475-19cfac1ce1ba",
-  "raw": " ClipScales \u00b7 1w Roblox Troll Clipping Dubbing AI $462 / $1.4K 45 $1 /1K ",
+  "raw": " ClipScales \u00b7 1w Roblox Troll Clipping Dubbing AI $538 / $1.4K 50 $1 /1K ",
   "total": 43,
   "verdict": "STOP",
   "stops": [
@@ -1505,12 +1498,51 @@
   ]
  },
  {
+  "name": "Coinpoker Campaign PGT - Poker Clip Only",
+  "org": "Coin Group Media",
+  "category": null,
+  "lane": "?",
+  "rate": 0.4,
+  "budget_left": 5200.0,
+  "budget_total": 10800.0,
+  "views": null,
+  "clippers": 74,
+  "days_left": null,
+  "days_est": null,
+  "funded_ago": null,
+  "platforms": [
+   "youtube",
+   "tiktok",
+   "instagram"
+  ],
+  "submissions": null,
+  "application_only": null,
+  "pts": {
+   "pay+budget": 12,
+   "paid out": 12,
+   "competition": 10,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": -3
+  },
+  "link": "https://contentrewards.com/c/campaigns/61aa88b5-e112-4abb-84e4-46bb652eae0a",
+  "raw": " Coin Group Media \u00b7 2w Coinpoker Campaign PGT - Poker Clip Only $5.6K / $10.8K 74 $0.40 /1K ",
+  "total": 43,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "gambling or crypto (board filter 2026-10-31: platform-ban risk to our accounts)",
+   "pays under $0.50 per 1k views (board filter 2026-10-31)",
+   "fits none of the three accounts (no clear topic for YouTube money, Instagram drama or TikTok entertainment)"
+  ]
+ },
+ {
   "name": "FOB Huncho - BOW",
   "org": "Digital E-Clipz",
   "category": null,
   "lane": "?",
   "rate": 1.0,
-  "budget_left": 2400.0,
+  "budget_left": 2200.0,
   "budget_total": 6800.0,
   "views": null,
   "clippers": 30,
@@ -1533,7 +1565,43 @@
    "platform guessed": -3
   },
   "link": "https://contentrewards.com/c/campaigns/73a27a11-9577-40cd-a0c5-e55b9dccbde5",
-  "raw": " Digital E-Clipz \u00b7 3w FOB Huncho - BOW $4.4K / $6.8K 30 $1 /1K ",
+  "raw": " Digital E-Clipz \u00b7 3w FOB Huncho - BOW $4.6K / $6.8K 30 $1 /1K ",
+  "total": 43,
+  "verdict": "STOP",
+  "stops": [
+   "fits none of the three accounts (no clear topic for YouTube money, Instagram drama or TikTok entertainment)"
+  ]
+ },
+ {
+  "name": "Empire Of The Sun \u2014 Walking on a Dream (Audio)",
+  "org": "The Clip Ship",
+  "category": null,
+  "lane": "?",
+  "rate": 1.0,
+  "budget_left": 2500.0,
+  "budget_total": 5100.0,
+  "views": null,
+  "clippers": 40,
+  "days_left": null,
+  "days_est": null,
+  "funded_ago": null,
+  "platforms": [
+   "youtube",
+   "tiktok",
+   "instagram"
+  ],
+  "submissions": null,
+  "application_only": null,
+  "pts": {
+   "pay+budget": 12,
+   "paid out": 12,
+   "competition": 10,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": -3
+  },
+  "link": "https://contentrewards.com/c/campaigns/9345a1f3-918c-4098-9fe4-8715f3253029",
+  "raw": " The Clip Ship \u00b7 1mo Empire Of The Sun \u2014 Walking on a Dream (Audio) $2.6K / $5.1K 40 $1 /1K ",
   "total": 43,
   "verdict": "STOP",
   "stops": [
@@ -1583,7 +1651,7 @@
   "category": null,
   "lane": "?",
   "rate": 6.0,
-  "budget_left": 1800.0,
+  "budget_left": 1700.0,
   "budget_total": 4000.0,
   "views": null,
   "clippers": null,
@@ -1606,47 +1674,10 @@
    "platform guessed": -3
   },
   "link": "https://contentrewards.com/c/campaigns/c0c37381-e244-4643-98bd-edbff4bc1465",
-  "raw": " FundingPips \u00b7 5mo Fundingpips Clipping $2.2K / $4K 1.3K $6 /1K ",
+  "raw": " FundingPips \u00b7 5mo Fundingpips Clipping $2.3K / $4K 1.3K $6 /1K ",
   "total": 40,
   "verdict": "STOP",
   "stops": [
-   "fits none of the three accounts (no clear topic for YouTube money, Instagram drama or TikTok entertainment)"
-  ]
- },
- {
-  "name": "ChainsFR: Como Se Dice Clipping",
-  "org": "ClipLaunch",
-  "category": null,
-  "lane": "?",
-  "rate": 0.5,
-  "budget_left": 10300.0,
-  "budget_total": 11300.0,
-  "views": null,
-  "clippers": 26,
-  "days_left": null,
-  "days_est": null,
-  "funded_ago": null,
-  "platforms": [
-   "youtube",
-   "tiktok",
-   "instagram"
-  ],
-  "submissions": null,
-  "application_only": null,
-  "pts": {
-   "pay+budget": 16,
-   "paid out": 5,
-   "competition": 10,
-   "lane fit": 0,
-   "entertainment": 0,
-   "platform guessed": -3
-  },
-  "link": "https://contentrewards.com/c/campaigns/791ad52c-a938-48b3-8f7e-f43ca10b110c",
-  "raw": " ClipLaunch \u00b7 2d ChainsFR: Como Se Dice Clipping $1K / $11.3K 26 $0.50 /1K ",
-  "total": 39,
-  "verdict": "STOP",
-  "stops": [
-   "pays under $0.75/1k, or an auction/pool with no fixed rate",
    "fits none of the three accounts (no clear topic for YouTube money, Instagram drama or TikTok entertainment)"
   ]
  },
@@ -1656,10 +1687,10 @@
   "category": null,
   "lane": "?",
   "rate": 0.75,
-  "budget_left": 35900.0,
+  "budget_left": 35500.0,
   "budget_total": 50000.0,
   "views": null,
-  "clippers": 228,
+  "clippers": 230,
   "days_left": null,
   "days_est": null,
   "funded_ago": null,
@@ -1679,47 +1710,11 @@
    "platform guessed": -3
   },
   "link": "https://contentrewards.com/c/campaigns/33c3d5a9-84a9-40c8-b6e4-9904e4816339",
-  "raw": " Reach \u00b7 1w TJR $50,000 Clipping Campaign $14.1K / $50K 228 $0.75 /1K ",
+  "raw": " Reach \u00b7 1w TJR $50,000 Clipping Campaign $14.5K / $50K 230 $0.75 /1K ",
   "total": 39,
   "verdict": "STOP",
   "stops": [
    "wants a dedicated / niche-matching account (Reach style; rico dropped TJR for this 2026-10-30)",
-   "fits none of the three accounts (no clear topic for YouTube money, Instagram drama or TikTok entertainment)"
-  ]
- },
- {
-  "name": "Empire Of The Sun \u2014 Walking on a Dream (Audio)",
-  "org": "The Clip Ship",
-  "category": null,
-  "lane": "?",
-  "rate": 1.0,
-  "budget_left": 2600.0,
-  "budget_total": 5100.0,
-  "views": null,
-  "clippers": 40,
-  "days_left": null,
-  "days_est": null,
-  "funded_ago": null,
-  "platforms": [
-   "youtube",
-   "tiktok",
-   "instagram"
-  ],
-  "submissions": null,
-  "application_only": null,
-  "pts": {
-   "pay+budget": 12,
-   "paid out": 9,
-   "competition": 10,
-   "lane fit": 0,
-   "entertainment": 0,
-   "platform guessed": -3
-  },
-  "link": "https://contentrewards.com/c/campaigns/9345a1f3-918c-4098-9fe4-8715f3253029",
-  "raw": " The Clip Ship \u00b7 1mo Empire Of The Sun \u2014 Walking on a Dream (Audio) $2.5K / $5.1K 40 $1 /1K ",
-  "total": 39,
-  "verdict": "STOP",
-  "stops": [
    "fits none of the three accounts (no clear topic for YouTube money, Instagram drama or TikTok entertainment)"
   ]
  },
@@ -1762,125 +1757,15 @@
   ]
  },
  {
-  "name": "Bruvvy - \"Little Shiva\" [8494]",
-  "org": "TikCut",
-  "category": null,
-  "lane": "?",
-  "rate": 1.0,
-  "budget_left": 132.0,
-  "budget_total": 1000.0,
-  "views": null,
-  "clippers": 47,
-  "days_left": null,
-  "days_est": null,
-  "funded_ago": null,
-  "platforms": [
-   "youtube",
-   "tiktok",
-   "instagram"
-  ],
-  "submissions": null,
-  "application_only": null,
-  "pts": {
-   "pay+budget": 8,
-   "paid out": 12,
-   "competition": 10,
-   "lane fit": 0,
-   "entertainment": 0,
-   "platform guessed": -3
-  },
-  "link": "https://contentrewards.com/c/campaigns/48866914-d3e9-4a2a-ace0-0b012bbb780c",
-  "raw": " TikCut \u00b7 4d Bruvvy - &quot;Little Shiva&quot; [8494] $868 / $1K 47 $1 /1K ",
-  "total": 38,
-  "verdict": "STOP",
-  "stops": [
-   "budget left under $1,000",
-   "fits none of the three accounts (no clear topic for YouTube money, Instagram drama or TikTok entertainment)"
-  ]
- },
- {
-  "name": "Mad Honey Hunters of the Himalayas \u2013 Clips",
-  "org": "NM Trade Company BV",
-  "category": null,
-  "lane": "?",
-  "rate": 1.0,
-  "budget_left": 1900.0,
-  "budget_total": 9000.0,
-  "views": null,
-  "clippers": 79,
-  "days_left": null,
-  "days_est": null,
-  "funded_ago": null,
-  "platforms": [
-   "youtube",
-   "tiktok",
-   "instagram"
-  ],
-  "submissions": null,
-  "application_only": null,
-  "pts": {
-   "pay+budget": 8,
-   "paid out": 12,
-   "competition": 10,
-   "lane fit": 0,
-   "entertainment": 0,
-   "platform guessed": -3
-  },
-  "link": "https://contentrewards.com/c/campaigns/488d8a64-6c64-446d-8038-b74001934705",
-  "raw": " NM Trade Company BV \u00b7 1mo Mad Honey Hunters of the Himalayas \u2013 Clips $7.1K / $9K 79 $1 /1K ",
-  "total": 38,
-  "verdict": "STOP",
-  "stops": [
-   "fits none of the three accounts (no clear topic for YouTube money, Instagram drama or TikTok entertainment)"
-  ]
- },
- {
-  "name": "PopDarts [Clipping Campaign] [Target CTA]",
-  "org": "ClipHouse",
-  "category": null,
-  "lane": "?",
-  "rate": 1.0,
-  "budget_left": 533.0,
-  "budget_total": 1300.0,
-  "views": null,
-  "clippers": 25,
-  "days_left": null,
-  "days_est": null,
-  "funded_ago": null,
-  "platforms": [
-   "youtube",
-   "tiktok",
-   "instagram"
-  ],
-  "submissions": null,
-  "application_only": null,
-  "pts": {
-   "pay+budget": 8,
-   "paid out": 12,
-   "competition": 10,
-   "lane fit": 0,
-   "entertainment": 0,
-   "platform guessed": -3
-  },
-  "link": "https://contentrewards.com/c/campaigns/7ac473b4-7490-49ae-9cd7-777016da3be7",
-  "raw": " ClipHouse \u00b7 1w PopDarts [Clipping Campaign] [Target CTA] $767 / $1.3K 25 $1 /1K ",
-  "total": 38,
-  "verdict": "STOP",
-  "stops": [
-   "budget left under $1,000",
-   "fits none of the three accounts (no clear topic for YouTube money, Instagram drama or TikTok entertainment)"
-  ]
- },
- {
   "name": "ClipForge",
   "org": "/1K",
   "category": null,
   "lane": "?",
   "rate": 1.0,
-  "budget_left": 437.0,
+  "budget_left": 441.0,
   "budget_total": 1000.0,
   "views": null,
-  "clippers": 58,
+  "clippers": 57,
   "days_left": null,
   "days_est": null,
   "funded_ago": null,
@@ -1900,7 +1785,7 @@
    "platform guessed": -3
   },
   "link": "https://contentrewards.com/c/campaigns/461c3aeb-12e1-4719-a1a0-3a486b77778e",
-  "raw": " ClipForge \u00b7 1w Momma Dee [Viral Clipping] \u2014 $1 per 1K Views $563 / $1K 58 $1 /1K ",
+  "raw": " ClipForge \u00b7 1w Momma Dee [Viral Clipping] \u2014 $1 per 1K Views $559 / $1K 57 $1 /1K ",
   "total": 38,
   "verdict": "STOP",
   "stops": [
@@ -1946,6 +1831,43 @@
   ]
  },
  {
+  "name": "ChainsFR: Como Se Dice Clipping",
+  "org": "ClipLaunch",
+  "category": null,
+  "lane": "?",
+  "rate": 0.5,
+  "budget_left": 9800.0,
+  "budget_total": 11300.0,
+  "views": null,
+  "clippers": 26,
+  "days_left": null,
+  "days_est": null,
+  "funded_ago": null,
+  "platforms": [
+   "youtube",
+   "tiktok",
+   "instagram"
+  ],
+  "submissions": null,
+  "application_only": null,
+  "pts": {
+   "pay+budget": 14,
+   "paid out": 5,
+   "competition": 10,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": -3
+  },
+  "link": "https://contentrewards.com/c/campaigns/791ad52c-a938-48b3-8f7e-f43ca10b110c",
+  "raw": " ClipLaunch \u00b7 2d ChainsFR: Como Se Dice Clipping $1.5K / $11.3K 26 $0.50 /1K ",
+  "total": 36,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "fits none of the three accounts (no clear topic for YouTube money, Instagram drama or TikTok entertainment)"
+  ]
+ },
+ {
   "name": "Danesh Diamonds",
   "org": "/1K",
   "category": null,
@@ -1979,42 +1901,6 @@
   "verdict": "STOP",
   "stops": [
    "budget left under $1,000",
-   "fits none of the three accounts (no clear topic for YouTube money, Instagram drama or TikTok entertainment)"
-  ]
- },
- {
-  "name": "HardScope x ClipFarm",
-  "org": "Clip Farm",
-  "category": null,
-  "lane": "?",
-  "rate": 1.0,
-  "budget_left": 5400.0,
-  "budget_total": 24000.0,
-  "views": null,
-  "clippers": 696,
-  "days_left": null,
-  "days_est": null,
-  "funded_ago": null,
-  "platforms": [
-   "youtube",
-   "tiktok",
-   "instagram"
-  ],
-  "submissions": null,
-  "application_only": null,
-  "pts": {
-   "pay+budget": 13,
-   "paid out": 12,
-   "competition": 3,
-   "lane fit": 0,
-   "entertainment": 0,
-   "platform guessed": -3
-  },
-  "link": "https://contentrewards.com/c/campaigns/d10f3f96-b533-493e-860f-99a4a05edc90",
-  "raw": " Clip Farm \u00b7 1mo HardScope x ClipFarm $18.6K / $24K 696 $1 /1K ",
-  "total": 35,
-  "verdict": "STOP",
-  "stops": [
    "fits none of the three accounts (no clear topic for YouTube money, Instagram drama or TikTok entertainment)"
   ]
  },
@@ -2061,7 +1947,7 @@
   "category": null,
   "lane": "?",
   "rate": 2.0,
-  "budget_left": 11966.0,
+  "budget_left": 11963.0,
   "budget_total": 12000.0,
   "views": null,
   "clippers": null,
@@ -2084,7 +1970,7 @@
    "platform guessed": -3
   },
   "link": "https://contentrewards.com/c/campaigns/b5ff48d7-ec63-443a-b767-3a430a6f71f4",
-  "raw": " Clipping Culture \u00b7 1d SEGA - Metaphor ReFantazio Trailer Clipping $34 / $12K 4 Up to $2.00 per 1K views, by viewer country Up to $2.00 /1K ",
+  "raw": " Clipping Culture \u00b7 1d SEGA - Metaphor ReFantazio Trailer Clipping $37 / $12K 4 Up to $2.00 per 1K views, by viewer country Up to $2.00 /1K ",
   "total": 33,
   "verdict": "STOP",
   "stops": [
@@ -2097,7 +1983,7 @@
   "category": null,
   "lane": "?",
   "rate": 2.0,
-  "budget_left": 10311.0,
+  "budget_left": 10110.0,
   "budget_total": 10500.0,
   "views": null,
   "clippers": null,
@@ -2120,7 +2006,7 @@
    "platform guessed": -3
   },
   "link": "https://contentrewards.com/c/campaigns/eb28f557-df7b-4245-8603-01380c4d84cc",
-  "raw": " Clipping Culture \u00b7 3d Wa-Chaa x The RZA - Grandmaster Collection Clip $189 / $10.5K 4 Up to $2.00 per 1K views, by viewer country Up to $2.00 /1K ",
+  "raw": " Clipping Culture \u00b7 3d Wa-Chaa x The RZA - Grandmaster Collection Clip $390 / $10.5K 26 Up to $2.00 per 1K views, by viewer country Up to $2.00 /1K ",
   "total": 33,
   "verdict": "STOP",
   "stops": [
@@ -2133,7 +2019,7 @@
   "category": null,
   "lane": "?",
   "rate": 1.0,
-  "budget_left": 8485.0,
+  "budget_left": 8476.0,
   "budget_total": 8500.0,
   "views": null,
   "clippers": 15,
@@ -2156,7 +2042,7 @@
    "platform guessed": -3
   },
   "link": "https://contentrewards.com/c/campaigns/200ea21b-be80-4db8-b552-8e32b148604e",
-  "raw": " ClippedIn \u00b7 2d $8,500 FaZe Tournament Clipping Campaign $15 / $8.5K 15 $1 /1K ",
+  "raw": " ClippedIn \u00b7 2d $8,500 FaZe Tournament Clipping Campaign $24 / $8.5K 15 $1 /1K ",
   "total": 33,
   "verdict": "STOP",
   "stops": [
@@ -2201,15 +2087,15 @@
   ]
  },
  {
-  "name": "Harrison Webb Clips",
-  "org": "/1K",
+  "name": "Jake Paul How to Make Money With AI",
+  "org": "Clip Farm",
   "category": null,
-  "lane": "?",
-  "rate": 0.5,
-  "budget_left": 1100.0,
-  "budget_total": 6500.0,
+  "lane": "A",
+  "rate": 0.75,
+  "budget_left": 1193.0,
+  "budget_total": 1200.0,
   "views": null,
-  "clippers": 99,
+  "clippers": 1,
   "days_left": null,
   "days_est": null,
   "funded_ago": null,
@@ -2221,21 +2107,18 @@
   "submissions": null,
   "application_only": null,
   "pts": {
-   "pay+budget": 5,
-   "paid out": 12,
+   "pay+budget": 9,
+   "paid out": 0,
    "competition": 10,
-   "lane fit": 0,
+   "lane fit": 7,
    "entertainment": 0,
    "platform guessed": -3
   },
-  "link": "https://contentrewards.com/c/campaigns/a2726858-79e3-4d47-a681-f0fbba34d19e",
-  "raw": " Harrison Webb Clips \u00b7 9mo Harrison Webb $300 per 1M Views $5.4K / $6.5K 99 $0.50 /1K ",
-  "total": 33,
-  "verdict": "STOP",
-  "stops": [
-   "pays under $0.75/1k, or an auction/pool with no fixed rate",
-   "fits none of the three accounts (no clear topic for YouTube money, Instagram drama or TikTok entertainment)"
-  ]
+  "link": "https://contentrewards.com/c/campaigns/ca9e8eca-1d96-4dfa-a252-f4b12f21f394",
+  "raw": " Clip Farm \u00b7 1d Jake Paul How to Make Money With AI $7 / $1.2K 1 $0.75 /1K ",
+  "total": 32,
+  "verdict": "SKIP",
+  "stops": []
  },
  {
   "name": "PREME TAKES OVER AREA 29",
@@ -2312,6 +2195,43 @@
   ]
  },
  {
+  "name": "Customuse Creators",
+  "org": "Customuse",
+  "category": null,
+  "lane": "?",
+  "rate": 1.0,
+  "budget_left": 700.0,
+  "budget_total": 3100.0,
+  "views": null,
+  "clippers": 151,
+  "days_left": null,
+  "days_est": null,
+  "funded_ago": null,
+  "platforms": [
+   "youtube",
+   "tiktok",
+   "instagram"
+  ],
+  "submissions": null,
+  "application_only": null,
+  "pts": {
+   "pay+budget": 8,
+   "paid out": 12,
+   "competition": 6,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": -3
+  },
+  "link": "https://contentrewards.com/c/campaigns/628310d1-3a5f-4fe2-b096-4e7eee7af03e",
+  "raw": " Customuse Creators \u00b7 6mo Customuse $2.4K / $3.1K 151 $1 /1K ",
+  "total": 32,
+  "verdict": "STOP",
+  "stops": [
+   "budget left under $1,000",
+   "fits none of the three accounts (no clear topic for YouTube money, Instagram drama or TikTok entertainment)"
+  ]
+ },
+ {
   "name": "The Weeknd - Hong Kong",
   "org": "Reactions + MV Edits",
   "category": null,
@@ -2348,12 +2268,85 @@
   ]
  },
  {
+  "name": "FR Yomi Denzel Campagne Principale",
+  "org": "Yomi Denzel Clipping",
+  "category": null,
+  "lane": "?",
+  "rate": 0.7,
+  "budget_left": 5600.0,
+  "budget_total": 343300.0,
+  "views": null,
+  "clippers": 356,
+  "days_left": null,
+  "days_est": null,
+  "funded_ago": null,
+  "platforms": [
+   "youtube",
+   "tiktok",
+   "instagram"
+  ],
+  "submissions": null,
+  "application_only": null,
+  "pts": {
+   "pay+budget": 10,
+   "paid out": 9,
+   "competition": 6,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": -3
+  },
+  "link": "https://contentrewards.com/c/campaigns/14f743b2-c5ca-4f3e-8c0d-3010c485005d",
+  "raw": " Yomi Denzel Clipping \u00b7 11mo FR Yomi Denzel Campagne Principale $337.7K / $343.3K 356 $0.70 /1K ",
+  "total": 31,
+  "verdict": "STOP",
+  "stops": [
+   "pays under $0.75/1k, or an auction/pool with no fixed rate",
+   "fits none of the three accounts (no clear topic for YouTube money, Instagram drama or TikTok entertainment)"
+  ]
+ },
+ {
+  "name": "Daimon X Syndicate",
+  "org": "Distributed",
+  "category": null,
+  "lane": "?",
+  "rate": 1.0,
+  "budget_left": 2800.0,
+  "budget_total": 69200.0,
+  "views": null,
+  "clippers": 166,
+  "days_left": null,
+  "days_est": null,
+  "funded_ago": null,
+  "platforms": [
+   "youtube",
+   "tiktok",
+   "instagram"
+  ],
+  "submissions": null,
+  "application_only": null,
+  "pts": {
+   "pay+budget": 10,
+   "paid out": 9,
+   "competition": 6,
+   "lane fit": 0,
+   "entertainment": 0,
+   "platform guessed": -3
+  },
+  "link": "https://contentrewards.com/c/campaigns/bb7a286d-c388-4550-b2c2-8beca19cd6d0",
+  "raw": " Distributed \u00b7 4mo Daimon X Syndicate $66.4K / $69.2K 166 $1 /1K ",
+  "total": 31,
+  "verdict": "STOP",
+  "stops": [
+   "fits none of the three accounts (no clear topic for YouTube money, Instagram drama or TikTok entertainment)"
+  ]
+ },
+ {
   "name": "Content Rewards UGC [International]",
   "org": "Split-Screen UGC [Non-English]",
   "category": null,
   "lane": "?",
   "rate": 1.0,
-  "budget_left": 5000.0,
+  "budget_left": 4100.0,
   "budget_total": 77400.0,
   "views": null,
   "clippers": 425,
@@ -2368,7 +2361,7 @@
   "submissions": null,
   "application_only": null,
   "pts": {
-   "pay+budget": 13,
+   "pay+budget": 10,
    "paid out": 9,
    "competition": 3,
    "lane fit": 0,
@@ -2376,49 +2369,12 @@
    "platform guessed": -3
   },
   "link": "https://contentrewards.com/c/campaigns/0c6959a1-99a5-4ee3-bd6d-1fba2ca92616",
-  "raw": " Content Rewards UGC [International] \u00b7 6mo Split-Screen UGC [Non-English] $72.4K / $77.4K 425 $1 /1K ",
-  "total": 31,
+  "raw": " Content Rewards UGC [International] \u00b7 6mo Split-Screen UGC [Non-English] $73.3K / $77.4K 425 $1 /1K ",
+  "total": 26,
   "verdict": "STOP",
   "stops": [
    "brand ad, not a show (rico: clips must grow the channels)",
    "not an English campaign (our accounts post in English)",
-   "fits none of the three accounts (no clear topic for YouTube money, Instagram drama or TikTok entertainment)"
-  ]
- },
- {
-  "name": "Daimon X Syndicate",
-  "org": "Distributed",
-  "category": null,
-  "lane": "?",
-  "rate": 1.0,
-  "budget_left": 500.0,
-  "budget_total": 66700.0,
-  "views": null,
-  "clippers": 166,
-  "days_left": null,
-  "days_est": null,
-  "funded_ago": null,
-  "platforms": [
-   "youtube",
-   "tiktok",
-   "instagram"
-  ],
-  "submissions": null,
-  "application_only": null,
-  "pts": {
-   "pay+budget": 8,
-   "paid out": 9,
-   "competition": 6,
-   "lane fit": 0,
-   "entertainment": 0,
-   "platform guessed": -3
-  },
-  "link": "https://contentrewards.com/c/campaigns/bb7a286d-c388-4550-b2c2-8beca19cd6d0",
-  "raw": " Distributed \u00b7 4mo Daimon X Syndicate $66.2K / $66.7K 166 $1 /1K ",
-  "total": 28,
-  "verdict": "STOP",
-  "stops": [
-   "budget left under $1,000",
    "fits none of the three accounts (no clear topic for YouTube money, Instagram drama or TikTok entertainment)"
   ]
  },
@@ -2465,7 +2421,7 @@
   "category": null,
   "lane": "?",
   "rate": 0.5,
-  "budget_left": 1527.0,
+  "budget_left": 1515.0,
   "budget_total": 2000.0,
   "views": null,
   "clippers": 139,
@@ -2488,46 +2444,12 @@
    "platform guessed": -3
   },
   "link": "https://contentrewards.com/c/campaigns/6590957d-cd29-4135-8483-0cda5f6ed6a8",
-  "raw": " Clouted \u00b7 4d Once Upon a Time in Texas $473 / $2K 139 $0.50 /1K ",
+  "raw": " Clouted \u00b7 4d Once Upon a Time in Texas $485 / $2K 139 $0.50 /1K ",
   "total": 24,
   "verdict": "STOP",
   "stops": [
    "pays under $0.75/1k, or an auction/pool with no fixed rate",
    "fits none of the three accounts (no clear topic for YouTube money, Instagram drama or TikTok entertainment)"
   ]
- },
- {
-  "name": "Jake Paul How to Make Money With AI",
-  "org": "Clip Farm",
-  "category": null,
-  "lane": "A",
-  "rate": 0.75,
-  "budget_left": 1200.0,
-  "budget_total": 1200.0,
-  "views": null,
-  "clippers": 0,
-  "days_left": null,
-  "days_est": null,
-  "funded_ago": null,
-  "platforms": [
-   "youtube",
-   "tiktok",
-   "instagram"
-  ],
-  "submissions": null,
-  "application_only": null,
-  "pts": {
-   "pay+budget": 7,
-   "paid out": 0,
-   "competition": 5,
-   "lane fit": 7,
-   "entertainment": 0,
-   "platform guessed": -3
-  },
-  "link": "https://contentrewards.com/c/campaigns/ca9e8eca-1d96-4dfa-a252-f4b12f21f394",
-  "raw": " Clip Farm \u00b7 1d Jake Paul How to Make Money With AI $0 / $1.2K 0 $0.75 /1K ",
-  "total": 22,
-  "verdict": "SKIP",
-  "stops": []
  }
 ]
