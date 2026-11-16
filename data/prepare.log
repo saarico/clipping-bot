@@ -1,3 +1,27 @@
-[23:57:32] CLIPPING root CLIPPING
-[23:58:35] waiting for the requirements file in 0_START
-[23:58:38] 0 render job(s)
+[06:16:43] CLIPPING root CLIPPING
+Traceback (most recent call last):
+  File "/home/runner/work/clipping-bot/clipping-bot/bot/run.py", line 1176, in <module>
+    main(a[0] if a and not a[0].startswith("--") else None, ph)
+  File "/home/runner/work/clipping-bot/clipping-bot/bot/run.py", line 1136, in main
+    moved = drive.drop(d)
+            ^^^^^^^^^^^^^
+  File "/home/runner/work/clipping-bot/clipping-bot/bot/drive.py", line 237, in drop
+    have = {e["Name"] for e in be().ls(f"{r}/{s}") if e.get("IsDir")}
+                               ^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/clipping-bot/clipping-bot/bot/drive.py", line 92, in ls
+    raise RuntimeError(f"rclone lsjson {path} failed ({r.returncode}): {r.stderr.strip()[-300:]}")
+RuntimeError: rclone lsjson CLIPPING/2_REDO failed (1): "
+    },
+    "reason": "RATE_LIMIT_EXCEEDED"
+  },
+  {
+    "@type": "type.googleapis.com/google.rpc.Help",
+    "links": [
+      {
+        "description": "Request a higher quota limit.",
+        "url": "https://cloud.google.com/docs/quotas/help/request_increase"
+      }
+    ]
+  }
+]
+, rateLimitExceeded
